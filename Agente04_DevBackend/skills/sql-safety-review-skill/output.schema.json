@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/sql-safety-review-skill/output",
+  "title": "sql-safety-review-skill Output",
+  "type": "object",
+  "required": ["risk_level", "findings", "sql_injection_safe", "uses_only_parameterized"],
+  "properties": {
+    "risk_level": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Highest risk level found. LOW = no issues. HIGH/CRITICAL blocks Gate 4."
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "issue", "fix"],
+        "properties": {
+          "file": { "type": "string" },
+          "line": { "type": "integer" },
+          "issue": { "type": "string" },
+          "fix": { "type": "string" },
+          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sql_injection_safe": { "type": "boolean" },
+    "uses_only_parameterized": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

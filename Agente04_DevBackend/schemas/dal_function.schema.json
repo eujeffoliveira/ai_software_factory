@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/dal-function-spec",
+  "title": "DAL Function Specification",
+  "description": "Schema for specifying a Prisma Data Access Layer function to be implemented by Agente04_DevBackend. All DB access goes through DAL functions — never direct prisma calls in features/ or route handlers.",
+  "type": "object",
+  "required": [
+    "function_name",
+    "file_path",
+    "prisma_model",
+    "operation",
+    "input_type",
+    "return_type"
+  ],
+  "properties": {
+    "function_name": {
+      "type": "string",
+      "description": "Name of the function within the DAL object.",
+      "pattern": "^[a-z][a-zA-Z0-9]+$",
+      "examples": ["findById", "findManyByUser", "create", "updateById", "upsert", "deleteById"]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "File path for this DAL. Must follow the pattern lib/db/[model].dal.ts.",
+      "pattern": "^lib/db/[a-z][a-zA-Z0-9]+\\.dal\\.ts$",
+      "examples": [
+        "lib/db/task.dal.ts",
+        "lib/db/project.dal.ts",
+        "lib/db/user.dal.ts"
+      ]
+    },
+    "prisma_model": {
+      "type": "string",
+      "description": "The Prisma model name (matches the model name in schema.prisma, PascalCase).",
+      "pattern": "^[A-Z][a-zA-Z0-9]+$",
+      "examples": ["Task", "Project", "User", "AuditLog", "SyncLog"]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "findUnique",
+        "findMany",
+        "create",
+        "update",
+        "delete",
+        "upsert",
+        "transaction",
+        "count",
+        "aggregate"
+      ],
+      "description": "The Prisma operation type used by this function."
+    },
+    "input_type": {
+      "type": "string",
+      "description": "TypeScript type for the function's input parameter.",
+      "examples": [
+        "string",
+        "Prisma.TaskCreateInput",
+        "Prisma.TaskUpdateInput",
+        "Prisma.TaskWhereUniqueInput",
+        "{ userId: string; status?: string }"
+      ]
+    },
+    "return_type": {
+      "type": "string",
+      "description": "TypeScript return type (excluding Promise<>).",
+      "examples": [
+        "Task | null",
+        "Task[]",
+        "Task",
+        "void",
+        "{ count: number }"
+      ]
+    },
+    "uses_select": {
+      "type": "boolean",
+      "description": "Whether this function uses Prisma select to return a subset of fields.",
+      "default": false
+    },
+    "uses_include": {
+      "type": "boolean",
+      "description": "Whether this function uses Prisma include to load related records.",
+      "default": false
+    },
+    "uses_raw_sql": {
+      "type": "boolean",
+      "description": "Whether this function uses $queryRaw or $executeRaw. Must be false — no raw SQL in DAL functions.",
+      "const": false
+    },
+    "order_by": {
+      "type": "string",
+      "description": "Default ordering for findMany operations.",
+      "examples": ["createdAt desc", "name asc", "updatedAt desc"]
+    }
+  },
+  "additionalProperties": false
+}

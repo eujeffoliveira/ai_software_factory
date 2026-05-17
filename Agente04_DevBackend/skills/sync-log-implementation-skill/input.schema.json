@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/sync-log-implementation-skill/input",
+  "title": "sync-log-implementation-skill Input",
+  "type": "object",
+  "required": ["job_name", "tracked_counts"],
+  "properties": {
+    "job_name": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$", "description": "Must match vercel.json cron key" },
+    "tracked_counts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string", "examples": ["processed", "created", "updated", "failed"] },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

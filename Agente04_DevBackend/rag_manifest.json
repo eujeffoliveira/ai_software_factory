@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente04_DevBackend",
+  "version": "1.0.0",
+  "description": "RAG policy for Dev Backend — defines which knowledge collections are accessible at runtime and how retrieval is configured.",
+  "retrieval_policy": {
+    "runtime_local_only": true,
+    "raw_books_at_runtime": false,
+    "raw_pdfs_at_runtime": false,
+    "context_folder_at_runtime": false,
+    "max_chunks": 8,
+    "chunk_size_tokens": 512,
+    "overlap_tokens": 64
+  },
+  "collections": [
+    {
+      "collection_id": "backend_engineering",
+      "priority": "core",
+      "description": "Core backend engineering patterns for the Golden Path — Server Actions, Route Handlers, DAL, cron jobs, structured logging, Zod validation.",
+      "source_artifacts": [
+        "Agente04_DevBackend/context_view.md",
+        "Agente04_DevBackend/knowledge/principles.md",
+        "Agente04_DevBackend/knowledge/heuristics.md",
+        "Agente04_DevBackend/knowledge/decision_rules.md",
+        "Agente04_DevBackend/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "server-actions",
+        "route-handlers",
+        "prisma-dal",
+        "cron-jobs",
+        "zod",
+        "audit-log",
+        "sync-log",
+        "guardcron"
+      ]
+    },
+    {
+      "collection_id": "nodejs_patterns",
+      "priority": "core",
+      "description": "Node.js and TypeScript backend patterns distilled from Clean Code and reference architecture — naming conventions, function design, error handling.",
+      "source_artifacts": [
+        "Agente04_DevBackend/knowledge/principles.md",
+        "Agente04_DevBackend/knowledge/knowledge_cards.md",
+        "Agente04_DevBackend/examples/good_server_action.ts",
+        "Agente04_DevBackend/examples/good_route_handler.ts"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "clean-code",
+        "typescript",
+        "naming-conventions",
+        "error-handling",
+        "srp"
+      ]
+    },
+    {
+      "collection_id": "api_design",
+      "priority": "supporting",
+      "description": "API design patterns distilled from the Golden Path — thin route handlers, REST conventions, status codes, request/response shapes.",
+      "source_artifacts": [
+        "Agente04_DevBackend/context_view.md",
+        "Agente04_DevBackend/templates/Route_Handler_Template.ts",
+        "Agente04_DevBackend/schemas/route_handler.schema.json",
+        "Agente04_DevBackend/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "rest",
+        "route-handlers",
+        "status-codes",
+        "thin-handlers",
+        "nextjs"
+      ]
+    },
+    {
+      "collection_id": "data_intensive_applications",
+      "priority": "supporting",
+      "description": "Data access patterns distilled from distributed systems literature — transactions, idempotency, migration safety, DAL design.",
+      "source_artifacts": [
+        "Agente04_DevBackend/knowledge/principles.md",
+        "Agente04_DevBackend/knowledge/decision_rules.md",
+        "Agente04_DevBackend/knowledge/knowledge_cards.md",
+        "Agente04_DevBackend/templates/Prisma_DAL_Template.ts",
+        "Agente04_DevBackend/schemas/dal_function.schema.json"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "prisma",
+        "transactions",
+        "idempotency",
+        "migrations",
+        "dal"
+      ]
+    },
+    {
+      "collection_id": "clean_code",
+      "priority": "supporting",
+      "description": "Clean code principles distilled for backend context — SRP, function naming, error handling, no magic numbers, readable tests.",
+      "source_artifacts": [
+        "Agente04_DevBackend/knowledge/principles.md",
+        "Agente04_DevBackend/knowledge/heuristics.md",
+        "Agente04_DevBackend/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "clean-code",
+        "srp",
+        "naming",
+        "functions",
+        "readability"
+      ]
+    },
+    {
+      "collection_id": "architecture_reference_backend_view",
+      "priority": "normative",
+      "description": "Normative reference — Golden Path rules, gate criteria, security requirements, migration policy, and anti-patterns. These rules override all other collections.",
+      "source_artifacts": [
+        "Agente04_DevBackend/agent_config.json",
+        "Agente04_DevBackend/quality_gate.md",
+        "Agente04_DevBackend/failure_modes.md",
+        "Agente04_DevBackend/checklists/backend_quality_checklist.md",
+        "Agente04_DevBackend/checklists/authz_checklist.md",
+        "Agente04_DevBackend/checklists/sql_safety_checklist.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "golden-path",
+        "gate-4",
+        "security",
+        "migration-policy",
+        "anti-patterns",
+        "normative"
+      ]
+    }
+  ],
+  "blocked_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/base_teorica.md",
+    "context/integrantes.md",
+    "context/reference_architecture_generico.md",
+    "context/manual_arquitetura_componentes_generico.md"
+  ]
+}

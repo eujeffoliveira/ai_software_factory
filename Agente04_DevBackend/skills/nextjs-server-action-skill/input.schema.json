@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/nextjs-server-action-skill/input",
+  "title": "nextjs-server-action-skill Input",
+  "description": "Input specification for the nextjs-server-action-skill. Validates the task parameters before implementing a Server Action.",
+  "type": "object",
+  "required": [
+    "action_name",
+    "file_path",
+    "input_fields",
+    "return_type",
+    "auth_required",
+    "audit_event_type"
+  ],
+  "properties": {
+    "action_name": {
+      "type": "string",
+      "description": "The exported async function name in camelCase.",
+      "pattern": "^[a-z][a-zA-Z0-9]+$",
+      "examples": ["createTask", "updateTaskStatus", "deleteTask", "approveRecord"]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Target file path. Must be inside features/*/actions/.",
+      "pattern": "^features/[a-z][a-zA-Z0-9-]*/actions/[a-zA-Z0-9]+\\.ts$"
+    },
+    "input_fields": {
+      "type": "array",
+      "description": "Fields to include in the Zod input schema.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "zod_type"],
+        "properties": {
+          "name": { "type": "string" },
+          "zod_type": {
+            "type": "string",
+            "examples": ["z.string().min(1).max(255)", "z.number().int().min(1)", "z.enum(['active','archived'])"]
+          },
+          "optional": { "type": "boolean", "default": false }
+        },
+        "additionalProperties": false
+      }
+    },
+    "return_type": {
+      "type": "string",
+      "description": "TypeScript return type (excluding Promise<>).",
+      "examples": ["Task", "Task | null", "{ taskId: string; success: boolean }"]
+    },
+    "auth_required": {
+      "type": "boolean",
+      "description": "Whether this action requires authentication. Should be true for all mutations.",
+      "default": true
+    },
+    "ownership_check_required": {
+      "type": "boolean",
+      "description": "Whether to verify the requesting user owns the target resource.",
+      "default": false
+    },
+    "audit_event_type": {
+      "type": "string",
+      "description": "Audit log action verb in PAST_TENSE_VERB format.",
+      "pattern": "^[A-Z][A-Z_]+$",
+      "examples": ["TASK_CREATED", "STATUS_UPDATED", "RECORD_DELETED"]
+    },
+    "dal_function": {
+      "type": "string",
+      "description": "The DAL function to call for DB operations.",
+      "examples": ["taskDal.create", "taskDal.updateById", "taskDal.deleteById"]
+    }
+  },
+  "additionalProperties": false
+}

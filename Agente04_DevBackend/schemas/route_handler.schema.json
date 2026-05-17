@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/route-handler-spec",
+  "title": "Route Handler Specification",
+  "description": "Schema for specifying a Route Handler to be implemented by Agente04_DevBackend. Enforces the thin-handler constraint — Route Handlers must authenticate, parse, delegate, and respond. Nothing more.",
+  "type": "object",
+  "required": [
+    "route_path",
+    "http_method",
+    "auth_required",
+    "delegates_to",
+    "returns_status_codes"
+  ],
+  "properties": {
+    "route_path": {
+      "type": "string",
+      "description": "The Next.js App Router file path for this route. Must be inside app/api/.",
+      "pattern": "^app/api/",
+      "examples": [
+        "app/api/tasks/route.ts",
+        "app/api/tasks/[id]/route.ts",
+        "app/api/cron/daily-sync/route.ts",
+        "app/api/webhooks/stripe/route.ts"
+      ]
+    },
+    "http_method": {
+      "type": "string",
+      "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      "description": "HTTP method this handler responds to."
+    },
+    "auth_required": {
+      "type": "boolean",
+      "description": "Whether this endpoint requires an authenticated session. If true, 401 is returned for unauthenticated requests.",
+      "default": true
+    },
+    "delegates_to": {
+      "type": "string",
+      "description": "The features/ service or action function this handler delegates to. Route handlers must NOT contain business logic — they delegate.",
+      "pattern": "^features/",
+      "examples": [
+        "features/tasks/task.service.ts — taskService.list()",
+        "features/projects/actions/createProject.ts — createProject()"
+      ]
+    },
+    "request_body_schema": {
+      "type": "string",
+      "description": "Name of the Zod schema used to validate the request body (for POST/PUT/PATCH).",
+      "examples": ["CreateTaskRequestSchema", "UpdateStatusSchema"]
+    },
+    "query_params_schema": {
+      "type": "string",
+      "description": "Name of the Zod schema used to validate query parameters (for GET with filters).",
+      "examples": ["TaskListQuerySchema", "SearchQuerySchema"]
+    },
+    "max_lines": {
+      "type": "integer",
+      "description": "Maximum allowed lines of code for this handler. Should be ≤ 30 for a properly thin handler.",
+      "maximum": 30,
+      "default": 30
+    },
+    "returns_status_codes": {
+      "type": "array",
+      "description": "HTTP status codes this handler returns.",
+      "minItems": 1,
+      "items": {
+        "type": "integer",
+        "enum": [200, 201, 204, 400, 401, 403, 404, 409, 422, 500]
+      },
+      "examples": [[200, 401, 400, 500], [201, 400, 401, 409, 500]]
+    },
+    "is_cron_route": {
+      "type": "boolean",
+      "description": "Whether this is a cron job route. If true, guardCron() must be the first call.",
+      "default": false
+    },
+    "is_webhook_route": {
+      "type": "boolean",
+      "description": "Whether this is a webhook receiver. If true, auth pattern differs (signature verification instead of session).",
+      "default": false
+    }
+  },
+  "additionalProperties": false
+}

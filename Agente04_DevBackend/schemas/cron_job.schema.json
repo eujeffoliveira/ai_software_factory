@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/cron-job-spec",
+  "title": "Cron Job Specification",
+  "description": "Schema for specifying a Vercel Cron job to be implemented by Agente04_DevBackend. Enforces guardCron() as first call, syncLog() in finally, and idempotency requirements.",
+  "type": "object",
+  "required": [
+    "job_name",
+    "route_path",
+    "schedule",
+    "guard_cron_first",
+    "idempotency_mechanism",
+    "sync_log_required",
+    "error_handling",
+    "vercel_cron_config"
+  ],
+  "properties": {
+    "job_name": {
+      "type": "string",
+      "description": "Kebab-case job name. Used as the syncLog job field and must match the vercel.json cron key.",
+      "pattern": "^[a-z][a-z0-9-]+$",
+      "examples": ["daily-data-sync", "cleanup-expired-sessions", "send-notifications"]
+    },
+    "route_path": {
+      "type": "string",
+      "description": "File path for the cron route handler. Must be inside app/api/cron/.",
+      "pattern": "^app/api/cron/[a-z][a-z0-9-]+/route\\.ts$",
+      "examples": [
+        "app/api/cron/daily-data-sync/route.ts",
+        "app/api/cron/cleanup-expired-sessions/route.ts"
+      ]
+    },
+    "job_logic_path": {
+      "type": "string",
+      "description": "File path for the job's business logic function. Must be inside lib/jobs/.",
+      "pattern": "^lib/jobs/[a-z][a-z0-9-]+\\.ts$",
+      "examples": [
+        "lib/jobs/daily-data-sync.ts",
+        "lib/jobs/cleanup-expired-sessions.ts"
+      ]
+    },
+    "schedule": {
+      "type": "string",
+      "description": "Cron expression for the job schedule (standard 5-field cron syntax).",
+      "examples": ["0 0 * * *", "*/15 * * * *", "0 8 * * 1-5", "0 2 * * *"]
+    },
+    "guard_cron_first": {
+      "type": "boolean",
+      "description": "MUST be true. guardCron(req) must be the absolute first call in the cron route handler.",
+      "const": true
+    },
+    "idempotency_mechanism": {
+      "type": "string",
+      "enum": ["upsert", "existence-check", "version-flag", "external-deduplication"],
+      "description": "The mechanism used to ensure the job is idempotent (safe to run multiple times with the same result). 'upsert' uses prisma.model.upsert(); 'existence-check' checks if record exists before creating; 'version-flag' stores a processedAt timestamp; 'external-deduplication' uses the external service's idempotency key."
+    },
+    "sync_log_required": {
+      "type": "boolean",
+      "description": "MUST be true. syncLog() must be called in the finally block of the cron route.",
+      "const": true
+    },
+    "tracked_counts": {
+      "type": "array",
+      "description": "Names of count fields to track in the syncLog counts object.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [["processed", "created", "updated", "failed"], ["deleted", "skipped"]]
+    },
+    "max_duration_seconds": {
+      "type": "integer",
+      "description": "Expected maximum duration in seconds. Vercel Cron timeout is 60s for Hobby / 300s for Pro.",
+      "minimum": 1,
+      "maximum": 300
+    },
+    "error_handling": {
+      "type": "string",
+      "enum": ["log-and-continue", "log-and-fail", "partial-success"],
+      "description": "How the job handles errors during processing: 'log-and-continue' processes remaining items; 'log-and-fail' stops on first error; 'partial-success' returns status 'partial' if some items fail."
+    },
+    "vercel_cron_config": {
+      "type": "object",
+      "description": "The vercel.json cron entry for this job.",
+      "required": ["path", "schedule"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The HTTP path Vercel calls to trigger the job.",
+          "examples": ["/api/cron/daily-data-sync", "/api/cron/cleanup-expired-sessions"]
+        },
+        "schedule": {
+          "type": "string",
+          "description": "Cron expression (same as the schedule field above)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

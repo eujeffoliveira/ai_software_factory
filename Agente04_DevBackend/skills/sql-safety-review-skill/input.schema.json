@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/sql-safety-review-skill/input",
+  "title": "sql-safety-review-skill Input",
+  "type": "object",
+  "required": ["files_to_review"],
+  "properties": {
+    "files_to_review": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Array of backend source file paths to review for SQL safety"
+    }
+  },
+  "additionalProperties": false
+}

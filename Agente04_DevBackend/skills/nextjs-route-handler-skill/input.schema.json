@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/nextjs-route-handler-skill/input",
+  "title": "nextjs-route-handler-skill Input",
+  "type": "object",
+  "required": ["route_path", "http_method", "auth_required", "delegates_to"],
+  "properties": {
+    "route_path": { "type": "string", "pattern": "^app/api/" },
+    "http_method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+    "auth_required": { "type": "boolean" },
+    "delegates_to": { "type": "string", "pattern": "^features/" },
+    "request_body_schema": { "type": "string" },
+    "query_params_schema": { "type": "string" }
+  },
+  "additionalProperties": false
+}

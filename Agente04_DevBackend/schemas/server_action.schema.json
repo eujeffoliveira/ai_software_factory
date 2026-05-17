@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/server-action-spec",
+  "title": "Server Action Specification",
+  "description": "Schema for specifying a Server Action to be implemented by Agente04_DevBackend. Used for validation of task inputs related to Server Action implementation.",
+  "type": "object",
+  "required": [
+    "action_name",
+    "file_path",
+    "input_schema_name",
+    "output_type",
+    "auth_required",
+    "uses_audit_log",
+    "error_handling"
+  ],
+  "properties": {
+    "action_name": {
+      "type": "string",
+      "description": "The exported async function name.",
+      "pattern": "^[a-z][a-zA-Z0-9]+$",
+      "examples": ["createTask", "updateTaskStatus", "deleteTask"]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "File path where the Server Action must be created. Must be inside features/*/actions/.",
+      "pattern": "^features/[a-z][a-zA-Z0-9-]*/actions/[a-zA-Z0-9-]+\\.ts$",
+      "examples": [
+        "features/tasks/actions/createTask.ts",
+        "features/projects/actions/archiveProject.ts"
+      ]
+    },
+    "input_schema_name": {
+      "type": "string",
+      "description": "Name of the Zod schema used to validate the raw input parameter.",
+      "pattern": "^[A-Z][a-zA-Z0-9]+Schema$",
+      "examples": ["CreateTaskSchema", "UpdateTaskStatusSchema"]
+    },
+    "output_type": {
+      "type": "string",
+      "description": "TypeScript return type of the Server Action (excluding Promise<>).",
+      "examples": ["Task", "Task | null", "{ success: boolean; taskId: string }"]
+    },
+    "auth_required": {
+      "type": "boolean",
+      "description": "Whether this Server Action requires an authenticated session. Should be true for virtually all actions.",
+      "default": true
+    },
+    "roles_allowed": {
+      "type": "array",
+      "description": "If role-restricted, list of allowed roles. Empty array means any authenticated user is allowed.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [["admin"], ["admin", "manager"], []]
+    },
+    "uses_audit_log": {
+      "type": "boolean",
+      "description": "Whether this action must call auditLog() after successful operation. Required for all CREATE/UPDATE/DELETE operations."
+    },
+    "audit_event_type": {
+      "type": "string",
+      "description": "The audit action verb in PAST_TENSE_VERB format. Required when uses_audit_log is true.",
+      "pattern": "^[A-Z][A-Z_]+$",
+      "examples": ["TASK_CREATED", "STATUS_UPDATED", "RECORD_DELETED"]
+    },
+    "uses_prisma_transaction": {
+      "type": "boolean",
+      "description": "Whether this action requires a Prisma transaction for atomicity. Use only when multiple DB writes must be atomic.",
+      "default": false
+    },
+    "dal_dependencies": {
+      "type": "array",
+      "description": "DAL modules this action depends on.",
+      "items": {
+        "type": "string",
+        "examples": ["taskDal", "projectDal", "userDal"]
+      }
+    },
+    "error_handling": {
+      "type": "string",
+      "enum": ["throws", "returns-result"],
+      "description": "Error handling strategy: 'throws' means errors are thrown as generic Error objects; 'returns-result' means errors are returned as { success: false, error: string }."
+    }
+  },
+  "if": {
+    "properties": {
+      "uses_audit_log": { "const": true }
+    }
+  },
+  "then": {
+    "required": ["audit_event_type"]
+  },
+  "additionalProperties": false
+}

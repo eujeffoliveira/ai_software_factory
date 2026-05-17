@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/structured-logging-skill/output",
+  "title": "structured-logging-skill Output",
+  "type": "object",
+  "required": ["log_calls_added", "format"],
+  "properties": {
+    "log_calls_added": { "type": "integer", "minimum": 1 },
+    "format": { "type": "string", "const": "structured-json-object" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/cron-job-implementation-skill/input",
+  "title": "cron-job-implementation-skill Input",
+  "type": "object",
+  "required": ["job_name", "schedule", "idempotency_mechanism", "operations"],
+  "properties": {
+    "job_name": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+    "schedule": { "type": "string", "description": "Standard 5-field cron expression" },
+    "idempotency_mechanism": {
+      "type": "string",
+      "enum": ["upsert", "existence-check", "version-flag", "external-deduplication"]
+    },
+    "operations": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

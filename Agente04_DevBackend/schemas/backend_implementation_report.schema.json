@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/backend-implementation-report",
+  "title": "Backend Implementation Report",
+  "description": "Schema for the Backend_Implementation_Report.md produced by Agente04_DevBackend after completing an atomic task. This report is delivered to Agente06_QaEngineer as part of the Gate 4 Handoff Package.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "task_id",
+    "implementation_date",
+    "files_created",
+    "files_modified",
+    "zod_schemas",
+    "auth_checks",
+    "audit_log_entries",
+    "sync_log_entries",
+    "test_files",
+    "self_review_checklist",
+    "gate_ready",
+    "open_issues"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique identifier for this report.",
+      "pattern": "^IMPL-RPT-[0-9]{3,}$",
+      "examples": ["IMPL-RPT-001"]
+    },
+    "task_id": {
+      "type": "string",
+      "description": "The task ID this report covers.",
+      "pattern": "^TASK-[0-9]{3,}$"
+    },
+    "implementation_date": {
+      "type": "string",
+      "description": "ISO 8601 date when the implementation was completed.",
+      "format": "date",
+      "examples": ["2026-05-17"]
+    },
+    "files_created": {
+      "type": "array",
+      "description": "List of new files created during this implementation.",
+      "items": {
+        "type": "object",
+        "required": ["path", "type", "lines_of_code"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Relative file path from project root."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "server-action",
+              "route-handler",
+              "dal",
+              "service",
+              "schema",
+              "cron-route",
+              "cron-job",
+              "integration-client",
+              "test",
+              "config",
+              "util"
+            ]
+          },
+          "lines_of_code": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "files_modified": {
+      "type": "array",
+      "description": "List of existing files modified during this implementation.",
+      "items": {
+        "type": "object",
+        "required": ["path", "changes_summary"],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "changes_summary": {
+            "type": "string",
+            "description": "Brief description of what was changed."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "zod_schemas": {
+      "type": "array",
+      "description": "Zod schemas added or modified in this implementation.",
+      "items": {
+        "type": "object",
+        "required": ["name", "file_path", "validates"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Schema variable name.",
+            "examples": ["CreateTaskSchema", "TaskQuerySchema"]
+          },
+          "file_path": {
+            "type": "string"
+          },
+          "validates": {
+            "type": "string",
+            "description": "What this schema validates.",
+            "examples": ["createTask Server Action input", "GET /api/tasks query parameters"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "auth_checks": {
+      "type": "array",
+      "description": "Auth checks implemented in this task.",
+      "items": {
+        "type": "object",
+        "required": ["location", "method"],
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "File path and function name.",
+            "examples": ["features/tasks/actions/createTask.ts — createTask()"]
+          },
+          "method": {
+            "type": "string",
+            "description": "Auth check method used.",
+            "examples": ["await auth() — throws Unauthorized if null", "await auth() — returns 401 if null"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "audit_log_entries": {
+      "type": "array",
+      "description": "Audit log entries added in this task.",
+      "items": {
+        "type": "object",
+        "required": ["action", "trigger", "location"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "The audit action verb (PAST_TENSE).",
+            "examples": ["TASK_CREATED", "TASK_DELETED", "STATUS_UPDATED"]
+          },
+          "trigger": {
+            "type": "string",
+            "description": "What user operation triggers this audit entry.",
+            "examples": ["User creates a task", "User deletes their task"]
+          },
+          "location": {
+            "type": "string",
+            "description": "File and function where auditLog() is called.",
+            "examples": ["features/tasks/actions/createTask.ts — createTask()"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sync_log_entries": {
+      "type": "array",
+      "description": "Sync log entries added in this task (for cron jobs).",
+      "items": {
+        "type": "object",
+        "required": ["job", "location"],
+        "properties": {
+          "job": {
+            "type": "string",
+            "description": "Job name matching vercel.json cron key."
+          },
+          "location": {
+            "type": "string",
+            "description": "File where syncLog() is called."
+          },
+          "in_finally": {
+            "type": "boolean",
+            "description": "Confirms syncLog is in the finally block."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "test_files": {
+      "type": "array",
+      "description": "Test files created or modified in this task.",
+      "items": {
+        "type": "object",
+        "required": ["path", "test_count"],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "test_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "coverage_estimate": {
+            "type": "string",
+            "description": "Rough coverage description.",
+            "examples": ["4/4 required scenarios covered", "covers auth, validation, success, error paths"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "self_review_checklist": {
+      "type": "object",
+      "description": "Results of running checklists/backend_quality_checklist.md.",
+      "properties": {
+        "no_business_logic_in_route": { "type": "boolean" },
+        "route_handlers_under_30_lines": { "type": "boolean" },
+        "zod_at_all_input_boundaries": { "type": "boolean" },
+        "auth_check_first_in_all_handlers": { "type": "boolean" },
+        "authorization_resource_level": { "type": "boolean" },
+        "no_process_env_outside_lib_env": { "type": "boolean" },
+        "no_raw_sql": { "type": "boolean" },
+        "dal_used_for_all_db_access": { "type": "boolean" },
+        "errors_caught_and_logged_internally": { "type": "boolean" },
+        "no_stack_traces_to_client": { "type": "boolean" },
+        "test_files_created": { "type": "boolean" },
+        "audit_log_for_sensitive_actions": { "type": "boolean" },
+        "sync_log_in_finally_for_cron": { "type": "boolean" },
+        "guard_cron_first_in_cron_routes": { "type": "boolean" },
+        "prisma_migrate_dev_not_db_push": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True when all self-review items are true and there are no blocking open issues."
+    },
+    "open_issues": {
+      "type": "array",
+      "description": "Known issues, deferred items, or open questions.",
+      "items": {
+        "type": "object",
+        "required": ["issue", "blocking"],
+        "properties": {
+          "issue": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, gate_ready must be false until resolved."
+          },
+          "resolution_needed_from": {
+            "type": "string",
+            "description": "Who needs to resolve this.",
+            "examples": ["Agente00_TechLead", "Agente02_SoftwareArchitect", "Product Owner"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

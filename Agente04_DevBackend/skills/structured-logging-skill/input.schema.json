@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/structured-logging-skill/input",
+  "title": "structured-logging-skill Input",
+  "type": "object",
+  "required": ["operation_name", "log_level", "context_fields"],
+  "properties": {
+    "operation_name": { "type": "string", "description": "Function or operation being logged (used as location prefix)" },
+    "log_level": { "type": "string", "enum": ["error", "warn", "info"] },
+    "context_fields": { "type": "array", "items": { "type": "string" }, "description": "Field names to include in the structured context object" }
+  },
+  "additionalProperties": false
+}

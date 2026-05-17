@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/external-integration-client-skill/input",
+  "title": "external-integration-client-skill Input",
+  "type": "object",
+  "required": ["service_name", "auth_method", "base_url_env_var", "endpoints"],
+  "properties": {
+    "service_name": { "type": "string" },
+    "auth_method": { "type": "string", "enum": ["api-key", "oauth", "bearer", "basic", "none"] },
+    "base_url_env_var": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+    "endpoints": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  },
+  "additionalProperties": false
+}

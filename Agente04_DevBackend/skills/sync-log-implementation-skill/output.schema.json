@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/sync-log-implementation-skill/output",
+  "title": "sync-log-implementation-skill Output",
+  "type": "object",
+  "required": ["sync_log_in_finally", "job_name_format", "status_values"],
+  "properties": {
+    "sync_log_in_finally": { "type": "boolean", "const": true },
+    "job_name_format": { "type": "string", "description": "kebab-case job name matching vercel.json" },
+    "status_values": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["success", "error", "partial"] },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

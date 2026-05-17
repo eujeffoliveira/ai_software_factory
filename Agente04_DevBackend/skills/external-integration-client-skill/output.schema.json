@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/external-integration-client-skill/output",
+  "title": "external-integration-client-skill Output",
+  "type": "object",
+  "required": ["file_path", "env_vars_used", "response_schemas_defined", "timeout_configured", "called_inside_transaction"],
+  "properties": {
+    "file_path": { "type": "string", "pattern": "^lib/integrations/" },
+    "env_vars_used": { "type": "array", "items": { "type": "string" } },
+    "response_schemas_defined": { "type": "boolean", "const": true },
+    "timeout_configured": { "type": "boolean", "const": true },
+    "called_inside_transaction": { "type": "boolean", "const": false }
+  },
+  "additionalProperties": false
+}

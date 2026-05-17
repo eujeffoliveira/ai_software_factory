@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/nextjs-route-handler-skill/output",
+  "title": "nextjs-route-handler-skill Output",
+  "type": "object",
+  "required": ["file_path", "lines_of_code", "auth_checked", "delegates_to", "status_codes_used"],
+  "properties": {
+    "file_path": { "type": "string", "pattern": "^app/api/" },
+    "lines_of_code": { "type": "integer", "maximum": 30 },
+    "auth_checked": { "type": "boolean", "const": true },
+    "delegates_to": { "type": "string" },
+    "status_codes_used": { "type": "array", "items": { "type": "integer" } }
+  },
+  "additionalProperties": false
+}

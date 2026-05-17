@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/prisma-dal-skill/output",
+  "title": "prisma-dal-skill Output",
+  "type": "object",
+  "required": ["file_path", "exported_object_name", "operations_implemented", "uses_raw_sql"],
+  "properties": {
+    "file_path": { "type": "string", "pattern": "^lib/db/[a-z][a-zA-Z0-9]+\.dal\.ts$" },
+    "exported_object_name": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9]+Dal$" },
+    "operations_implemented": { "type": "array", "items": { "type": "string" } },
+    "uses_raw_sql": { "type": "boolean", "const": false }
+  },
+  "additionalProperties": false
+}

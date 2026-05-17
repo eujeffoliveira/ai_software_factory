@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/zod-validation-skill/output",
+  "title": "zod-validation-skill Output",
+  "type": "object",
+  "required": ["file_path", "schema_names", "type_names"],
+  "properties": {
+    "file_path": { "type": "string" },
+    "schema_names": { "type": "array", "items": { "type": "string" } },
+    "type_names": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

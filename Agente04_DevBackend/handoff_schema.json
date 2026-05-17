@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/agente04-handoff",
+  "title": "Agente04_DevBackend Handoff Package",
+  "description": "Schema for the Handoff Package produced by Agente04_DevBackend and delivered to Agente06_QaEngineer for Gate 4 (QA Review).",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "summary",
+    "tasks_completed",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "validation_checklist",
+    "implementation_summary",
+    "gate_ready"
+  ],
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "Primary artifact produced by this implementation cycle.",
+      "example": "Backend_Implementation_Report.md"
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level description of what was implemented — which task, which files, which patterns used.",
+      "minLength": 20
+    },
+    "tasks_completed": {
+      "type": "array",
+      "description": "List of atomic tasks completed in this handoff cycle.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "file_path", "implementation_summary"],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Task identifier from the Execution Plan.",
+            "pattern": "^TASK-[0-9]{3,}$"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Primary file created or modified for this task.",
+            "example": "features/tasks/actions/createTask.ts"
+          },
+          "implementation_summary": {
+            "type": "string",
+            "description": "Brief description of what was implemented for this task.",
+            "minLength": 10
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumptions made during implementation that are not explicitly stated in the task spec or API contract.",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "properties": {
+          "assumption": {
+            "type": "string",
+            "description": "The assumption made."
+          },
+          "impact": {
+            "type": "string",
+            "description": "What breaks or changes if this assumption is wrong."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that may affect the QA review or subsequent work.",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The open question."
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, this question blocks Gate 4 from being approved — must be resolved before submission."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Risks identified during implementation.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation", "blocks_gate"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "description": "Risk identifier.",
+            "pattern": "^RISK-[0-9]{3,}$"
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Risk severity level."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the risk is and what could go wrong."
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "How the risk is mitigated or what action is needed."
+          },
+          "blocks_gate": {
+            "type": "boolean",
+            "description": "CRITICAL risks without mitigation block Gate 4."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "const": "Agente06_QaEngineer",
+      "description": "Always Agente06_QaEngineer — the QA Engineer evaluates Gate 4."
+    },
+    "validation_checklist": {
+      "type": "array",
+      "description": "Self-review checklist items — each must be confirmed before gate_ready: true.",
+      "minItems": 10,
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "No business logic in route.ts",
+          "All route handlers ≤ 30 lines",
+          "Zod validation at all input boundaries",
+          "Auth check first in all Server Actions and Route Handlers",
+          "No process.env outside lib/env.ts",
+          "No raw SQL string concatenation",
+          "DAL used for all DB access",
+          "Error handling catches internally — no stack traces to client",
+          "Test files created with minimum 4 test cases per function",
+          "audit_log added for all sensitive human actions",
+          "sync_log in finally block for all cron routes",
+          "guardCron() is first call in all cron routes",
+          "prisma migrate dev used (not prisma db push)"
+        ]
+      ]
+    },
+    "implementation_summary": {
+      "type": "object",
+      "description": "Quantitative summary of what was implemented.",
+      "required": [
+        "files_created",
+        "files_modified",
+        "tests_created",
+        "zod_schemas_added",
+        "audit_log_entries_added",
+        "sync_log_entries_added"
+      ],
+      "properties": {
+        "files_created": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of new TypeScript files created."
+        },
+        "files_modified": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of existing files modified."
+        },
+        "tests_created": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of test files created."
+        },
+        "zod_schemas_added": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of Zod schema definitions added."
+        },
+        "audit_log_entries_added": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of auditLog() calls added."
+        },
+        "sync_log_entries_added": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of syncLog() calls added."
+        }
+      },
+      "additionalProperties": false
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True only when all self-review checklist items are confirmed and there are no blocking open questions or CRITICAL unmitigated risks."
+    }
+  },
+  "additionalProperties": false
+}

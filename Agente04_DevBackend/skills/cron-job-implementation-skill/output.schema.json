@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/cron-job-implementation-skill/output",
+  "title": "cron-job-implementation-skill Output",
+  "type": "object",
+  "required": ["route_file_path", "job_file_path", "guard_cron_first", "sync_log_in_finally"],
+  "properties": {
+    "route_file_path": { "type": "string", "pattern": "^app/api/cron/" },
+    "job_file_path": { "type": "string", "pattern": "^lib/jobs/" },
+    "guard_cron_first": { "type": "boolean", "const": true },
+    "sync_log_in_finally": { "type": "boolean", "const": true }
+  },
+  "additionalProperties": false
+}

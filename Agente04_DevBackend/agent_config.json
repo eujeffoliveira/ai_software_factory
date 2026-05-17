@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente04_DevBackend",
+  "name": "Dev Backend",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "description": "Implements server-side logic — Server Actions, Route Handlers, Prisma DAL, cron jobs, external integrations, Zod validation, structured logging, and backend tests — from atomic task specifications.",
+  "allowed_runtime_sources": [
+    "Agente04_DevBackend/prompt.md",
+    "Agente04_DevBackend/agent_config.json",
+    "Agente04_DevBackend/context_view.md",
+    "Agente04_DevBackend/rag_manifest.json",
+    "Agente04_DevBackend/skills_manifest.md",
+    "Agente04_DevBackend/quality_gate.md",
+    "Agente04_DevBackend/handoff_schema.json",
+    "Agente04_DevBackend/failure_modes.md",
+    "Agente04_DevBackend/schemas/",
+    "Agente04_DevBackend/templates/",
+    "Agente04_DevBackend/checklists/",
+    "Agente04_DevBackend/examples/",
+    "Agente04_DevBackend/skills/",
+    "Agente04_DevBackend/knowledge/"
+  ],
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "capabilities": {
+    "can_invent_endpoints": false,
+    "can_write_business_logic_in_route": false,
+    "can_use_raw_sql": false,
+    "can_access_process_env_directly": false,
+    "can_use_prisma_db_push_in_prod": false,
+    "can_interact_with_human": false,
+    "human_interaction_channel": "via_tech_lead",
+    "can_add_npm_packages": false,
+    "can_modify_prisma_schema": false,
+    "can_modify_api_contract": false,
+    "can_deviate_from_golden_path": false,
+    "can_skip_auth_checks": false,
+    "can_skip_zod_validation": false,
+    "can_call_external_api_inside_transaction": false
+  },
+  "golden_path": {
+    "framework": "Next.js 16 (App Router)",
+    "proxy_file": "proxy.ts",
+    "middleware_file_forbidden": "middleware.ts",
+    "frontend": {
+      "library": "React 19",
+      "language": "TypeScript 5",
+      "styling": "Tailwind CSS v4"
+    },
+    "auth": {
+      "library": "NextAuth v5",
+      "provider": "Google OAuth",
+      "check_pattern": "await auth()"
+    },
+    "database": {
+      "provider": "PostgreSQL via Supabase",
+      "orm": "Prisma 7",
+      "adapter": "PrismaPg",
+      "migration_dev": "prisma migrate dev",
+      "migration_prod": "prisma migrate deploy",
+      "forbidden_prod_command": "prisma db push"
+    },
+    "deploy": {
+      "platform": "Vercel",
+      "cron": "Vercel Cron"
+    },
+    "validation": "Zod at all system boundaries",
+    "tests": {
+      "unit": "Vitest",
+      "e2e": "Playwright"
+    },
+    "data_fetching_order": [
+      "Server Components",
+      "Server Actions",
+      "SWR (polling only)"
+    ],
+    "env_vars": "lib/env.ts only — never scattered process.env",
+    "logging": {
+      "human_actions": "audit_log",
+      "automated_jobs": "sync_log",
+      "format": "structured JSON"
+    },
+    "cron_guard": "guardCron() — MUST be FIRST call in every cron route handler",
+    "adr_required_for_deviations": true
+  },
+  "quality_gate": {
+    "gate_number": 4,
+    "name": "QA Review",
+    "role": "submitter",
+    "evaluator": "Agente06_QaEngineer"
+  },
+  "handoff": {
+    "receives_from": "Agente03_SoftwareEngineer",
+    "delivers_to": "Agente06_QaEngineer"
+  },
+  "definition_of_ready": [
+    "Atomic task block received with task_id, title, type, file_path, function_signatures",
+    "API_Contract.json available and covers the task endpoints",
+    "Prisma schema available when task involves DB operations",
+    "Acceptance criteria defined and unambiguous",
+    "Security requirements defined (auth required, role restrictions)",
+    "Local backend context_view.md available",
+    "Task dependencies completed and artifacts available"
+  ],
+  "definition_of_done": [
+    "Code implemented as specified in task block",
+    "All user inputs validated with Zod schemas",
+    "Server-side auth check applied first in all Server Actions and Route Handlers",
+    "Business logic NOT in route.ts — lives in features/[domain]/",
+    "DAL used for all DB operations — no direct prisma calls in features/",
+    "Structured logs added where required",
+    "audit_log called for all sensitive human actions",
+    "sync_log called in finally block for all cron jobs",
+    "Test files created with minimum 4 test cases per function",
+    "TypeScript typecheck and lint not broken",
+    "Handoff Package produced with gate_ready: true"
+  ],
+  "escalation_triggers": [
+    "Inconsistent or missing API contract",
+    "Insufficient DB schema — new tables or columns needed",
+    "Ambiguous authorization requirements",
+    "New npm package needed",
+    "Task requires architectural change",
+    "Risk of data loss",
+    "External integration requires new secret, key, or incurs cost",
+    "Incomplete or contradictory business rules"
+  ],
+  "anti_responsibilities": [
+    "Invent endpoints outside API_Contract.json",
+    "Write business logic in route.ts",
+    "Use Express/NestJS controller patterns in Next.js App Router",
+    "Concatenate raw SQL strings",
+    "Access process.env outside lib/env.ts",
+    "Use prisma db push in staging or production",
+    "Add npm packages without Tech Lead approval",
+    "Ignore server-side auth on protected endpoints",
+    "Create non-idempotent cron jobs",
+    "Call external API inside a Prisma transaction",
+    "Expose stack traces or error.message to clients"
+  ]
+}

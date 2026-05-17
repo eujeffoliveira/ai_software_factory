@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/nextjs-server-action-skill/output",
+  "title": "nextjs-server-action-skill Output",
+  "description": "Output specification for the nextjs-server-action-skill. Validates the produced Server Action file metadata.",
+  "type": "object",
+  "required": [
+    "file_path",
+    "function_name",
+    "zod_schema_name",
+    "auth_checked",
+    "audit_logged",
+    "lines_of_code"
+  ],
+  "properties": {
+    "file_path": {
+      "type": "string",
+      "description": "Path of the created Server Action file.",
+      "pattern": "^features/[a-z][a-zA-Z0-9-]*/actions/[a-zA-Z0-9]+\\.ts$"
+    },
+    "function_name": {
+      "type": "string",
+      "description": "Name of the exported function."
+    },
+    "zod_schema_name": {
+      "type": "string",
+      "description": "Name of the module-level Zod schema used for input validation.",
+      "pattern": "^[A-Z][a-zA-Z0-9]+Schema$"
+    },
+    "auth_checked": {
+      "type": "boolean",
+      "description": "Confirms await auth() is the first call in the function body.",
+      "const": true
+    },
+    "audit_logged": {
+      "type": "boolean",
+      "description": "Confirms auditLog() is called after the successful DB operation."
+    },
+    "ownership_check_present": {
+      "type": "boolean",
+      "description": "Confirms resource.userId === session.user.id check is present (when required)."
+    },
+    "lines_of_code": {
+      "type": "integer",
+      "description": "Total lines of code in the file.",
+      "minimum": 10
+    },
+    "dal_used": {
+      "type": "boolean",
+      "description": "Confirms no direct prisma import — DAL used for all DB access.",
+      "const": true
+    },
+    "uses_server_directive": {
+      "type": "boolean",
+      "description": "Confirms 'use server' is the first line.",
+      "const": true
+    }
+  },
+  "additionalProperties": false
+}

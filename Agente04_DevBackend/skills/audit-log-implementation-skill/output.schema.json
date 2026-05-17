@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/audit-log-implementation-skill/output",
+  "title": "audit-log-implementation-skill Output",
+  "type": "object",
+  "required": ["audit_call_location", "action_verb_format", "called_after_success"],
+  "properties": {
+    "audit_call_location": { "type": "string", "description": "File and line where auditLog() was added" },
+    "action_verb_format": { "type": "string", "const": "PAST_TENSE", "description": "Confirms the action verb is PAST_TENSE_VERB format" },
+    "called_after_success": { "type": "boolean", "const": true, "description": "Confirms auditLog is called inside try block after the DB operation succeeds" }
+  },
+  "additionalProperties": false
+}

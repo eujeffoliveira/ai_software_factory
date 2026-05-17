@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/audit-log-implementation-skill/input",
+  "title": "audit-log-implementation-skill Input",
+  "type": "object",
+  "required": ["action_verb", "entity_type", "trigger_location", "metadata_fields"],
+  "properties": {
+    "action_verb": { "type": "string", "pattern": "^[A-Z][A-Z_]+$", "examples": ["TASK_CREATED", "STATUS_UPDATED"] },
+    "entity_type": { "type": "string", "description": "Prisma model name (PascalCase)", "examples": ["Task", "Project"] },
+    "trigger_location": { "type": "string", "description": "File path and function name where auditLog will be added" },
+    "metadata_fields": { "type": "array", "items": { "type": "string" }, "description": "Fields to include in metadata (no PII beyond audited-by-policy fields)" }
+  },
+  "additionalProperties": false
+}

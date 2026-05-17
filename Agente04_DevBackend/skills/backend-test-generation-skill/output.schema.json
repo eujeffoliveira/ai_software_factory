@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/backend-test-generation-skill/output",
+  "title": "backend-test-generation-skill Output",
+  "type": "object",
+  "required": ["test_file_path", "test_count", "mocks_used", "covers_auth_failure", "covers_invalid_input"],
+  "properties": {
+    "test_file_path": { "type": "string" },
+    "test_count": { "type": "integer", "minimum": 4 },
+    "mocks_used": { "type": "array", "items": { "type": "string" } },
+    "covers_auth_failure": { "type": "boolean", "const": true },
+    "covers_invalid_input": { "type": "boolean", "const": true }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente04_DevBackend",
+  "description": "Maps each build-time source to the distilled artifacts it informed. Used for traceability — not accessed at runtime.",
+  "sources": [
+    {
+      "source_title": "Clean Code",
+      "source_author": "Robert C. Martin",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/clean_code.pdf",
+      "key_concepts_extracted": [
+        "Single Responsibility Principle applied to web handlers (thin route handlers)",
+        "Functions do one thing",
+        "Names reveal intent",
+        "Error handling: log internally, generic to client",
+        "No magic numbers — named constants",
+        "Tests are not optional"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P1 (Thin Route Handlers), P8 (Errors to Operators), P9 (Env Vars), P10 (Tests)",
+        "knowledge/heuristics.md — H1, H7",
+        "knowledge/decision_rules.md — DR002, DR009",
+        "knowledge/knowledge_cards.md — Card 010"
+      ]
+    },
+    {
+      "source_title": "Microservices Patterns",
+      "source_author": "Chris Richardson",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/microservices_patterns.pdf",
+      "key_concepts_extracted": [
+        "Idempotent Consumer pattern",
+        "Saga pattern and transaction coordination",
+        "Transactional outbox for audit logging",
+        "Structured logging for distributed tracing"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P7 (Idempotency)",
+        "knowledge/heuristics.md — H4, H8",
+        "knowledge/decision_rules.md — DR007, DR008",
+        "knowledge/knowledge_cards.md — Card 009"
+      ]
+    },
+    {
+      "source_title": "Architecture Patterns with Python",
+      "source_author": "Harry Percival and Bob Gregory",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/architecture_patterns_python.pdf",
+      "key_concepts_extracted": [
+        "Ports and Adapters (Hexagonal Architecture)",
+        "Repository Pattern for data access abstraction",
+        "Service Layer pattern",
+        "Test-Driven Development approach"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P2 (Zod at Boundaries), P5 (DAL Abstraction)",
+        "knowledge/heuristics.md — H5",
+        "knowledge/knowledge_cards.md — Card 001 (Server Action), Card 004 (DAL Pattern)"
+      ]
+    },
+    {
+      "source_title": "Programming Pearls",
+      "source_author": "Jon Bentley",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/programming_pearls.pdf",
+      "key_concepts_extracted": [
+        "Performance-first thinking for query design",
+        "Measuring before optimizing",
+        "Back-of-envelope estimation for resource usage"
+      ],
+      "derived_artifacts": [
+        "knowledge/heuristics.md — H6 (No string concatenation in queries), H12",
+        "knowledge/knowledge_cards.md — Card 009 (performance notes in idempotency)"
+      ]
+    },
+    {
+      "source_title": "Introduction to Algorithms",
+      "source_author": "Thomas H. Cormen et al.",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/introduction_to_algorithms.pdf",
+      "key_concepts_extracted": [
+        "Algorithmic complexity awareness",
+        "Efficient data structure selection",
+        "Sorting and searching tradeoffs"
+      ],
+      "derived_artifacts": [
+        "knowledge/knowledge_cards.md — Card 009 (algorithmic approach to idempotency strategies)"
+      ]
+    },
+    {
+      "source_title": "Grokking Algorithms",
+      "source_author": "Aditya Bhargava",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/grokking_algorithms.pdf",
+      "key_concepts_extracted": [
+        "Big O notation for everyday code decisions",
+        "Avoiding nested loops (N+1 query pattern)",
+        "Space-time tradeoffs"
+      ],
+      "derived_artifacts": [
+        "knowledge/heuristics.md — H11 (N+1 query awareness)"
+      ]
+    },
+    {
+      "source_title": "Reference Architecture v1.1.1",
+      "source_author": "AI Software Factory Team",
+      "source_type": "architecture_document",
+      "source_path": "context/reference_architecture_generico.md",
+      "key_concepts_extracted": [
+        "Golden Path tech stack",
+        "guardCron() security contract",
+        "Auth check first policy",
+        "IDOR prevention requirements",
+        "audit_log and sync_log schemas",
+        "Migration policy (migrate deploy vs db push)"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P3, P4, P6",
+        "knowledge/heuristics.md — H10",
+        "knowledge/decision_rules.md — DR003, DR004, DR005, DR011, DR012, DR013",
+        "knowledge/knowledge_cards.md — Card 003, Card 005, Card 008",
+        "agent_config.json — golden_path section",
+        "context_view.md — all sections"
+      ]
+    },
+    {
+      "source_title": "Operational Manifesto (integrantes.md)",
+      "source_author": "AI Software Factory Team",
+      "source_type": "operational_document",
+      "source_path": "context/integrantes.md",
+      "key_concepts_extracted": [
+        "Agent roles and responsibilities",
+        "Pipeline handoff chain",
+        "Definition of Ready and Definition of Done",
+        "Escalation triggers and anti-responsibilities",
+        "Gate criteria"
+      ],
+      "derived_artifacts": [
+        "prompt.md — all sections",
+        "agent_config.json — capabilities, anti_responsibilities, escalation_triggers",
+        "quality_gate.md — full document",
+        "handoff_schema.json — structure and required fields",
+        "failure_modes.md — FM-01 through FM-12"
+      ]
+    }
+  ],
+  "runtime_access_policy": {
+    "raw_sources_allowed": false,
+    "pdf_access_allowed": false,
+    "bibliography_folder_allowed": false,
+    "context_folder_allowed": false,
+    "local_distilled_artifacts_allowed": true,
+    "allowed_local_paths": [
+      "Agente04_DevBackend/knowledge/",
+      "Agente04_DevBackend/context_view.md",
+      "Agente04_DevBackend/skills/",
+      "Agente04_DevBackend/templates/",
+      "Agente04_DevBackend/checklists/",
+      "Agente04_DevBackend/examples/"
+    ]
+  }
+}

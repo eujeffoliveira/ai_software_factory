@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/integration-client-spec",
+  "title": "External Integration Client Specification",
+  "description": "Schema for specifying an external API integration client to be implemented by Agente04_DevBackend. All external API clients must: use lib/env.ts for credentials, validate responses with Zod, configure timeouts, and never be called inside Prisma transactions.",
+  "type": "object",
+  "required": [
+    "client_name",
+    "file_path",
+    "external_api_name",
+    "auth_method",
+    "base_url_env_var",
+    "timeout_ms",
+    "called_inside_transaction"
+  ],
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Name of the exported client const object (camelCase + 'Client').",
+      "pattern": "^[a-z][a-zA-Z0-9]+Client$",
+      "examples": ["emailClient", "paymentClient", "dataProviderClient"]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "File path for the integration client. Must be inside lib/integrations/.",
+      "pattern": "^lib/integrations/[a-z][a-z0-9-]+\\.client\\.ts$",
+      "examples": [
+        "lib/integrations/email.client.ts",
+        "lib/integrations/payment.client.ts",
+        "lib/integrations/data-provider.client.ts"
+      ]
+    },
+    "external_api_name": {
+      "type": "string",
+      "description": "Human-readable name of the external API or service.",
+      "examples": ["SendGrid Email API", "Stripe Payments API", "Weather Data Provider"]
+    },
+    "auth_method": {
+      "type": "string",
+      "enum": ["api-key", "oauth", "bearer", "basic", "hmac-signature", "none"],
+      "description": "Authentication method used by the external API."
+    },
+    "base_url_env_var": {
+      "type": "string",
+      "description": "The env var key (in lib/env.ts) that holds the base URL for this API.",
+      "pattern": "^[A-Z][A-Z0-9_]+$",
+      "examples": ["EMAIL_API_URL", "PAYMENT_API_URL", "DATA_PROVIDER_BASE_URL"]
+    },
+    "api_key_env_var": {
+      "type": "string",
+      "description": "The env var key (in lib/env.ts) that holds the API key, if applicable.",
+      "pattern": "^[A-Z][A-Z0-9_]+$",
+      "examples": ["EMAIL_API_KEY", "STRIPE_SECRET_KEY"]
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "description": "Request timeout in milliseconds. Required — no unbounded requests.",
+      "minimum": 1000,
+      "maximum": 30000,
+      "default": 10000
+    },
+    "retry_policy": {
+      "type": "object",
+      "description": "Retry configuration for failed requests.",
+      "properties": {
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "default": 3
+        },
+        "retry_on_status": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "examples": [[429, 500, 502, 503, 504]]
+        },
+        "backoff_ms": {
+          "type": "integer",
+          "description": "Base backoff delay in milliseconds between retries.",
+          "default": 1000
+        }
+      },
+      "additionalProperties": false
+    },
+    "endpoints": {
+      "type": "array",
+      "description": "Endpoints implemented in this client.",
+      "items": {
+        "type": "object",
+        "required": ["method_name", "http_method", "path"],
+        "properties": {
+          "method_name": {
+            "type": "string",
+            "description": "Client method name.",
+            "examples": ["sendEmail", "getCustomer", "createCharge"]
+          },
+          "http_method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+          },
+          "path": {
+            "type": "string",
+            "description": "Endpoint path relative to base URL.",
+            "examples": ["/v3/mail/send", "/v1/customers/{id}", "/v1/charges"]
+          },
+          "response_schema_name": {
+            "type": "string",
+            "description": "Zod schema name used to validate this endpoint's response.",
+            "examples": ["SendEmailResponseSchema", "CustomerSchema"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "error_types": {
+      "type": "array",
+      "description": "Typed error classes or error code enums defined for this client's failures.",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        ["EmailDeliveryError", "EmailRateLimitError"],
+        ["PaymentDeclinedError", "PaymentNetworkError"]
+      ]
+    },
+    "called_inside_transaction": {
+      "type": "boolean",
+      "description": "MUST be false. External API clients must never be called inside a Prisma $transaction block.",
+      "const": false
+    }
+  },
+  "additionalProperties": false
+}

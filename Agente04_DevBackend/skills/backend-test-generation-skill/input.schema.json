@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/skills/backend-test-generation-skill/input",
+  "title": "backend-test-generation-skill Input",
+  "type": "object",
+  "required": ["function_name", "file_path", "mock_dependencies", "test_cases"],
+  "properties": {
+    "function_name": { "type": "string" },
+    "file_path": { "type": "string" },
+    "mock_dependencies": { "type": "array", "items": { "type": "string" }, "description": "Module paths to mock (e.g. @/lib/auth, @/lib/db/task.dal)" },
+    "test_cases": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["scenario", "expected"],
+        "properties": {
+          "scenario": { "type": "string" },
+          "expected": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

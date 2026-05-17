@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente04_DevBackend",
+  "build_date": "2026-05-17",
+  "bibliography": [
+    {
+      "source_title": "Clean Code",
+      "source_author": "Robert C. Martin",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/clean_code.pdf",
+      "key_concepts_extracted": [
+        "Single Responsibility Principle — thin route handlers",
+        "Functions do one thing — service extraction",
+        "Error handling contract — operators vs users",
+        "Configuration isolation — centralized env vars",
+        "Tests are not optional",
+        "Names reveal intent",
+        "No magic numbers — named constants"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P1, P8, P9, P10",
+        "knowledge/heuristics.md — H1, H7",
+        "knowledge/decision_rules.md — DR002, DR009",
+        "knowledge/knowledge_cards.md — Card 010"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_title": "Introduction to Algorithms",
+      "source_author": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/introduction_to_algorithms.pdf",
+      "key_concepts_extracted": [
+        "Algorithmic complexity and data structure selection",
+        "Efficient sorting and searching for idempotency key lookup",
+        "Space-time complexity tradeoffs in job design"
+      ],
+      "derived_artifacts": [
+        "knowledge/knowledge_cards.md — Card 009 (algorithmic framing of idempotency strategies)"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_title": "Microservices Patterns",
+      "source_author": "Chris Richardson",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/microservices_patterns.pdf",
+      "key_concepts_extracted": [
+        "Idempotent Consumer pattern",
+        "Saga pattern and transaction boundaries",
+        "Transactional outbox for reliable audit logging",
+        "Polling publisher for sync logs",
+        "Event-driven architecture patterns"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P7",
+        "knowledge/heuristics.md — H4, H8",
+        "knowledge/decision_rules.md — DR007, DR008",
+        "knowledge/knowledge_cards.md — Card 009",
+        "failure_modes.md — FM-11, FM-12"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_title": "Grokking Algorithms",
+      "source_author": "Aditya Bhargava",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/grokking_algorithms.pdf",
+      "key_concepts_extracted": [
+        "Big O notation for everyday code decisions",
+        "N+1 query pattern recognition and avoidance",
+        "Graph traversal awareness for complex queries",
+        "Hash map efficiency for existence checks"
+      ],
+      "derived_artifacts": [
+        "knowledge/heuristics.md — H11",
+        "checklists/sql_safety_checklist.md — N+1 check item"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_title": "Architecture Patterns with Python",
+      "source_author": "Harry Percival and Bob Gregory",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/architecture_patterns_python.pdf",
+      "key_concepts_extracted": [
+        "Ports and Adapters (Hexagonal Architecture) — Zod as boundary adapter",
+        "Repository Pattern — DAL abstraction layer",
+        "Service Layer — features/ as domain service layer",
+        "Test isolation via dependency injection (mockable DAL)",
+        "Domain events for audit log pattern",
+        "Command/Query separation principles"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md — P2, P5",
+        "knowledge/heuristics.md — H5",
+        "knowledge/knowledge_cards.md — Card 001, Card 004",
+        "context_view.md — §2, §3, §6",
+        "templates/Prisma_DAL_Template.ts",
+        "templates/Server_Action_Template.ts"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_title": "Programming Pearls",
+      "source_author": "Jon Bentley",
+      "source_type": "book",
+      "source_path": "lib/DevBackend/programming_pearls.pdf",
+      "key_concepts_extracted": [
+        "Efficiency through proper data structure selection",
+        "Parameterized queries as the correct abstraction (no manual string building)",
+        "Measuring before optimizing — no premature optimization",
+        "Back-of-envelope estimation for query performance"
+      ],
+      "derived_artifacts": [
+        "knowledge/heuristics.md — H6, H12",
+        "checklists/sql_safety_checklist.md"
+      ],
+      "runtime_accessible": false
+    }
+  ],
+  "total_books": 6,
+  "runtime_access_policy": {
+    "raw_sources_allowed_at_runtime": false,
+    "pdf_access_allowed_at_runtime": false,
+    "distilled_artifacts_allowed_at_runtime": true
+  }
+}

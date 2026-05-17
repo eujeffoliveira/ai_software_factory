@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/backend-task",
+  "title": "Backend Task",
+  "description": "Schema for an atomic task block delivered to Agente04_DevBackend from Agente03_SoftwareEngineer via the Execution Plan.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "type",
+    "file_path",
+    "function_signatures",
+    "acceptance_criteria",
+    "security_requirements",
+    "test_requirements"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique task identifier from the Execution Plan.",
+      "pattern": "^TASK-[0-9]{3,}$",
+      "examples": ["TASK-001", "TASK-042"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable task title.",
+      "minLength": 5,
+      "maxLength": 120,
+      "examples": ["Implement createTask Server Action", "Add GET /api/tasks route handler"]
+    },
+    "type": {
+      "type": "string",
+      "description": "The primary implementation type required for this task.",
+      "enum": [
+        "server-action",
+        "route-handler",
+        "dal",
+        "cron-job",
+        "integration-client",
+        "test",
+        "config"
+      ]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Target file path where the implementation should be created or modified.",
+      "examples": [
+        "features/tasks/actions/createTask.ts",
+        "app/api/tasks/route.ts",
+        "lib/db/task.dal.ts",
+        "app/api/cron/daily-sync/route.ts"
+      ]
+    },
+    "function_signatures": {
+      "type": "array",
+      "description": "Expected function signatures or API shapes to implement.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "description": "TypeScript-style function signature.",
+        "examples": [
+          "export async function createTask(rawInput: unknown): Promise<Task>",
+          "export async function GET(req: NextRequest): Promise<NextResponse>"
+        ]
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "List of testable acceptance criteria that define when this task is complete.",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "Returns created task with id when valid input provided",
+          "Throws Unauthorized when session is null",
+          "Throws ZodError when title is empty string",
+          "Records audit_log entry after successful creation"
+        ]
+      ]
+    },
+    "security_requirements": {
+      "type": "object",
+      "description": "Security requirements for this task.",
+      "required": ["auth_required"],
+      "properties": {
+        "auth_required": {
+          "type": "boolean",
+          "description": "Whether authentication is required."
+        },
+        "roles_allowed": {
+          "type": "array",
+          "description": "If role-restricted, which roles are allowed. Empty means any authenticated user.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ownership_check_required": {
+          "type": "boolean",
+          "description": "Whether the requesting user must own the resource being accessed/mutated."
+        },
+        "audit_required": {
+          "type": "boolean",
+          "description": "Whether audit_log entry is required for this operation."
+        }
+      },
+      "additionalProperties": false
+    },
+    "test_requirements": {
+      "type": "object",
+      "description": "Test coverage requirements for this task.",
+      "required": ["test_file_path", "minimum_test_cases"],
+      "properties": {
+        "test_file_path": {
+          "type": "string",
+          "description": "Path where the test file should be created.",
+          "examples": [
+            "features/tasks/actions/createTask.test.ts",
+            "__tests__/api/tasks.test.ts"
+          ]
+        },
+        "minimum_test_cases": {
+          "type": "integer",
+          "minimum": 4,
+          "description": "Minimum number of test cases. Default is 4 (unauthenticated, invalid input, success, error)."
+        },
+        "required_scenarios": {
+          "type": "array",
+          "description": "Specific test scenarios that must be covered.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "depends_on": {
+      "type": "array",
+      "description": "Task IDs that must be completed before this task can start.",
+      "items": {
+        "type": "string",
+        "pattern": "^TASK-[0-9]{3,}$"
+      }
+    },
+    "api_contract_reference": {
+      "type": "string",
+      "description": "Reference to the relevant section of API_Contract.json (path or endpoint ID).",
+      "examples": ["/tasks POST", "components/schemas/CreateTaskRequest"]
+    },
+    "db_schema_reference": {
+      "type": "string",
+      "description": "Reference to the relevant Prisma model(s) used by this task.",
+      "examples": ["Task", "Task, User", "prisma/schema.prisma#Task"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context, constraints, or special instructions for implementation."
+    }
+  },
+  "additionalProperties": false
+}
