@@ -1,11 +1,11 @@
-# Manual de Arquitetura e Componentes — Enterprise AI Software Factory
+# Manual de Arquitetura e Componentes — AI Software Factory
 
 ## Versão
 **v1.2 — Build Blueprint Edition — White-label**
 
 ## Natureza deste documento
 
-Este documento é o **manual de arquitetura, peças, contratos e componentes** da Enterprise AI Software Factory da Organização.
+Este documento é o **manual de arquitetura, peças, contratos e componentes** da AI Software Factory da Organização.
 
 Ele descreve:
 
@@ -56,7 +56,7 @@ Portanto:
 
 # 1. Objetivo
 
-O objetivo da Enterprise AI Software Factory é criar uma fábrica de software operada por agentes de IA especializados, capazes de conduzir todo o ciclo de vida de desenvolvimento de software da organização.
+O objetivo da AI Software Factory é criar uma fábrica de software operada por agentes de IA especializados, capazes de conduzir todo o ciclo de vida de desenvolvimento de software da organização.
 
 A fábrica deve ser capaz de:
 
@@ -515,7 +515,7 @@ A operação runtime deve ser:
 
 # 6. Fontes oficiais de build
 
-A Enterprise AI Software Factory é construída a partir de quatro fontes principais.
+A AI Software Factory é construída a partir de quatro fontes principais.
 
 ## 6.1. Manual de Arquitetura e Componentes
 
@@ -617,7 +617,7 @@ O agente não deve depender do manual global em runtime.
 
 # 8. Modelo conceitual da fábrica
 
-A Enterprise AI Software Factory é composta por cinco camadas.
+A AI Software Factory é composta por cinco camadas.
 
 ## 8.1. Camada de governança
 
@@ -1767,7 +1767,7 @@ Ele define as peças que o Claude Code deve construir:
 - state ledger;
 - governança.
 
-A Enterprise AI Software Factory deve ser construída a partir desta separação:
+A AI Software Factory deve ser construída a partir desta separação:
 
 ```txt
 00-contexto

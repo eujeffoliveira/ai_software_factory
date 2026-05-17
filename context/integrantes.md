@@ -5,7 +5,7 @@
 
 ## Natureza deste documento
 
-Este documento define os integrantes da **AI Software Factory** da Raiz Educação.
+Este documento define os integrantes da **AI Software Factory**.
 
 Ele descreve:
 

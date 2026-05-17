@@ -1,19 +1,20 @@
-# PROMPT PARA CLAUDE CODE — BUILD DO AGENTE00_TECHLEAD
+# PROMPT PARA CLAUDE CODE — BUILD DO AGENTE05_DEVFRONTEND
 
 Atue como um **Principal AI Systems Engineer** especializado em construção de agentes, sistemas multiagentes, RAG, skills, arquitetura de software e automação com Claude Code.
 
 Você está dentro do repositório da **AI Software Factory**.
 
-Sua missão é construir **somente o agente `Agente00_TechLead`**, usando os arquivos genéricos da fábrica como fonte de build.
+Sua missão é construir **somente o agente `Agente05_DevFrontend`**, usando os arquivos genéricos da fábrica como fonte de build.
 
 Este processo é **build-time only**.
 
-O agente gerado NÃO deve depender de documentos globais em runtime.  
-Depois do build, o `Agente00_TechLead` deve operar apenas com os arquivos locais gerados dentro da própria pasta:
+O agente gerado NÃO deve depender de documentos globais em runtime.
+Depois do build, o `Agente05_DevFrontend` deve operar apenas com os arquivos locais gerados dentro da própria pasta:
 
 ```txt
-Agente00_TechLead/
+Agente05_DevFrontend/
 ```
+
 
 ---
 
@@ -22,23 +23,21 @@ Agente00_TechLead/
 Criar o agente:
 
 ```txt
-Agente00_TechLead
+Agente05_DevFrontend
 ```
 
-Este agente será o **Tech Lead / Orchestrator / Council President** da fábrica.
+Este agente será o **Dev Frontend** da fábrica.
 
 Ele será responsável por:
 
-- orquestrar o fluxo entre agentes;
-- manter o estado global do projeto;
-- validar artefatos;
-- aplicar quality gates;
-- decidir o próximo agente;
-- acionar o Council em decisões críticas;
-- gerenciar ADRs;
-- escalar decisões humanas;
-- bloquear avanço quando faltarem contexto, artefatos ou aprovações;
-- garantir aderência ao Golden Model técnico compilado.
+- implementar interfaces React/Next.js
+- usar Server Components por padrão
+- usar Client Components apenas quando necessário
+- aplicar Design System genérico
+- implementar estados loading/empty/error
+- garantir acessibilidade e responsividade
+- integrar com APIs e Server Actions
+- implementar dashboards com Recharts quando necessário
 
 ---
 
@@ -68,7 +67,8 @@ Se algum arquivo obrigatório estiver ausente, registre a lacuna em:
 build/missing_structure_report.md
 ```
 
-e continue com melhor esforço, desde que seja possível construir o `Agente00_TechLead`.
+e continue com melhor esforço, desde que seja possível construir o agente solicitado.
+
 
 ---
 
@@ -89,12 +89,14 @@ Portanto:
 - use termos como:
   - `AI Software Factory`;
   - `organization`;
+  - `stakeholder`;
+  - `business user`;
   - `corporate design system`;
   - `primary-color`;
   - `secondary-color`;
   - `data protection compliance`;
 - remova referências a contexto educacional, escolas, alunos, responsáveis, unidades ou terminologias específicas;
-- preserve integralmente o pilar técnico.
+- preserve integralmente o pilar técnico da arquitetura.
 
 O pilar técnico é inegociável:
 
@@ -127,6 +129,7 @@ DevSecOps
 data protection compliance
 ```
 
+
 ---
 
 # 4. Premissa build-time vs runtime
@@ -142,38 +145,39 @@ integrantes_generico.md ou integrantes.md
 base_teorica.md
 ```
 
-Durante o runtime, o `Agente00_TechLead` NÃO deve depender desses arquivos globais.
+Durante o runtime, o `Agente05_DevFrontend` NÃO deve depender desses arquivos globais.
 
 Portanto, compile tudo que for necessário para dentro de:
 
 ```txt
-Agente00_TechLead/
+Agente05_DevFrontend/
 ```
 
 Em runtime, o agente só poderá consultar:
 
 ```txt
-Agente00_TechLead/prompt.md
-Agente00_TechLead/agent_config.json
-Agente00_TechLead/context_view.md
-Agente00_TechLead/rag_manifest.json
-Agente00_TechLead/skills_manifest.md
-Agente00_TechLead/quality_gate.md
-Agente00_TechLead/handoff_schema.json
-Agente00_TechLead/failure_modes.md
-Agente00_TechLead/schemas/
-Agente00_TechLead/templates/
-Agente00_TechLead/checklists/
-Agente00_TechLead/examples/
-Agente00_TechLead/knowledge/
-Agente00_TechLead/skills/
+Agente05_DevFrontend/prompt.md
+Agente05_DevFrontend/agent_config.json
+Agente05_DevFrontend/context_view.md
+Agente05_DevFrontend/rag_manifest.json
+Agente05_DevFrontend/skills_manifest.md
+Agente05_DevFrontend/quality_gate.md
+Agente05_DevFrontend/handoff_schema.json
+Agente05_DevFrontend/failure_modes.md
+Agente05_DevFrontend/schemas/
+Agente05_DevFrontend/templates/
+Agente05_DevFrontend/checklists/
+Agente05_DevFrontend/examples/
+Agente05_DevFrontend/knowledge/
+Agente05_DevFrontend/skills/
 ```
 
 Regra final:
 
 ```txt
-O Agente00_TechLead deve ser autocontido após o build.
+O Agente05_DevFrontend deve ser autocontido após o build.
 ```
+
 
 ---
 
@@ -278,26 +282,34 @@ Runtime usa apenas conhecimento destilado.
 Nesta execução, crie **apenas** o agente:
 
 ```txt
-Agente00_TechLead/
+Agente05_DevFrontend/
 ```
 
 Não gere os demais agentes.
 
-Você pode ler informações sobre os demais agentes para entender o fluxo, mas não deve criar ou alterar suas pastas.
+Você pode ler informações sobre agentes relacionados para entender o fluxo, especialmente:
+
+```txt
+Agente00_TechLead
+Agente02_SoftwareArchitect
+Agente03_SoftwareEngineer
+Agente04_DevBackend
+Agente06_QaEngineer
+```
+
+Mas não deve criar ou alterar suas pastas.
 
 Não crie nem modifique:
 
 ```txt
-Agente01_ProductOwner/
-Agente02_SoftwareArchitect/
-Agente03_SoftwareEngineer/
-Agente04_DevBackend/
-Agente05_DevFrontend/
-Agente06_QaEngineer/
-Agente07_DevSecOps/
-Agente08_DevOps/
-Agente09_UxUiDesigner/
-Agente10_DataIntegrationEngineer/
+Agente02_SoftwareArchitect
+Agente03_SoftwareEngineer
+Agente04_DevBackend
+Agente06_QaEngineer
+Agente07_DevSecOps
+Agente08_DevOps
+Agente09_UxUiDesigner
+Agente10_DataIntegrationEngineer
 ```
 
 a menos que essas pastas já existam e você precise apenas referenciá-las em relatórios.
@@ -319,15 +331,15 @@ Verifique:
 ```txt
 00-contexto/
 01-bibliografia/
-Agente00_TechLead/
+Agente05_DevFrontend/
 ```
 
-Se `Agente00_TechLead/` não existir, crie.
+Se `Agente05_DevFrontend/` não existir, crie.
 
 Gere ou atualize:
 
 ```txt
-build/Agente00_TechLead_scan_report.md
+build/Agente05_DevFrontend_scan_report.md
 build/missing_structure_report.md
 ```
 
@@ -335,8 +347,8 @@ O relatório de varredura deve informar:
 
 - arquivos de contexto encontrados;
 - arquivos de contexto ausentes;
-- existência ou criação da pasta `Agente00_TechLead/`;
-- fontes bibliográficas disponíveis para Tech Lead;
+- existência ou criação da pasta `Agente05_DevFrontend/`;
+- fontes bibliográficas disponíveis para `Dev Frontend`;
 - riscos ou lacunas de build.
 
 ---
@@ -352,57 +364,47 @@ Leia, nesta ordem:
 4. 00-contexto/base_teorica.md
 ```
 
-Extraia somente o que for necessário para construir o `Agente00_TechLead`.
+Extraia somente o que for necessário para construir o `Agente05_DevFrontend`.
 
-O Tech Lead precisa compreender:
+Este agente precisa compreender:
 
-- composição geral da fábrica;
-- fluxo entre agentes;
-- gates;
-- artefatos obrigatórios;
-- State Ledger;
-- Handoff Package;
-- matriz de autoridade;
-- ADRs;
-- Council;
-- política de escalonamento humano;
-- relação build-time vs runtime;
-- referência arquitetural técnica;
-- regras de qualidade;
-- regras de segurança;
-- regras de deploy;
-- anti-padrões críticos.
+- Server Components
+- Client Components
+- Tailwind v4
+- Design System genérico
+- acessibilidade
+- responsividade
+- loading/empty/error states
+- Recharts
+- API contract
+
+Além disso, todos os agentes devem compreender:
+
+- runtime isolation policy;
+- handoff obrigatório;
+- limites e anti-responsabilidades;
+- política de escalonamento ao Tech Lead;
+- fontes globais bloqueadas em runtime;
+- relação entre artefatos locais, skills e RAG.
 
 Gere:
 
 ```txt
-build/Agente00_TechLead_context_routing_plan.md
+build/Agente05_DevFrontend_context_routing_plan.md
 ```
 
 ---
 
-## Etapa 3 — Ingestão bibliográfica do Tech Lead
+## Etapa 3 — Ingestão bibliográfica deste agente
 
-Leia a parte da bibliografia relacionada ao Tech Lead em:
+Leia a parte da bibliografia relacionada a `Dev Frontend` em:
 
 ```txt
 00-contexto/base_teorica.md
 01-bibliografia/
 ```
 
-Mapeie apenas fontes relevantes para:
-
-- liderança técnica;
-- engenharia de software;
-- arquitetura;
-- governança;
-- DevOps;
-- gestão de fluxo;
-- coordenação de times;
-- tomada de decisão;
-- trade-offs;
-- qualidade;
-- entrega contínua.
+Mapeie apenas fontes relevantes às responsabilidades deste agente.
 
 Não copie livros para dentro do prompt.
 
@@ -413,7 +415,7 @@ Crie um manifesto RAG local apontando apenas para coleções/chunks/índices já
 Gere:
 
 ```txt
-build/Agente00_TechLead_bibliography_inventory.json
+build/Agente05_DevFrontend_bibliography_inventory.json
 ```
 
 ---
@@ -423,7 +425,7 @@ build/Agente00_TechLead_bibliography_inventory.json
 Crie a seguinte estrutura:
 
 ```txt
-Agente00_TechLead/
+Agente05_DevFrontend/
   prompt.md
   agent_config.json
   context_view.md
@@ -434,36 +436,33 @@ Agente00_TechLead/
   failure_modes.md
 
   schemas/
-    state_ledger.schema.json
-    gate_decision.schema.json
-    council_verdict.schema.json
-    human_escalation.schema.json
-    agent_briefing.schema.json
-    adr_request.schema.json
-    risk_register.schema.json
+    frontend_task.schema.json
+    component_spec.schema.json
+    frontend_implementation_report.schema.json
+    ui_state.schema.json
+    accessibility_review.schema.json
+    responsive_layout.schema.json
 
   templates/
-    State_Ledger.json
-    Gate_Decision.md
-    Council_Verdict.md
-    Human_Escalation_Request.md
-    Agent_Briefing.md
-    ADR_Request.md
-    Risk_Register.md
-    Handoff_Validation_Report.md
-    Progress_Report.md
+    Frontend_Implementation_Report.md
+    Server_Component_Template.tsx
+    Client_Component_Template.tsx
+    Loading_State_Template.tsx
+    Error_State_Template.tsx
+    Empty_State_Template.tsx
+    Recharts_Component_Template.tsx
 
   checklists/
-    artifact_validation_checklist.md
-    tollgate_checklist.md
-    adr_required_checklist.md
-    human_escalation_checklist.md
-    state_ledger_update_checklist.md
-    council_activation_checklist.md
+    frontend_quality_checklist.md
+    design_system_checklist.md
+    accessibility_checklist.md
+    responsive_layout_checklist.md
+    server_vs_client_component_checklist.md
+    api_contract_usage_checklist.md
     runtime_isolation_checklist.md
 
   skills/
-    state-ledger-management-skill/
+    nextjs-react-component-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -472,7 +471,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    agent-routing-skill/
+    tailwind-v4-design-system-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -481,7 +480,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    artifact-contract-validation-skill/
+    accessibility-check-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -490,7 +489,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    tollgate-decision-skill/
+    frontend-state-management-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -499,7 +498,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    council-mediation-skill/
+    swr-polling-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -508,7 +507,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    adr-governance-skill/
+    recharts-dashboard-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -517,7 +516,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    human-escalation-skill/
+    frontend-error-state-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -526,7 +525,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    risk-register-management-skill/
+    responsive-layout-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -535,7 +534,7 @@ Agente00_TechLead/
         good_output.md
         bad_output.md
 
-    progress-reporting-skill/
+    server-component-selection-skill/
       skill.md
       input.schema.json
       output.schema.json
@@ -543,16 +542,24 @@ Agente00_TechLead/
       examples/
         good_output.md
         bad_output.md
+
+    design-token-compliance-skill/
+      skill.md
+      input.schema.json
+      output.schema.json
+      checklist.md
+      examples/
+        good_output.md
+        bad_output.md
+
 
   examples/
-    good_state_ledger.json
-    bad_state_ledger.json
-    good_gate_decision.md
-    bad_gate_decision.md
-    good_agent_briefing.md
-    bad_agent_briefing.md
-    good_handoff_validation.md
-    bad_handoff_validation.md
+    good_component.tsx
+    bad_component.tsx
+    good_dashboard_view.tsx
+    bad_dashboard_view.tsx
+    good_frontend_report.md
+    bad_frontend_report.md
 ```
 
 ---
@@ -562,7 +569,7 @@ Agente00_TechLead/
 Crie:
 
 ```txt
-Agente00_TechLead/prompt.md
+Agente05_DevFrontend/prompt.md
 ```
 
 Esse arquivo deve ser o prompt operacional local do agente.
@@ -570,7 +577,7 @@ Esse arquivo deve ser o prompt operacional local do agente.
 Ele deve conter, no mínimo:
 
 ```md
-# Agente00 — Tech Lead / Orchestrator / Council President
+# Agente05_DevFrontend — Dev Frontend
 
 ## Role
 ...
@@ -582,7 +589,7 @@ Ele deve conter, no mínimo:
 ...
 
 ## Runtime Context Rule
-O agente só pode consultar os artefatos locais dentro da pasta `Agente00_TechLead/` e os artefatos de projeto fornecidos como input pelo usuário/orquestrador.
+O agente só pode consultar os artefatos locais dentro da pasta `Agente05_DevFrontend/` e os artefatos de projeto fornecidos como input pelo Tech Lead ou orquestrador.
 
 Ele não deve consultar `00-contexto/`, `01-bibliografia/`, o manual global, a arquitetura global ou a bibliografia bruta em runtime.
 
@@ -601,19 +608,7 @@ Ele não deve consultar `00-contexto/`, `01-bibliografia/`, o manual global, a a
 ## Workflow
 ...
 
-## Quality Gates
-...
-
-## State Ledger Policy
-...
-
-## Handoff Validation Policy
-...
-
-## Council Activation Policy
-...
-
-## ADR Policy
+## Quality Gate
 ...
 
 ## Human Escalation Policy
@@ -629,15 +624,13 @@ Ele não deve consultar `00-contexto/`, `01-bibliografia/`, o manual global, a a
 ...
 ```
 
-O prompt deve deixar claro que o Tech Lead:
+O prompt deve deixar claro que o agente:
 
-- não implementa código final;
-- não escreve PRD completo no lugar do Product Owner;
-- não cria arquitetura completa no lugar do Architect;
-- não substitui QA;
-- não substitui DevSecOps;
-- não executa deploy;
-- valida, orquestra, bloqueia, sintetiza e escala.
+- respeita seu escopo;
+- usa apenas artefatos locais em runtime;
+- escala conflitos ao Tech Lead;
+- não decide fora de seu papel;
+- não consulta fontes globais em runtime.
 
 ---
 
@@ -646,32 +639,32 @@ O prompt deve deixar claro que o Tech Lead:
 Crie:
 
 ```txt
-Agente00_TechLead/agent_config.json
+Agente05_DevFrontend/agent_config.json
 ```
 
 Com estrutura parecida com:
 
 ```json
 {
-  "agent_id": "Agente00_TechLead",
-  "name": "Tech Lead / Orchestrator / Council President",
+  "agent_id": "Agente05_DevFrontend",
+  "name": "Dev Frontend",
   "version": "1.0.0",
   "mode": "runtime-local-only",
   "edition": "generic-white-label",
-  "primary_responsibility": "orchestration_and_governance",
+  "primary_responsibility": "dev_frontend",
   "allowed_runtime_sources": [
-    "Agente00_TechLead/prompt.md",
-    "Agente00_TechLead/context_view.md",
-    "Agente00_TechLead/rag_manifest.json",
-    "Agente00_TechLead/skills_manifest.md",
-    "Agente00_TechLead/quality_gate.md",
-    "Agente00_TechLead/handoff_schema.json",
-    "Agente00_TechLead/failure_modes.md",
-    "Agente00_TechLead/schemas/",
-    "Agente00_TechLead/templates/",
-    "Agente00_TechLead/checklists/",
-    "Agente00_TechLead/examples/",
-    "Agente00_TechLead/skills/"
+    "Agente05_DevFrontend/prompt.md",
+    "Agente05_DevFrontend/context_view.md",
+    "Agente05_DevFrontend/rag_manifest.json",
+    "Agente05_DevFrontend/skills_manifest.md",
+    "Agente05_DevFrontend/quality_gate.md",
+    "Agente05_DevFrontend/handoff_schema.json",
+    "Agente05_DevFrontend/failure_modes.md",
+    "Agente05_DevFrontend/schemas/",
+    "Agente05_DevFrontend/templates/",
+    "Agente05_DevFrontend/checklists/",
+    "Agente05_DevFrontend/examples/",
+    "Agente05_DevFrontend/skills/"
   ],
   "blocked_runtime_sources": [
     "00-contexto/",
@@ -681,17 +674,13 @@ Com estrutura parecida com:
     "integrantes_generico.md",
     "base_teorica.md"
   ],
-  "can_interact_with_human": true,
-  "can_trigger_council": true,
-  "can_create_adr_request": true,
-  "can_approve_gates": true,
-  "can_execute_code": false,
-  "can_deploy": false,
-  "can_accept_security_risk": false
+  "can_interact_with_human": false,
+  "human_interaction_channel": "via_tech_lead",
+  "can_execute_outside_scope": false
 }
 ```
 
-Adapte se necessário, mas preserve a intenção.
+Adapte permissões específicas do agente quando necessário, mas preserve o bloqueio de fontes globais em runtime.
 
 ---
 
@@ -700,29 +689,27 @@ Adapte se necessário, mas preserve a intenção.
 Crie:
 
 ```txt
-Agente00_TechLead/context_view.md
+Agente05_DevFrontend/context_view.md
 ```
 
-Esse arquivo deve ser a visão local compilada do Tech Lead.
+Esse arquivo deve ser a visão local compilada do agente.
 
-Ele deve conter:
+Ele deve conter apenas o subconjunto necessário para o papel de **Dev Frontend**.
 
-- visão geral da fábrica;
-- lista de agentes;
-- fluxo macro;
-- quality gates;
-- State Ledger;
-- Handoff Package;
-- matriz de autoridade;
-- ADR policy;
-- Council policy;
-- escalonamento humano;
-- resumo da arquitetura técnica genérica;
-- anti-padrões críticos;
-- runtime isolation policy.
+Inclua:
 
-Não copie a arquitetura inteira literalmente.  
-Compile apenas o que o Tech Lead precisa para orquestrar e validar.
+- Server Components
+- Client Components
+- Tailwind v4
+- Design System genérico
+- acessibilidade
+- responsividade
+- loading/empty/error states
+- Recharts
+- API contract
+
+Não copie a arquitetura inteira.  
+Compile apenas o que este agente precisa para operar.
 
 ---
 
@@ -731,60 +718,53 @@ Compile apenas o que o Tech Lead precisa para orquestrar e validar.
 Crie:
 
 ```txt
-Agente00_TechLead/rag_manifest.json
+Agente05_DevFrontend/rag_manifest.json
 ```
 
-Ele deve declarar as coleções RAG autorizadas.
-
-Use estrutura parecida com:
+Use estrutura compatível com:
 
 ```json
 {
-  "agent_id": "Agente00_TechLead",
+  "agent_id": "Agente05_DevFrontend",
   "edition": "generic-white-label",
   "retrieval_policy": {
     "runtime_local_only": true,
     "prefer_local_context": true,
     "prefer_normative_architecture": true,
     "books_are_theoretical": true,
-    "max_chunks": 10,
+    "max_chunks": 8,
     "require_source_metadata": true
   },
   "collections": [
     {
-      "name": "architecture_reference_full",
+      "name": "frontend_engineering",
       "priority": "core",
+      "usage": "theoretical"
+    },
+    {
+      "name": "ui_design",
+      "priority": "core",
+      "usage": "theoretical"
+    },
+    {
+      "name": "web_performance",
+      "priority": "supporting",
+      "usage": "theoretical"
+    },
+    {
+      "name": "accessibility",
+      "priority": "supporting",
+      "usage": "theoretical"
+    },
+    {
+      "name": "architecture_reference_frontend_view",
+      "priority": "supporting",
       "usage": "normative"
     },
     {
-      "name": "factory_governance",
-      "priority": "core",
-      "usage": "operational"
-    },
-    {
-      "name": "software_architecture",
+      "name": "design_system_reference",
       "priority": "supporting",
       "usage": "theoretical"
-    },
-    {
-      "name": "leadership_engineering",
-      "priority": "supporting",
-      "usage": "theoretical"
-    },
-    {
-      "name": "devops_accelerate",
-      "priority": "supporting",
-      "usage": "theoretical"
-    },
-    {
-      "name": "team_topologies",
-      "priority": "optional",
-      "usage": "theoretical"
-    },
-    {
-      "name": "adr_governance",
-      "priority": "core",
-      "usage": "operational"
     }
   ],
   "blocked_sources": [
@@ -802,21 +782,22 @@ Use estrutura parecida com:
 Crie:
 
 ```txt
-Agente00_TechLead/skills_manifest.md
+Agente05_DevFrontend/skills_manifest.md
 ```
 
-Liste todas as skills do Tech Lead:
+Liste todas as skills autorizadas:
 
 ```txt
-state-ledger-management-skill
-agent-routing-skill
-artifact-contract-validation-skill
-tollgate-decision-skill
-council-mediation-skill
-adr-governance-skill
-human-escalation-skill
-risk-register-management-skill
-progress-reporting-skill
+nextjs-react-component-skill
+tailwind-v4-design-system-skill
+accessibility-check-skill
+frontend-state-management-skill
+swr-polling-skill
+recharts-dashboard-skill
+frontend-error-state-skill
+responsive-layout-skill
+server-component-selection-skill
+design-token-compliance-skill
 ```
 
 Para cada skill, descreva:
@@ -828,7 +809,7 @@ Para cada skill, descreva:
 - failure modes;
 - quality gate;
 - RAG permitido;
-- conformidade com a arquitetura.
+- conformidade com o manual da fábrica e com a arquitetura genérica.
 
 ---
 
@@ -837,50 +818,20 @@ Para cada skill, descreva:
 Crie:
 
 ```txt
-Agente00_TechLead/quality_gate.md
+Agente05_DevFrontend/quality_gate.md
 ```
 
-Esse arquivo deve definir como o Tech Lead decide avanço entre fases.
+Esse arquivo deve definir como o agente prepara, valida ou participa do quality gate relacionado ao seu papel.
 
-Inclua gates:
+Inclua:
 
-```txt
-Gate 1 — PRD Approval
-Gate 2 — Architecture Approval
-Gate 3 — Execution Plan Approval
-Gate 4 — QA Review
-Gate 5 — Security Review
-Gate 6 — Deployment Approval
-Gate 7 — Post-Deploy Validation
-```
-
-Inclua status:
-
-```txt
-APPROVED
-NEEDS_REVISION
-APPROVED_WITH_ADR
-REJECTED_RISK_TOO_HIGH
-PASS
-FAIL_FIX_REQUIRED
-FAIL_BLOCKING
-APPROVED_WITH_WARNINGS
-BLOCKED_SECURITY_RISK
-BLOCKED_PRIVACY_RISK
-READY_FOR_DEPLOY
-NEEDS_ROLLBACK_PLAN
-BLOCKED_PRODUCTION_APPROVAL_REQUIRED
-DEPLOY_HEALTHY
-DEPLOY_DEGRADED
-ROLLBACK_REQUIRED
-INCIDENT_OPENED
-```
-
-Inclua regra:
-
-```txt
-O Tech Lead não deve aprovar avanço se o artefato obrigatório da fase estiver ausente.
-```
+- objetivo do gate;
+- critérios de entrada;
+- critérios de saída;
+- status possíveis;
+- quando bloquear;
+- quando escalar ao Tech Lead;
+- quando exigir humano.
 
 ---
 
@@ -889,7 +840,7 @@ O Tech Lead não deve aprovar avanço se o artefato obrigatório da fase estiver
 Crie:
 
 ```txt
-Agente00_TechLead/handoff_schema.json
+Agente05_DevFrontend/handoff_schema.json
 ```
 
 O schema deve validar a estrutura:
@@ -915,37 +866,25 @@ Inclua campos obrigatórios e validação mínima.
 Crie:
 
 ```txt
-Agente00_TechLead/failure_modes.md
+Agente05_DevFrontend/failure_modes.md
 ```
 
-Inclua falhas como:
-
-- artefato obrigatório ausente;
-- handoff incompleto;
-- PRD sem critérios de aceite;
-- arquitetura sem ADR necessário;
-- execution plan com tarefas grandes demais;
-- QA com status bloqueante;
-- DevSecOps com risco bloqueante;
-- deploy sem rollback plan;
-- tentativa de bypass de gate;
-- conflito entre agentes;
-- necessidade de aprovação humana;
-- runtime tentando consultar fonte global bloqueada.
+Inclua falhas específicas do papel de **Dev Frontend**.
 
 Para cada failure mode, defina:
 
 - sintoma;
 - causa provável;
-- ação do Tech Lead;
-- próximo agente;
-- se exige humano.
+- ação do agente;
+- quando escalar ao Tech Lead;
+- artefato a corrigir;
+- se bloqueia o fluxo.
 
 ---
 
 # 16. Skills obrigatórias
 
-Para cada skill dentro de `Agente00_TechLead/skills/`, crie:
+Para cada skill dentro de `Agente05_DevFrontend/skills/`, crie:
 
 ```txt
 skill.md
@@ -956,151 +895,53 @@ examples/good_output.md
 examples/bad_output.md
 ```
 
-## 16.1. `state-ledger-management-skill`
-
-Propósito:
-
-- criar;
-- atualizar;
-- validar;
-- resumir;
-- detectar inconsistências no State Ledger.
-
-Deve lidar com fases:
+Skills a criar:
 
 ```txt
-requirements
-architecture
-planning
-implementation
-qa
-security
-deploy
-post_deploy
-maintenance
+nextjs-react-component-skill
+tailwind-v4-design-system-skill
+accessibility-check-skill
+frontend-state-management-skill
+swr-polling-skill
+recharts-dashboard-skill
+frontend-error-state-skill
+responsive-layout-skill
+server-component-selection-skill
+design-token-compliance-skill
 ```
 
-## 16.2. `agent-routing-skill`
-
-Propósito:
-
-- decidir qual agente deve atuar em seguida.
-
-Deve considerar:
-
-- fase atual;
-- artefato produzido;
-- status do gate;
-- riscos;
-- bloqueios;
-- aprovações humanas pendentes.
-
-## 16.3. `artifact-contract-validation-skill`
-
-Propósito:
-
-- validar se artefatos obrigatórios estão completos.
-
-Artefatos:
-
-```txt
-PRD.md
-Architecture.md
-API_Contract.json
-DB_Schema.sql
-Execution_Plan.json
-QA_Report.md
-Security_Audit.md
-Deployment_Plan.md
-Rollback_Plan.md
-Post_Deploy_Report.md
-```
-
-## 16.4. `tollgate-decision-skill`
-
-Propósito:
-
-- decidir status de gate.
-
-Deve produzir:
-
-```txt
-Gate_Decision.md
-```
-
-## 16.5. `council-mediation-skill`
-
-Propósito:
-
-- acionar e sintetizar o Council.
-
-Personas:
-
-```txt
-Contrarian
-First Principles Thinker
-Expansionist
-Outsider
-Executor
-```
-
-Saída:
+Cada `skill.md` deve conter:
 
 ```md
-## Council Verdict
+# Skill Name
 
-### Where the Council Agrees
+## Purpose
 ...
 
-### Where the Council Clashes
+## When to use
 ...
 
-### Blind Spots Caught
+## Inputs
 ...
 
-### Recommendation
+## Outputs
 ...
 
-### The One Thing to Do First
+## Procedure
+...
+
+## Quality Gate
+...
+
+## Failure Modes
+...
+
+## RAG Policy
+...
+
+## Architecture Compliance
 ...
 ```
-
-## 16.6. `adr-governance-skill`
-
-Propósito:
-
-- identificar quando ADR é necessário;
-- criar pedido de ADR;
-- validar ADR;
-- registrar decisão no State Ledger.
-
-## 16.7. `human-escalation-skill`
-
-Propósito:
-
-- identificar quando humano deve decidir;
-- criar pedido objetivo de decisão humana;
-- resumir opções e riscos.
-
-## 16.8. `risk-register-management-skill`
-
-Propósito:
-
-- registrar riscos;
-- classificar severidade;
-- definir mitigação;
-- associar risco a agente ou fase.
-
-## 16.9. `progress-reporting-skill`
-
-Propósito:
-
-- gerar status executivo do projeto;
-- informar fase atual;
-- próximos passos;
-- bloqueios;
-- riscos;
-- decisões pendentes.
 
 ---
 
@@ -1109,13 +950,12 @@ Propósito:
 Crie schemas JSON funcionais para:
 
 ```txt
-state_ledger.schema.json
-gate_decision.schema.json
-council_verdict.schema.json
-human_escalation.schema.json
-agent_briefing.schema.json
-adr_request.schema.json
-risk_register.schema.json
+frontend_task.schema.json
+component_spec.schema.json
+frontend_implementation_report.schema.json
+ui_state.schema.json
+accessibility_review.schema.json
+responsive_layout.schema.json
 ```
 
 Use JSON Schema Draft 2020-12 quando possível.
@@ -1139,18 +979,16 @@ Cada schema deve ter:
 Crie templates markdown/json para:
 
 ```txt
-State_Ledger.json
-Gate_Decision.md
-Council_Verdict.md
-Human_Escalation_Request.md
-Agent_Briefing.md
-ADR_Request.md
-Risk_Register.md
-Handoff_Validation_Report.md
-Progress_Report.md
+Frontend_Implementation_Report.md
+Server_Component_Template.tsx
+Client_Component_Template.tsx
+Loading_State_Template.tsx
+Error_State_Template.tsx
+Empty_State_Template.tsx
+Recharts_Component_Template.tsx
 ```
 
-Os templates devem ser práticos e prontos para uso por agente.
+Os templates devem ser práticos, objetivos e prontos para uso pelo agente.
 
 ---
 
@@ -1159,12 +997,12 @@ Os templates devem ser práticos e prontos para uso por agente.
 Crie checklists para:
 
 ```txt
-artifact_validation_checklist.md
-tollgate_checklist.md
-adr_required_checklist.md
-human_escalation_checklist.md
-state_ledger_update_checklist.md
-council_activation_checklist.md
+frontend_quality_checklist.md
+design_system_checklist.md
+accessibility_checklist.md
+responsive_layout_checklist.md
+server_vs_client_component_checklist.md
+api_contract_usage_checklist.md
 runtime_isolation_checklist.md
 ```
 
@@ -1177,50 +1015,45 @@ Cada checklist deve ser objetivo e acionável.
 Crie exemplos bons e ruins para:
 
 ```txt
-good_state_ledger.json
-bad_state_ledger.json
-good_gate_decision.md
-bad_gate_decision.md
-good_agent_briefing.md
-bad_agent_briefing.md
-good_handoff_validation.md
-bad_handoff_validation.md
+good_component.tsx
+bad_component.tsx
+good_dashboard_view.tsx
+bad_dashboard_view.tsx
+good_frontend_report.md
+bad_frontend_report.md
 ```
 
-Exemplos ruins devem mostrar erros reais como:
-
-- falta de próximo agente;
-- ausência de riscos;
-- gate aprovado sem artefato;
-- handoff sem checklist;
-- decisão sem justificativa;
-- tentativa de consultar documento global em runtime.
+Exemplos ruins devem mostrar erros reais compatíveis com o papel do agente.
 
 ---
 
-# 21. Regras de segurança e autoridade
+# 21. Regras de autoridade
 
-O `Agente00_TechLead` pode:
+O `Agente05_DevFrontend` pode:
 
-- aprovar ou bloquear gates;
-- solicitar correções;
-- acionar agentes;
-- acionar Council;
-- solicitar ADR;
-- pedir aprovação humana;
-- atualizar State Ledger.
+- implementar interfaces React/Next.js
+- usar Server Components por padrão
+- usar Client Components apenas quando necessário
+- aplicar Design System genérico
+- implementar estados loading/empty/error
+- garantir acessibilidade e responsividade
+- integrar com APIs e Server Actions
+- implementar dashboards com Recharts quando necessário
 
-O `Agente00_TechLead` não pode:
+O `Agente05_DevFrontend` não pode:
 
-- implementar código final;
-- aceitar risco grave de segurança sozinho;
-- executar deploy;
-- executar migration;
-- escrever PRD completo no lugar do Product Owner;
-- substituir QA;
-- substituir DevSecOps;
-- ignorar gate obrigatório;
-- permitir runtime com dependência de `00-contexto` ou `01-bibliografia`.
+- inventar identidade visual
+- usar tokens específicos de empresa
+- usar img nativo
+- usar Client Component sem necessidade
+- usar SWR quando Server Component resolver
+- criar biblioteca visual paralela
+- ignorar loading/empty/error states
+- ignorar acessibilidade
+- alterar contrato de API
+- implementar lógica de negócio sensível no cliente
+
+Além disso, nenhum agente pode consultar `00-contexto` ou `01-bibliografia` em runtime.
 
 ---
 
@@ -1229,9 +1062,9 @@ O `Agente00_TechLead` não pode:
 Ao final da geração, crie:
 
 ```txt
-build/Agente00_TechLead_build_report.md
-build/Agente00_TechLead_generated_files_index.md
-build/Agente00_TechLead_runtime_readiness_checklist.md
+build/Agente05_DevFrontend_build_report.md
+build/Agente05_DevFrontend_generated_files_index.md
+build/Agente05_DevFrontend_runtime_readiness_checklist.md
 ```
 
 O relatório final deve conter:
@@ -1252,7 +1085,7 @@ O relatório final deve conter:
 
 A tarefa só está concluída quando:
 
-- `Agente00_TechLead/` existe;
+- `Agente05_DevFrontend/` existe;
 - todos os arquivos obrigatórios foram criados;
 - todas as skills obrigatórias foram criadas;
 - todos os schemas obrigatórios foram criados;
@@ -1262,8 +1095,8 @@ A tarefa só está concluída quando:
 - `rag_manifest.json` existe;
 - `knowledge/` existe com conhecimento bibliográfico destilado;
 - `agent_config.json` bloqueia fontes globais em runtime;
-- `prompt.md` deixa claro o papel e os limites do Tech Lead;
-- `context_view.md` contém o contexto local necessário;
+- `prompt.md` deixa claro o papel e os limites do agente;
+- `context_view.md` contém apenas o contexto necessário;
 - os relatórios de build foram gerados;
 - não há dependência runtime de `00-contexto`;
 - não há dependência runtime de `01-bibliografia`;
@@ -1278,10 +1111,10 @@ A tarefa só está concluída quando:
 Depois de executar o build, responda com:
 
 ```md
-# Agente00_TechLead criado
+# Agente05_DevFrontend criado
 
 ## Pasta criada
-- `Agente00_TechLead/`
+- `Agente05_DevFrontend/`
 
 ## Arquivos principais
 - `prompt.md`
@@ -1324,7 +1157,7 @@ Depois de executar o build, responda com:
 Se algo não puder ser criado, registre a falha em:
 
 ```txt
-build/Agente00_TechLead_build_report.md
+build/Agente05_DevFrontend_build_report.md
 ```
 
 e explique claramente no resumo final.
@@ -1333,9 +1166,9 @@ e explique claramente no resumo final.
 
 # 25. Regra final
 
-Crie somente o `Agente00_TechLead`.
+Crie somente o `Agente05_DevFrontend`.
 
-Ele deve ser o orquestrador autocontido da fábrica genérica.
+Ele deve ser autocontido e aderente à versão genérica / white-label.
 
 A arquitetura técnica deve permanecer rigorosa.  
 A identidade deve permanecer white-label.  

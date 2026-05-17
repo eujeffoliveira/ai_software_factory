@@ -10,7 +10,7 @@
 
 **Versão:** v1.1.1 — White-label  
 **Tipo:** Arquitetura de referência e padrão técnico organizacional  
-**Público principal:** Agentes da Enterprise AI Software Factory, Tech Leads humanos, arquitetos, devs, QA, DevSecOps e DevOps  
+**Público principal:** Agentes da AI Software Factory, Tech Leads humanos, arquitetos, devs, QA, DevSecOps e DevOps  
 **Natureza:** Documento normativo de engenharia  
 **Não é:** prompt de agente, PRD, guia de implementação de produto específico ou tutorial de tecnologia
 
@@ -38,7 +38,7 @@ Ele estabelece:
 - context views para agentes de IA;
 - anti-padrões proibidos.
 
-Este documento deve ser usado como **base de conhecimento obrigatória** para os agentes da Enterprise AI Software Factory.
+Este documento deve ser usado como **base de conhecimento obrigatória** para os agentes da AI Software Factory.
 
 ## 1.2. O que este documento não é
 
@@ -53,7 +53,7 @@ A relação correta é:
 Reference Architecture v1.1.1
   = base normativa de engenharia
 
-Manual de Arquitetura e Componentes da Enterprise AI Software Factory
+Manual de Arquitetura e Componentes da AI Software Factory
   = manual de peças, papéis, artefatos, gates e agentes
 
 Prompts dos agentes
@@ -82,7 +82,7 @@ Quando houver conflito entre fontes, use esta ordem:
 1. Instrução explícita do humano responsável
 2. ADR aprovado no projeto
 3. Este documento de arquitetura
-4. Manual de Arquitetura e Componentes da Enterprise AI Software Factory
+4. Manual de Arquitetura e Componentes da AI Software Factory
 5. Documentação específica do projeto, como CLAUDE.md
 6. Base teórica via RAG
 7. Conhecimento geral do modelo
@@ -1798,7 +1798,7 @@ Antes de transformar em política final da organização, validar:
 
 ---
 
-# 25. Relação com a Enterprise AI Software Factory
+# 25. Relação com a AI Software Factory
 
 Este documento é a base técnica que todos os agentes devem respeitar.
 
@@ -1870,7 +1870,7 @@ Toda mudança deve registrar:
 
 # 27. Síntese final
 
-Esta arquitetura existe para garantir que a Enterprise AI Software Factory produza software:
+Esta arquitetura existe para garantir que a AI Software Factory produza software:
 
 - seguro;
 - auditável;
