@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Artifact Contract Validation Skill Output",
+  "type": "object",
+  "required": ["success", "validation_result", "validation_table"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "validation_result": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "PASS_WITH_CONDITIONS"]
+    },
+    "validation_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "status", "evidence"],
+        "properties": {
+          "criterion": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "N/A"] },
+          "evidence": { "type": "string" },
+          "blocker": { "type": "boolean" }
+        }
+      }
+    },
+    "issues_found": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "conditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions required for PASS_WITH_CONDITIONS"
+    },
+    "adr_required": {
+      "type": "boolean",
+      "description": "True if a Golden Path deviation was detected"
+    },
+    "adr_details": {
+      "type": "string",
+      "description": "What deviation was detected and which ADR is needed"
+    },
+    "recommended_gate_status": {
+      "type": "string",
+      "enum": ["APPROVED", "APPROVED_WITH_CONDITIONS", "APPROVED_WITH_ADR", "RETURNED_FOR_REVISION", "BLOCKED_PENDING_ADR"]
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

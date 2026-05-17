@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Risk Register",
+  "description": "Project risk registry maintained by the Tech Lead",
+  "type": "object",
+  "required": ["project_id", "risks"],
+  "properties": {
+    "project_id": { "type": "string" },
+    "last_updated": { "type": "string", "format": "date-time" },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "severity", "likelihood", "phase", "status", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string", "minLength": 10 },
+          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "likelihood": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+          "phase": { "type": "string" },
+          "source_agent": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["security", "data_protection", "architecture", "delivery", "scope", "cost", "dependency", "operational", "compliance"]
+          },
+          "mitigation": { "type": "string" },
+          "owner": { "type": "string" },
+          "status": { "type": "string", "enum": ["OPEN", "MITIGATED", "ACCEPTED", "ESCALATED", "CLOSED"] },
+          "human_decision_required": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+          "resolution_note": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

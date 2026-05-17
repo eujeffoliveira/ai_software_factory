@@ -1,0 +1,85 @@
+{
+  "project_name": "Enterprise Portal — Supplier Management Module",
+  "project_id": "proj-supplier-mgmt-v1",
+  "created_at": "2026-05-10T09:00:00Z",
+  "updated_at": "2026-05-17T14:30:00Z",
+  "current_phase": "qa",
+  "current_agent": "Agente06_QaEngineer",
+  "next_agent": "Agente07_DevSecOps",
+  "approved_artifacts": {
+    "prd": true,
+    "architecture": true,
+    "api_contract": true,
+    "db_schema": true,
+    "execution_plan": true,
+    "qa": false,
+    "security": false,
+    "deployment": false,
+    "rollback": false,
+    "post_deploy": false
+  },
+  "open_questions": [
+    {
+      "id": "OQ-001",
+      "question": "Should supplier deactivation trigger email notification to all linked buyers?",
+      "source_agent": "Agente01_ProductOwner",
+      "blocking": false,
+      "created_at": "2026-05-11T10:00:00Z",
+      "resolved_at": null,
+      "resolution": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "decision": "Gate 1 APPROVED — PRD is complete with INVEST stories and BDD criteria",
+      "rationale": "All acceptance criteria validated. Out-of-scope explicitly defined.",
+      "made_by": "Agente00_TechLead",
+      "date": "2026-05-12T09:00:00Z",
+      "reversible": false
+    },
+    {
+      "id": "DEC-002",
+      "decision": "Gate 2 APPROVED_WITH_ADR — Architecture approved with ADR-001 for background email service",
+      "rationale": "Architecture follows Golden Model. Email via Nodemailer+SES requires Vercel serverless duration limit workaround documented in ADR-001.",
+      "made_by": "Agente00_TechLead",
+      "date": "2026-05-13T11:00:00Z",
+      "reversible": false
+    }
+  ],
+  "adrs": [
+    {
+      "id": "ADR-001",
+      "title": "Email delivery via Nodemailer+SES with retry on Vercel Edge",
+      "status": "Approved",
+      "file_path": "docs/adr/ADR-001-email-nodemailer-ses.md",
+      "created_at": "2026-05-13T10:00:00Z"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-001",
+      "description": "Supplier bulk import CSV could contain malformed data causing job failure",
+      "severity": "MEDIUM",
+      "likelihood": "MEDIUM",
+      "phase": "implementation",
+      "source_agent": "Agente04_DevBackend",
+      "category": "operational",
+      "mitigation": "Validation schema with Zod + row-level error reporting in sync_log",
+      "owner": "Agente04_DevBackend",
+      "status": "MITIGATED",
+      "human_decision_required": false,
+      "created_at": "2026-05-15T08:00:00Z",
+      "resolved_at": "2026-05-16T09:00:00Z",
+      "resolution_note": "Zod schema validation implemented with detailed error reporting"
+    }
+  ],
+  "blocked_tasks": [],
+  "human_approvals_required": [],
+  "gate_history": [
+    { "gate": 1, "status": "APPROVED", "decided_at": "2026-05-12T09:00:00Z", "notes": "PRD complete" },
+    { "gate": 2, "status": "APPROVED_WITH_ADR", "decided_at": "2026-05-13T11:00:00Z", "notes": "ADR-001 for email service" },
+    { "gate": 3, "status": "APPROVED", "decided_at": "2026-05-14T10:00:00Z", "notes": "All tasks atomic" }
+  ],
+  "next_action": "Await QA_Report.md from Agente06_QaEngineer then issue Gate 4 decision"
+}

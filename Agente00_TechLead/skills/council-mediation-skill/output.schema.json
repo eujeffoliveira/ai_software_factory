@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Council Mediation Skill Output",
+  "type": "object",
+  "required": ["success", "persona_analyses", "consensus", "clashes", "recommendation", "one_thing_to_do_first", "requires_human_decision"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "topic": { "type": "string" },
+    "persona_analyses": {
+      "type": "object",
+      "required": ["contrarian", "first_principles", "expansionist", "outsider", "executor"],
+      "properties": {
+        "contrarian": {
+          "type": "object",
+          "required": ["analysis", "concerns", "preferred_option"],
+          "properties": {
+            "analysis": { "type": "string" },
+            "concerns": { "type": "array", "items": { "type": "string" } },
+            "preferred_option": { "type": "string" }
+          }
+        },
+        "first_principles": {
+          "type": "object",
+          "required": ["analysis", "core_tradeoff", "preferred_option"],
+          "properties": {
+            "analysis": { "type": "string" },
+            "core_tradeoff": { "type": "string" },
+            "preferred_option": { "type": "string" }
+          }
+        },
+        "expansionist": {
+          "type": "object",
+          "required": ["analysis", "long_term_impact", "preferred_option"],
+          "properties": {
+            "analysis": { "type": "string" },
+            "long_term_impact": { "type": "string" },
+            "preferred_option": { "type": "string" }
+          }
+        },
+        "outsider": {
+          "type": "object",
+          "required": ["analysis", "industry_benchmark", "preferred_option"],
+          "properties": {
+            "analysis": { "type": "string" },
+            "industry_benchmark": { "type": "string" },
+            "preferred_option": { "type": "string" }
+          }
+        },
+        "executor": {
+          "type": "object",
+          "required": ["analysis", "feasibility", "preferred_option"],
+          "properties": {
+            "analysis": { "type": "string" },
+            "feasibility": { "type": "string" },
+            "preferred_option": { "type": "string" }
+          }
+        }
+      }
+    },
+    "consensus": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Points where 3+ personas agree"
+    },
+    "clashes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "personas": { "type": "array", "items": { "type": "string" } },
+          "disagreement": { "type": "string" }
+        }
+      }
+    },
+    "blind_spots": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "recommendation": {
+      "type": "object",
+      "required": ["option", "rationale", "safeguards"],
+      "properties": {
+        "option": { "type": "string" },
+        "rationale": { "type": "string" },
+        "safeguards": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "one_thing_to_do_first": { "type": "string" },
+    "requires_human_decision": { "type": "boolean" },
+    "human_decision_reason": { "type": "string" },
+    "errors": { "type": "array", "items": { "type": "string" } }
+  }
+}

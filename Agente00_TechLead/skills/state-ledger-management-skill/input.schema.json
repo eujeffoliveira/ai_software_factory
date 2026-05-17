@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "State Ledger Management Skill Input",
+  "type": "object",
+  "required": ["operation"],
+  "properties": {
+    "operation": { "type": "string", "enum": ["CREATE", "UPDATE", "VALIDATE", "SUMMARIZE", "DETECT_INCONSISTENCY"] },
+    "project_name": { "type": "string" },
+    "project_id": { "type": "string" },
+    "update_type": { "type": "string", "enum": ["gate_decision", "risk", "adr", "open_question", "decision", "human_approval", "block", "resolve_block", "phase_change"] },
+    "update_payload": { "type": "object" },
+    "current_ledger": { "type": "object", "description": "Current State_Ledger.json content" }
+  }
+}

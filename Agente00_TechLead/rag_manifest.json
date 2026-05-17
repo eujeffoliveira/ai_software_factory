@@ -1,0 +1,143 @@
+{
+  "agent_id": "Agente00_TechLead",
+  "edition": "generic-white-label",
+  "version": "1.0.0",
+  "retrieval_policy": {
+    "runtime_local_only": true,
+    "prefer_local_context": true,
+    "prefer_normative_architecture": true,
+    "books_are_theoretical": true,
+    "max_chunks": 10,
+    "require_source_metadata": true,
+    "chunk_by": "subsection",
+    "preserve_tables": true,
+    "prioritize_mandatory_rules": true,
+    "prioritize_antipatterns": true
+  },
+  "collections": [
+    {
+      "name": "architecture_reference_full",
+      "priority": "core",
+      "usage": "normative",
+      "description": "Complete reference architecture — Golden Model, stack, rules, anti-patterns, security, deploy",
+      "source": "reference_architecture_generico.md (compiled into context_view.md)",
+      "agent_view": "TechLeadView",
+      "runtime_access": "via context_view.md only"
+    },
+    {
+      "name": "factory_governance",
+      "priority": "core",
+      "usage": "operational",
+      "description": "Agent roles, responsibilities, handoff contracts, gates, state ledger, authority matrix",
+      "source": "manual_arquitetura_componentes_generico.md + integrantes.md (compiled into context_view.md)",
+      "runtime_access": "via context_view.md only"
+    },
+    {
+      "name": "adr_governance",
+      "priority": "core",
+      "usage": "operational",
+      "description": "ADR templates, when-to-create rules, ADR registry patterns",
+      "source": "reference_architecture_generico.md section 4 (compiled into context_view.md)",
+      "runtime_access": "via context_view.md and ADR_Request.md template"
+    },
+    {
+      "name": "software_architecture",
+      "priority": "supporting",
+      "usage": "theoretical",
+      "description": "Software architecture fundamentals, trade-off analysis, architecture characteristics",
+      "source_titles": [
+        "Fundamentals of Software Architecture — Mark Richards & Neal Ford",
+        "Clean Architecture — Robert C. Martin",
+        "Building Microservices — Sam Newman",
+        "Domain-Driven Design — Eric Evans"
+      ],
+      "local_pdfs_available": ["lib/SoftwareArchitect/Fundamentals of Software Architecture – Mark Richards and Neal Ford.pdf"],
+      "rag_collection_id": "software_architecture"
+    },
+    {
+      "name": "leadership_engineering",
+      "priority": "supporting",
+      "usage": "theoretical",
+      "description": "Technical leadership, engineering management, professional conduct, team coordination",
+      "source_titles": [
+        "Modern Software Engineering — David Farley",
+        "The Mythical Man-Month — Frederick P. Brooks Jr.",
+        "The Clean Coder — Robert C. Martin",
+        "Staff Engineer — Will Larson",
+        "An Elegant Puzzle — Will Larson"
+      ],
+      "local_pdfs_available": [
+        "lib/TechLead/The Mythical Man-Month – Frederick P. Brooks Jr.pdf",
+        "lib/TechLead/The Clean Coder – Robert C. Martin.pdf"
+      ],
+      "rag_collection_id": "leadership_engineering"
+    },
+    {
+      "name": "devops_accelerate",
+      "priority": "supporting",
+      "usage": "theoretical",
+      "description": "Delivery performance, deployment frequency, change failure rate, MTTR, CI/CD, SRE",
+      "source_titles": [
+        "Accelerate — Nicole Forsgren, Jez Humble, Gene Kim",
+        "Continuous Delivery — Jez Humble & David Farley",
+        "Site Reliability Engineering — Google SRE Book"
+      ],
+      "local_pdfs_available": [
+        "lib/TechLead/Accelerate – Nicole Forsgren, Jez Humble and Gene Kim.pdf",
+        "lib/DevOps/Continuous Delivery – Jez Humble and David Farley.pdf",
+        "lib/DevOps/Site Reliability Engineering – Niall Richard Murphy et al.pdf"
+      ],
+      "rag_collection_id": "devops_accelerate"
+    },
+    {
+      "name": "team_topologies",
+      "priority": "optional",
+      "usage": "theoretical",
+      "description": "Team structures, cognitive load, stream-aligned teams, Conway's Law implications",
+      "source_titles": [
+        "Team Topologies — Matthew Skelton & Manuel Pais"
+      ],
+      "local_pdfs_available": [],
+      "rag_collection_id": "team_topologies"
+    }
+  ],
+  "blocked_sources": [
+    "raw_pdf_files_at_runtime",
+    "context/",
+    "00-contexto/",
+    "lib/",
+    "01-bibliografia/",
+    "manual_arquitetura_componentes_generico.md",
+    "reference_architecture_generico.md",
+    "integrantes.md",
+    "base_teorica.md"
+  ],
+  "raw_sources_policy": {
+    "raw_pdfs_allowed_at_runtime": false,
+    "raw_books_allowed_at_runtime": false,
+    "bibliography_folder_allowed_at_runtime": false,
+    "build_time_distillation_required": true,
+    "runtime_uses_distilled_chunks_only": true,
+    "policy_enforcement": "blocked_sources list above + agent_config.json runtime_knowledge_policy"
+  },
+  "local_distilled_sources": [
+    "Agente00_TechLead/knowledge/knowledge_cards.md",
+    "Agente00_TechLead/knowledge/principles.md",
+    "Agente00_TechLead/knowledge/heuristics.md",
+    "Agente00_TechLead/knowledge/decision_rules.md",
+    "Agente00_TechLead/knowledge/source_map.json"
+  ],
+  "metadata_schema": {
+    "source_title": "string",
+    "source_type": "book | standard | architecture_doc | internal_doc | adr | project_doc",
+    "agent_scope": ["agent-id"],
+    "domain": "requirements | architecture | backend | frontend | qa | security | devops | data | ux | leadership | governance",
+    "chapter": "string",
+    "section": "string",
+    "priority": "core | supporting | optional",
+    "rule_level": "mandatory | golden_path | adr_required | reference | theoretical",
+    "language": "en-US | pt-BR",
+    "version": "string",
+    "copyright_policy": "retrieval_only"
+  }
+}

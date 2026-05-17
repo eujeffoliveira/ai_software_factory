@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Routing Skill Output",
+  "type": "object",
+  "required": ["success", "next_agent", "routing_rationale"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "next_agent": {
+      "type": "string",
+      "description": "Valid agent ID from approved roster"
+    },
+    "routing_rationale": {
+      "type": "string",
+      "description": "Why this agent was selected"
+    },
+    "agent_briefing": {
+      "type": "object",
+      "description": "Complete Agent_Briefing object following agent_briefing.schema.json"
+    },
+    "state_ledger_update": {
+      "type": "object",
+      "properties": {
+        "next_agent": { "type": "string" },
+        "current_agent": { "type": "string" },
+        "next_action": { "type": "string" },
+        "current_phase": { "type": "string" }
+      },
+      "description": "Fields to apply to State Ledger"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

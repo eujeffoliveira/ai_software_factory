@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Council Mediation Skill Input",
+  "type": "object",
+  "required": ["topic", "context", "options", "urgency"],
+  "properties": {
+    "topic": {
+      "type": "string",
+      "description": "The specific question or decision the Council must deliberate"
+    },
+    "context": {
+      "type": "string",
+      "description": "Background, current project state, constraints, and why this decision is needed now"
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["label", "description", "pros", "cons", "risks"],
+        "properties": {
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "pros": { "type": "array", "items": { "type": "string" } },
+          "cons": { "type": "array", "items": { "type": "string" } },
+          "risks": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "affected_phases": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "urgency": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    },
+    "prior_decision": {
+      "type": "string",
+      "description": "Reference to any prior decision being revisited"
+    },
+    "council_trigger": {
+      "type": "string",
+      "description": "Which mandatory or recommended trigger activated the Council"
+    }
+  }
+}

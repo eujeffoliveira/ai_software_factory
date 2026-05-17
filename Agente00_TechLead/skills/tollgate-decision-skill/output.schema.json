@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tollgate Decision Skill Output",
+  "type": "object",
+  "required": ["success", "gate_decision", "status_code"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "gate_decision": {
+      "type": "object",
+      "required": ["gate", "phase", "status", "validation_results", "rationale", "required_actions", "next_agent"],
+      "properties": {
+        "gate": { "type": "integer" },
+        "phase": { "type": "string" },
+        "status": { "type": "string" },
+        "decided_by": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "validation_results": { "type": "array" },
+        "rationale": { "type": "string" },
+        "required_actions": { "type": "array", "items": { "type": "string" } },
+        "adr_status": { "type": "string" },
+        "next_agent": { "type": "string" }
+      }
+    },
+    "status_code": {
+      "type": "string",
+      "enum": [
+        "APPROVED", "APPROVED_WITH_CONDITIONS", "APPROVED_WITH_ADR",
+        "RETURNED_FOR_REVISION", "BLOCKED_PENDING_ADR", "BLOCKED_PENDING_HUMAN",
+        "BLOCKED_PENDING_SECURITY", "BLOCKED_PENDING_QA", "ESCALATED_TO_COUNCIL",
+        "ESCALATED_TO_HUMAN", "FAILED", "REVOKED", "CONDITIONAL_PASS",
+        "PARTIAL_APPROVAL", "DEFERRED", "FAST_TRACKED", "SUSPENDED",
+        "EXPIRED", "CONTESTED", "PENDING_REVIEW", "RESUBMITTED"
+      ]
+    },
+    "state_ledger_update": {
+      "type": "object",
+      "description": "Gate history entry to append to State Ledger"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

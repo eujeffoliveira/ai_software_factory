@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Routing Skill Input",
+  "type": "object",
+  "required": ["current_phase", "gate_status", "gate_number"],
+  "properties": {
+    "current_phase": {
+      "type": "string",
+      "enum": ["requirements", "architecture", "planning", "implementation", "qa", "security", "deployment", "post-deploy", "closed"]
+    },
+    "gate_status": {
+      "type": "string",
+      "enum": ["APPROVED", "APPROVED_WITH_CONDITIONS", "APPROVED_WITH_ADR", "RETURNED_FOR_REVISION", "BLOCKED_PENDING_ADR", "BLOCKED_PENDING_HUMAN"]
+    },
+    "gate_number": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "open_adrs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ADR IDs that are open/pending"
+    },
+    "conditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions from APPROVED_WITH_CONDITIONS status"
+    },
+    "target_agent_override": {
+      "type": "string",
+      "description": "Optional explicit agent ID override"
+    },
+    "current_ledger": {
+      "type": "object",
+      "description": "Current State_Ledger.json content"
+    }
+  }
+}

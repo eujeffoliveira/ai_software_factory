@@ -1,0 +1,170 @@
+{
+  "agent_id": "Agente00_TechLead",
+  "edition": "generic-white-label",
+  "build_date": "2026-05-17",
+  "distillation_policy": "All raw sources are consumed once at build-time. Runtime uses only derived local artifacts.",
+  "sources_processed_at_build_time": [
+    {
+      "source_title": "manual_arquitetura_componentes_generico.md",
+      "source_type": "internal_doc",
+      "source_path": "context/manual_arquitetura_componentes_generico.md",
+      "lines": 1797,
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "derived_artifacts": [
+        "context_view.md",
+        "prompt.md",
+        "quality_gate.md",
+        "handoff_schema.json",
+        "schemas/state_ledger.schema.json",
+        "schemas/gate_decision.schema.json",
+        "schemas/council_verdict.schema.json",
+        "schemas/human_escalation.schema.json",
+        "schemas/agent_briefing.schema.json",
+        "templates/State_Ledger.json",
+        "templates/Gate_Decision.md",
+        "templates/Council_Verdict.md",
+        "templates/Human_Escalation_Request.md",
+        "templates/Agent_Briefing.md",
+        "templates/Handoff_Validation_Report.md",
+        "checklists/tollgate_checklist.md",
+        "checklists/human_escalation_checklist.md",
+        "checklists/state_ledger_update_checklist.md",
+        "checklists/council_activation_checklist.md",
+        "knowledge/knowledge_cards.md",
+        "knowledge/principles.md",
+        "knowledge/heuristics.md",
+        "knowledge/decision_rules.md"
+      ]
+    },
+    {
+      "source_title": "integrantes.md",
+      "source_type": "internal_doc",
+      "source_path": "context/integrantes.md",
+      "lines": 2329,
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED_WITH_ABSTRACTION",
+      "note": "Used as fallback for integrantes_generico.md (not yet created). White-label abstractions applied manually: 'Raiz Educação' → 'Organization', domain-specific terminology abstracted.",
+      "derived_artifacts": [
+        "context_view.md",
+        "prompt.md",
+        "rag_manifest.json",
+        "skills_manifest.md",
+        "agent_config.json"
+      ]
+    },
+    {
+      "source_title": "reference_architecture_generico.md",
+      "source_type": "architecture_doc",
+      "source_path": "context/reference_architecture_generico.md",
+      "lines": 1900,
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "derived_artifacts": [
+        "context_view.md",
+        "agent_config.json",
+        "checklists/adr_required_checklist.md",
+        "checklists/runtime_isolation_checklist.md",
+        "skills/adr-governance-skill/skill.md",
+        "knowledge/knowledge_cards.md",
+        "knowledge/decision_rules.md"
+      ]
+    },
+    {
+      "source_title": "base_teorica.md",
+      "source_type": "internal_doc",
+      "source_path": "context/base_teorica.md",
+      "lines": null,
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Bibliography mapping used to populate rag_manifest.json collections and knowledge/source_map.json bibliography entries.",
+      "derived_artifacts": [
+        "rag_manifest.json",
+        "build/Agente00_TechLead_bibliography_inventory.json"
+      ]
+    },
+    {
+      "source_title": "The Mythical Man-Month — Frederick P. Brooks Jr.",
+      "source_type": "book",
+      "source_path": "lib/TechLead/The Mythical Man-Month – Frederick P. Brooks Jr.pdf",
+      "usage": "build_time_distillation_only",
+      "status": "INVENTORIED_NOT_READ",
+      "note": "PDF exists in lib/TechLead/. Full content not read during build due to length. Key concepts known from training data: Brooks's Law (adding people to a late project makes it later), conceptual integrity, communication overhead O(n²). Concepts incorporated into principles and heuristics implicitly.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P1 — Orchestrate, do not replace specialists)",
+        "knowledge/heuristics.md (H1 — Handoff Package absent = reject)"
+      ]
+    },
+    {
+      "source_title": "The Clean Coder — Robert C. Martin",
+      "source_type": "book",
+      "source_path": "lib/TechLead/The Clean Coder – Robert C. Martin.pdf",
+      "usage": "build_time_distillation_only",
+      "status": "INVENTORIED_NOT_READ",
+      "note": "PDF exists in lib/TechLead/. Full content not read during build. Key concepts known from training data: professional responsibility, 'No' as a complete sentence, estimation honesty, not shipping broken code. Concepts incorporated into principles implicitly.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P7 — QA and DevSecOps can block)",
+        "knowledge/heuristics.md (H5, H6)"
+      ]
+    },
+    {
+      "source_title": "Accelerate — Nicole Forsgren, Jez Humble, Gene Kim",
+      "source_type": "book",
+      "source_path": "lib/TechLead/Accelerate – Nicole Forsgren, Jez Humble and Gene Kim.pdf",
+      "usage": "build_time_distillation_only",
+      "status": "INVENTORIED_NOT_READ",
+      "note": "PDF exists in lib/TechLead/. Full content not read during build. Key concepts known from training data: DORA metrics (deployment frequency, lead time, change failure rate, MTTR), trunk-based development, CI/CD as predictor of performance. Concepts implicitly incorporated into deploy phase gates and rollback requirements.",
+      "derived_artifacts": [
+        "quality_gate.md (Gate 6 and Gate 7 criteria)",
+        "knowledge/principles.md (P5 — Production deployment requires rollback)"
+      ]
+    },
+    {
+      "source_title": "Modern Software Engineering — David Farley",
+      "source_type": "book",
+      "source_path": null,
+      "usage": "build_time_distillation_only",
+      "status": "NOT_AVAILABLE_LOCALLY",
+      "note": "Not found in lib/ during build. Concepts known from training data: testability, deployability, managing complexity, empirical approach. Not directly incorporated; covered by Accelerate and Clean Coder overlap.",
+      "derived_artifacts": []
+    },
+    {
+      "source_title": "Staff Engineer — Will Larson",
+      "source_type": "book",
+      "source_path": null,
+      "usage": "build_time_distillation_only",
+      "status": "NOT_AVAILABLE_LOCALLY",
+      "note": "Not found in lib/ during build. Concepts known from training data: staff archetypes, tech strategy, influence without authority, writing documents. Incorporated implicitly via Tech Lead Council design.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P1 — Orchestrate, do not replace specialists)"
+      ]
+    },
+    {
+      "source_title": "Team Topologies — Matthew Skelton & Manuel Pais",
+      "source_type": "book",
+      "source_path": null,
+      "usage": "build_time_distillation_only",
+      "status": "NOT_AVAILABLE_LOCALLY",
+      "note": "Not found in lib/ during build. Concepts known from training data: cognitive load, stream-aligned teams, Conway's Law, enabling teams. Not directly required for Tech Lead operational rules.",
+      "derived_artifacts": []
+    }
+  ],
+  "sources_not_processed": [
+    {
+      "source_title": "integrantes_generico.md",
+      "source_path": "context/integrantes_generico.md",
+      "reason": "File does not exist. Fallback to integrantes.md with manual white-label abstraction.",
+      "impact": "LOW — abstraction applied manually. Review context_view.md when this file is created.",
+      "recommended_action": "When integrantes_generico.md is created, run a build patch to re-review context_view.md for any residual domain-specific terminology."
+    }
+  ],
+  "runtime_access_policy": {
+    "raw_sources_allowed": false,
+    "pdf_access_allowed": false,
+    "bibliography_folder_allowed": false,
+    "global_context_folder_allowed": false,
+    "local_distilled_artifacts_allowed": true,
+    "local_knowledge_path": "Agente00_TechLead/knowledge/",
+    "enforcement": "agent_config.json blocked_runtime_sources + prompt.md Build-Time Knowledge Distillation Policy"
+  }
+}

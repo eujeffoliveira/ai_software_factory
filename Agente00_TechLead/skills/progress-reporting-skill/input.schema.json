@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Progress Reporting Skill Input",
+  "type": "object",
+  "required": ["report_type", "current_ledger"],
+  "properties": {
+    "report_type": {
+      "type": "string",
+      "enum": ["EXECUTIVE", "TECHNICAL", "GATE_TRANSITION", "INCIDENT"]
+    },
+    "current_ledger": {
+      "type": "object",
+      "description": "Current State_Ledger.json — must be the complete, up-to-date ledger"
+    },
+    "audience": {
+      "type": "string",
+      "enum": ["STAKEHOLDER", "TECH_LEAD", "AGENT"],
+      "default": "STAKEHOLDER"
+    },
+    "period_covered": {
+      "type": "object",
+      "properties": {
+        "from": { "type": "string", "format": "date" },
+        "to": { "type": "string", "format": "date" }
+      }
+    },
+    "gate_transition": {
+      "type": "object",
+      "description": "For GATE_TRANSITION report type: gate number and status codes",
+      "properties": {
+        "gate": { "type": "integer" },
+        "previous_status": { "type": "string" },
+        "new_status": { "type": "string" }
+      }
+    },
+    "incident_context": {
+      "type": "string",
+      "description": "For INCIDENT report type: what happened and current state"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gate Decision",
+  "description": "Formal gate decision issued by the Tech Lead at each phase transition",
+  "type": "object",
+  "required": ["gate", "phase", "status", "rationale", "required_actions", "next_agent", "decided_at"],
+  "properties": {
+    "gate": { "type": "integer", "minimum": 1, "maximum": 7 },
+    "phase": {
+      "type": "string",
+      "enum": ["requirements", "architecture", "planning", "qa", "security", "deploy", "post_deploy"]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "APPROVED",
+        "APPROVED_WITH_ADR",
+        "APPROVED_WITH_WARNINGS",
+        "NEEDS_MORE_REQUIREMENTS",
+        "NEEDS_REVISION",
+        "NEEDS_TASK_SPLIT",
+        "NEEDS_DEPENDENCY_FIX",
+        "NEEDS_ENV_FIX",
+        "NEEDS_ROLLBACK_PLAN",
+        "REJECTED_OUT_OF_SCOPE",
+        "REJECTED_RISK_TOO_HIGH",
+        "PASS",
+        "FAIL_FIX_REQUIRED",
+        "FAIL_BLOCKING",
+        "BLOCKED_SECURITY_RISK",
+        "BLOCKED_PRIVACY_RISK",
+        "BLOCKED_PRODUCTION_APPROVAL_REQUIRED",
+        "READY_FOR_DEPLOY",
+        "DEPLOY_HEALTHY",
+        "DEPLOY_DEGRADED",
+        "ROLLBACK_REQUIRED",
+        "INCIDENT_OPENED"
+      ]
+    },
+    "validation_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "result"],
+        "properties": {
+          "criterion": { "type": "string", "minLength": 1 },
+          "result": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "rationale": { "type": "string", "minLength": 20 },
+    "required_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "next_agent": { "type": "string" },
+    "adr_required": { "type": "boolean" },
+    "adr_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "human_escalation_required": { "type": "boolean" },
+    "council_triggered": { "type": "boolean" },
+    "decided_at": { "type": "string", "format": "date-time" },
+    "decided_by": { "type": "string", "default": "Agente00_TechLead" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human Escalation Skill Output",
+  "type": "object",
+  "required": ["success", "escalation_request", "pipeline_halt"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "escalation_request": {
+      "type": "object",
+      "required": ["urgency", "context", "decision_required", "options", "tech_lead_recommendation", "impact_of_delay", "blocking"],
+      "properties": {
+        "urgency": { "type": "string" },
+        "context": { "type": "string" },
+        "decision_required": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "description": { "type": "string" },
+              "pros": { "type": "array", "items": { "type": "string" } },
+              "cons": { "type": "array", "items": { "type": "string" } },
+              "risk": { "type": "string" }
+            }
+          }
+        },
+        "tech_lead_recommendation": { "type": "object" },
+        "impact_of_delay": { "type": "string" },
+        "blocking": {
+          "type": "object",
+          "properties": {
+            "gate": { "type": "integer" },
+            "next_agent": { "type": "string" },
+            "unblock_condition": { "type": "string" }
+          }
+        }
+      }
+    },
+    "pipeline_halt": {
+      "type": "boolean",
+      "const": true,
+      "description": "Always true — pipeline must halt until human responds"
+    },
+    "state_ledger_update": {
+      "type": "object",
+      "description": "Entry to add to human_approvals_required in State Ledger"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

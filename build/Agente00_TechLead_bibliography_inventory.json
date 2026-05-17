@@ -1,0 +1,126 @@
+{
+  "agent_id": "Agente00_TechLead",
+  "build_date": "2026-05-17",
+  "edition": "generic-white-label",
+  "sources": [
+    {
+      "title": "Accelerate: The Science of Lean Software and DevOps",
+      "authors": "Nicole Forsgren, Jez Humble, Gene Kim",
+      "local_path": "lib/TechLead/Accelerate – Nicole Forsgren, Jez Humble and Gene Kim.pdf",
+      "available_locally": true,
+      "domain": "engineering_leadership",
+      "priority": "core",
+      "usage": "retrieval_only",
+      "rag_collection": "devops_accelerate",
+      "key_concepts": ["DORA metrics", "delivery performance", "change failure rate", "deployment frequency", "lead time", "MTTR"]
+    },
+    {
+      "title": "The Mythical Man-Month: Essays on Software Engineering",
+      "authors": "Frederick P. Brooks Jr.",
+      "local_path": "lib/TechLead/The Mythical Man-Month – Frederick P. Brooks Jr.pdf",
+      "available_locally": true,
+      "domain": "software_engineering_leadership",
+      "priority": "core",
+      "usage": "retrieval_only",
+      "rag_collection": "leadership_engineering",
+      "key_concepts": ["Brooks Law", "conceptual integrity", "no silver bullet", "software complexity", "team coordination"]
+    },
+    {
+      "title": "The Clean Coder: A Code of Conduct for Professional Programmers",
+      "authors": "Robert C. Martin",
+      "local_path": "lib/TechLead/The Clean Coder – Robert C. Martin.pdf",
+      "available_locally": true,
+      "domain": "professional_software_engineering",
+      "priority": "supporting",
+      "usage": "retrieval_only",
+      "rag_collection": "leadership_engineering",
+      "key_concepts": ["professional ethics", "saying no", "estimation", "pressure", "testing discipline"]
+    },
+    {
+      "title": "Modern Software Engineering",
+      "authors": "David Farley",
+      "local_path": null,
+      "available_locally": false,
+      "domain": "software_engineering",
+      "priority": "core",
+      "usage": "retrieval_only",
+      "rag_collection": "leadership_engineering",
+      "key_concepts": ["spec-driven development", "modularity", "feedback loops", "continuous learning", "empirical process"]
+    },
+    {
+      "title": "Staff Engineer: Leadership Beyond the Management Track",
+      "authors": "Will Larson",
+      "local_path": null,
+      "available_locally": false,
+      "domain": "technical_leadership",
+      "priority": "supporting",
+      "usage": "retrieval_only",
+      "rag_collection": "leadership_engineering",
+      "key_concepts": ["technical strategy", "staff archetypes", "glue work", "influence without authority", "eng vision"]
+    },
+    {
+      "title": "An Elegant Puzzle: Systems of Engineering Management",
+      "authors": "Will Larson",
+      "local_path": null,
+      "available_locally": false,
+      "domain": "engineering_management",
+      "priority": "optional",
+      "usage": "retrieval_only",
+      "rag_collection": "leadership_engineering",
+      "key_concepts": ["organizational design", "technical debt", "systems thinking", "team capacity"]
+    },
+    {
+      "title": "Team Topologies: Organizing Business and Technology Teams for Fast Flow",
+      "authors": "Matthew Skelton, Manuel Pais",
+      "local_path": null,
+      "available_locally": false,
+      "domain": "team_organization",
+      "priority": "optional",
+      "usage": "retrieval_only",
+      "rag_collection": "team_topologies",
+      "key_concepts": ["stream-aligned teams", "platform teams", "cognitive load", "team interaction modes", "Conway's Law"]
+    },
+    {
+      "title": "Fundamentals of Software Architecture",
+      "authors": "Mark Richards, Neal Ford",
+      "local_path": "lib/SoftwareArchitect/Fundamentals of Software Architecture – Mark Richards and Neal Ford.pdf",
+      "available_locally": true,
+      "domain": "software_architecture",
+      "priority": "supporting",
+      "usage": "retrieval_only",
+      "rag_collection": "software_architecture",
+      "key_concepts": ["architecture characteristics", "trade-offs", "ADRs", "fitness functions", "architecture styles"]
+    },
+    {
+      "title": "Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation",
+      "authors": "Jez Humble, David Farley",
+      "local_path": "lib/DevOps/Continuous Delivery – Jez Humble and David Farley.pdf",
+      "available_locally": true,
+      "domain": "devops",
+      "priority": "core",
+      "usage": "retrieval_only",
+      "rag_collection": "devops_accelerate",
+      "key_concepts": ["deployment pipeline", "feature flags", "trunk-based development", "zero-downtime", "rollback"]
+    },
+    {
+      "title": "Site Reliability Engineering",
+      "authors": "Niall Richard Murphy et al.",
+      "local_path": "lib/DevOps/Site Reliability Engineering – Niall Richard Murphy et al.pdf",
+      "available_locally": true,
+      "domain": "sre",
+      "priority": "supporting",
+      "usage": "retrieval_only",
+      "rag_collection": "devops_accelerate",
+      "key_concepts": ["SLOs", "error budgets", "toil", "incidents", "on-call", "postmortems"]
+    }
+  ],
+  "rag_collections_summary": {
+    "leadership_engineering": ["Modern Software Engineering", "The Mythical Man-Month", "The Clean Coder", "Staff Engineer", "An Elegant Puzzle"],
+    "devops_accelerate": ["Accelerate", "Continuous Delivery", "Site Reliability Engineering"],
+    "software_architecture": ["Fundamentals of Software Architecture"],
+    "team_topologies": ["Team Topologies"],
+    "adr_governance": ["reference_architecture_generico.md — Section 4"],
+    "architecture_reference_full": ["reference_architecture_generico.md — full document"],
+    "factory_governance": ["manual_arquitetura_componentes_generico.md", "integrantes.md"]
+  }
+}

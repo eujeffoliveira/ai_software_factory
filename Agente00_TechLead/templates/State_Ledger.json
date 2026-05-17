@@ -1,0 +1,29 @@
+{
+  "project_name": "{{PROJECT_NAME}}",
+  "project_id": "{{PROJECT_ID}}",
+  "created_at": "{{ISO_DATETIME}}",
+  "updated_at": "{{ISO_DATETIME}}",
+  "current_phase": "requirements",
+  "current_agent": "Agente00_TechLead",
+  "next_agent": "Agente01_ProductOwner",
+  "approved_artifacts": {
+    "prd": false,
+    "architecture": false,
+    "api_contract": false,
+    "db_schema": false,
+    "execution_plan": false,
+    "qa": false,
+    "security": false,
+    "deployment": false,
+    "rollback": false,
+    "post_deploy": false
+  },
+  "open_questions": [],
+  "decisions": [],
+  "adrs": [],
+  "risks": [],
+  "blocked_tasks": [],
+  "human_approvals_required": [],
+  "gate_history": [],
+  "next_action": "Route to Agente01_ProductOwner with initial briefing"
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Progress Reporting Skill Output",
+  "type": "object",
+  "required": ["success", "report", "health_status"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "report": {
+      "type": "string",
+      "description": "Complete formatted report in Markdown"
+    },
+    "health_status": {
+      "type": "string",
+      "enum": ["GREEN", "YELLOW", "RED"],
+      "description": "Overall project health indicator"
+    },
+    "key_metrics": {
+      "type": "object",
+      "properties": {
+        "gates_approved": { "type": "integer" },
+        "gates_total": { "type": "integer", "const": 7 },
+        "current_phase": { "type": "string" },
+        "active_risks_critical": { "type": "integer" },
+        "active_risks_high": { "type": "integer" },
+        "active_risks_medium": { "type": "integer" },
+        "open_questions_blocking": { "type": "integer" },
+        "open_questions_total": { "type": "integer" },
+        "pending_human_approvals": { "type": "integer" },
+        "approved_artifacts": { "type": "integer" }
+      }
+    },
+    "blocking_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["RISK", "OPEN_QUESTION", "HUMAN_APPROVAL", "GATE_BLOCK", "ADR_PENDING"] },
+          "id": { "type": "string" },
+          "description": { "type": "string" },
+          "severity": { "type": "string" }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

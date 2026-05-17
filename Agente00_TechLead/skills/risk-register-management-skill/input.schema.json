@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Risk Register Management Skill Input",
+  "type": "object",
+  "required": ["operation"],
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": ["ADD", "UPDATE", "CLOSE", "SUMMARIZE"]
+    },
+    "risk": {
+      "type": "object",
+      "description": "Required for ADD operation",
+      "properties": {
+        "description": { "type": "string" },
+        "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+        "likelihood": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+        "category": {
+          "type": "string",
+          "enum": ["TECHNICAL", "SCOPE", "SCHEDULE", "RESOURCE", "EXTERNAL", "SECURITY", "QUALITY", "OPERATIONAL", "BUSINESS"]
+        },
+        "mitigation": { "type": "string" },
+        "owner": { "type": "string" },
+        "reported_by": { "type": "string" }
+      },
+      "required": ["description", "severity", "category"]
+    },
+    "risk_id": {
+      "type": "string",
+      "pattern": "^RISK-[0-9]{3}$",
+      "description": "Required for UPDATE and CLOSE operations"
+    },
+    "update_payload": {
+      "type": "object",
+      "description": "Fields to update — only specified fields are changed"
+    },
+    "current_ledger": {
+      "type": "object",
+      "description": "Current State_Ledger.json"
+    }
+  }
+}

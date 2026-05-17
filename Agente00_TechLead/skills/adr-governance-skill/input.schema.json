@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADR Governance Skill Input",
+  "type": "object",
+  "required": ["deviation_identified", "golden_path_violated", "source_artifact"],
+  "properties": {
+    "deviation_identified": {
+      "type": "string",
+      "description": "Clear description of what deviates from the Golden Model"
+    },
+    "golden_path_violated": {
+      "type": "string",
+      "description": "Specific Golden Model rule that is being violated"
+    },
+    "source_artifact": {
+      "type": "string",
+      "description": "Which artifact or document contains the deviation"
+    },
+    "deviation_category": {
+      "type": "string",
+      "enum": ["technology", "architecture_pattern", "irreversible_decision"],
+      "description": "Category of deviation — determines ADR severity and process"
+    },
+    "council_verdict": {
+      "type": "object",
+      "description": "Optional council verdict if Council already deliberated on this deviation"
+    },
+    "proposed_adr": {
+      "type": "object",
+      "description": "Optional pre-written ADR from submitting agent",
+      "properties": {
+        "context": { "type": "string" },
+        "decision": { "type": "string" },
+        "consequences": { "type": "string" },
+        "alternatives_considered": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "current_ledger": {
+      "type": "object",
+      "description": "Current State_Ledger.json for ADR ID assignment"
+    }
+  }
+}

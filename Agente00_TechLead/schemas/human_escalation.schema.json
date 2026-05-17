@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human Escalation Request",
+  "description": "Structured escalation request for decisions that require human judgment",
+  "type": "object",
+  "required": ["id", "topic", "urgency", "context", "decision_required", "options", "recommendation", "impact_of_delay", "requested_at"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "topic": { "type": "string", "minLength": 1 },
+    "urgency": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM"] },
+    "project": { "type": "string" },
+    "current_phase": { "type": "string" },
+    "context": { "type": "string", "minLength": 50 },
+    "decision_required": { "type": "string", "minLength": 20 },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["label", "pros", "cons", "risk"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "pros": { "type": "array", "items": { "type": "string" } },
+          "cons": { "type": "array", "items": { "type": "string" } },
+          "risk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }
+        }
+      }
+    },
+    "recommendation": { "type": "string", "minLength": 20 },
+    "impact_of_delay": { "type": "string", "minLength": 20 },
+    "next_step_after_decision": { "type": "string" },
+    "blocking_agents": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requested_at": { "type": "string", "format": "date-time" },
+    "requested_by": { "type": "string", "default": "Agente00_TechLead" },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+    "human_decision": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

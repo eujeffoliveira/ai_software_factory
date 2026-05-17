@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADR Request",
+  "description": "Request from Tech Lead to Software Architect to create an Architecture Decision Record",
+  "type": "object",
+  "required": ["id", "deviation_identified", "golden_path_violated", "decision_required", "requested_from_agent", "requested_at"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "deviation_identified": { "type": "string", "minLength": 20 },
+    "golden_path_violated": { "type": "string", "minLength": 1 },
+    "decision_required": { "type": "string", "minLength": 20 },
+    "context": { "type": "string" },
+    "gate_blocked_until_resolved": { "type": "integer", "minimum": 1, "maximum": 7 },
+    "urgency": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "requested_from_agent": { "type": "string" },
+    "requested_at": { "type": "string", "format": "date-time" },
+    "requested_by": { "type": "string", "default": "Agente00_TechLead" },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+    "adr_id_assigned": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

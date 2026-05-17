@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Risk Register Management Skill Output",
+  "type": "object",
+  "required": ["success"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "risk_id": {
+      "type": "string",
+      "description": "Assigned or affected risk ID"
+    },
+    "updated_risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "severity", "likelihood", "category", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "likelihood": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+          "category": { "type": "string" },
+          "status": { "type": "string", "enum": ["OPEN", "MITIGATED", "ESCALATED", "ACCEPTED", "CLOSED"] },
+          "mitigation": { "type": "string" },
+          "owner": { "type": "string" },
+          "reported_by": { "type": "string" },
+          "reported_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "closed_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "escalation_required": {
+      "type": "boolean",
+      "description": "True if any CRITICAL risk has no mitigation or escalation"
+    },
+    "escalation_risks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "RISK IDs that require escalation"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Formatted risk summary (for SUMMARIZE operation)"
+    },
+    "state_ledger_update": {
+      "type": "object",
+      "description": "Risks array update to apply to State Ledger"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

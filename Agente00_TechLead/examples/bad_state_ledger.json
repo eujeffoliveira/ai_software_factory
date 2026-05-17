@@ -1,0 +1,52 @@
+{
+  "_comment": "BAD EXAMPLE — Multiple critical violations. Do not use as a model.",
+  "_violations": [
+    "current_phase is 'deploy' but PRD and architecture are not approved — impossible state",
+    "next_agent is missing",
+    "approved_artifacts do not match current_phase (qa=false but phase is deploy)",
+    "open_questions has blocking question with no resolution attempt",
+    "risks array is empty despite blocked_tasks — risks should have been registered",
+    "human_approvals_required is empty but phase is 'deploy' — production deploy requires human approval",
+    "gate_history is empty — no record of how we got to this phase",
+    "next_action is vague and not actionable",
+    "No ADRs despite architecture presumably having been reviewed",
+    "updated_at is same as created_at — State Ledger was never updated after initialization"
+  ],
+  "project_name": "Something",
+  "project_id": "",
+  "created_at": "2026-05-17T09:00:00Z",
+  "updated_at": "2026-05-17T09:00:00Z",
+  "current_phase": "deploy",
+  "current_agent": "Agente08_DevOps",
+  "next_agent": "",
+  "approved_artifacts": {
+    "prd": false,
+    "architecture": false,
+    "api_contract": false,
+    "db_schema": false,
+    "execution_plan": false,
+    "qa": false,
+    "security": false,
+    "deployment": false,
+    "rollback": false,
+    "post_deploy": false
+  },
+  "open_questions": [
+    {
+      "question": "What is the authentication model?",
+      "blocking": true
+    }
+  ],
+  "decisions": [],
+  "adrs": [],
+  "risks": [],
+  "blocked_tasks": [
+    {
+      "description": "Backend implementation stalled",
+      "blocked_by": "missing schema"
+    }
+  ],
+  "human_approvals_required": [],
+  "gate_history": [],
+  "next_action": "continue"
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human Escalation Skill Input",
+  "type": "object",
+  "required": ["escalation_reason", "context", "urgency", "options", "tech_lead_recommendation"],
+  "properties": {
+    "escalation_reason": {
+      "type": "string",
+      "description": "Specific trigger from the mandatory or recommended escalation list"
+    },
+    "context": {
+      "type": "string",
+      "description": "Project state, what decision is needed, and why it cannot be made autonomously"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM"]
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["label", "description", "pros", "cons", "risk"],
+        "properties": {
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "pros": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "cons": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "risk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }
+        }
+      }
+    },
+    "tech_lead_recommendation": {
+      "type": "object",
+      "required": ["recommended_option", "rationale"],
+      "properties": {
+        "recommended_option": { "type": "string" },
+        "rationale": { "type": "string" }
+      }
+    },
+    "impact_of_delay": {
+      "type": "string",
+      "description": "What is blocked and the cost of waiting"
+    },
+    "blocking_gate": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "Which gate is blocked pending this decision"
+    },
+    "current_ledger": {
+      "type": "object",
+      "description": "Current State_Ledger.json"
+    }
+  }
+}

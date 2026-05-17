@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "State Ledger Management Skill Output",
+  "type": "object",
+  "required": ["success"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "updated_ledger": { "type": "object", "description": "Updated State_Ledger.json content" },
+    "validation_report": { "type": "array", "items": { "type": "object" } },
+    "summary": { "type": "string" },
+    "inconsistencies": { "type": "array", "items": { "type": "string" } },
+    "errors": { "type": "array", "items": { "type": "string" } }
+  }
+}

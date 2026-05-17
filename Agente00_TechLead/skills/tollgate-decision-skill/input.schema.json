@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tollgate Decision Skill Input",
+  "type": "object",
+  "required": ["gate_number", "validation_result", "validation_table"],
+  "properties": {
+    "gate_number": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "validation_result": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "PASS_WITH_CONDITIONS"]
+    },
+    "validation_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "status", "evidence"],
+        "properties": {
+          "criterion": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "N/A"] },
+          "evidence": { "type": "string" },
+          "blocker": { "type": "boolean" }
+        }
+      }
+    },
+    "issues_found": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "conditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "adr_required": {
+      "type": "boolean"
+    },
+    "adr_details": {
+      "type": "string"
+    },
+    "council_verdict": {
+      "type": "object",
+      "description": "Optional council verdict from council-mediation-skill"
+    },
+    "human_approval_obtained": {
+      "type": "boolean",
+      "description": "Required true for Gate 6"
+    },
+    "current_ledger": {
+      "type": "object",
+      "description": "Current State_Ledger.json"
+    }
+  }
+}

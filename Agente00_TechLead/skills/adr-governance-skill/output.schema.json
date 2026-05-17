@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADR Governance Skill Output",
+  "type": "object",
+  "required": ["success", "adr_id", "gate_block_required", "resolution_path"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "adr_id": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{3}$",
+      "description": "Assigned ADR identifier e.g. ADR-001"
+    },
+    "adr_request": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["PROPOSED", "APPROVED", "REJECTED", "SUPERSEDED"] },
+        "deviation_identified": { "type": "string" },
+        "golden_path_violated": { "type": "string" },
+        "decision_required": { "type": "string" },
+        "gate_blocked": { "type": "boolean" }
+      }
+    },
+    "gate_block_required": {
+      "type": "boolean",
+      "description": "Always true for technology-level deviations"
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "description": "True for irreversible decisions"
+    },
+    "council_required": {
+      "type": "boolean",
+      "description": "True for technology-level deviations — Council deliberation mandatory"
+    },
+    "resolution_path": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered list of steps to resolve the ADR and unblock the gate"
+    },
+    "state_ledger_update": {
+      "type": "object",
+      "description": "ADR entry to add to State Ledger adrs array"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
