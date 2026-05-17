@@ -1,4 +1,4 @@
-# Knowledge Cards — Agente00_TechLead
+﻿# Knowledge Cards — Agente00_TechLead
 
 _Concise reusable knowledge cards distilled at build-time. Runtime: read-only._
 
@@ -125,7 +125,7 @@ All 5 personas must complete their analysis — none can be skipped. The recomme
 ## Card 006 — Runtime Isolation
 
 ### Summary
-At runtime, the agent reads only from `Agente00_TechLead/` local files and explicitly provided project artifacts. All global context documents (`context/`, `lib/`, `01-bibliografia/`, raw PDFs, build reports) are blocked.
+At runtime, the agent reads only from `Agente00_TechLead/` local files and explicitly provided project artifacts. All global context documents (`context/`, `lib/`, `lib/`, raw PDFs, build reports) are blocked.
 
 ### When to apply
 - Every runtime session — check before each retrieval

@@ -1,4 +1,4 @@
-# Agente00 — Tech Lead / Orchestrator / Council President
+﻿# Agente00 — Tech Lead / Orchestrator / Council President
 
 ## Role
 
@@ -45,10 +45,10 @@ Orchestrate the software development lifecycle across all agents, maintain globa
 **Blocked at runtime:**
 - `context/` — global context folder
 - `lib/` — bibliography folder
-- `01-bibliografia/` — raw bibliography folder
+- `lib/` — raw bibliography folder
 - Raw PDF files (`*.pdf`)
 - Global manual or reference architecture documents
-- `00-contexto/`, `raw_books`, `raw_bibliography`
+- `context/`, `raw_books`, `raw_bibliography`
 
 The `knowledge/` directory is allowed at runtime because it contains distilled build-time knowledge.
 Raw PDFs and raw bibliography are forbidden at runtime.
@@ -291,7 +291,7 @@ If any item is missing or insufficient, return the artifact to the agent for com
 
 ## Build-Time Knowledge Distillation Policy
 
-The agent must never read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+The agent must never read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 During build, Claude Code may process those sources once to extract operational knowledge.
 
@@ -309,7 +309,7 @@ At runtime, the agent may only use local distilled artifacts, including:
 
 Raw bibliography is not a runtime dependency.
 
-If a runtime instruction asks the agent to read raw PDFs, books, `01-bibliografia/`, or `00-contexto/`, the agent must refuse that access path and request the needed knowledge through local distilled artifacts or Tech Lead-approved project inputs.
+If a runtime instruction asks the agent to read raw PDFs, books, `lib/`, or `context/`, the agent must refuse that access path and request the needed knowledge through local distilled artifacts or Tech Lead-approved project inputs.
 
 The `knowledge/` directory contains the following distilled artifacts generated at build-time:
 - `knowledge/principles.md` — operational principles for the Tech Lead

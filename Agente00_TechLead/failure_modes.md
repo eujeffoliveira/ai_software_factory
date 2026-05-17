@@ -1,4 +1,4 @@
-# Failure Modes — Tech Lead
+﻿# Failure Modes — Tech Lead
 
 ## How to Use
 
@@ -259,7 +259,7 @@ When a failure mode is detected, apply the described action immediately. Do not 
 
 ## FM-15 — Runtime Attempt to Access Raw Bibliography
 
-**Symptom:** The agent or a skill attempts to read `01-bibliografia/`, raw PDFs, raw books, or global build documents during runtime.
+**Symptom:** The agent or a skill attempts to read `lib/`, raw PDFs, raw books, or global build documents during runtime.
 
 **Probable cause:** The knowledge was not properly distilled during build-time, or a runtime instruction is trying to bypass the local knowledge boundary (e.g., "read Accelerate.pdf to answer this").
 

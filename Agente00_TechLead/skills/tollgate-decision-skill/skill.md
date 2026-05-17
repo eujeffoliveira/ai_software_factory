@@ -1,4 +1,4 @@
-# Tollgate Decision Skill
+﻿# Tollgate Decision Skill
 
 ## Purpose
 Issue a formal gate decision (with status code, rationale, and required actions) based on the validation results from the artifact-contract-validation-skill and any Council verdicts.
@@ -94,7 +94,7 @@ Issue a formal gate decision (with status code, rationale, and required actions)
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

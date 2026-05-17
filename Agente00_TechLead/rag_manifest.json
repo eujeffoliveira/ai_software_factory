@@ -1,4 +1,4 @@
-{
+﻿{
   "agent_id": "Agente00_TechLead",
   "edition": "generic-white-label",
   "version": "1.0.0",
@@ -104,9 +104,9 @@
   "blocked_sources": [
     "raw_pdf_files_at_runtime",
     "context/",
-    "00-contexto/",
+    "context/",
     "lib/",
-    "01-bibliografia/",
+    "lib/",
     "manual_arquitetura_componentes_generico.md",
     "reference_architecture_generico.md",
     "integrantes.md",

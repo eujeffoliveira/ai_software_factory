@@ -1,4 +1,4 @@
-# Tollgate Decision Skill — Checklist
+﻿# Tollgate Decision Skill — Checklist
 
 ## Before Issuing Decision
 - [ ] Validation table received and complete
@@ -33,4 +33,4 @@
 - [ ] `status_code` matches the decision narrative
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

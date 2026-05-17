@@ -1,4 +1,4 @@
-# ADR Governance Skill — Checklist
+﻿# ADR Governance Skill — Checklist
 
 ## Deviation Detection
 - [ ] Deviation clearly described — specific technology or pattern named
@@ -36,4 +36,4 @@
 - [ ] Superseded ADR → new ADR references old one
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

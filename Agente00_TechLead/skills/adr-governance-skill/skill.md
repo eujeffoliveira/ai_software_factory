@@ -1,4 +1,4 @@
-# ADR Governance Skill
+﻿# ADR Governance Skill
 
 ## Purpose
 Detect Golden Path deviations, initiate ADR requests, track ADR status, and enforce gate blocks until ADRs are formally resolved.
@@ -99,7 +99,7 @@ No ADR can be approved without documenting at least 2 alternatives considered. "
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

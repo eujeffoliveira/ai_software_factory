@@ -1,4 +1,4 @@
-# Manifesto Operacional dos Agentes — AI Software Factory
+﻿# Manifesto Operacional dos Agentes — AI Software Factory
 
 ## Versão
 **v2.1 — Build-Time Agent Manifest**
@@ -58,12 +58,12 @@ Portanto:
 
 # 2. Relação com os demais documentos
 
-Este manifesto faz parte da camada `00-contexto` da fábrica.
+Este manifesto faz parte da camada `context` da fábrica.
 
 Ele deve ser usado junto com:
 
 ```txt
-00-contexto/
+context/
   manual_arquitetura_componentes.md
   reference_architecture.md
   base_teorica.md
@@ -89,7 +89,7 @@ Durante o build, o Claude Code deve respeitar:
 3. Reference Architecture
 4. Este Manifesto de Integrantes
 5. Base Teórica
-6. Bibliografia em 01-bibliografia/
+6. Bibliografia em lib/
 7. Conhecimento geral do modelo
 ```
 
@@ -2307,7 +2307,7 @@ Ele deve ser usado no build junto com:
 manual_arquitetura_componentes.md
 reference_architecture.md
 base_teorica.md
-01-bibliografia/
+lib/
 ```
 
 Após o build:

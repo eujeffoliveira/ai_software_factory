@@ -1,4 +1,4 @@
-# Artifact Contract Validation Skill — Checklist
+﻿# Artifact Contract Validation Skill — Checklist
 
 ## Before Validation
 - [ ] Identify gate number (1–7)
@@ -36,4 +36,4 @@
 - [ ] `recommended_gate_status` matches `validation_result`
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

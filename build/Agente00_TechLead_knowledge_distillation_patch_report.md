@@ -1,4 +1,4 @@
-# Agente00_TechLead — Knowledge Distillation Patch Report
+﻿# Agente00_TechLead — Knowledge Distillation Patch Report
 
 **Patch Date:** 2026-05-17  
 **Patch Type:** Incremental — no existing files deleted or recreated  
@@ -42,7 +42,7 @@ This patch incorporates the build-time knowledge distillation rule into the exis
 | File | Changes Made |
 |------|-------------|
 | `agent_config.json` | Added `Agente00_TechLead/knowledge/` to `allowed_runtime_sources`; added `*.pdf`, `raw_books`, `raw_bibliography`, and 4 specific blocked files to `blocked_runtime_sources`; added `runtime_knowledge_policy` object |
-| `prompt.md` | Added `knowledge/` to Runtime Context Rule allowed sources; added blocked sources list with `01-bibliografia/`, `*.pdf`, `raw_books`; added `Build-Time Knowledge Distillation Policy` section; updated critical failure modes |
+| `prompt.md` | Added `knowledge/` to Runtime Context Rule allowed sources; added blocked sources list with `lib/`, `*.pdf`, `raw_books`; added `Build-Time Knowledge Distillation Policy` section; updated critical failure modes |
 | `context_view.md` | Added `Knowledge Distillation Boundary` section at end |
 | `rag_manifest.json` | Added `raw_sources_policy` object; added `local_distilled_sources` array |
 | `skills_manifest.md` | Added `Knowledge Distillation Rule for Skills` section at end |
@@ -110,7 +110,7 @@ Each skill had the following added:
 | All 5 knowledge files present | ✅ PASS |
 | `agent_config.json` allows `knowledge/` | ✅ PASS |
 | `agent_config.json` blocks `*.pdf` | ✅ PASS |
-| `agent_config.json` blocks `01-bibliografia/` | ✅ PASS |
+| `agent_config.json` blocks `lib/` | ✅ PASS |
 | `prompt.md` has `Build-Time Knowledge Distillation Policy` | ✅ PASS |
 | `rag_manifest.json` has `raw_pdfs_allowed_at_runtime: false` | ✅ PASS |
 | All 9 skills have `Knowledge Access Policy` | ✅ PASS |
@@ -140,7 +140,7 @@ Build reads raw sources.
 Build distills knowledge into Agente00_TechLead/knowledge/.
 Runtime uses only local distilled artifacts.
 Runtime does not read PDFs.
-Runtime does not access 01-bibliografia/.
+Runtime does not access lib/.
 Runtime does not access context/ or lib/.
 ```
 

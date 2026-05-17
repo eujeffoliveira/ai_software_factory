@@ -1,4 +1,4 @@
-# Human Escalation Skill — Checklist
+﻿# Human Escalation Skill — Checklist
 
 ## Trigger Verification
 - [ ] Escalation reason matches a mandatory or recommended trigger
@@ -34,4 +34,4 @@
 - [ ] Relevant artifacts updated if human modified the proposal
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

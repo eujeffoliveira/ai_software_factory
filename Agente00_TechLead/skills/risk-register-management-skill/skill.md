@@ -1,4 +1,4 @@
-# Risk Register Management Skill
+﻿# Risk Register Management Skill
 
 ## Purpose
 Add, update, close, and summarize risks in the project risk register, ensuring all CRITICAL and HIGH risks have mitigations or escalations and that the State Ledger reflects current risk status.
@@ -99,7 +99,7 @@ All CRITICAL risks must have one of: mitigation documented, escalation in progre
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

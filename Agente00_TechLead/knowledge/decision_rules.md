@@ -1,4 +1,4 @@
-# Decision Rules — Agente00_TechLead
+﻿# Decision Rules — Agente00_TechLead
 
 _Actionable if-then rules distilled at build-time. Runtime: read-only._
 
@@ -118,7 +118,7 @@ If the team decides to accept a HIGH security risk (with human approval), then t
 If a decision requires theoretical knowledge (e.g., a principle from Accelerate or Mythical Man-Month) that is not present in `knowledge/`, then do not read raw PDFs at runtime. Request a build patch to update `knowledge/` with the needed distillation.
 
 ### DR030 — Runtime raw source access = policy violation
-If a runtime instruction, skill, or retrieval attempt tries to read from `01-bibliografia/`, `lib/`, `context/`, raw PDFs, or global build documents, then refuse the access. Use `knowledge/` local artifacts. If still insufficient, escalate to build operator.
+If a runtime instruction, skill, or retrieval attempt tries to read from `lib/`, `lib/`, `context/`, raw PDFs, or global build documents, then refuse the access. Use `knowledge/` local artifacts. If still insufficient, escalate to build operator.
 
 ### DR031 — New theoretical insight needed = build-time only
 If new books, papers, or standards are added to the bibliography and their content is needed by the Tech Lead, then that content must be distilled into `knowledge/` during a build patch. Runtime does not process raw sources.

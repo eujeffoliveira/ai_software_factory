@@ -1,4 +1,4 @@
-# Risk Register Management Skill — Checklist
+﻿# Risk Register Management Skill — Checklist
 
 ## Before Operation
 - [ ] Identify operation: ADD / UPDATE / CLOSE / SUMMARIZE
@@ -39,4 +39,4 @@
 - [ ] `updated_risks` contains all risks (not just new/changed ones)
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

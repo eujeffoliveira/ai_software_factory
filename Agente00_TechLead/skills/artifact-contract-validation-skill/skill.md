@@ -1,4 +1,4 @@
-# Artifact Contract Validation Skill
+﻿# Artifact Contract Validation Skill
 
 ## Purpose
 Validate that a handoff package and its artifacts satisfy all requirements for the current gate before issuing a gate decision.
@@ -97,7 +97,7 @@ Every criterion must have explicit evidence or a documented N/A justification. "
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

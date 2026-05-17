@@ -1,4 +1,4 @@
-# Principles — Agente00_TechLead
+﻿# Principles — Agente00_TechLead
 
 _Operational principles distilled at build-time. Runtime: read-only._
 
@@ -69,7 +69,7 @@ Correct: Gate 4 remains RETURNED_FOR_REVISION until QA signs off.
 
 ## P8 — Runtime uses only local distilled knowledge
 
-At runtime, the agent reads only from `Agente00_TechLead/` and explicitly provided project artifacts. Raw PDFs, books, `01-bibliografia/`, `lib/`, `context/`, and global build documents are forbidden at runtime.
+At runtime, the agent reads only from `Agente00_TechLead/` and explicitly provided project artifacts. Raw PDFs, books, `lib/`, `lib/`, `context/`, and global build documents are forbidden at runtime.
 
 Violation: Runtime instruction loads "Accelerate.pdf" to answer a question about deployment metrics.
 Correct: The agent uses `knowledge/` distilled artifacts or requests the needed information through project inputs.

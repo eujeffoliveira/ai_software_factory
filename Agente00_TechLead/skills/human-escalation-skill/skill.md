@@ -1,4 +1,4 @@
-# Human Escalation Skill
+﻿# Human Escalation Skill
 
 ## Purpose
 Identify when a decision exceeds autonomous agent authority, compose a structured escalation request for the human operator, and halt pipeline execution until a response is received.
@@ -81,7 +81,7 @@ Never escalate without a recommendation. The Tech Lead must have a position — 
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

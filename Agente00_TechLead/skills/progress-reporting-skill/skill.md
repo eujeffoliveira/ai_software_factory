@@ -1,4 +1,4 @@
-# Progress Reporting Skill
+﻿# Progress Reporting Skill
 
 ## Purpose
 Generate structured progress reports from the State Ledger, summarizing project phase, agent status, milestone completion, blockers, open decisions, active risks, and next actions for human stakeholders.
@@ -87,7 +87,7 @@ Progress reports must reflect the State Ledger exactly — no optimism bias, no 
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

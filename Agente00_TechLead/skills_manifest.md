@@ -1,4 +1,4 @@
-# Skills Manifest — Agente00_TechLead
+﻿# Skills Manifest — Agente00_TechLead
 
 ## Overview
 
@@ -409,7 +409,7 @@ This manifest describes all skills authorized for the Tech Lead agent. Each skil
 
 ## Knowledge Distillation Rule for Skills
 
-Skills must not load raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+Skills must not load raw PDFs, raw books, `lib/`, or `context/` at runtime.
 
 Skills may use:
 

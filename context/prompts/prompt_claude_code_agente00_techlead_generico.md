@@ -1,4 +1,4 @@
-# PROMPT PARA CRIAÇÃO DOS AGENTES — BUILD DO AGENTE00_TECHLEAD
+﻿# PROMPT PARA CRIAÇÃO DOS AGENTES — BUILD DO AGENTE00_TECHLEAD
 
 Atue como um **Principal AI Systems Engineer** especializado em construção de agentes, sistemas multiagentes, RAG, skills, arquitetura de software e automação com Claude Code.
 
@@ -47,7 +47,7 @@ Ele será responsável por:
 Leia os arquivos genéricos nesta ordem:
 
 ```txt
-00-contexto/
+context/
   manual_arquitetura_componentes_generico.md
   reference_architecture_generico.md
   integrantes_generico.md
@@ -57,7 +57,7 @@ Leia os arquivos genéricos nesta ordem:
 Se `integrantes_generico.md` não existir, use:
 
 ```txt
-00-contexto/integrantes.md
+context/integrantes.md
 ```
 
 e trate qualquer menção corporativa específica como algo a ser removido ou abstraído na versão genérica.
@@ -134,8 +134,8 @@ data protection compliance
 Durante o build, você pode ler:
 
 ```txt
-00-contexto/
-01-bibliografia/
+context/
+lib/
 manual_arquitetura_componentes_generico.md
 reference_architecture_generico.md
 integrantes_generico.md ou integrantes.md
@@ -179,7 +179,7 @@ O Agente00_TechLead deve ser autocontido após o build.
 
 # REGRA CRÍTICA — Destilação de conhecimento da bibliografia
 
-A pasta `01-bibliografia/` e quaisquer PDFs/livros brutos devem ser usados **somente uma vez durante o build**.
+A pasta `lib/` e quaisquer PDFs/livros brutos devem ser usados **somente uma vez durante o build**.
 
 O objetivo NÃO é fazer os agentes lerem PDFs em runtime.
 
@@ -208,7 +208,7 @@ Durante o build, o Claude Code deve:
 Depois dessa destilação:
 
 - o agente NÃO deve consultar PDFs brutos;
-- o agente NÃO deve consultar `01-bibliografia/`;
+- o agente NÃO deve consultar `lib/`;
 - o agente NÃO deve consultar livros inteiros;
 - o agente deve usar apenas os artefatos locais gerados em sua pasta;
 - qualquer RAG runtime deve apontar para chunks/índices já processados, não para PDFs brutos.
@@ -317,8 +317,8 @@ Mapeie a estrutura do projeto.
 Verifique:
 
 ```txt
-00-contexto/
-01-bibliografia/
+context/
+lib/
 Agente00_TechLead/
 ```
 
@@ -346,10 +346,10 @@ O relatório de varredura deve informar:
 Leia, nesta ordem:
 
 ```txt
-1. 00-contexto/manual_arquitetura_componentes_generico.md
-2. 00-contexto/integrantes_generico.md ou 00-contexto/integrantes.md
-3. 00-contexto/reference_architecture_generico.md
-4. 00-contexto/base_teorica.md
+1. context/manual_arquitetura_componentes_generico.md
+2. context/integrantes_generico.md ou context/integrantes.md
+3. context/reference_architecture_generico.md
+4. context/base_teorica.md
 ```
 
 Extraia somente o que for necessário para construir o `Agente00_TechLead`.
@@ -386,8 +386,8 @@ build/Agente00_TechLead_context_routing_plan.md
 Leia a parte da bibliografia relacionada ao Tech Lead em:
 
 ```txt
-00-contexto/base_teorica.md
-01-bibliografia/
+context/base_teorica.md
+lib/
 ```
 
 Mapeie apenas fontes relevantes para:
@@ -584,7 +584,7 @@ Ele deve conter, no mínimo:
 ## Runtime Context Rule
 O agente só pode consultar os artefatos locais dentro da pasta `Agente00_TechLead/` e os artefatos de projeto fornecidos como input pelo usuário/orquestrador.
 
-Ele não deve consultar `00-contexto/`, `01-bibliografia/`, o manual global, a arquitetura global ou a bibliografia bruta em runtime.
+Ele não deve consultar `context/`, `lib/`, o manual global, a arquitetura global ou a bibliografia bruta em runtime.
 
 ## Responsibilities
 ...
@@ -674,8 +674,8 @@ Com estrutura parecida com:
     "Agente00_TechLead/skills/"
   ],
   "blocked_runtime_sources": [
-    "00-contexto/",
-    "01-bibliografia/",
+    "context/",
+    "lib/",
     "manual_arquitetura_componentes_generico.md",
     "reference_architecture_generico.md",
     "integrantes_generico.md",
@@ -789,8 +789,8 @@ Use estrutura parecida com:
   ],
   "blocked_sources": [
     "raw_books_at_runtime",
-    "00-contexto",
-    "01-bibliografia"
+    "context",
+    "lib"
   ]
 }
 ```
@@ -1220,7 +1220,7 @@ O `Agente00_TechLead` não pode:
 - substituir QA;
 - substituir DevSecOps;
 - ignorar gate obrigatório;
-- permitir runtime com dependência de `00-contexto` ou `01-bibliografia`.
+- permitir runtime com dependência de `context` ou `lib`.
 
 ---
 
@@ -1265,8 +1265,8 @@ A tarefa só está concluída quando:
 - `prompt.md` deixa claro o papel e os limites do Tech Lead;
 - `context_view.md` contém o contexto local necessário;
 - os relatórios de build foram gerados;
-- não há dependência runtime de `00-contexto`;
-- não há dependência runtime de `01-bibliografia`;
+- não há dependência runtime de `context`;
+- não há dependência runtime de `lib`;
 - não há dependência runtime de PDFs ou livros brutos;
 - não há menção corporativa específica;
 - a versão é genérica / white-label.

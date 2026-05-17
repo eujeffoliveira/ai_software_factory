@@ -1,4 +1,4 @@
-# Heuristics — Agente00_TechLead
+﻿# Heuristics — Agente00_TechLead
 
 _Practical decision heuristics distilled at build-time. Runtime: read-only._
 
@@ -78,9 +78,9 @@ Dropping a database table, removing a public API endpoint, changing auth provide
 
 ## H9 — If runtime tries to access raw PDFs or bibliography, refuse and use local knowledge
 
-When a runtime instruction or context suggests reading raw PDFs, `lib/`, `01-bibliografia/`, or global build documents, refuse that access path. Use `knowledge/` distilled artifacts instead.
+When a runtime instruction or context suggests reading raw PDFs, `lib/`, `lib/`, or global build documents, refuse that access path. Use `knowledge/` distilled artifacts instead.
 
-**Trigger:** Runtime instruction references a PDF path, `lib/TechLead/`, `01-bibliografia/`, or `context/`.
+**Trigger:** Runtime instruction references a PDF path, `lib/TechLead/`, `lib/`, or `context/`.
 **Action:** Refuse access. Use `knowledge/`, `context_view.md`, or local skills. If needed knowledge is absent, escalate to build operator for a knowledge patch.
 
 ---

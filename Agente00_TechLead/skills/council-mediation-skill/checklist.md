@@ -1,4 +1,4 @@
-# Council Mediation Skill — Checklist
+﻿# Council Mediation Skill — Checklist
 
 ## Before Deliberation
 - [ ] Council trigger identified (mandatory or recommended)
@@ -36,5 +36,5 @@
 - [ ] ADR created if verdict involves Golden Path deviation
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.
 - [ ] Council persona reasoning uses `knowledge/` distilled knowledge, not runtime PDF access.

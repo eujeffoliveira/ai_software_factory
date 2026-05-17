@@ -1,4 +1,4 @@
-{
+﻿{
   "agent_id": "Agente00_TechLead",
   "name": "Tech Lead / Orchestrator / Council President",
   "version": "1.0.0",
@@ -25,9 +25,9 @@
   ],
   "blocked_runtime_sources": [
     "context/",
-    "00-contexto/",
+    "context/",
     "lib/",
-    "01-bibliografia/",
+    "lib/",
     "context/manual_arquitetura_componentes_generico.md",
     "context/manual_arquitetura_componentes_raiz.md",
     "context/reference_architecture_generico.md",

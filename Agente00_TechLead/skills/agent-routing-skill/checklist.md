@@ -1,4 +1,4 @@
-# Agent Routing Skill — Checklist
+﻿# Agent Routing Skill — Checklist
 
 ## Before Routing
 - [ ] Identify current phase from State Ledger
@@ -28,4 +28,4 @@
 - [ ] `current_phase` advanced if gate was approved
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

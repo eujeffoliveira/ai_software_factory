@@ -1,4 +1,4 @@
-# Runtime Isolation Checklist
+﻿# Runtime Isolation Checklist
 
 Run this checklist to verify that the Tech Lead agent is operating in proper runtime isolation mode.
 
@@ -29,9 +29,9 @@ Run this checklist to verify that the Tech Lead agent is operating in proper run
 The following must NEVER be accessed during runtime:
 
 - [ ] `context/` — ❌ BLOCKED
-- [ ] `00-contexto/` — ❌ BLOCKED
+- [ ] `context/` — ❌ BLOCKED
 - [ ] `lib/` — ❌ BLOCKED
-- [ ] `01-bibliografia/` — ❌ BLOCKED
+- [ ] `lib/` — ❌ BLOCKED
 - [ ] `context/manual_arquitetura_componentes_generico.md` — ❌ BLOCKED
 - [ ] `context/reference_architecture_generico.md` — ❌ BLOCKED
 - [ ] `context/integrantes.md` — ❌ BLOCKED
@@ -42,8 +42,8 @@ The following must NEVER be accessed during runtime:
 
 ## Knowledge Distillation Checks
 
-- [ ] Runtime does not access `00-contexto/`.
-- [ ] Runtime does not access `01-bibliografia/`.
+- [ ] Runtime does not access `context/`.
+- [ ] Runtime does not access `lib/`.
 - [ ] Runtime does not access raw PDFs.
 - [ ] Runtime does not access raw books.
 - [ ] Runtime uses `knowledge/` for distilled build-time knowledge.

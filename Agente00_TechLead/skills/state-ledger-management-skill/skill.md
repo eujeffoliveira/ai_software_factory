@@ -1,4 +1,4 @@
-# State Ledger Management Skill
+﻿# State Ledger Management Skill
 
 ## Purpose
 Create, update, validate, summarize, and detect inconsistencies in the project State Ledger.
@@ -72,7 +72,7 @@ State Ledger must always reflect actual project state. Never leave it outdated.
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

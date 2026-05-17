@@ -1,4 +1,4 @@
-# State Ledger Management Skill — Checklist
+﻿# State Ledger Management Skill — Checklist
 
 ## Before Operation
 - [ ] Identify correct operation (CREATE / UPDATE / VALIDATE / SUMMARIZE / DETECT_INCONSISTENCY)
@@ -29,4 +29,4 @@
 - [ ] Next action stated
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

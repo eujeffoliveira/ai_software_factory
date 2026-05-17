@@ -1,4 +1,4 @@
-# Council Mediation Skill
+﻿# Council Mediation Skill
 
 ## Purpose
 Activate the Tech Lead Council (5 personas) to deliberate on a complex or contentious decision, synthesize their analyses, and produce a structured verdict with a clear recommendation.
@@ -91,7 +91,7 @@ Every persona must produce an analysis — no persona can be skipped. The recomm
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

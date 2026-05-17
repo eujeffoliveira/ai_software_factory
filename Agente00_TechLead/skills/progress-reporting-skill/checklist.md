@@ -1,4 +1,4 @@
-# Progress Reporting Skill — Checklist
+﻿# Progress Reporting Skill — Checklist
 
 ## Before Report Generation
 - [ ] Report type identified: EXECUTIVE / TECHNICAL / GATE_TRANSITION / INCIDENT
@@ -34,4 +34,4 @@
 - [ ] No TODO placeholders left in report
 
 ## Runtime Knowledge Policy
-- [ ] Skill does not depend on raw PDFs, raw books, `01-bibliografia/`, or `00-contexto/` at runtime.
+- [ ] Skill does not depend on raw PDFs, raw books, `lib/`, or `context/` at runtime.

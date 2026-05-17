@@ -1,4 +1,4 @@
-# Manual de Arquitetura e Componentes — AI Software Factory
+﻿# Manual de Arquitetura e Componentes — AI Software Factory
 
 ## Versão
 **v1.2 — Build Blueprint Edition — White-label**
@@ -31,10 +31,10 @@ Manual de Arquitetura e Componentes
 Reference Architecture
   = padrão técnico normativo que será transformado em artefatos locais dos agentes
 
-00-contexto
+context
   = índice e fonte inicial de regras para o build
 
-01-bibliografia
+lib
   = corpus teórico usado para estruturar RAGs e bases vetoriais
 
 Pastas raiz dos agentes
@@ -115,7 +115,7 @@ Este manual não define:
 - a ferramenta final de execução runtime;
 - regras de negócio de projetos específicos.
 
-Esses itens devem ser criados posteriormente pelo Claude Code usando este manual, `00-contexto`, `01-bibliografia` e a estrutura de pastas do projeto como insumos.
+Esses itens devem ser criados posteriormente pelo Claude Code usando este manual, `context`, `lib` e a estrutura de pastas do projeto como insumos.
 
 ---
 
@@ -125,13 +125,13 @@ A estrutura esperada do projeto segue este modelo:
 
 ```txt
 ai_software_factory/
-  00-contexto/
+  context/
     base_teorica.md
     integrantes.md
     manual_arquitetura_componentes.md
     reference_architecture.md
 
-  01-bibliografia/
+  lib/
     TechLead/
     ProductOwner/
     SoftwareArchitect/
@@ -153,9 +153,9 @@ ai_software_factory/
   Agente08_DevOps/
 ```
 
-## 3.1. Papel da pasta `00-contexto`
+## 3.1. Papel da pasta `context`
 
-A pasta `00-contexto` é o **índice inicial e fonte de regras de construção**.
+A pasta `context` é o **índice inicial e fonte de regras de construção**.
 
 Ela deve conter os documentos que orientam o Claude Code durante o build da fábrica:
 
@@ -166,13 +166,13 @@ Ela deve conter os documentos que orientam o Claude Code durante o build da fáb
 | `integrantes.md` | definição dos agentes, papéis, inputs, outputs e responsabilidades |
 | `base_teorica.md` | mapa bibliográfico por agente |
 
-A pasta `00-contexto` é consumida **apenas no build**.
+A pasta `context` é consumida **apenas no build**.
 
 Ela não deve ser consultada diretamente pelos agentes em runtime.
 
-## 3.2. Papel da pasta `01-bibliografia`
+## 3.2. Papel da pasta `lib`
 
-A pasta `01-bibliografia` é o **corpus teórico bruto** da fábrica.
+A pasta `lib` é o **corpus teórico bruto** da fábrica.
 
 Ela contém os livros e materiais baixados, separados por domínio/agente.
 
@@ -185,7 +185,7 @@ O Claude Code deve usar essa pasta para:
 - criar políticas de recuperação;
 - criar referências teóricas locais por agente.
 
-A pasta `01-bibliografia` também é consumida **apenas no build**.
+A pasta `lib` também é consumida **apenas no build**.
 
 Em runtime, os agentes não devem consultar diretamente os PDFs brutos. Eles devem consultar os índices, coleções, embeddings, manifests e resumos técnicos gerados dentro de suas próprias pastas.
 
@@ -229,8 +229,8 @@ O Claude Code será acionado via prompt para iniciar o processo de build.
 Nesta etapa, ele deve:
 
 1. Mapear a estrutura do diretório raiz.
-2. Confirmar a existência de `00-contexto`.
-3. Confirmar a existência de `01-bibliografia`.
+2. Confirmar a existência de `context`.
+3. Confirmar a existência de `lib`.
 4. Confirmar a existência das pastas raiz dos agentes.
 5. Identificar lacunas estruturais.
 6. Criar um relatório inicial de varredura.
@@ -250,12 +250,12 @@ build/missing_structure_report.md
 
 A varredura não deve gerar prompts nem skills ainda. Ela apenas confirma a estrutura e identifica o que deve ser compilado.
 
-## 4.2. Etapa 2 — Roteamento de Contexto (`00-contexto`)
+## 4.2. Etapa 2 — Roteamento de Contexto (`context`)
 
 Após a varredura, o Claude Code deve ler primeiramente a pasta:
 
 ```txt
-00-contexto/
+context/
 ```
 
 Esta pasta funciona como **índice de referência** e dita as regras de criação para tudo que cada agente terá.
@@ -289,12 +289,12 @@ build/skills_plan.json
 build/rag_plan.json
 ```
 
-## 4.3. Etapa 3 — Ingestão de Conhecimento (`01-bibliografia`)
+## 4.3. Etapa 3 — Ingestão de Conhecimento (`lib`)
 
 Depois de mapear o contexto, o Claude Code deve consumir a pasta:
 
 ```txt
-01-bibliografia/
+lib/
 ```
 
 Esta etapa estrutura as referências teóricas e bases vetoriais que os agentes precisarão.
@@ -447,8 +447,8 @@ build/runtime_readiness_checklist.md
 
 Checklist mínimo:
 
-- [ ] `00-contexto` foi lido.
-- [ ] `01-bibliografia` foi inventariada.
+- [ ] `context` foi lido.
+- [ ] `lib` foi inventariada.
 - [ ] Todos os agentes principais foram gerados.
 - [ ] Cada agente possui `prompt.md`.
 - [ ] Cada agente possui `context_view.md`.
@@ -460,8 +460,8 @@ Checklist mínimo:
 - [ ] A Reference Architecture foi compilada em context views locais.
 - [ ] A bibliografia foi convertida em manifests RAG.
 - [ ] Nenhum agente depende de consultar este manual em runtime.
-- [ ] Nenhum agente depende de consultar `00-contexto` em runtime.
-- [ ] Nenhum agente depende de consultar `01-bibliografia` diretamente em runtime.
+- [ ] Nenhum agente depende de consultar `context` em runtime.
+- [ ] Nenhum agente depende de consultar `lib` diretamente em runtime.
 
 ---
 
@@ -474,8 +474,8 @@ Após o build, os agentes operam somente com os artefatos locais gerados em suas
 Durante a operação, agentes não devem consultar diretamente:
 
 ```txt
-00-contexto/
-01-bibliografia/
+context/
+lib/
 manual_arquitetura_componentes.md
 reference_architecture.md completo
 integrantes.md
@@ -522,7 +522,7 @@ A AI Software Factory é construída a partir de quatro fontes principais.
 Arquivo esperado:
 
 ```txt
-00-contexto/manual_arquitetura_componentes.md
+context/manual_arquitetura_componentes.md
 ```
 
 Função:
@@ -540,7 +540,7 @@ Função:
 Arquivo esperado:
 
 ```txt
-00-contexto/integrantes.md
+context/integrantes.md
 ```
 
 Função:
@@ -556,7 +556,7 @@ Função:
 Arquivo esperado:
 
 ```txt
-00-contexto/reference_architecture.md
+context/reference_architecture.md
 ```
 
 Função:
@@ -571,14 +571,14 @@ Função:
 Arquivos esperados:
 
 ```txt
-00-contexto/base_teorica.md
-01-bibliografia/
+context/base_teorica.md
+lib/
 ```
 
 Função:
 
 - `base_teorica.md` mapeia a bibliografia por agente;
-- `01-bibliografia/` armazena o corpus bruto;
+- `lib/` armazena o corpus bruto;
 - o Claude Code usa ambos para criar manifests, índices e bases vetoriais.
 
 ---
@@ -669,8 +669,8 @@ Responsável por fornecer contexto e fundamentação durante o build.
 Componentes de build:
 
 ```txt
-00-contexto/
-01-bibliografia/
+context/
+lib/
 Reference Architecture
 Base teórica
 Integrantes
@@ -1688,8 +1688,8 @@ O Council é um mecanismo de stress-test para decisões críticas.
 
 ## Build
 
-- [ ] `00-contexto` existe.
-- [ ] `01-bibliografia` existe.
+- [ ] `context` existe.
+- [ ] `lib` existe.
 - [ ] Pastas raiz dos agentes existem.
 - [ ] Manual foi lido no build.
 - [ ] Reference Architecture foi lida no build.
@@ -1704,8 +1704,8 @@ O Council é um mecanismo de stress-test para decisões críticas.
 
 ## Runtime
 
-- [ ] Agentes não consultam `00-contexto`.
-- [ ] Agentes não consultam `01-bibliografia` diretamente.
+- [ ] Agentes não consultam `context`.
+- [ ] Agentes não consultam `lib` diretamente.
 - [ ] Agentes não consultam este manual.
 - [ ] Agentes consultam apenas sua pasta local.
 - [ ] Cada agente possui `prompt.md`.
@@ -1738,9 +1738,9 @@ Mudanças principais:
 1. Define explicitamente que o manual não será consultado pelos agentes em runtime.
 2. Define que os agentes consultam apenas artefatos locais gerados em suas pastas.
 3. Adiciona o **Pipeline de Construção — Build Pipeline**.
-4. Formaliza a ordem: varredura → `00-contexto` → `01-bibliografia` → pastas dos agentes.
-5. Reclassifica `00-contexto` como fonte de build, não runtime.
-6. Reclassifica `01-bibliografia` como corpus bruto de build, não runtime.
+4. Formaliza a ordem: varredura → `context` → `lib` → pastas dos agentes.
+5. Reclassifica `context` como fonte de build, não runtime.
+6. Reclassifica `lib` como corpus bruto de build, não runtime.
 7. Define os artefatos mínimos que cada pasta de agente deve conter.
 8. Separa hierarquia de conhecimento em build-time e runtime.
 9. Adiciona checklist específico de build e runtime.
@@ -1770,13 +1770,13 @@ Ele define as peças que o Claude Code deve construir:
 A AI Software Factory deve ser construída a partir desta separação:
 
 ```txt
-00-contexto
+context
   ↓
 Manual de Arquitetura e Componentes
   ↓
 Reference Architecture
   ↓
-01-bibliografia
+lib
   ↓
 Claude Code Build Pipeline
   ↓

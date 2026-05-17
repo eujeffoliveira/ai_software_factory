@@ -1,4 +1,4 @@
-# Tech Lead — Context View (Compiled)
+﻿# Tech Lead — Context View (Compiled)
 
 > This file is the local compiled context for Agente00_TechLead.
 > It replaces global context documents at runtime.
@@ -449,7 +449,7 @@ This context view is a runtime-local artifact.
 
 It was generated at build-time from the allowed generic context (`context/manual_arquitetura_componentes_generico.md`, `context/reference_architecture_generico.md`, `context/integrantes.md`) and bibliography inventory (`context/base_teorica.md`).
 
-The agent must not consult raw PDFs, books, `01-bibliografia/`, `00-contexto/`, or global build files at runtime.
+The agent must not consult raw PDFs, books, `lib/`, `context/`, or global build files at runtime.
 
 If additional theoretical knowledge is needed, it must come from:
 

@@ -1,4 +1,4 @@
-# Agente00_TechLead — Runtime Readiness Checklist
+﻿# Agente00_TechLead — Runtime Readiness Checklist
 
 **Build Date:** 2026-05-17  
 **Verified By:** Build process (static analysis — no runtime execution)
@@ -23,9 +23,9 @@
 - [x] `agent_config.json` has `"mode": "runtime-local-only"`
 - [x] `blocked_runtime_sources` lists all global context directories:
   - `context/`
-  - `00-contexto/`
+  - `context/`
   - `lib/`
-  - `01-bibliografia/`
+  - `lib/`
   - `build/`
   - `../` (parent directory)
 - [x] `allowed_runtime_sources` explicitly lists only `Agente00_TechLead/` subdirectories

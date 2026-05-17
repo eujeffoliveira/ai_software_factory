@@ -1,4 +1,4 @@
-# Agent Routing Skill
+﻿# Agent Routing Skill
 
 ## Purpose
 Determine which agent should receive control next, compose a valid briefing package, and update the State Ledger routing fields accordingly.
@@ -66,7 +66,7 @@ Every routing output MUST name a specific valid agent ID. Empty or null `next_ag
 
 ## Knowledge Access Policy
 
-This skill must not read raw PDFs, raw books, `01-bibliografia/`, `00-contexto/`, or global build documents at runtime.
+This skill must not read raw PDFs, raw books, `lib/`, `context/`, or global build documents at runtime.
 
 It may use only:
 

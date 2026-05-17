@@ -1,4 +1,4 @@
-# Agente00_TechLead — Runtime Distillation Readiness Checklist
+﻿# Agente00_TechLead — Runtime Distillation Readiness Checklist
 
 **Patch Date:** 2026-05-17  
 **Verified By:** Static analysis (file presence + grep validation)
@@ -20,7 +20,7 @@
 
 - [x] `"Agente00_TechLead/knowledge/"` present in `allowed_runtime_sources`
 - [x] `"*.pdf"` present in `blocked_runtime_sources`
-- [x] `"01-bibliografia/"` present in `blocked_runtime_sources`
+- [x] `"lib/"` present in `blocked_runtime_sources`
 - [x] `"raw_books"` present in `blocked_runtime_sources`
 - [x] `"raw_bibliography"` present in `blocked_runtime_sources`
 - [x] `"runtime_knowledge_policy"` object present
@@ -35,7 +35,7 @@
 
 - [x] `Build-Time Knowledge Distillation Policy` section present
 - [x] `knowledge/` listed in Runtime Context Rule allowed sources
-- [x] `01-bibliografia/` listed in blocked sources
+- [x] `lib/` listed in blocked sources
 - [x] `*.pdf` listed in blocked sources
 - [x] Knowledge distillation failure mode added to critical failure modes list
 - [x] `knowledge/` subdirectories listed in distillation policy
@@ -60,7 +60,7 @@
 - [x] Section explains runtime-local status of context_view.md
 - [x] Section lists which build-time sources were consumed
 - [x] Section lists `knowledge/` as runtime knowledge path
-- [x] Section explicitly blocks raw PDFs, books, `01-bibliografia/`, `00-contexto/`
+- [x] Section explicitly blocks raw PDFs, books, `lib/`, `context/`
 
 ---
 
