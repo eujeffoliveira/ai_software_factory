@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/schemas/accessibility_review.schema.json",
+  "title": "AccessibilityReview",
+  "description": "Schema for the output of accessibility-check-skill. Documents WCAG AA compliance findings and resolutions.",
+  "type": "object",
+  "required": [
+    "reviewed_files",
+    "review_date",
+    "wcag_aa_compliant",
+    "issues"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "reviewed_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "List of component file paths reviewed"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "wcag_aa_compliant": {
+      "type": "boolean",
+      "description": "Overall WCAG AA compliance. Must be true before Gate 4 submission."
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "file", "severity", "wcag_criterion", "description", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^A11Y-[0-9]{3}$",
+            "description": "Issue ID (e.g., A11Y-001)"
+          },
+          "file": {
+            "type": "string",
+            "description": "File path where the issue was found"
+          },
+          "line_reference": {
+            "type": "string",
+            "description": "Line number or code snippet reference"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+            "description": "CRITICAL and HIGH block Gate 4"
+          },
+          "wcag_criterion": {
+            "type": "string",
+            "description": "WCAG 2.1 criterion (e.g., 1.1.1 Non-text Content, 2.1.1 Keyboard)"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Description of the accessibility issue"
+          },
+          "current_code": {
+            "type": "string",
+            "description": "The problematic code snippet"
+          },
+          "corrected_code": {
+            "type": "string",
+            "description": "The corrected code snippet"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "fixed", "wont_fix", "false_positive"],
+            "description": "Current status of the issue"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total_issues": { "type": "integer", "minimum": 0 },
+        "critical_count": { "type": "integer", "minimum": 0 },
+        "high_count": { "type": "integer", "minimum": 0 },
+        "medium_count": { "type": "integer", "minimum": 0 },
+        "low_count": { "type": "integer", "minimum": 0 },
+        "fixed_count": { "type": "integer", "minimum": 0 },
+        "open_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "gate_4_status": {
+      "type": "string",
+      "enum": ["READY_FOR_QA", "BLOCKED_ACCESSIBILITY_FAILURE"],
+      "description": "BLOCKED if any CRITICAL or HIGH issues are open"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "ServerComponentSelectionOutput",
+  "type": "object",
+  "required": ["component_name", "component_type", "justification", "recommended_template"],
+  "properties": {
+    "component_name": { "type": "string" },
+    "component_type": { "type": "string", "enum": ["ServerComponent", "ClientComponent"] },
+    "justification": { "type": "string", "minLength": 10 },
+    "client_trigger": {
+      "type": "string",
+      "enum": ["DR001-useState", "DR002-useEffect", "DR003-eventHandlers", "DR004-browserAPIs", "DR005-recharts", "multiple", null],
+      "nullable": true
+    },
+    "recommended_template": {
+      "type": "string",
+      "enum": ["Server_Component_Template.tsx", "Client_Component_Template.tsx"]
+    },
+    "companion_files_needed": {
+      "type": "object",
+      "properties": {
+        "loading_tsx": { "type": "boolean" },
+        "error_tsx": { "type": "boolean" },
+        "empty_state": { "type": "boolean" }
+      }
+    }
+  }
+}

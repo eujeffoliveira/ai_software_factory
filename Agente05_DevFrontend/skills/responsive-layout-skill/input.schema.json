@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "ResponsiveLayoutInput",
+  "type": "object",
+  "required": ["layout_spec"],
+  "properties": {
+    "layout_spec": { "$ref": "../../schemas/responsive_layout.schema.json" },
+    "component_list": { "type": "array", "items": { "type": "string" } }
+  }
+}

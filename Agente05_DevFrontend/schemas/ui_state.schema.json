@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/schemas/ui_state.schema.json",
+  "title": "UIStateSpec",
+  "description": "Schema for specifying and validating UI states (loading, error, empty) for a component or page route. Used by frontend-error-state-skill and nextjs-react-component-skill.",
+  "type": "object",
+  "required": ["component_path", "states"],
+  "additionalProperties": false,
+  "properties": {
+    "component_path": {
+      "type": "string",
+      "description": "The component or page path these states belong to (e.g., app/dashboard/page.tsx)"
+    },
+    "states": {
+      "type": "object",
+      "required": ["loading", "error", "empty"],
+      "properties": {
+        "loading": {
+          "type": "object",
+          "required": ["required", "mechanism"],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "mechanism": {
+              "type": "string",
+              "enum": ["loading.tsx", "Suspense", "not_required"],
+              "description": "How the loading state is implemented"
+            },
+            "file_path": {
+              "type": "string",
+              "description": "Path to the loading.tsx file or Suspense wrapper component"
+            },
+            "skeleton_matches_layout": {
+              "type": "boolean",
+              "description": "Whether the skeleton UI matches the actual content layout"
+            },
+            "has_aria_status": {
+              "type": "boolean",
+              "description": "Whether role='status' and aria-label='Loading content' are present"
+            }
+          }
+        },
+        "error": {
+          "type": "object",
+          "required": ["required", "file_path"],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "file_path": {
+              "type": "string",
+              "description": "Path to error.tsx file"
+            },
+            "is_client_component": {
+              "type": "boolean",
+              "description": "Must be true — Next.js requires error.tsx to be Client Component"
+            },
+            "exposes_error_message": {
+              "type": "boolean",
+              "description": "Must be false — never show error.message to users"
+            },
+            "has_reset_button": {
+              "type": "boolean",
+              "description": "Must be true — user must have a recovery option"
+            },
+            "has_role_alert": {
+              "type": "boolean",
+              "description": "Must be true — role='alert' for screen readers"
+            }
+          }
+        },
+        "empty": {
+          "type": "object",
+          "required": ["required"],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "trigger_condition": {
+              "type": "string",
+              "description": "The condition that triggers the empty state (e.g., 'items.length === 0')"
+            },
+            "message": {
+              "type": "string",
+              "description": "The headline message shown in the empty state"
+            },
+            "description": {
+              "type": "string",
+              "description": "Optional supporting text"
+            },
+            "has_cta": {
+              "type": "boolean",
+              "description": "Whether the empty state has a call-to-action button"
+            },
+            "cta_label": {
+              "type": "string",
+              "description": "CTA button label (if has_cta is true)"
+            }
+          }
+        }
+      }
+    },
+    "validation_results": {
+      "type": "object",
+      "description": "Results of validating state implementation",
+      "properties": {
+        "loading_valid": { "type": "boolean" },
+        "error_valid": { "type": "boolean" },
+        "empty_valid": { "type": "boolean" },
+        "all_states_valid": { "type": "boolean" },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["state_type", "issue", "blocking"],
+            "properties": {
+              "state_type": {
+                "type": "string",
+                "enum": ["loading", "error", "empty"]
+              },
+              "issue": { "type": "string" },
+              "blocking": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

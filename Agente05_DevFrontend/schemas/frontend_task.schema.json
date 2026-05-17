@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/schemas/frontend_task.schema.json",
+  "title": "FrontendTask",
+  "description": "Schema for an atomic frontend task received from Agente03_SoftwareEngineer via the Execution_Plan.json. Validates that the task has everything needed for Dev Frontend to begin implementation.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "type",
+    "file_path",
+    "component_specs",
+    "acceptance_criteria"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^TASK-[0-9]{3,}$",
+      "description": "Unique task identifier (e.g., TASK-042)"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 200,
+      "description": "Human-readable title of the frontend task"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "server_component",
+        "client_component",
+        "page_route",
+        "layout",
+        "loading_state",
+        "error_state",
+        "empty_state",
+        "chart_component",
+        "polling_widget",
+        "form_component",
+        "responsive_layout",
+        "design_token_update"
+      ],
+      "description": "Type of frontend artifact to be created"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Target file path relative to project root (e.g., app/dashboard/page.tsx)"
+    },
+    "component_specs": {
+      "type": "object",
+      "required": ["component_name", "data_source"],
+      "properties": {
+        "component_name": {
+          "type": "string",
+          "pattern": "^[A-Z][a-zA-Z0-9]+$",
+          "description": "PascalCase component name"
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "required"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "required": { "type": "boolean" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "data_source": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["server_action", "api_endpoint", "props_only", "polling"]
+            },
+            "endpoint": {
+              "type": "string",
+              "description": "API endpoint from API_Contract.json (required for api_endpoint and polling types)"
+            },
+            "action": {
+              "type": "string",
+              "description": "Server Action path (required for server_action type)"
+            },
+            "poll_interval_ms": {
+              "type": "integer",
+              "minimum": 5000,
+              "description": "Polling interval in ms (required for polling type)"
+            }
+          }
+        },
+        "requires_loading_state": {
+          "type": "boolean",
+          "default": false
+        },
+        "requires_error_state": {
+          "type": "boolean",
+          "default": false
+        },
+        "requires_empty_state": {
+          "type": "boolean",
+          "default": false
+        },
+        "chart_config": {
+          "type": "object",
+          "description": "Chart configuration (only for chart_component type)",
+          "properties": {
+            "chart_type": {
+              "type": "string",
+              "enum": ["LineChart", "BarChart", "AreaChart", "PieChart", "ComposedChart"]
+            },
+            "data_key": { "type": "string" },
+            "x_axis_key": { "type": "string" },
+            "height_px": { "type": "integer", "minimum": 100, "maximum": 800 }
+          }
+        },
+        "responsive_breakpoints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["default", "sm", "md", "lg", "xl", "2xl"]
+          },
+          "description": "Tailwind breakpoints this layout must handle"
+        }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 10
+      },
+      "description": "Testable acceptance criteria that must be met"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "status"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^TASK-[0-9]{3,}$" },
+          "status": {
+            "type": "string",
+            "enum": ["completed", "in_progress", "blocked"]
+          },
+          "artifact_path": { "type": "string" }
+        }
+      }
+    },
+    "api_contract_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "method"],
+        "properties": {
+          "endpoint": { "type": "string" },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+          },
+          "response_type": { "type": "string" }
+        }
+      },
+      "description": "API Contract endpoints this task's component will consume"
+    },
+    "design_token_requirements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Design tokens this component must use (e.g., primary-color, bg-background)"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "default": "medium"
+    },
+    "estimated_hours": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 40
+    }
+  }
+}

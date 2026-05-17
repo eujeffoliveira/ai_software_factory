@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "NextjsReactComponentInput",
+  "type": "object",
+  "required": ["component_spec", "selection_decision"],
+  "properties": {
+    "component_spec": { "$ref": "../../schemas/component_spec.schema.json" },
+    "selection_decision": { "type": "object", "description": "Output of server-component-selection-skill" },
+    "api_contract_reference": { "type": "object", "description": "Relevant section of API_Contract.json" },
+    "existing_files_to_modify": { "type": "array", "items": { "type": "string" } }
+  }
+}

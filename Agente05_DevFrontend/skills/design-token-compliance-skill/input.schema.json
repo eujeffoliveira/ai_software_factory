@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "DesignTokenComplianceInput",
+  "type": "object",
+  "required": ["component_files"],
+  "properties": {
+    "component_files": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "token_map": { "type": "object" }
+  }
+}

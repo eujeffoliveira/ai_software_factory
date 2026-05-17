@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "NextjsReactComponentOutput",
+  "type": "object",
+  "required": ["files_produced", "component_type", "has_loading_state", "has_error_state", "has_empty_state"],
+  "properties": {
+    "files_produced": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "component_type": { "type": "string", "enum": ["ServerComponent", "ClientComponent"] },
+    "has_loading_state": { "type": "boolean" },
+    "has_error_state": { "type": "boolean" },
+    "has_empty_state": { "type": "boolean" },
+    "typescript_interfaces": { "type": "array", "items": { "type": "string" } },
+    "assumptions": { "type": "array", "items": { "type": "string" } }
+  }
+}

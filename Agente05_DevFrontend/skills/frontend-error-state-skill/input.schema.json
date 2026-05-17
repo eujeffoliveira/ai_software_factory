@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "FrontendErrorStateInput",
+  "type": "object",
+  "required": ["route_path"],
+  "properties": {
+    "route_path": { "type": "string" },
+    "error_message": { "type": "string" },
+    "recovery_strategy": { "type": "string", "enum": ["reset", "navigate_back", "contact_support"] }
+  }
+}

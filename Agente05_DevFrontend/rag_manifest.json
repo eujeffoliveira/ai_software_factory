@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente05_DevFrontend",
+  "rag_version": "1.0.0",
+  "description": "RAG policy for Dev Frontend agent. Defines which collections may be queried at runtime, chunking strategy, and blocked raw sources.",
+  "runtime_policy": "local-knowledge-only",
+  "blocked_raw_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "collections": [
+    {
+      "collection_id": "frontend_engineering",
+      "description": "React, Next.js App Router, TypeScript, component patterns, Server Components, Client Components, state management",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/principles.md",
+        "Agente05_DevFrontend/knowledge/heuristics.md",
+        "Agente05_DevFrontend/knowledge/decision_rules.md",
+        "Agente05_DevFrontend/knowledge/knowledge_cards.md"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["server-component-selection-skill", "nextjs-react-component-skill", "frontend-state-management-skill"],
+      "query_examples": [
+        "When should a component be a Client Component?",
+        "How to implement async data fetching in App Router?",
+        "Server Component vs Client Component decision"
+      ]
+    },
+    {
+      "collection_id": "ui_design_patterns",
+      "description": "UI patterns: loading states, empty states, error boundaries, progressive disclosure, skeleton UIs, accessible components",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/knowledge_cards.md",
+        "Agente05_DevFrontend/context_view.md",
+        "Agente05_DevFrontend/templates/Loading_State_Template.tsx",
+        "Agente05_DevFrontend/templates/Error_State_Template.tsx",
+        "Agente05_DevFrontend/templates/Empty_State_Template.tsx"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["frontend-error-state-skill", "nextjs-react-component-skill", "responsive-layout-skill"],
+      "query_examples": [
+        "How to implement loading skeleton?",
+        "Empty state pattern for list components",
+        "Error boundary implementation in Next.js"
+      ]
+    },
+    {
+      "collection_id": "tailwind_design_system",
+      "description": "Tailwind CSS v4 patterns, design tokens, responsive breakpoints, mobile-first design, dark mode",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/principles.md",
+        "Agente05_DevFrontend/knowledge/decision_rules.md",
+        "Agente05_DevFrontend/context_view.md",
+        "Agente05_DevFrontend/checklists/design_system_checklist.md"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["tailwind-v4-design-system-skill", "design-token-compliance-skill", "responsive-layout-skill"],
+      "query_examples": [
+        "How to apply design tokens in Tailwind v4?",
+        "Mobile-first responsive grid pattern",
+        "Replace inline styles with Tailwind classes"
+      ]
+    },
+    {
+      "collection_id": "accessibility",
+      "description": "WCAG AA compliance, ARIA attributes, keyboard navigation, focus management, screen reader support, color contrast",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/heuristics.md",
+        "Agente05_DevFrontend/checklists/accessibility_checklist.md",
+        "Agente05_DevFrontend/context_view.md"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["accessibility-check-skill"],
+      "query_examples": [
+        "What aria-label is needed for icon buttons?",
+        "Keyboard navigation requirements for modals",
+        "WCAG AA color contrast requirements"
+      ]
+    },
+    {
+      "collection_id": "recharts_patterns",
+      "description": "Recharts v3 implementation, ResponsiveContainer usage, chart types, data preparation, chart accessibility",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/knowledge_cards.md",
+        "Agente05_DevFrontend/templates/Recharts_Component_Template.tsx",
+        "Agente05_DevFrontend/context_view.md"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["recharts-dashboard-skill"],
+      "query_examples": [
+        "How to implement a line chart with Recharts?",
+        "ResponsiveContainer usage pattern",
+        "Chart empty state implementation"
+      ]
+    },
+    {
+      "collection_id": "swr_patterns",
+      "description": "SWR polling, useSWR hook, when to use SWR vs Server Components, revalidation strategy",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/decision_rules.md",
+        "Agente05_DevFrontend/knowledge/heuristics.md",
+        "Agente05_DevFrontend/context_view.md"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["swr-polling-skill", "frontend-state-management-skill"],
+      "query_examples": [
+        "When should I use SWR instead of Server Component?",
+        "How to implement polling with SWR?",
+        "SWR refreshInterval configuration"
+      ]
+    },
+    {
+      "collection_id": "api_contract_consumption",
+      "description": "Reading API contracts, deriving TypeScript types from contracts, Server Action integration, no endpoint invention",
+      "source_artifacts": [
+        "Agente05_DevFrontend/knowledge/principles.md",
+        "Agente05_DevFrontend/knowledge/decision_rules.md",
+        "Agente05_DevFrontend/context_view.md",
+        "Agente05_DevFrontend/checklists/api_contract_usage_checklist.md"
+      ],
+      "chunk_size": 512,
+      "chunk_overlap": 64,
+      "allowed_skills": ["nextjs-react-component-skill", "swr-polling-skill"],
+      "query_examples": [
+        "How to derive TypeScript types from API contract?",
+        "What to do when API contract is missing?",
+        "Server Action import pattern"
+      ]
+    }
+  ],
+  "chunking_strategy": {
+    "default_chunk_size": 512,
+    "default_chunk_overlap": 64,
+    "split_on": ["## ", "### ", "\n---\n"],
+    "preserve_code_blocks": true
+  },
+  "retrieval_policy": {
+    "max_chunks_per_query": 5,
+    "min_relevance_score": 0.72,
+    "cross_collection_search": true
+  }
+}

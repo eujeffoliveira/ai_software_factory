@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "SwrPollingInput",
+  "type": "object",
+  "required": ["endpoint", "response_type", "polling_interval_ms", "component_name", "file_path"],
+  "properties": {
+    "endpoint": { "type": "string", "description": "Must exist in API_Contract.json" },
+    "response_type": { "type": "string" },
+    "polling_interval_ms": { "type": "integer", "minimum": 5000 },
+    "component_name": { "type": "string", "pattern": "^[A-Z][a-zA-Z0-9]+$" },
+    "file_path": { "type": "string" }
+  }
+}

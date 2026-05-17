@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "RechartsDashboardOutput",
+  "type": "object",
+  "required": ["file_path", "has_responsive_container", "has_empty_state", "has_aria_label", "uses_token_colors"],
+  "properties": {
+    "file_path": { "type": "string" },
+    "has_responsive_container": { "type": "boolean" },
+    "has_empty_state": { "type": "boolean" },
+    "has_aria_label": { "type": "boolean" },
+    "has_sr_table": { "type": "boolean" },
+    "uses_token_colors": { "type": "boolean" },
+    "typescript_interface": { "type": "string", "description": "The interface name created for chart data" }
+  }
+}

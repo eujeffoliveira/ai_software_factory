@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "SwrPollingOutput",
+  "type": "object",
+  "required": ["file_path", "has_loading_state", "has_error_state", "refresh_interval_ms"],
+  "properties": {
+    "file_path": { "type": "string" },
+    "has_loading_state": { "type": "boolean" },
+    "has_error_state": { "type": "boolean" },
+    "refresh_interval_ms": { "type": "integer", "minimum": 5000 },
+    "endpoint_verified": { "type": "boolean", "description": "Confirmed endpoint exists in API_Contract.json" }
+  }
+}

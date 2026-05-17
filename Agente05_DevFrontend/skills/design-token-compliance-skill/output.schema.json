@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "DesignTokenComplianceOutput",
+  "type": "object",
+  "required": ["design_token_compliant", "violations_found", "violations"],
+  "properties": {
+    "design_token_compliant": { "type": "boolean" },
+    "violations_found": { "type": "integer", "minimum": 0 },
+    "violations_fixed": { "type": "integer", "minimum": 0 },
+    "gate_4_status": { "type": "string", "enum": ["READY_FOR_QA", "BLOCKED_DESIGN_SYSTEM_VIOLATION"] },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "type", "severity", "original", "replacement", "fixed"],
+        "properties": {
+          "file": { "type": "string" },
+          "type": { "type": "string", "enum": ["inline_style", "hardcoded_color", "non_token_class", "css_module"] },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "original": { "type": "string" },
+          "replacement": { "type": "string" },
+          "fixed": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

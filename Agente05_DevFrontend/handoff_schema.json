@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/handoff_schema.json",
+  "title": "FrontendHandoffPackage",
+  "description": "JSON Schema for the Handoff Package produced by Agente05_DevFrontend after completing a frontend implementation task. Validates the artifact before submission to Gate 4 (QA Review).",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "summary",
+    "tasks_completed",
+    "required_next_agent",
+    "validation_checklist",
+    "implementation_summary",
+    "gate_ready"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "const": "Frontend_Implementation_Report.md",
+      "description": "The primary artifact produced by this agent."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 500,
+      "description": "Human-readable summary of what was implemented."
+    },
+    "tasks_completed": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "file_path", "implementation_summary", "component_type"],
+        "additionalProperties": false,
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^TASK-[0-9]{3,}$",
+            "description": "Task ID from Execution_Plan.json (e.g. TASK-042)"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Relative path of the primary file created or modified"
+          },
+          "component_type": {
+            "type": "string",
+            "enum": ["ServerComponent", "ClientComponent", "LoadingState", "ErrorState", "EmptyState", "Layout", "Chart", "PollingWidget", "TestFile"],
+            "description": "Type of component or artifact created"
+          },
+          "client_component_justification": {
+            "type": "string",
+            "description": "Required if component_type is ClientComponent — why 'use client' was needed"
+          },
+          "implementation_summary": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Brief description of what was implemented"
+          },
+          "has_loading_state": {
+            "type": "boolean",
+            "description": "Whether a loading state was created for this component/route"
+          },
+          "has_error_state": {
+            "type": "boolean",
+            "description": "Whether an error state was created for this component/route"
+          },
+          "has_empty_state": {
+            "type": "boolean",
+            "description": "Whether an empty state was implemented for data-driven sections"
+          },
+          "accessibility_verified": {
+            "type": "boolean",
+            "description": "Whether accessibility-check-skill was run and passed"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 10
+      },
+      "description": "Assumptions made during implementation that the QA engineer should be aware of"
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, this question must be resolved before Gate 4 — escalate to Agente00"
+          },
+          "context": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Unresolved questions. Blocking questions prevent Gate 4 submission."
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "description", "severity", "mitigation"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "pattern": "^RISK-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+          },
+          "mitigation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "const": "Agente06_QaEngineer",
+      "description": "The next agent in the pipeline. Always QA Engineer for Dev Frontend output."
+    },
+    "validation_checklist": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["item", "passed"],
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Self-review checklist items with pass/fail status"
+    },
+    "implementation_summary": {
+      "type": "object",
+      "required": [
+        "files_created",
+        "files_modified",
+        "server_components_created",
+        "client_components_created",
+        "loading_states_created",
+        "error_states_created",
+        "empty_states_created",
+        "tests_created"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "files_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_modified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "server_components_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "client_components_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "loading_states_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error_states_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "empty_states_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "charts_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "swr_polling_components_created": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tests_created": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "Must be true. If any blocker exists, resolve it before setting this to true."
+    }
+  }
+}

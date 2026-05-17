@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "FrontendErrorStateOutput",
+  "type": "object",
+  "required": ["file_path", "is_client_component", "exposes_error_message", "has_reset_button", "has_role_alert"],
+  "properties": {
+    "file_path": { "type": "string" },
+    "is_client_component": { "type": "boolean", "description": "Must be true" },
+    "exposes_error_message": { "type": "boolean", "description": "Must be false" },
+    "has_reset_button": { "type": "boolean", "description": "Must be true" },
+    "has_role_alert": { "type": "boolean", "description": "Must be true" },
+    "logs_internally": { "type": "boolean", "description": "Must be true — digest logged to console" }
+  }
+}

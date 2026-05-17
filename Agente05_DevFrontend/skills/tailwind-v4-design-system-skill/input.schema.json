@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "TailwindDesignSystemInput",
+  "type": "object",
+  "required": ["component_files"],
+  "properties": {
+    "component_files": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "design_token_map": { "type": "object", "description": "Optional override of default token map from context_view.md" }
+  }
+}

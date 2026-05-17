@@ -1,0 +1,45 @@
+# Skill: frontend-error-state-skill
+
+## Purpose
+
+Implements `error.tsx` files for page routes and error boundary components for nested components. Ensures user-friendly messages (never `error.message`), a `reset()` button, and accessible markup.
+
+## When to Use
+
+- For every page route in the task scope (every `page.tsx` needs a companion `error.tsx`)
+- For async components that wrap a data-dependent subtree
+- When a form or mutation can produce an error state
+
+## Inputs
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `route_path` | Yes | The route folder path (e.g., `app/entities/`) |
+| `error_message` | No | Optional custom user-facing message (generic default if not provided) |
+| `recovery_strategy` | No | `reset` (try again) / `navigate_back` / `contact_support` |
+
+## Outputs
+
+- `error.tsx` file at the route folder
+- Client Component (Next.js requirement)
+- Generic user-friendly message (never `error.message`)
+- `reset()` recovery button
+- Internal logging (digest only, not message)
+- Accessible `role="alert"` wrapper
+
+## Constraints
+
+- **`"use client"` is REQUIRED** — Next.js requires `error.tsx` to be Client Component (DR003)
+- **`error.message` MUST NOT be shown to users** — information disclosure (FM-03)
+- **`reset()` MUST be provided** as a recovery mechanism
+- **`role="alert"` MUST be on the container** for screen readers
+
+## Knowledge Access Policy
+
+This skill reads ONLY from:
+- `Agente05_DevFrontend/context_view.md` — § 5 Error State Pattern
+- `Agente05_DevFrontend/knowledge/decision_rules.md` — DR008
+- `Agente05_DevFrontend/knowledge/principles.md` — P5
+- `Agente05_DevFrontend/templates/Error_State_Template.tsx`
+
+**BLOCKED at runtime:** `context/`, `lib/`, any external source.

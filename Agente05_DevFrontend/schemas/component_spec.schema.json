@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/schemas/component_spec.schema.json",
+  "title": "ComponentSpec",
+  "description": "Detailed specification for a single React component to be implemented by Agente05_DevFrontend. Used by server-component-selection-skill and nextjs-react-component-skill.",
+  "type": "object",
+  "required": [
+    "component_name",
+    "file_path",
+    "component_type",
+    "justification"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "component_name": {
+      "type": "string",
+      "pattern": "^[A-Z][a-zA-Z0-9]+$",
+      "description": "PascalCase component name (e.g., EntityList, MetricsDashboard)"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Target file path relative to project root"
+    },
+    "component_type": {
+      "type": "string",
+      "enum": ["ServerComponent", "ClientComponent"],
+      "description": "Result of server-component-selection-skill"
+    },
+    "justification": {
+      "type": "string",
+      "minLength": 10,
+      "description": "For ServerComponent: state reason it's a SC. For ClientComponent: which trigger (DR001-DR005) applies."
+    },
+    "client_trigger": {
+      "type": "string",
+      "enum": [
+        "DR001-useState",
+        "DR002-useEffect",
+        "DR003-eventHandlers",
+        "DR004-browserAPIs",
+        "DR005-recharts",
+        "multiple"
+      ],
+      "description": "Which decision rule triggered Client Component (required if component_type is ClientComponent)"
+    },
+    "props": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "typescript_type", "required"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Prop name (camelCase)"
+          },
+          "typescript_type": {
+            "type": "string",
+            "description": "TypeScript type string (e.g., string, EntityItem, EntityItem[])"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "default_value": {
+            "type": "string",
+            "description": "Default value as a string representation"
+          },
+          "source": {
+            "type": "string",
+            "enum": ["api_contract", "parent_component", "static", "derived"],
+            "description": "Where this prop's type originates"
+          }
+        }
+      }
+    },
+    "data_fetching": {
+      "type": "object",
+      "description": "Data fetching configuration (for Server Components only)",
+      "properties": {
+        "server_action": {
+          "type": "string",
+          "description": "Server Action import path (e.g., @/features/entities/actions/getEntities)"
+        },
+        "response_type": {
+          "type": "string",
+          "description": "TypeScript type of the server action return value"
+        },
+        "can_be_null": {
+          "type": "boolean",
+          "description": "Whether the data fetch can return null/undefined"
+        }
+      }
+    },
+    "swr_config": {
+      "type": "object",
+      "description": "SWR configuration (for polling Client Components only)",
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "description": "API endpoint from API_Contract.json"
+        },
+        "response_type": {
+          "type": "string"
+        },
+        "refresh_interval_ms": {
+          "type": "integer",
+          "minimum": 5000,
+          "description": "Polling interval — must be ≥ 5000ms"
+        }
+      }
+    },
+    "states_required": {
+      "type": "object",
+      "properties": {
+        "loading": {
+          "type": "boolean",
+          "description": "Requires loading state (loading.tsx or Suspense)"
+        },
+        "error": {
+          "type": "boolean",
+          "description": "Requires error state (error.tsx or error boundary)"
+        },
+        "empty": {
+          "type": "boolean",
+          "description": "Requires empty state (empty data case)"
+        }
+      }
+    },
+    "accessibility_requirements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Specific accessibility requirements for this component"
+    },
+    "responsive_requirements": {
+      "type": "object",
+      "properties": {
+        "mobile_cols": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "tablet_cols": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "desktop_cols": { "type": "integer", "minimum": 1, "maximum": 12 }
+      }
+    },
+    "design_tokens_required": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Design tokens this component must use"
+    },
+    "test_required": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether a test file is required for this component"
+    },
+    "test_scenarios": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Test scenarios to cover (derived from acceptance criteria)"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "FrontendStateManagementInput",
+  "type": "object",
+  "required": ["state_requirement", "component_context"],
+  "properties": {
+    "state_requirement": { "type": "string", "minLength": 10 },
+    "component_context": { "type": "string" },
+    "polling_interval_ms": { "type": "integer", "minimum": 5000 },
+    "is_mutation": { "type": "boolean", "default": false }
+  }
+}

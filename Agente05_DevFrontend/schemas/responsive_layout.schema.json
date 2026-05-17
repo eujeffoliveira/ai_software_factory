@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/schemas/responsive_layout.schema.json",
+  "title": "ResponsiveLayoutSpec",
+  "description": "Schema for specifying responsive layout requirements. Input for responsive-layout-skill.",
+  "type": "object",
+  "required": ["layout_name", "layout_type", "breakpoints"],
+  "additionalProperties": false,
+  "properties": {
+    "layout_name": {
+      "type": "string",
+      "description": "Descriptive name for this layout (e.g., DashboardGrid, SidebarLayout)"
+    },
+    "layout_type": {
+      "type": "string",
+      "enum": ["grid", "flex", "mixed"],
+      "description": "Primary layout mechanism"
+    },
+    "breakpoints": {
+      "type": "object",
+      "required": ["default"],
+      "description": "Column/layout configuration at each breakpoint. 'default' is mobile (required).",
+      "properties": {
+        "default": {
+          "$ref": "#/definitions/breakpoint_config"
+        },
+        "sm": {
+          "$ref": "#/definitions/breakpoint_config"
+        },
+        "md": {
+          "$ref": "#/definitions/breakpoint_config"
+        },
+        "lg": {
+          "$ref": "#/definitions/breakpoint_config"
+        },
+        "xl": {
+          "$ref": "#/definitions/breakpoint_config"
+        },
+        "2xl": {
+          "$ref": "#/definitions/breakpoint_config"
+        }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "description": "Gap between grid/flex items at each breakpoint",
+      "properties": {
+        "default": { "type": "string", "description": "Tailwind gap class (e.g., gap-4)" },
+        "lg": { "type": "string" }
+      }
+    },
+    "container": {
+      "type": "object",
+      "description": "Container configuration",
+      "properties": {
+        "max_width": {
+          "type": "string",
+          "description": "Tailwind max-width class (e.g., max-w-7xl)"
+        },
+        "horizontal_padding": {
+          "type": "string",
+          "description": "Tailwind padding classes (e.g., px-4 sm:px-6 lg:px-8)"
+        },
+        "centered": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "description": "Layout children with span overrides",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "col_span": {
+            "type": "object",
+            "description": "Column span at each breakpoint (for grid layouts)",
+            "properties": {
+              "default": { "type": "integer", "minimum": 1 },
+              "sm": { "type": "integer" },
+              "md": { "type": "integer" },
+              "lg": { "type": "integer" }
+            }
+          },
+          "order": {
+            "type": "object",
+            "description": "Visual order override at each breakpoint",
+            "properties": {
+              "default": { "type": "integer" },
+              "lg": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "overflow_strategy": {
+      "type": "string",
+      "enum": ["wrap", "scroll", "truncate", "none"],
+      "description": "How to handle content overflow on small screens"
+    },
+    "tailwind_classes": {
+      "type": "string",
+      "description": "The resulting Tailwind class string (output of responsive-layout-skill)"
+    }
+  },
+  "definitions": {
+    "breakpoint_config": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12,
+          "description": "Number of columns in the grid"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["row", "column"],
+          "description": "Flex direction (for flex layouts)"
+        },
+        "align": {
+          "type": "string",
+          "enum": ["start", "center", "end", "stretch", "between", "around"],
+          "description": "Alignment of items"
+        },
+        "visible": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this section is visible at this breakpoint"
+        }
+      }
+    }
+  }
+}

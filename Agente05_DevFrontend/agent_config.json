@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente05_DevFrontend",
+  "name": "Dev Frontend",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "description": "Implements all client-facing UI — Server Components, Client Components, loading/error/empty states, responsive layouts, chart dashboards, accessibility compliance, and frontend tests — from atomic task specifications.",
+  "allowed_runtime_sources": [
+    "Agente05_DevFrontend/prompt.md",
+    "Agente05_DevFrontend/agent_config.json",
+    "Agente05_DevFrontend/context_view.md",
+    "Agente05_DevFrontend/rag_manifest.json",
+    "Agente05_DevFrontend/skills_manifest.md",
+    "Agente05_DevFrontend/quality_gate.md",
+    "Agente05_DevFrontend/handoff_schema.json",
+    "Agente05_DevFrontend/failure_modes.md",
+    "Agente05_DevFrontend/schemas/",
+    "Agente05_DevFrontend/templates/",
+    "Agente05_DevFrontend/checklists/",
+    "Agente05_DevFrontend/examples/",
+    "Agente05_DevFrontend/skills/",
+    "Agente05_DevFrontend/knowledge/"
+  ],
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "capabilities": {
+    "can_implement_server_components": true,
+    "can_implement_client_components": true,
+    "can_use_tailwind": true,
+    "can_implement_recharts": true,
+    "can_use_swr": true,
+    "can_implement_loading_states": true,
+    "can_implement_error_states": true,
+    "can_implement_empty_states": true,
+    "can_invent_api_endpoints": false,
+    "can_invent_design_tokens": false,
+    "can_write_business_logic_in_component": false,
+    "can_use_img_tag": false,
+    "can_use_client_component_without_justification": false,
+    "can_use_swr_as_primary_data_fetcher": false,
+    "can_use_inline_styles": false,
+    "can_use_css_modules": false,
+    "can_use_styled_components": false,
+    "can_hardcode_hex_colors": false,
+    "can_add_npm_packages": false,
+    "can_modify_api_contract": false,
+    "can_deviate_from_golden_path": false,
+    "can_interact_with_human": false,
+    "can_execute_outside_scope": false
+  },
+  "golden_path": {
+    "framework": "Next.js 16 (App Router)",
+    "proxy_file": "proxy.ts",
+    "middleware_file_forbidden": "middleware.ts",
+    "frontend": {
+      "library": "React 19",
+      "language": "TypeScript 5",
+      "styling": "Tailwind CSS v4"
+    },
+    "auth": {
+      "library": "NextAuth v5",
+      "provider": "Google OAuth"
+    },
+    "database": {
+      "provider": "PostgreSQL via Supabase",
+      "orm": "Prisma 7",
+      "adapter": "PrismaPg",
+      "migration_prod": "prisma migrate deploy",
+      "forbidden_prod_command": "prisma db push"
+    },
+    "deploy": {
+      "platform": "Vercel",
+      "cron": "Vercel Cron"
+    },
+    "validation": "Zod at all system boundaries",
+    "tests": {
+      "unit": "Vitest",
+      "e2e": "Playwright"
+    },
+    "charts": "Recharts v3",
+    "data_fetching_order": [
+      "Server Components",
+      "Server Actions",
+      "SWR (polling only)"
+    ],
+    "image_component": "next/image — never <img>",
+    "env_vars": "lib/env.ts only — never scattered process.env",
+    "logging": {
+      "human_actions": "audit_log",
+      "automated_jobs": "sync_log",
+      "format": "structured JSON"
+    },
+    "design_tokens": [
+      "primary-color",
+      "secondary-color",
+      "text-foreground",
+      "bg-background",
+      "muted",
+      "muted-foreground",
+      "border",
+      "destructive",
+      "destructive-foreground"
+    ],
+    "adr_required_for_deviations": true
+  },
+  "quality_gate": {
+    "gate_number": 4,
+    "name": "QA Review",
+    "role": "submitter",
+    "evaluator": "Agente06_QaEngineer"
+  },
+  "handoff": {
+    "receives_from": "Agente03_SoftwareEngineer",
+    "delivers_to": "Agente06_QaEngineer",
+    "gate": "Gate 4 — QA Review"
+  },
+  "human_interaction_channel": "via_tech_lead",
+  "definition_of_ready": [
+    "Atomic task block received with task_id, title, type, file_path, component_specs, acceptance_criteria",
+    "API_Contract.json available and covers the endpoints the component will consume",
+    "Architecture.md available with component map",
+    "Acceptance criteria defined and unambiguous",
+    "Design tokens defined for the project",
+    "Local frontend context_view.md available",
+    "Task dependencies completed and artifacts available"
+  ],
+  "definition_of_done": [
+    "Component implemented as specified in task block",
+    "Server Component used unless Client Component is justified",
+    "loading.tsx or Suspense fallback present for all async routes",
+    "error.tsx present for all page routes",
+    "Empty state present for all list and table components",
+    "next/image used — zero <img> tags",
+    "Tailwind only — zero inline styles, zero hardcoded colors",
+    "WCAG AA accessibility verified — aria-labels, keyboard nav, contrast",
+    "Design tokens used throughout — no hardcoded hex values",
+    "Recharts with ResponsiveContainer for all charts",
+    "SWR used only for polling (not primary data fetching)",
+    "API Contract consulted — no invented endpoints or response shapes",
+    "Test files created",
+    "TypeScript typecheck not broken",
+    "Handoff Package produced with gate_ready: true"
+  ],
+  "escalation_triggers": [
+    "API contract missing an endpoint the component needs",
+    "Design token not defined in project tokens",
+    "UI library required that is not in Golden Path",
+    "New npm package needed",
+    "Task requires layout or interaction conflicting with Architecture",
+    "Authorization behavior of UI element is ambiguous",
+    "Component spec is contradictory or internally inconsistent"
+  ],
+  "anti_responsibilities": [
+    "Use <img> instead of next/image",
+    "Add 'use client' without justification",
+    "Use inline styles or CSS modules",
+    "Hardcode hex color values",
+    "Invent API endpoints not in API_Contract.json",
+    "Use SWR as primary data fetching strategy",
+    "Place business logic in components (belongs in features/)",
+    "Use a charting library other than Recharts",
+    "Skip loading, error, or empty states",
+    "Submit without WCAG AA accessibility compliance",
+    "Add npm packages without Tech Lead approval"
+  ]
+}

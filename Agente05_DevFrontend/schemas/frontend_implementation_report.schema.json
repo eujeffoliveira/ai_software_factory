@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "Agente05_DevFrontend/schemas/frontend_implementation_report.schema.json",
+  "title": "FrontendImplementationReport",
+  "description": "Schema for the Frontend_Implementation_Report.md metadata block. Validates the completeness of the report before Gate 4 submission.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "date",
+    "agent",
+    "files_created",
+    "component_inventory",
+    "states_inventory",
+    "accessibility_review",
+    "design_token_review",
+    "test_coverage",
+    "self_review_checklist",
+    "gate_readiness"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^TASK-[0-9]{3,}$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Implementation date (YYYY-MM-DD)"
+    },
+    "agent": {
+      "type": "string",
+      "const": "Agente05_DevFrontend"
+    },
+    "files_created": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "component_type", "line_count"],
+        "properties": {
+          "path": { "type": "string" },
+          "component_type": {
+            "type": "string",
+            "enum": ["ServerComponent", "ClientComponent", "LoadingState", "ErrorState", "EmptyState", "Layout", "Chart", "PollingWidget", "TestFile", "Other"]
+          },
+          "line_count": { "type": "integer", "minimum": 1 },
+          "client_justification": {
+            "type": "string",
+            "description": "Required if component_type is ClientComponent"
+          }
+        }
+      }
+    },
+    "files_modified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "change_summary"],
+        "properties": {
+          "path": { "type": "string" },
+          "change_summary": { "type": "string" }
+        }
+      }
+    },
+    "component_inventory": {
+      "type": "object",
+      "required": ["server_components", "client_components"],
+      "properties": {
+        "server_components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "path"],
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" },
+              "data_source": { "type": "string" }
+            }
+          }
+        },
+        "client_components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "path", "justification"],
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" },
+              "justification": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "states_inventory": {
+      "type": "object",
+      "required": ["loading_states", "error_states", "empty_states"],
+      "properties": {
+        "loading_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "mechanism"],
+            "properties": {
+              "path": { "type": "string" },
+              "mechanism": {
+                "type": "string",
+                "enum": ["loading.tsx", "Suspense"]
+              }
+            }
+          }
+        },
+        "error_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "has_reset_button"],
+            "properties": {
+              "path": { "type": "string" },
+              "has_reset_button": { "type": "boolean" }
+            }
+          }
+        },
+        "empty_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["component", "has_cta"],
+            "properties": {
+              "component": { "type": "string" },
+              "has_cta": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "accessibility_review": {
+      "type": "object",
+      "required": ["skill_run", "wcag_aa_compliant", "issues_found", "issues_resolved"],
+      "properties": {
+        "skill_run": { "type": "boolean" },
+        "wcag_aa_compliant": { "type": "boolean" },
+        "issues_found": { "type": "integer", "minimum": 0 },
+        "issues_resolved": { "type": "integer", "minimum": 0 },
+        "remaining_issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["severity", "description"],
+            "properties": {
+              "severity": {
+                "type": "string",
+                "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+              },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "design_token_review": {
+      "type": "object",
+      "required": ["skill_run", "design_token_compliant", "violations_found", "violations_fixed"],
+      "properties": {
+        "skill_run": { "type": "boolean" },
+        "design_token_compliant": { "type": "boolean" },
+        "violations_found": { "type": "integer", "minimum": 0 },
+        "violations_fixed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "test_coverage": {
+      "type": "object",
+      "required": ["test_files_created", "vitest_tests", "playwright_tests"],
+      "properties": {
+        "test_files_created": { "type": "integer", "minimum": 0 },
+        "vitest_tests": { "type": "integer", "minimum": 0 },
+        "playwright_tests": { "type": "integer", "minimum": 0 },
+        "test_files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "type", "test_count"],
+            "properties": {
+              "path": { "type": "string" },
+              "type": { "type": "string", "enum": ["vitest", "playwright"] },
+              "test_count": { "type": "integer", "minimum": 1 },
+              "scenarios": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "self_review_checklist": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["item", "passed"],
+        "properties": {
+          "item": { "type": "string" },
+          "passed": { "type": "boolean" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": { "type": "string" },
+          "blocking": { "type": "boolean" },
+          "context": { "type": "string" }
+        }
+      }
+    },
+    "gate_readiness": {
+      "type": "object",
+      "required": ["gate_ready", "required_next_agent"],
+      "properties": {
+        "gate_ready": { "type": "boolean" },
+        "required_next_agent": {
+          "type": "string",
+          "const": "Agente06_QaEngineer"
+        },
+        "blocking_issues": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

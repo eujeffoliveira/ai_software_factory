@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "FrontendStateManagementOutput",
+  "type": "object",
+  "required": ["strategy", "rationale"],
+  "properties": {
+    "strategy": { "type": "string", "enum": ["none_server_component", "local_ui_state", "server_action", "swr_polling"] },
+    "rationale": { "type": "string", "minLength": 20 },
+    "implementation_guidance": { "type": "string" },
+    "warning": { "type": "string", "description": "Warning if a better approach exists" }
+  }
+}

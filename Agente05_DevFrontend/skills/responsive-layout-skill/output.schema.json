@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "ResponsiveLayoutOutput",
+  "type": "object",
+  "required": ["tailwind_classes", "mobile_first_verified"],
+  "properties": {
+    "tailwind_classes": { "type": "string", "description": "The complete Tailwind class string for the layout" },
+    "mobile_first_verified": { "type": "boolean", "description": "Default (no prefix) classes define mobile layout" },
+    "breakpoints_applied": { "type": "array", "items": { "type": "string" } },
+    "overflow_strategy": { "type": "string" }
+  }
+}

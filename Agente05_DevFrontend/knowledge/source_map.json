@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente05_DevFrontend",
+  "build_date": "2026-05-17",
+  "description": "Maps each build-time source to the distilled artifacts it produced. Use this to trace the origin of any principle, heuristic, decision rule, or knowledge card back to its source.",
+  "sources": [
+    {
+      "source_id": "SRC-01",
+      "title": "Eloquent JavaScript",
+      "author": "Marijn Haverbeke",
+      "location": "lib/DevFrontend/eloquent-javascript.pdf",
+      "topics_extracted": [
+        "JavaScript closures and module system",
+        "Async/await patterns and Promise handling",
+        "ES module imports and exports",
+        "Browser event model and event delegation",
+        "TypeScript type system and type inference",
+        "Error handling patterns (try/catch, typed errors)",
+        "Functional programming patterns (map, filter, reduce)"
+      ],
+      "distilled_to": {
+        "principles": ["P2", "P9", "P10", "P12"],
+        "heuristics": ["H12"],
+        "decision_rules": ["DR001", "DR002", "DR003", "DR004", "DR018"],
+        "knowledge_cards": ["Card 010", "Card 011"]
+      }
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Designing Interfaces",
+      "author": "Jenifer Tidwell",
+      "location": "lib/DevFrontend/designing-interfaces.pdf",
+      "topics_extracted": [
+        "Loading state patterns (skeleton, spinner, progress)",
+        "Empty state design (icon + message + CTA)",
+        "Progressive disclosure in UI",
+        "Form design patterns (inline validation, field grouping)",
+        "Feedback patterns (success, error, pending)",
+        "Navigation patterns (breadcrumbs, tabs, sidebars)",
+        "Responsive layout patterns",
+        "Accessibility and inclusive design patterns",
+        "Data visualization best practices"
+      ],
+      "distilled_to": {
+        "principles": ["P4", "P5", "P11"],
+        "heuristics": ["H3", "H4", "H8", "H13"],
+        "decision_rules": ["DR007", "DR008", "DR009"],
+        "knowledge_cards": ["Card 004", "Card 005"]
+      }
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "High Performance Browser Networking",
+      "author": "Ilya Grigorik",
+      "location": "lib/DevFrontend/high-performance-browser-networking.pdf",
+      "topics_extracted": [
+        "HTTP/2 and HTTP/3 resource loading",
+        "JavaScript bundle size and parsing cost",
+        "Image optimization (WebP, lazy loading, LCP)",
+        "HTTP polling vs. Server-Sent Events vs. WebSockets",
+        "Caching strategy (stale-while-revalidate)",
+        "Core Web Vitals (LCP, FID, CLS)",
+        "Network request deduplication",
+        "CDN and edge delivery"
+      ],
+      "distilled_to": {
+        "principles": ["P1", "P7", "P9"],
+        "heuristics": ["H2", "H9"],
+        "decision_rules": ["DR006", "DR014"],
+        "knowledge_cards": ["Card 001", "Card 007", "Card 008"]
+      }
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "CSS Secrets",
+      "author": "Lea Verou",
+      "location": "lib/DevFrontend/css-secrets.pdf",
+      "topics_extracted": [
+        "CSS custom properties (design tokens)",
+        "Responsive layout techniques (Grid, Flexbox)",
+        "Visual design patterns (shadows, rounded corners, gradients)",
+        "Dark mode implementation with CSS variables",
+        "CSS Grid auto-fill and auto-fit patterns",
+        "Fluid typography and spacing",
+        "Transition and animation techniques",
+        "Clip-path and shape patterns"
+      ],
+      "distilled_to": {
+        "principles": ["P3", "P11"],
+        "heuristics": ["H7", "H10"],
+        "decision_rules": ["DR011", "DR012", "DR020"],
+        "knowledge_cards": ["Card 003", "Card 012"]
+      }
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "Golden Path Reference Architecture",
+      "author": "AI Software Factory",
+      "location": "context/reference_architecture_generico.md",
+      "note": "Build-time source only — blocked at runtime",
+      "topics_extracted": [
+        "Mandatory tech stack (Next.js 16 App Router)",
+        "React 19 + TypeScript 5 + Tailwind CSS v4",
+        "Recharts v3 as the only authorized charting library",
+        "Data fetching order: Server Components → Server Actions → SWR",
+        "SWR for polling only",
+        "next/image for all images",
+        "Env vars via lib/env.ts only",
+        "Structured logging (audit_log / sync_log)"
+      ],
+      "distilled_to": {
+        "principles": ["P1", "P2", "P3", "P6", "P7", "P8"],
+        "decision_rules": ["DR005", "DR010", "DR013", "DR015", "DR017"],
+        "knowledge_cards": ["Card 002", "Card 006"]
+      }
+    },
+    {
+      "source_id": "SRC-06",
+      "title": "WCAG 2.1 AA Standard",
+      "author": "W3C",
+      "location": "context/base_teorica.md (section: accessibility)",
+      "note": "Build-time source only — blocked at runtime",
+      "topics_extracted": [
+        "Contrast ratio requirements (4.5:1 normal text, 3:1 large text)",
+        "Keyboard navigation requirements",
+        "ARIA roles and attributes",
+        "Focus management patterns",
+        "Screen reader announcement patterns",
+        "Accessible names for interactive elements",
+        "Error identification and suggestion"
+      ],
+      "distilled_to": {
+        "principles": ["P4"],
+        "heuristics": ["H6", "H14", "H15"],
+        "decision_rules": ["DR019"],
+        "knowledge_cards": ["Card 009"]
+      }
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "gap": "WebSocket real-time patterns (beyond SWR polling)",
+      "reason": "Golden Path authorizes only SWR polling for real-time; WebSocket requires ADR",
+      "escalation": "If WebSocket is needed, escalate to Agente00_TechLead for ADR"
+    },
+    {
+      "gap": "React Query vs. SWR comparison",
+      "reason": "SWR is the only authorized client-side data fetching library",
+      "escalation": "React Query requires ADR"
+    },
+    {
+      "gap": "Storybook and component documentation",
+      "reason": "Not in current Golden Path scope",
+      "escalation": "Escalate to Agente00_TechLead if component documentation is required"
+    }
+  ]
+}

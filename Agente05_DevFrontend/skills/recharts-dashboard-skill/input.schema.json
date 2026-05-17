@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "RechartsDashboardInput",
+  "type": "object",
+  "required": ["chart_type", "title", "file_path"],
+  "properties": {
+    "chart_type": { "type": "string", "enum": ["LineChart", "BarChart", "AreaChart", "PieChart", "ComposedChart"] },
+    "data_type_definition": { "type": "object", "description": "Data type from API_Contract.json" },
+    "title": { "type": "string" },
+    "height_px": { "type": "integer", "minimum": 100, "maximum": 800, "default": 300 },
+    "file_path": { "type": "string" },
+    "data_keys": { "type": "array", "items": { "type": "string" }, "description": "Recharts dataKey values" }
+  }
+}
