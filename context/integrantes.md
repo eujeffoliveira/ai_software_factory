@@ -122,8 +122,8 @@ O agente não deve depender deste manifesto em runtime.
 | 06 | QA Engineer | `Agente06_QaEngineer/` | Qualidade | `QA_Report.md` | Não |
 | 07 | DevSecOps | `Agente07_DevSecOps/` | Segurança e LGPD | `Security_Audit.md` | Via Tech Lead |
 | 08 | DevOps | `Agente08_DevOps/` | Deploy e operação | `Deployment_Plan.md` | Via Tech Lead |
-| 09 | UX/UI Designer | `Agente09_UxUiDesigner/` | Opcional — UX/UI | `UX_Flow.md` | Via Tech Lead |
-| 10 | Data / Integration Engineer | `Agente10_DataIntegrationEngineer/` | Opcional — Dados/integrações | `Integration_Spec.md` | Via Tech Lead |
+| 09 | UX/UI Designer | `Agente09_UxUiDesigner/` | UX/UI | `UX_Flow.md` | Via Tech Lead |
+| 10 | Data / Integration Engineer | `Agente10_DataIntegrationEngineer/` | Dados/integrações | `Integration_Spec.md` | Via Tech Lead |
 
 ---
 
