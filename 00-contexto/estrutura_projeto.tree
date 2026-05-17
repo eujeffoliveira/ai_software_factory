@@ -1,0 +1,111 @@
+📦ai_software_factory
+ ┣ 📂00-contexto
+ ┃ ┣ 📜base_teorica.md
+ ┃ ┣ 📜integrantes.md
+ ┃ ┣ 📜manual_arquitetura_componentes.md
+ ┃ ┗ 📜reference_architecture.md
+ ┣ 📂01-bibliografia
+ ┃ ┣ 📂DevBackend
+ ┃ ┃ ┣ 📜Architecture Patterns with Python – Harry Percival and Bob Gregory.pdf
+ ┃ ┃ ┣ 📜Clean Code – Robert C. Martin.pdf
+ ┃ ┃ ┣ 📜Grokking Algorithms – Aditya Bhargava.pdf
+ ┃ ┃ ┣ 📜Introduction to Algorithms – Thomas H. Cormen et al.pdf
+ ┃ ┃ ┣ 📜Microservices Patterns – Chris Richardson.pdf
+ ┃ ┃ ┗ 📜Programming Pearls – Jon Bentley.pdf
+ ┃ ┣ 📂DevFrontend
+ ┃ ┃ ┣ 📜CSS Secrets – Lea Verou.pdf
+ ┃ ┃ ┣ 📜Designing Interfaces – Jenifer Tidwell.pdf
+ ┃ ┃ ┣ 📜Eloquent JavaScript – Marijn Haverbeke.pdf
+ ┃ ┃ ┗ 📜High Performance Browser Networking – Ilya Grigorik.pdf
+ ┃ ┣ 📂DevOps
+ ┃ ┃ ┣ 📜Continuous Delivery – Jez Humble and David Farley.pdf
+ ┃ ┃ ┣ 📜Infrastructure as Code – Kief Morris.pdf
+ ┃ ┃ ┣ 📜Site Reliability Engineering – Niall Richard Murphy et al.pdf
+ ┃ ┃ ┣ 📜The DevOps Handbook – Gene Kim et al.pdf
+ ┃ ┃ ┗ 📜The Phoenix Project – Gene Kim, Kevin Behr and George Spafford.pdf
+ ┃ ┣ 📂DevSecOps
+ ┃ ┃ ┣ 📜Practical Cloud Security – Chris Dotson.pdf
+ ┃ ┃ ┣ 📜The Web Application Hacker's Handbook – Stuttard and Pinto.pdf
+ ┃ ┃ ┗ 📜Threat Modeling Designing for Security – Adam Shostack.pdf
+ ┃ ┣ 📂ProductOwner
+ ┃ ┃ ┣ 📜Agile Software Requirements – Dean Leffingwell.pdf
+ ┃ ┃ ┣ 📜Mastering the Requirements Process, Getting Requirements Right – Suzanne Robertson & James Robertson.pdf
+ ┃ ┃ ┣ 📜Software Requirements – Karl Wiegers & Joy Beatty.pdf
+ ┃ ┃ ┣ 📜User Stories Applied, For Agile Software Development – Mike Cohn.pdf
+ ┃ ┃ ┗ 📜Writing Effective Use Cases – Alistair Cockburn.pdf
+ ┃ ┣ 📂QaEngineer
+ ┃ ┃ ┣ 📜Growing Object-Oriented Software Guided by Tests – Freeman and Pryce.pdf
+ ┃ ┃ ┣ 📜Refactoring – Martin Fowler.pdf
+ ┃ ┃ ┣ 📜Test-Driven Development by Example – Kent Beck.pdf
+ ┃ ┃ ┣ 📜Unit Testing Principles Practices Patterns – Vladimir Khorikov.pdf
+ ┃ ┃ ┗ 📜Working Effectively with Legacy Code – Michael Feathers.pdf
+ ┃ ┣ 📂SoftwareArchitect
+ ┃ ┃ ┣ 📜Building Microservices – Sam Newman.pdf
+ ┃ ┃ ┣ 📜Clean Architecture – Robert C. Martin.pdf
+ ┃ ┃ ┣ 📜Designing Data-Intensive Applications – Martin Kleppmann.pdf
+ ┃ ┃ ┣ 📜Domain-Driven Design – Eric Evans.pdf
+ ┃ ┃ ┣ 📜Fundamentals of Software Architecture – Mark Richards and Neal Ford.pdf
+ ┃ ┃ ┗ 📜Patterns of Enterprise Application Architecture – Martin Fowler.pdf
+ ┃ ┣ 📂SoftwareEngineer
+ ┃ ┃ ┣ 📜Code Complete – Steve McConnell.pdf
+ ┃ ┃ ┣ 📜Design Patterns – Gang of Four.pdf
+ ┃ ┃ ┣ 📜Enterprise Integration Patterns – Gregor Hohpe and Bobby Woolf.pdf
+ ┃ ┃ ┣ 📜System Design Interview – Alex Xu.pdf
+ ┃ ┃ ┗ 📜The Pragmatic Programmer – Andrew Hunt and David Thomas.pdf
+ ┃ ┣ 📂TechLead
+ ┃ ┃ ┣ 📜Accelerate – Nicole Forsgren, Jez Humble and Gene Kim.pdf
+ ┃ ┃ ┣ 📜The Clean Coder – Robert C. Martin.pdf
+ ┃ ┃ ┗ 📜The Mythical Man-Month – Frederick P. Brooks Jr.pdf
+ ┃ ┗ 📜STATUS_DOWNLOADS.md
+ ┣ 📂Agente00_TechLead
+ ┃ ┣ 📜Accelerate – Nicole Forsgren, Jez Humble and Gene Kim.pdf
+ ┃ ┣ 📜The Clean Coder – Robert C. Martin.pdf
+ ┃ ┗ 📜The Mythical Man-Month – Frederick P. Brooks Jr.pdf
+ ┣ 📂Agente01_ProductOwner
+ ┃ ┣ 📜Agile Software Requirements – Dean Leffingwell.pdf
+ ┃ ┣ 📜Mastering the Requirements Process, Getting Requirements Right – Suzanne Robertson & James Robertson.pdf
+ ┃ ┣ 📜Software Requirements – Karl Wiegers & Joy Beatty.pdf
+ ┃ ┣ 📜User Stories Applied, For Agile Software Development – Mike Cohn.pdf
+ ┃ ┗ 📜Writing Effective Use Cases – Alistair Cockburn.pdf
+ ┣ 📂Agente02_SoftwareArchitect
+ ┃ ┣ 📜Building Microservices – Sam Newman.pdf
+ ┃ ┣ 📜Clean Architecture – Robert C. Martin.pdf
+ ┃ ┣ 📜Designing Data-Intensive Applications – Martin Kleppmann.pdf
+ ┃ ┣ 📜Domain-Driven Design – Eric Evans.pdf
+ ┃ ┣ 📜Fundamentals of Software Architecture – Mark Richards and Neal Ford.pdf
+ ┃ ┗ 📜Patterns of Enterprise Application Architecture – Martin Fowler.pdf
+ ┣ 📂Agente03_SoftwareEngineer
+ ┃ ┣ 📜Code Complete – Steve McConnell.pdf
+ ┃ ┣ 📜Design Patterns – Gang of Four.pdf
+ ┃ ┣ 📜Enterprise Integration Patterns – Gregor Hohpe and Bobby Woolf.pdf
+ ┃ ┣ 📜System Design Interview – Alex Xu.pdf
+ ┃ ┗ 📜The Pragmatic Programmer – Andrew Hunt and David Thomas.pdf
+ ┣ 📂Agente04_DevBackend
+ ┃ ┣ 📜Architecture Patterns with Python – Harry Percival and Bob Gregory.pdf
+ ┃ ┣ 📜Clean Code – Robert C. Martin.pdf
+ ┃ ┣ 📜Grokking Algorithms – Aditya Bhargava.pdf
+ ┃ ┣ 📜Introduction to Algorithms – Thomas H. Cormen et al.pdf
+ ┃ ┣ 📜Microservices Patterns – Chris Richardson.pdf
+ ┃ ┗ 📜Programming Pearls – Jon Bentley.pdf
+ ┣ 📂Agente05_DevFrontend
+ ┃ ┣ 📜CSS Secrets – Lea Verou.pdf
+ ┃ ┣ 📜Designing Interfaces – Jenifer Tidwell.pdf
+ ┃ ┣ 📜Eloquent JavaScript – Marijn Haverbeke.pdf
+ ┃ ┗ 📜High Performance Browser Networking – Ilya Grigorik.pdf
+ ┣ 📂Agente06_QaEngineer
+ ┃ ┣ 📜Growing Object-Oriented Software Guided by Tests – Freeman and Pryce.pdf
+ ┃ ┣ 📜Refactoring – Martin Fowler.pdf
+ ┃ ┣ 📜Test-Driven Development by Example – Kent Beck.pdf
+ ┃ ┣ 📜Unit Testing Principles Practices Patterns – Vladimir Khorikov.pdf
+ ┃ ┗ 📜Working Effectively with Legacy Code – Michael Feathers.pdf
+ ┣ 📂Agente07_DevSecOps
+ ┃ ┣ 📜Practical Cloud Security – Chris Dotson.pdf
+ ┃ ┣ 📜The Web Application Hacker's Handbook – Stuttard and Pinto.pdf
+ ┃ ┗ 📜Threat Modeling Designing for Security – Adam Shostack.pdf
+ ┣ 📂Agente08_DevOps
+ ┃ ┣ 📜Continuous Delivery – Jez Humble and David Farley.pdf
+ ┃ ┣ 📜Infrastructure as Code – Kief Morris.pdf
+ ┃ ┣ 📜Site Reliability Engineering – Niall Richard Murphy et al.pdf
+ ┃ ┣ 📜The DevOps Handbook – Gene Kim et al.pdf
+ ┃ ┗ 📜The Phoenix Project – Gene Kim, Kevin Behr and George Spafford.pdf
+ ┗ 📜estrutura_projeto.tree
