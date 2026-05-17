@@ -1,28 +1,34 @@
-# Missing Structure Report
+# Missing Structure Report — AI Software Factory Build
 
-## Build Date
-2026-05-17
+**Build Date:** 2026-05-17  
+**Scope:** Agente02_SoftwareArchitect build
 
-## Arquivos ausentes
+---
 
-| Arquivo | Impacto | Ação tomada |
-|---|---|---|
-| `context/integrantes_generico.md` | Médio | Usando `context/integrantes.md` com abstrações white-label aplicadas |
+## 1. Missing Files (non-blocking)
 
-## Pastas de agentes ausentes no build atual
+| File Expected | Impact | Action |
+|---------------|--------|--------|
+| `context/integrantes_generico.md` | LOW | Used `context/integrantes.md` as substitute |
 
-As pastas abaixo não existem ainda e estão fora do escopo desta execução (apenas Agente00_TechLead foi solicitado):
+## 2. Missing Agent Skeletons (expected — will be created by build)
 
-- `Agente01_ProductOwner/`
-- `Agente02_SoftwareArchitect/`
-- `Agente03_SoftwareEngineer/`
-- `Agente04_DevBackend/`
-- `Agente05_DevFrontend/`
-- `Agente06_QaEngineer/`
-- `Agente07_DevSecOps/`
-- `Agente08_DevOps/`
+| Agent | Status |
+|-------|--------|
+| `Agente02_SoftwareArchitect/` | Created by this build |
+| `Agente03_SoftwareEngineer/` | Out of scope for this build |
+| `Agente04_DevBackend/` | Out of scope for this build |
+| `Agente05_DevFrontend/` | Out of scope for this build |
+| `Agente06_QaEngineer/` | Out of scope for this build |
+| `Agente07_DevSecOps/` | Out of scope for this build |
+| `Agente08_DevOps/` | Out of scope for this build |
+| `Agente09_UxUiDesigner/` | Out of scope for this build |
+| `Agente10_DataIntegrationEngineer/` | Out of scope for this build |
 
-## Notas
+## 3. Blocking Issues
 
-- Títulos bibliográficos ausentes na `lib/TechLead/`: Staff Engineer (Will Larson), An Elegant Puzzle (Will Larson), Team Topologies (Skelton & Pais), Modern Software Engineering (Farley). Estão referenciados no `rag_manifest.json` mas sem PDF local.
-- Todos os arquivos obrigatórios do Agente00_TechLead foram criados com sucesso.
+**None.** Build proceeded without blockers.
+
+## 4. Recommendation
+
+After completing Agente02 build, proceed to build Agente03_SoftwareEngineer to complete the upstream handoff chain.

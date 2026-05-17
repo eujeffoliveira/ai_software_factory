@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "api-contract-design-skill Output",
+  "description": "Output contract summarizing the produced API_Contract.json",
+  "type": "object",
+  "required": ["contract_path", "openapi_version", "endpoint_count", "security_schemes", "health_endpoint_present", "all_architecture_endpoints_covered"],
+  "properties": {
+    "contract_path": {
+      "type": "string",
+      "description": "Path to the written API_Contract.json file."
+    },
+    "openapi_version": {
+      "type": "string",
+      "const": "3.1.0",
+      "description": "Must always be 3.1.0."
+    },
+    "endpoint_count": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of endpoint paths defined in the contract."
+    },
+    "protected_endpoint_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of endpoints with security: [{ BearerAuth: [] }]."
+    },
+    "public_endpoint_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of endpoints explicitly marked as public (security: [])."
+    },
+    "security_schemes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of security scheme names defined in components/securitySchemes."
+    },
+    "health_endpoint_present": {
+      "type": "boolean",
+      "description": "Whether /api/health GET endpoint is defined in the contract."
+    },
+    "all_architecture_endpoints_covered": {
+      "type": "boolean",
+      "description": "True only if every route handler in Architecture.md maps to an endpoint in this contract."
+    },
+    "uncovered_endpoints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of Architecture.md endpoints not yet covered by this contract. Should be empty."
+    },
+    "reusable_components_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of $ref components defined in components/schemas."
+    },
+    "architecture_decisions_entry": {
+      "type": "string",
+      "description": "Summary line appended to Architecture_Decisions.md: 'API_Contract.json: N endpoints, M protected, security: BearerAuth'."
+    },
+    "compliance_issues": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of compliance issues found during quality gate check. Must be empty for contract to pass."
+    }
+  }
+}

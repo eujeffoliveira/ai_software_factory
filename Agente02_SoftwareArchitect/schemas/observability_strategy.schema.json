@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Observability Strategy Schema",
+  "description": "Validates the Observability_Strategy.md metadata for Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["log_strategy", "apm", "healthcheck"],
+  "properties": {
+    "log_strategy": {
+      "type": "object",
+      "required": ["format", "required_fields"],
+      "properties": {
+        "format": { "type": "string", "enum": ["json-structured", "text"] },
+        "required_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Fields required in every production log entry"
+        },
+        "forbidden_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Fields that must never appear in logs (PII, secrets)"
+        },
+        "log_levels": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["debug", "info", "warn", "error"] }
+        }
+      }
+    },
+    "sync_log": {
+      "type": "object",
+      "required": ["enabled", "jobs"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "jobs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["job_name", "log_fields"],
+            "properties": {
+              "job_name": { "type": "string" },
+              "log_fields": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "audit_log": {
+      "type": "object",
+      "required": ["enabled", "events"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "events": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "apm": {
+      "type": "object",
+      "required": ["tool"],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "enum": ["sentry", "datadog", "opentelemetry", "vercel-analytics", "none", "adr-required"]
+        },
+        "adr_reference": { "type": "string" },
+        "error_tracking": { "type": "boolean" },
+        "performance_monitoring": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "healthcheck": {
+      "type": "object",
+      "required": ["endpoint", "checks"],
+      "properties": {
+        "endpoint": { "type": "string", "const": "/api/health" },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["check", "critical"],
+            "properties": {
+              "check": { "type": "string" },
+              "critical": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

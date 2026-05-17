@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "observability-design-skill Output",
+  "description": "Output summary for Observability_Strategy.md",
+  "type": "object",
+  "required": ["strategy_path", "audit_log_events", "sync_log_events", "apm_tool", "health_endpoint_defined", "pii_masking_defined"],
+  "properties": {
+    "strategy_path": {
+      "type": "string",
+      "description": "Path to the written Observability_Strategy.md file."
+    },
+    "audit_log_events": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Named audit_log events for every human-initiated action in the system.",
+      "items": {
+        "type": "object",
+        "required": ["event_name", "trigger", "required_fields"],
+        "properties": {
+          "event_name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]+$",
+            "description": "snake_case event name (e.g., job_published)"
+          },
+          "trigger": { "type": "string", "description": "What human action triggers this event." },
+          "required_fields": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "sync_log_events": {
+      "type": "array",
+      "description": "Named sync_log events for every cron job and background process.",
+      "items": {
+        "type": "object",
+        "required": ["event_name", "job_type", "required_fields"],
+        "properties": {
+          "event_name": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+          "job_type": { "type": "string", "enum": ["cron", "background", "webhook_processor"] },
+          "required_fields": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "apm_tool": {
+      "type": "string",
+      "enum": ["sentry", "vercel_analytics", "sentry_and_vercel_analytics", "custom_prometheus", "none"],
+      "description": "Selected APM tool(s)."
+    },
+    "health_endpoint_defined": {
+      "type": "boolean",
+      "description": "Whether /api/health GET endpoint is specified in the strategy."
+    },
+    "health_checks_covered": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Dependencies checked in /api/health (e.g., 'db', 'redis', 'scoring_service')."
+    },
+    "pii_masking_defined": {
+      "type": "boolean",
+      "description": "Whether PII masking rules are explicitly defined for each PII field type."
+    },
+    "alerting_thresholds_defined": {
+      "type": "boolean",
+      "description": "Whether alerting thresholds are defined for all components."
+    },
+    "log_schema_complete": {
+      "type": "boolean",
+      "description": "Whether the base log schema defines all 7 mandatory fields: timestamp, level, service, traceId, userId, event, payload."
+    },
+    "compliance_gaps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Any gaps detected against context_view.md §9 requirements. Must be empty to pass quality gate."
+    }
+  }
+}

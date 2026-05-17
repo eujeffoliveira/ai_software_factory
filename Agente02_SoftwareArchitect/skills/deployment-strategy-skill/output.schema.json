@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "deployment-strategy-skill Output",
+  "description": "Output summary for Deployment_Strategy.md",
+  "type": "object",
+  "required": ["strategy_path", "environments_defined", "migration_command_valid", "cron_jobs_configured", "rollback_plan_present", "smoke_tests_defined"],
+  "properties": {
+    "strategy_path": {
+      "type": "string",
+      "description": "Path to the written Deployment_Strategy.md file."
+    },
+    "environments_defined": {
+      "type": "array",
+      "minItems": 3,
+      "description": "All deployment environments defined.",
+      "items": {
+        "type": "object",
+        "required": ["name", "migration_command", "deploy_trigger"],
+        "properties": {
+          "name": { "type": "string", "enum": ["local", "staging", "production"] },
+          "migration_command": { "type": "string" },
+          "deploy_trigger": { "type": "string" }
+        }
+      }
+    },
+    "migration_command_valid": {
+      "type": "boolean",
+      "description": "True when staging and production both use 'prisma migrate deploy' — never 'prisma db push'."
+    },
+    "migration_command_violations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Environments where prisma db push was incorrectly specified. Must be empty."
+    },
+    "cron_jobs_configured": {
+      "type": "array",
+      "description": "Cron jobs configured in vercel.json with guardCron() requirement documented.",
+      "items": {
+        "type": "object",
+        "required": ["name", "path", "schedule", "guard_cron_required"],
+        "properties": {
+          "name": { "type": "string" },
+          "path": { "type": "string" },
+          "schedule": { "type": "string" },
+          "guard_cron_required": { "type": "boolean", "const": true }
+        }
+      }
+    },
+    "cron_jobs_missing_guard": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Cron job paths missing guardCron() documentation. Must be empty."
+    },
+    "rollback_plan_present": {
+      "type": "boolean",
+      "description": "Whether the strategy includes an actionable rollback plan for both application and database."
+    },
+    "rollback_rto_minutes": {
+      "type": "integer",
+      "description": "Recovery Time Objective for application rollback (Vercel Instant Rollback)."
+    },
+    "smoke_tests_defined": {
+      "type": "boolean",
+      "description": "True when at minimum /api/health, auth flow, 1 read, and 1 write smoke test are defined."
+    },
+    "smoke_tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "endpoint", "expected_outcome"],
+        "properties": {
+          "name": { "type": "string" },
+          "endpoint": { "type": "string" },
+          "expected_outcome": { "type": "string" }
+        }
+      }
+    },
+    "env_vars_documented": {
+      "type": "boolean",
+      "description": "True when all required env vars are listed per environment and lib/env.ts validation confirmed."
+    },
+    "gate_6_prerequisites_met": {
+      "type": "boolean",
+      "description": "True when rollback plan present, migration command valid, and smoke tests defined — Gate 6 pre-requisites satisfied from architecture side."
+    }
+  }
+}

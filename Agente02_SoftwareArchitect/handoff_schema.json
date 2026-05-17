@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agente02_SoftwareArchitect Handoff Package Schema",
+  "description": "Validates the handoff package produced by the Software Architect before Gate 2 submission.",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "summary",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "validation_checklist",
+    "architecture_artifacts",
+    "gate_status"
+  ],
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "Name and version of the primary artifact produced",
+      "minLength": 1,
+      "examples": ["Architecture Package v1"]
+    },
+    "summary": {
+      "type": "string",
+      "description": "2-3 sentence summary of the architecture produced",
+      "minLength": 50,
+      "maxLength": 1000
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "List of assumptions made during architecture design",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "properties": {
+          "assumption": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM", "LOW"],
+            "description": "Impact on architecture if assumption is wrong"
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Questions requiring human or Tech Lead resolution",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "Whether this question blocks Gate 2 or next phase"
+          },
+          "context": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Technical risks identified during architecture design",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "pattern": "^RISK-[0-9]{3}$",
+            "examples": ["RISK-001"]
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Mitigation strategy or ESCALATED if requires human decision"
+          },
+          "blocks_gate": {
+            "type": "boolean",
+            "description": "Whether this risk blocks Gate 2 until addressed"
+          }
+        }
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "description": "Agent that must receive this handoff",
+      "const": "Agente03_SoftwareEngineer"
+    },
+    "validation_checklist": {
+      "type": "array",
+      "description": "Pre-submission validation checklist items",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["item", "status"],
+        "properties": {
+          "item": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "NOT_APPLICABLE"]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "architecture_artifacts": {
+      "type": "object",
+      "description": "Status of all mandatory architecture artifacts",
+      "required": [
+        "architecture_md",
+        "api_contract_json",
+        "db_schema",
+        "architecture_decisions_md",
+        "risk_register_md",
+        "security_strategy_md",
+        "observability_strategy_md",
+        "testing_strategy_md",
+        "deployment_strategy_md"
+      ],
+      "properties": {
+        "architecture_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "notes": { "type": "string" }
+          }
+        },
+        "api_contract_json": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "endpoints_count": { "type": "integer", "minimum": 1 },
+            "notes": { "type": "string" }
+          }
+        },
+        "db_schema": {
+          "type": "object",
+          "required": ["status", "format"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "format": { "type": "string", "enum": ["prisma", "sql", "both"] },
+            "notes": { "type": "string" }
+          }
+        },
+        "architecture_decisions_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "adrs_required": { "type": "integer", "minimum": 0 },
+            "adrs_drafted": { "type": "integer", "minimum": 0 },
+            "notes": { "type": "string" }
+          }
+        },
+        "risk_register_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "critical_risks_count": { "type": "integer", "minimum": 0 },
+            "critical_risks_mitigated": { "type": "integer", "minimum": 0 },
+            "notes": { "type": "string" }
+          }
+        },
+        "security_strategy_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "threat_model_complete": { "type": "boolean" },
+            "notes": { "type": "string" }
+          }
+        },
+        "observability_strategy_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "notes": { "type": "string" }
+          }
+        },
+        "testing_strategy_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "notes": { "type": "string" }
+          }
+        },
+        "deployment_strategy_md": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PRESENT", "MISSING", "INCOMPLETE"] },
+            "rollback_plan_present": { "type": "boolean" },
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    },
+    "gate_status": {
+      "type": "string",
+      "description": "Self-assessed gate status before Tech Lead review",
+      "enum": [
+        "READY_FOR_GATE_2",
+        "REQUIRES_HUMAN_APPROVAL",
+        "BLOCKED_PENDING_ADR",
+        "BLOCKED_PENDING_RISK_MITIGATION"
+      ]
+    },
+    "adrs_list": {
+      "type": "array",
+      "description": "List of ADRs created or required",
+      "items": {
+        "type": "object",
+        "required": ["adr_id", "title", "status"],
+        "properties": {
+          "adr_id": {
+            "type": "string",
+            "pattern": "^ADR-[0-9]{3}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PROPOSED", "APPROVED", "REJECTED", "SUPERSEDED", "REQUIRED_NOT_YET_WRITTEN"]
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

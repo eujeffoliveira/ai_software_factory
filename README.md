@@ -303,8 +303,8 @@ ai_software_factory/
 │       ├── risk-register-management-skill/
 │       └── progress-reporting-skill/
 │
-├── Agente01_ProductOwner/            # Estrutura criada, build pendente
-├── Agente02_SoftwareArchitect/       # Estrutura criada, build pendente
+├── Agente01_ProductOwner/            # Agente totalmente construído ✅ (10 skills)
+├── Agente02_SoftwareArchitect/       # Agente totalmente construído ✅ (112 arquivos, 10 skills)
 ├── Agente03_SoftwareEngineer/        # Estrutura criada, build pendente
 ├── Agente04_DevBackend/              # Estrutura criada, build pendente
 ├── Agente05_DevFrontend/             # Estrutura criada, build pendente
@@ -547,7 +547,7 @@ context/prompts/
 |--------|--------|----------------|-----------|--------|--------|
 | **00 TechLead** | ✅ | ✅ | ✅ | ✅ 9/9 | **Pronto para uso** |
 | **01 ProductOwner** | ✅ | ✅ | ✅ | ✅ 10/10 | **Pronto para uso** |
-| 02 SoftwareArchitect | ✅ | ⏳ | ❌ | ❌ | Build pendente |
+| **02 SoftwareArchitect** | ✅ | ✅ | ✅ | ✅ 10/10 | **Pronto para uso** |
 | 03 SoftwareEngineer | ✅ | ⏳ | ❌ | ❌ | Build pendente |
 | 04 DevBackend | ✅ | ⏳ | ❌ | ❌ | Build pendente |
 | 05 DevFrontend | ✅ | ⏳ | ❌ | ❌ | Build pendente |
@@ -557,7 +557,7 @@ context/prompts/
 | 09 UxUiDesigner | ✅ | ❌ | ❌ | ❌ | Não iniciado |
 | 10 DataIntegrationEngineer | ✅ | ❌ | ❌ | ❌ | Não iniciado |
 
-> **Todos os 11 prompts genéricos estão prontos em `context/prompts/`.** O Agente00 é o único com build completo (artefatos locais, skills, knowledge distillation). Os demais precisam passar pelo processo de build descrito acima.
+> **Todos os 11 prompts genéricos estão prontos em `context/prompts/`.** Agente00, Agente01 e Agente02 têm build completo (artefatos locais, skills, knowledge distillation). Os demais precisam passar pelo processo de build descrito acima.
 
 ---
 

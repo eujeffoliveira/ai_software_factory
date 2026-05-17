@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Risk Register Schema",
+  "description": "Validates the Risk_Register.md structured metadata for Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["project", "risks"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "category", "description", "mitigation", "status", "blocks_gate"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "pattern": "^RISK-[0-9]{3}$"
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          },
+          "category": {
+            "type": "string",
+            "enum": ["security", "data-protection", "architecture", "migration", "performance", "compliance", "operational", "dependency", "cost"]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20
+          },
+          "trigger": {
+            "type": "string",
+            "description": "What condition would cause this risk to materialize"
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Mitigation strategy. Use 'ESCALATED — requires human approval' for unmitigable CRITICAL risks."
+          },
+          "responsible_agent": {
+            "type": "string",
+            "description": "Agent or team responsible for mitigation"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["OPEN", "MITIGATED", "ACCEPTED", "ESCALATED", "RESOLVED"]
+          },
+          "blocks_gate": {
+            "type": "boolean",
+            "description": "Whether this risk blocks Gate 2 (CRITICAL unmitigated = true)"
+          },
+          "adr_reference": {
+            "type": "string",
+            "description": "ADR-NNN if this risk is addressed by an ADR"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "critical_count": { "type": "integer", "minimum": 0 },
+        "high_count": { "type": "integer", "minimum": 0 },
+        "medium_count": { "type": "integer", "minimum": 0 },
+        "low_count": { "type": "integer", "minimum": 0 },
+        "blocking_risks": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

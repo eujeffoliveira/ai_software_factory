@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Strategy Schema",
+  "description": "Validates the Security_Strategy.md metadata for Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["auth_strategy", "authorization_model", "data_classification", "threat_model", "audit_logging"],
+  "properties": {
+    "auth_strategy": {
+      "type": "object",
+      "required": ["provider", "library", "session_strategy"],
+      "properties": {
+        "provider": { "type": "string", "description": "e.g., Google OAuth" },
+        "library": { "type": "string", "description": "e.g., NextAuth v5" },
+        "domain_restriction": { "type": "boolean" },
+        "session_strategy": { "type": "string", "enum": ["jwt", "database", "hybrid"] },
+        "user_status_model": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "e.g., [pending, approved, rejected]"
+        }
+      }
+    },
+    "authorization_model": {
+      "type": "object",
+      "required": ["type", "enforcement_layer"],
+      "properties": {
+        "type": { "type": "string", "enum": ["rbac", "abac", "simple-role", "custom"] },
+        "enforcement_layer": { "type": "string", "enum": ["server-side", "proxy", "both"] },
+        "roles": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rls_enabled": { "type": "boolean" }
+      }
+    },
+    "data_classification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "examples", "handling_rules"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["pii", "sensitive-pii", "operational", "financial", "integration", "public"]
+          },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "handling_rules": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "threat_model": {
+      "type": "array",
+      "description": "Threat model per endpoint or component",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "callers", "anonymous_call_impact", "unauthorized_call_impact", "sensitive_data", "owasp_risks"],
+        "properties": {
+          "endpoint": { "type": "string" },
+          "callers": { "type": "string" },
+          "anonymous_call_impact": { "type": "string" },
+          "unauthorized_call_impact": { "type": "string" },
+          "sensitive_data": { "type": "string" },
+          "owasp_risks": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "mitigations": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "audit_logging": {
+      "type": "object",
+      "required": ["audit_log_events", "sync_log_jobs"],
+      "properties": {
+        "audit_log_events": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sync_log_jobs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "env_vars_classified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "sensitivity"],
+        "properties": {
+          "name": { "type": "string" },
+          "sensitivity": { "type": "string", "enum": ["secret", "config", "public"] },
+          "validation": { "type": "string" }
+        }
+      }
+    }
+  }
+}

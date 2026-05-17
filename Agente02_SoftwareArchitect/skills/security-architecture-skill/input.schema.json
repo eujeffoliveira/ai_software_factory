@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "security-architecture-skill Input",
+  "description": "Input contract for producing Security_Strategy.md",
+  "type": "object",
+  "required": ["architecture_path"],
+  "properties": {
+    "architecture_path": {
+      "type": "string",
+      "description": "Path to Architecture.md (draft). Auth strategy, components, and data flows extracted from here."
+    },
+    "api_contract_path": {
+      "type": "string",
+      "description": "Path to API_Contract.json (draft). Endpoints and their schemas are the primary threat modeling input."
+    },
+    "prisma_schema_path": {
+      "type": "string",
+      "description": "Path to Prisma_Schema_Proposal.prisma (draft). PII field identification is performed against this schema."
+    },
+    "prd_path": {
+      "type": "string",
+      "description": "Optional path to PRD.md for role definitions and data sensitivity requirements."
+    },
+    "user_roles": {
+      "type": "array",
+      "description": "User roles defined in the PRD. If omitted, roles are extracted from Architecture.md.",
+      "items": {
+        "type": "object",
+        "required": ["role_name", "description"],
+        "properties": {
+          "role_name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "existing_risk_register_path": {
+      "type": "string",
+      "description": "Path to existing Risk_Register.md to append security risk entries to."
+    },
+    "context_view_path": {
+      "type": "string",
+      "description": "Path to context_view.md. Defaults to Agente02_SoftwareArchitect/context_view.md."
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "_comment": "BAD EXAMPLE — DO NOT REPLICATE. See bad_api_contract_notes.md for explanation of each issue.",
+  "openapi": "2.0",
+  "_issue_1": "OpenAPI 2.0 (Swagger) instead of 3.1.x — must use 3.1.x",
+  "info": {
+    "title": "API",
+    "_issue_2": "Title is 'API' — not descriptive enough",
+    "version": "latest"
+  },
+  "paths": {
+    "/tasks": {
+      "_issue_3": "Missing /api/ prefix — all routes in Next.js App Router are under /api/",
+      "post": {
+        "_issue_4": "Missing operationId",
+        "_issue_5": "Missing security declaration — is this protected or public?",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "_issue_6": "No properties defined — type: object with no schema is useless"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "_issue_7": "No response schema — what does 200 return?"
+          }
+        },
+        "_issue_8": "No 401, 403, 500 error responses defined"
+      }
+    },
+    "/tasks/{id}": {
+      "delete": {
+        "_issue_9": "DELETE endpoint with no auth check documented — who can delete? Any authenticated user? Only admins?",
+        "responses": {
+          "200": { "description": "Deleted" }
+        }
+      }
+    }
+  },
+  "_issue_10": "No components/securitySchemes defined — authentication model unknown",
+  "_issue_11": "No /api/health endpoint",
+  "_issue_12": "Route design implies business logic in route.ts (no thin shell principle applied)"
+}

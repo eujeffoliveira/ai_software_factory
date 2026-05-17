@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "security-architecture-skill Output",
+  "description": "Output summary for Security_Strategy.md",
+  "type": "object",
+  "required": ["strategy_path", "endpoint_threat_summary", "critical_risks", "pii_fields_classified", "auth_strategy_complete", "escalation_required"],
+  "properties": {
+    "strategy_path": {
+      "type": "string",
+      "description": "Path to the written Security_Strategy.md file."
+    },
+    "endpoint_threat_summary": {
+      "type": "array",
+      "description": "Threat level summary per endpoint.",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "method", "threat_level", "questions_answered"],
+        "properties": {
+          "endpoint": { "type": "string" },
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+          "threat_level": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "questions_answered": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 5,
+            "description": "All 5 threat modeling questions must be answered."
+          },
+          "controls_applied": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "critical_risks": {
+      "type": "array",
+      "description": "CRITICAL-level risks requiring Tech Lead escalation.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "description", "escalation_required"],
+        "properties": {
+          "risk_id": { "type": "string", "pattern": "^RISK-[0-9]{3}$" },
+          "description": { "type": "string" },
+          "escalation_required": { "type": "boolean", "const": true }
+        }
+      }
+    },
+    "escalation_required": {
+      "type": "boolean",
+      "description": "True if any CRITICAL risk exists. Tech Lead must resolve before Gate 5 can proceed."
+    },
+    "pii_fields_classified": {
+      "type": "boolean",
+      "description": "True when all PII fields in the Prisma schema are classified and annotated."
+    },
+    "data_classification_table": {
+      "type": "array",
+      "description": "Data classification per entity/field.",
+      "items": {
+        "type": "object",
+        "required": ["entity", "field", "classification"],
+        "properties": {
+          "entity": { "type": "string" },
+          "field": { "type": "string" },
+          "classification": {
+            "type": "string",
+            "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "PII", "PII_SENSITIVE"]
+          }
+        }
+      }
+    },
+    "auth_strategy_complete": {
+      "type": "boolean",
+      "description": "True when session storage, token lifetime, sign-out behavior, and public route list are documented."
+    },
+    "authorization_server_side": {
+      "type": "boolean",
+      "description": "True when all authorization checks are confirmed server-side (Server Actions or DAL)."
+    },
+    "secrets_management_compliant": {
+      "type": "boolean",
+      "description": "True when all secrets confirmed to go through lib/env.ts."
+    },
+    "compliance_gaps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Security gaps found against context_view.md §8. Must be empty (or CRITICAL risks escalated) to pass quality gate."
+    }
+  }
+}

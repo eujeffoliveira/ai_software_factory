@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "adr-authoring-skill Output",
+  "description": "Output contract for a completed Architecture Decision Record",
+  "type": "object",
+  "required": ["adr_id", "adr_filename", "adr_title", "status", "prd_requirement_id", "decision_statement", "alternatives_count", "architecture_decisions_entry"],
+  "properties": {
+    "adr_id": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{3}$",
+      "description": "Assigned ADR identifier, zero-padded three digits (e.g., ADR-003)."
+    },
+    "adr_filename": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{3}-[a-z0-9-]+\\.md$",
+      "description": "Full filename including ADR ID and kebab-case title (e.g., ADR-003-use-fastapi-for-ai-service.md)."
+    },
+    "adr_title": {
+      "type": "string",
+      "description": "Human-readable title of the ADR."
+    },
+    "status": {
+      "type": "string",
+      "const": "PROPOSED",
+      "description": "Initial status. Must always be PROPOSED — Tech Lead changes to ACCEPTED or REJECTED after review."
+    },
+    "prd_requirement_id": {
+      "type": "string",
+      "description": "PRD requirement traced by this ADR."
+    },
+    "decision_statement": {
+      "type": "string",
+      "pattern": "^We will",
+      "description": "The decision in one sentence, beginning with 'We will'."
+    },
+    "alternatives_count": {
+      "type": "integer",
+      "minimum": 2,
+      "description": "Number of alternatives documented. Minimum 2."
+    },
+    "consequences": {
+      "type": "object",
+      "required": ["positive", "negative"],
+      "properties": {
+        "positive": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "negative": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "risks": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "adr_file_path": {
+      "type": "string",
+      "description": "Relative path to the written ADR file (e.g., docs/adr/ADR-003-use-fastapi-for-ai-service.md)."
+    },
+    "architecture_decisions_entry": {
+      "type": "string",
+      "description": "One-line entry to append to Architecture_Decisions.md. Format: 'ADR-NNN: [title] | Status: PROPOSED | Triggers gate: N'."
+    },
+    "triggering_gate": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "Gate that remains blocked until this ADR is ACCEPTED."
+    }
+  }
+}

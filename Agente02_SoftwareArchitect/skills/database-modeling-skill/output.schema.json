@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "database-modeling-skill Output",
+  "description": "Output summary for Prisma_Schema_Proposal.prisma and DB_Schema.sql",
+  "type": "object",
+  "required": ["prisma_schema_path", "db_schema_path", "model_count", "pii_field_count", "all_entities_covered", "naming_convention_compliant"],
+  "properties": {
+    "prisma_schema_path": {
+      "type": "string",
+      "description": "Path to the written Prisma_Schema_Proposal.prisma file."
+    },
+    "db_schema_path": {
+      "type": "string",
+      "description": "Path to the written DB_Schema.sql file."
+    },
+    "model_count": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of Prisma models defined."
+    },
+    "all_entities_covered": {
+      "type": "boolean",
+      "description": "True only if every domain entity in Architecture.md has a corresponding Prisma model."
+    },
+    "missing_entities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Domain entities from Architecture.md without a Prisma model. Must be empty."
+    },
+    "pii_field_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of fields annotated with @privacy: PII or @privacy: PII_SENSITIVE."
+    },
+    "unclassified_pii_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Fields suspected to be PII but missing privacy annotation (e.g., 'email', 'phone', 'name'). Must be empty."
+    },
+    "naming_convention_compliant": {
+      "type": "boolean",
+      "description": "True when all models have @@map (snake_case table) and all fields have @map (snake_case column)."
+    },
+    "relations_with_explicit_on_delete": {
+      "type": "boolean",
+      "description": "True when every @relation has explicit onDelete behavior."
+    },
+    "models_missing_timestamps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Model names missing createdAt or updatedAt. Acceptable only for pure junction tables."
+    },
+    "data_classification_path": {
+      "type": "string",
+      "description": "Path to the data classification section written (in Security_Strategy.md or standalone Data_Classification.md)."
+    },
+    "migration_risk_notes": {
+      "type": "string",
+      "description": "Brief note on migration risk for migration-risk-analysis-skill to consume. E.g., 'New tables only — no destructive changes'."
+    }
+  }
+}

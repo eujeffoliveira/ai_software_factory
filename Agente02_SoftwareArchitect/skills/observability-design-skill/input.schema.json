@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "observability-design-skill Input",
+  "description": "Input contract for producing Observability_Strategy.md",
+  "type": "object",
+  "required": ["architecture_path"],
+  "properties": {
+    "architecture_path": {
+      "type": "string",
+      "description": "Path to Architecture.md. Component list, cron jobs, and integrations are extracted from here."
+    },
+    "prd_path": {
+      "type": "string",
+      "description": "Optional path to PRD.md for SLA and NFR requirements that drive alerting thresholds."
+    },
+    "apm_preference": {
+      "type": "string",
+      "enum": ["sentry", "vercel_analytics", "custom_prometheus", "none"],
+      "description": "APM tool preference if already decided. If omitted, skill selects default (Sentry + Vercel Analytics)."
+    },
+    "log_retention_days": {
+      "type": "integer",
+      "minimum": 30,
+      "default": 90,
+      "description": "Default log retention period in days. Audit logs follow this unless PRD specifies otherwise."
+    },
+    "existing_strategy_path": {
+      "type": "string",
+      "description": "Optional path to existing Observability_Strategy.md being revised."
+    },
+    "context_view_path": {
+      "type": "string",
+      "description": "Path to context_view.md. Defaults to Agente02_SoftwareArchitect/context_view.md."
+    }
+  }
+}

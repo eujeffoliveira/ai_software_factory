@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "database-modeling-skill Input",
+  "description": "Input contract for producing Prisma_Schema_Proposal.prisma and DB_Schema.sql",
+  "type": "object",
+  "required": ["architecture_path", "prd_path"],
+  "properties": {
+    "architecture_path": {
+      "type": "string",
+      "description": "Path to completed Architecture.md. Domain entities must be enumerated."
+    },
+    "prd_path": {
+      "type": "string",
+      "description": "Path to approved PRD.md. Used to extract data requirements, retention rules, and privacy constraints."
+    },
+    "security_classification_path": {
+      "type": "string",
+      "description": "Optional path to existing Security_Strategy.md or Data_Classification.md from security-architecture-skill. If provided, classification annotations are taken from there."
+    },
+    "existing_schema_path": {
+      "type": "string",
+      "description": "Optional path to existing Prisma schema being extended. If provided, the skill extends rather than creates from scratch."
+    },
+    "soft_delete_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the PRD requires soft deletes (data retention or audit trail for user-visible entities)."
+    },
+    "id_strategy": {
+      "type": "string",
+      "enum": ["cuid", "uuid", "autoincrement"],
+      "default": "cuid",
+      "description": "Primary key generation strategy for user-facing models. Use autoincrement only for internal/audit tables."
+    },
+    "context_view_path": {
+      "type": "string",
+      "description": "Path to context_view.md. Defaults to Agente02_SoftwareArchitect/context_view.md."
+    }
+  }
+}

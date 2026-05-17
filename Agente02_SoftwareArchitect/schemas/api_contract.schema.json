@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "API Contract Schema",
+  "description": "Validates the API_Contract.json OpenAPI structure for Agente02_SoftwareArchitect output.",
+  "type": "object",
+  "required": ["openapi", "info", "paths", "components"],
+  "properties": {
+    "openapi": {
+      "type": "string",
+      "pattern": "^3\\.[0-9]+\\.[0-9]+$",
+      "description": "OpenAPI version — must be 3.x.x"
+    },
+    "info": {
+      "type": "object",
+      "required": ["title", "version"],
+      "properties": {
+        "title": { "type": "string" },
+        "version": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "servers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "description": "Path item — must have at least one HTTP method",
+        "additionalProperties": {
+          "type": "object",
+          "required": ["operationId", "responses"],
+          "properties": {
+            "operationId": { "type": "string" },
+            "summary": { "type": "string" },
+            "description": { "type": "string" },
+            "security": {
+              "type": "array",
+              "description": "Security requirements — empty array means public, non-empty means protected"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "in", "schema"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "in": { "type": "string", "enum": ["path", "query", "header", "cookie"] },
+                  "required": { "type": "boolean" },
+                  "schema": { "type": "object" }
+                }
+              }
+            },
+            "requestBody": {
+              "type": "object",
+              "properties": {
+                "required": { "type": "boolean" },
+                "content": { "type": "object" }
+              }
+            },
+            "responses": {
+              "type": "object",
+              "minProperties": 1,
+              "description": "Must include at least one success (2xx) and one error (4xx/5xx) response"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "schemas": { "type": "object" },
+        "securitySchemes": { "type": "object" },
+        "responses": { "type": "object" }
+      }
+    }
+  }
+}

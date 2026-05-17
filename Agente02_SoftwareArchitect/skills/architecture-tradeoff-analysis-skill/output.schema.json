@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "architecture-tradeoff-analysis-skill Output",
+  "description": "Output contract for a completed architectural trade-off analysis",
+  "type": "object",
+  "required": ["decision_question", "chosen_option", "primary_tension", "gains", "sacrifices", "revisit_trigger", "recommendation", "analysis_written_to"],
+  "properties": {
+    "decision_question": {
+      "type": "string",
+      "description": "The decision question as analyzed."
+    },
+    "alternatives_compared": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Names of all alternatives evaluated."
+    },
+    "chosen_option": {
+      "type": "string",
+      "description": "The option currently in Architecture.md or recommended by this analysis."
+    },
+    "primary_tension": {
+      "type": "string",
+      "description": "The single core trade-off tension (e.g., 'Simplicity vs. future scalability')."
+    },
+    "evaluation_table": {
+      "type": "array",
+      "description": "Scored comparison table. One row per alternative, one column per criterion.",
+      "items": {
+        "type": "object",
+        "required": ["alternative", "scores"],
+        "properties": {
+          "alternative": { "type": "string" },
+          "scores": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "enum": ["HIGH", "MEDIUM", "LOW"]
+            }
+          }
+        }
+      }
+    },
+    "gains": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Concrete benefits of the chosen option."
+    },
+    "sacrifices": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Concrete costs or limitations of the chosen option."
+    },
+    "revisit_trigger": {
+      "type": "string",
+      "description": "Condition under which this decision should be revisited (e.g., 'If MAU exceeds 500k or cron job count exceeds 20')."
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": ["supports_current_architecture", "recommends_change", "escalate_to_council"],
+      "description": "Whether the analysis validates the current Architecture.md decision or suggests a change."
+    },
+    "recommended_next_action": {
+      "type": "string",
+      "description": "If recommendation is recommends_change or escalate_to_council, what the next action is."
+    },
+    "analysis_written_to": {
+      "type": "string",
+      "description": "Path to the document where the trade-off section was appended."
+    }
+  }
+}

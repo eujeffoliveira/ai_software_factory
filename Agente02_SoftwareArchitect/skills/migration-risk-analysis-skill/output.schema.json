@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "migration-risk-analysis-skill Output",
+  "description": "Output summary for migration risk classification and execution plan",
+  "type": "object",
+  "required": ["overall_risk_level", "migration_steps", "zero_downtime_eligible", "migration_command_valid", "risk_register_entries"],
+  "properties": {
+    "overall_risk_level": {
+      "type": "string",
+      "enum": ["REVERSIBLE", "COMPATIBLE", "IRREVERSIBLE", "DESTRUCTIVE"],
+      "description": "Highest risk level among all individual migration steps. A migration is DESTRUCTIVE if any step is DESTRUCTIVE."
+    },
+    "migration_steps": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Individual classified migration steps.",
+      "items": {
+        "type": "object",
+        "required": ["description", "risk_level", "rollback_plan"],
+        "properties": {
+          "description": { "type": "string", "description": "What this step does (e.g., 'Add nullable column bio to users table')." },
+          "risk_level": {
+            "type": "string",
+            "enum": ["REVERSIBLE", "COMPATIBLE", "IRREVERSIBLE", "DESTRUCTIVE"]
+          },
+          "rollback_plan": { "type": "string", "description": "Exact SQL or Prisma command to revert this step. For REVERSIBLE changes, a single DROP statement. For DESTRUCTIVE, reference to phased plan." },
+          "data_loss_on_rollback": { "type": "boolean", "description": "Whether rolling back this step causes data loss." },
+          "requires_maintenance_window": { "type": "boolean", "description": "Whether this step requires a maintenance window." }
+        }
+      }
+    },
+    "zero_downtime_eligible": {
+      "type": "boolean",
+      "description": "True if the entire migration can run during a rolling deployment without maintenance window."
+    },
+    "phased_plan_required": {
+      "type": "boolean",
+      "description": "True if any DESTRUCTIVE step is present. Phased plan must be included in Deployment_Strategy.md."
+    },
+    "phased_plan": {
+      "type": "object",
+      "description": "Three-phase plan for DESTRUCTIVE migrations. Required when phased_plan_required is true.",
+      "properties": {
+        "phase_1": { "type": "string", "description": "Application change to soft-delete or shadow the data." },
+        "phase_2": { "type": "string", "description": "Deploy and monitor phase. Duration recommendation." },
+        "phase_3": { "type": "string", "description": "Destructive migration step with backup confirmation requirement." }
+      }
+    },
+    "migration_command_valid": {
+      "type": "boolean",
+      "description": "True if the migration will use prisma migrate deploy for staging/prod. False if prisma db push is detected."
+    },
+    "risk_register_entries": {
+      "type": "array",
+      "description": "RISK-NNN entries to append to Risk_Register.md.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "description", "classification", "mitigation"],
+        "properties": {
+          "risk_id": { "type": "string", "pattern": "^RISK-[0-9]{3}$" },
+          "description": { "type": "string" },
+          "classification": { "type": "string", "enum": ["REVERSIBLE", "COMPATIBLE", "IRREVERSIBLE", "DESTRUCTIVE"] },
+          "mitigation": { "type": "string" }
+        }
+      }
+    },
+    "deployment_strategy_section": {
+      "type": "string",
+      "description": "Markdown section to append to Deployment_Strategy.md. Includes risk summary table and execution plan."
+    }
+  }
+}

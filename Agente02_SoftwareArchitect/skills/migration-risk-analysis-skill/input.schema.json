@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "migration-risk-analysis-skill Input",
+  "description": "Input contract for migration risk classification and execution plan production",
+  "type": "object",
+  "required": ["proposed_schema_path"],
+  "properties": {
+    "proposed_schema_path": {
+      "type": "string",
+      "description": "Path to the proposed Prisma_Schema_Proposal.prisma or DB_Schema.sql containing the changes to analyze."
+    },
+    "current_schema_path": {
+      "type": "string",
+      "description": "Path to the current production/staging schema for diff-based analysis. If omitted, all changes are treated as new (REVERSIBLE by default unless destructive)."
+    },
+    "target_environments": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["local", "staging", "production"]
+      },
+      "default": ["staging", "production"],
+      "description": "Environments where this migration will be applied. Affects migration command validation."
+    },
+    "zero_downtime_required": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the deployment requires zero-downtime migration. If true, any migration requiring a maintenance window must produce a phased plan."
+    },
+    "deployment_strategy_path": {
+      "type": "string",
+      "description": "Optional path to existing Deployment_Strategy.md to append the migration section to."
+    },
+    "risk_register_path": {
+      "type": "string",
+      "description": "Optional path to existing Risk_Register.md to append migration risk entries to."
+    },
+    "context_view_path": {
+      "type": "string",
+      "description": "Path to context_view.md. Defaults to Agente02_SoftwareArchitect/context_view.md."
+    }
+  }
+}

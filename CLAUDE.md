@@ -10,7 +10,7 @@ This is a **prompt-engineering and agent-design project** — not a runnable sof
 
 The repository implements a multi-agent Software Development Lifecycle (SDLC) framework with 11 specialized agents (Agente00–Agente10). Each agent has a role, a set of skills, JSON schemas, checklists, examples, and distilled operational knowledge.
 
-**Agente00_TechLead and Agente01_ProductOwner are fully built.** Agents 02–08 have skeleton folders but incomplete artifacts. Agents 09–10 have no local artifacts yet.
+**Agente00_TechLead, Agente01_ProductOwner, and Agente02_SoftwareArchitect are fully built.** Agents 03–08 have skeleton folders but incomplete artifacts. Agents 09–10 have no local artifacts yet.
 
 ---
 
@@ -168,7 +168,7 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 ## When working on this repo
 
 - Read `context/base_teorica.md` to understand an agent's role before building its artifacts
-- Read `Agente00_TechLead/` as the reference implementation — it is the only complete agent
+- Read `Agente00_TechLead/` or `Agente02_SoftwareArchitect/` as reference implementations for fully-built agents
 - Do not introduce references to specific organizations, client names, or domain-specific terminology in `_generico` files
 - `lib/` is gitignored — do not attempt to commit book files
 - When updating `lib/STATUS_DOWNLOADS.md`, follow the existing table format: ✅ found, ⚠️ partial, ❌ not found, 📂 already in another agent's folder

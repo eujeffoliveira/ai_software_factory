@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Database Schema Decision Schema",
+  "description": "Validates the structured metadata of database modeling decisions by Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["models", "migration_policy", "privacy_classifications"],
+  "properties": {
+    "models": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "prisma_name", "db_table_name", "fields", "bounded_context"],
+        "properties": {
+          "name": { "type": "string" },
+          "prisma_name": {
+            "type": "string",
+            "description": "PascalCase Prisma model name"
+          },
+          "db_table_name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "snake_case database table name (applied via @@map)"
+          },
+          "bounded_context": { "type": "string" },
+          "is_aggregate_root": { "type": "boolean" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type", "db_column_name"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "camelCase Prisma field name"
+                },
+                "db_column_name": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "description": "snake_case column name (applied via @map)"
+                },
+                "type": { "type": "string" },
+                "nullable": { "type": "boolean" },
+                "unique": { "type": "boolean" },
+                "privacy_classification": {
+                  "type": "string",
+                  "enum": ["pii", "sensitive-pii", "operational", "financial", "technical", "public"]
+                },
+                "index": { "type": "boolean" }
+              }
+            }
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["related_model", "relation_type"],
+              "properties": {
+                "related_model": { "type": "string" },
+                "relation_type": {
+                  "type": "string",
+                  "enum": ["one-to-one", "one-to-many", "many-to-many"]
+                },
+                "foreign_key": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "migration_policy": {
+      "type": "object",
+      "required": ["local", "staging", "production"],
+      "properties": {
+        "local": { "type": "string", "enum": ["prisma-db-push", "prisma-migrate-dev"] },
+        "staging": { "type": "string", "enum": ["prisma-migrate-deploy"] },
+        "production": { "type": "string", "enum": ["prisma-migrate-deploy"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "privacy_classifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["model", "field", "classification", "handling"],
+        "properties": {
+          "model": { "type": "string" },
+          "field": { "type": "string" },
+          "classification": {
+            "type": "string",
+            "enum": ["pii", "sensitive-pii", "operational", "financial", "technical", "public"]
+          },
+          "handling": {
+            "type": "string",
+            "description": "How this field is handled (masked in logs, excluded from exports, etc.)"
+          }
+        }
+      }
+    },
+    "audit_tables": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Names of models that have audit_log or sync_log instrumentation"
+      }
+    }
+  }
+}

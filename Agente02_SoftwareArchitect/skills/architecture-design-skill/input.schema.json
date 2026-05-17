@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "architecture-design-skill Input",
+  "type": "object",
+  "required": ["prd_path", "prd_version"],
+  "properties": {
+    "prd_path": { "type": "string", "description": "Path to approved PRD.md" },
+    "prd_version": { "type": "string" },
+    "open_questions_path": { "type": "string" },
+    "existing_adrs": { "type": "array", "items": { "type": "string" } },
+    "tech_constraints": { "type": "string" }
+  }
+}

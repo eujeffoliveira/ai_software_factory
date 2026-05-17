@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Testing Strategy Schema",
+  "description": "Validates the Testing_Strategy.md metadata for Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["unit_tests", "integration_tests", "e2e_tests", "ci_requirements"],
+  "properties": {
+    "unit_tests": {
+      "type": "object",
+      "required": ["tool", "scope", "priority_areas"],
+      "properties": {
+        "tool": { "type": "string", "const": "Vitest" },
+        "scope": { "type": "string" },
+        "priority_areas": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "coverage_target": { "type": "string" }
+      }
+    },
+    "integration_tests": {
+      "type": "object",
+      "required": ["tool", "database_strategy"],
+      "properties": {
+        "tool": { "type": "string", "const": "Vitest" },
+        "database_strategy": {
+          "type": "string",
+          "enum": ["real-test-database", "mock", "in-memory"]
+        },
+        "scope": { "type": "string" }
+      }
+    },
+    "e2e_tests": {
+      "type": "object",
+      "required": ["tool", "critical_flows"],
+      "properties": {
+        "tool": { "type": "string", "const": "Playwright" },
+        "critical_flows": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "scope": { "type": "string" }
+      }
+    },
+    "ci_requirements": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "blocking_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "test_priority_order": {
+      "type": "array",
+      "description": "Ordered list: what must be tested first",
+      "items": { "type": "string" }
+    }
+  }
+}

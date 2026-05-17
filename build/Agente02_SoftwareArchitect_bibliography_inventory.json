@@ -1,0 +1,189 @@
+{
+  "agent_id": "Agente02_SoftwareArchitect",
+  "build_date": "2026-05-17",
+  "edition": "generic-white-label",
+  "bibliography_sources": [
+    {
+      "title": "Clean Architecture",
+      "author": "Robert C. Martin",
+      "file": "lib/SoftwareArchitect/Clean Architecture – Robert C. Martin.pdf",
+      "availability": "available",
+      "relevance": "core",
+      "key_concepts_distilled": [
+        "Dependency Rule: source code dependencies point inward",
+        "Use case centricity: business rules at the center",
+        "SOLID principles applied to architecture",
+        "Boundary definition and component cohesion",
+        "Stable dependencies principle",
+        "Plugin architecture pattern",
+        "Clean boundaries between layers (Entities, Use Cases, Interface Adapters, Frameworks)"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md (P1, P2, P3, P8)",
+        "knowledge/heuristics.md (H1, H4, H9)",
+        "knowledge/knowledge_cards.md (Card 001, 002, 003)",
+        "knowledge/decision_rules.md (DR001, DR003)",
+        "checklists/architecture_quality_checklist.md",
+        "skills/architecture-design-skill/skill.md"
+      ]
+    },
+    {
+      "title": "Designing Data-Intensive Applications",
+      "author": "Martin Kleppmann",
+      "file": "lib/SoftwareArchitect/Designing Data-Intensive Applications – Martin Kleppmann.pdf",
+      "availability": "available",
+      "relevance": "core",
+      "key_concepts_distilled": [
+        "Data models and query languages",
+        "Storage engines and retrieval",
+        "Encoding and evolution",
+        "Replication and consistency",
+        "Transactions and isolation levels",
+        "ACID vs BASE trade-offs",
+        "Schema-on-read vs schema-on-write",
+        "Batch processing vs stream processing patterns"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md (P6, P7)",
+        "knowledge/heuristics.md (H5, H6, H7)",
+        "knowledge/knowledge_cards.md (Card 006, 007, 008)",
+        "knowledge/decision_rules.md (DR007, DR008, DR009)",
+        "checklists/database_modeling_checklist.md",
+        "skills/database-modeling-skill/skill.md",
+        "skills/migration-risk-analysis-skill/skill.md"
+      ]
+    },
+    {
+      "title": "Domain-Driven Design",
+      "author": "Eric Evans",
+      "file": "lib/SoftwareArchitect/Domain-Driven Design – Eric Evans.pdf",
+      "availability": "available",
+      "relevance": "core",
+      "key_concepts_distilled": [
+        "Bounded Context and Context Mapping",
+        "Ubiquitous Language",
+        "Aggregate, Entity, Value Object",
+        "Domain Service vs Application Service",
+        "Repository pattern",
+        "Domain Events",
+        "Anti-Corruption Layer",
+        "Strategic design patterns"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md (P4, P5)",
+        "knowledge/heuristics.md (H2, H3)",
+        "knowledge/knowledge_cards.md (Card 004, 005, 009)",
+        "knowledge/decision_rules.md (DR004, DR005)",
+        "checklists/architecture_quality_checklist.md",
+        "skills/architecture-design-skill/skill.md",
+        "skills/api-contract-design-skill/skill.md"
+      ]
+    },
+    {
+      "title": "Fundamentals of Software Architecture",
+      "author": "Mark Richards and Neal Ford",
+      "file": "lib/SoftwareArchitect/Fundamentals of Software Architecture – Mark Richards and Neal Ford.pdf",
+      "availability": "available",
+      "relevance": "core",
+      "key_concepts_distilled": [
+        "Architecture styles: layered, event-driven, microservices, modular monolith",
+        "Architecture characteristics (fitness functions)",
+        "Trade-off analysis methodology",
+        "Architecture quantum concept",
+        "Component cohesion and coupling",
+        "First law of software architecture: everything is a trade-off",
+        "Metrics: coupling (afferent/efferent), instability, abstractness"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md (P9, P10)",
+        "knowledge/heuristics.md (H8, H10, H11)",
+        "knowledge/knowledge_cards.md (Card 010, 011)",
+        "knowledge/decision_rules.md (DR002, DR006)",
+        "skills/architecture-tradeoff-analysis-skill/skill.md",
+        "skills/golden-path-compliance-skill/skill.md"
+      ]
+    },
+    {
+      "title": "Building Microservices",
+      "author": "Sam Newman",
+      "file": "lib/SoftwareArchitect/Building Microservices – Sam Newman.pdf",
+      "availability": "available",
+      "relevance": "supporting",
+      "key_concepts_distilled": [
+        "Service decomposition strategies",
+        "When NOT to use microservices",
+        "API gateway patterns",
+        "Service-to-service communication",
+        "Data ownership per service",
+        "Decompose by business capability",
+        "Strangler Fig pattern for migration",
+        "When a monolith is the right choice (vs microservices)"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md (P11)",
+        "knowledge/heuristics.md (H12, H13)",
+        "knowledge/knowledge_cards.md (Card 012, 013)",
+        "knowledge/decision_rules.md (DR010, DR011)",
+        "skills/architecture-design-skill/skill.md",
+        "skills/architecture-tradeoff-analysis-skill/skill.md"
+      ]
+    },
+    {
+      "title": "Patterns of Enterprise Application Architecture",
+      "author": "Martin Fowler",
+      "file": "lib/SoftwareArchitect/Patterns of Enterprise Application Architecture – Martin Fowler.pdf",
+      "availability": "available",
+      "relevance": "supporting",
+      "key_concepts_distilled": [
+        "Repository pattern",
+        "Unit of Work",
+        "Data Mapper vs Active Record",
+        "Service Layer",
+        "Domain Model vs Transaction Script",
+        "Identity Map",
+        "Optimistic vs pessimistic locking",
+        "Table Data Gateway vs Row Data Gateway"
+      ],
+      "derived_artifacts": [
+        "knowledge/knowledge_cards.md (Card 014, 015, 016)",
+        "knowledge/heuristics.md (H14, H15)",
+        "knowledge/decision_rules.md (DR012)",
+        "skills/database-modeling-skill/skill.md",
+        "skills/api-contract-design-skill/skill.md"
+      ]
+    }
+  ],
+  "internal_docs_processed": [
+    {
+      "title": "Reference Architecture v1.1.1",
+      "file": "context/reference_architecture_generico.md",
+      "relevance": "normative",
+      "derived_artifacts": [
+        "context_view.md",
+        "knowledge/decision_rules.md",
+        "knowledge/principles.md",
+        "all checklists",
+        "all templates"
+      ]
+    },
+    {
+      "title": "Operational Manifesto (integrantes.md)",
+      "file": "context/integrantes.md",
+      "relevance": "normative",
+      "derived_artifacts": [
+        "prompt.md",
+        "agent_config.json",
+        "skills_manifest.md",
+        "quality_gate.md",
+        "handoff_schema.json",
+        "failure_modes.md"
+      ]
+    }
+  ],
+  "runtime_access_policy": {
+    "raw_sources_allowed": false,
+    "pdf_access_allowed": false,
+    "bibliography_folder_allowed": false,
+    "local_distilled_artifacts_allowed": true
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "agent_id": "Agente02_SoftwareArchitect",
+  "edition": "generic-white-label",
+  "build_date": "2026-05-17",
+  "retrieval_policy": {
+    "runtime_local_only": true,
+    "prefer_local_context": true,
+    "prefer_normative_architecture": true,
+    "books_are_theoretical": true,
+    "raw_books_at_runtime": false,
+    "max_chunks": 8,
+    "require_source_metadata": true,
+    "chunk_overlap_tokens": 50,
+    "preferred_chunk_size_tokens": 512
+  },
+  "collections": [
+    {
+      "name": "architecture_reference_full",
+      "description": "Normative reference architecture and Golden Model — compiled into context_view.md",
+      "priority": "core",
+      "usage": "normative",
+      "source_artifact": "Agente02_SoftwareArchitect/context_view.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "software_architecture_fundamentals",
+      "description": "Architecture styles, fitness functions, trade-off analysis — distilled from Fundamentals of Software Architecture (Richards & Ford)",
+      "priority": "core",
+      "usage": "theoretical",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/knowledge_cards.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "clean_architecture",
+      "description": "Dependency rule, SOLID, use case centricity, component boundaries — distilled from Clean Architecture (Martin)",
+      "priority": "core",
+      "usage": "theoretical",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/principles.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "domain_driven_design",
+      "description": "Bounded context, ubiquitous language, aggregates, domain events — distilled from DDD (Evans)",
+      "priority": "core",
+      "usage": "theoretical",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/knowledge_cards.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "data_intensive_applications",
+      "description": "Data model selection, consistency, ACID/BASE, schema evolution — distilled from DDIA (Kleppmann)",
+      "priority": "core",
+      "usage": "theoretical",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/heuristics.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "enterprise_patterns",
+      "description": "Repository, Unit of Work, Data Mapper, Service Layer — distilled from Patterns of EAA (Fowler)",
+      "priority": "supporting",
+      "usage": "theoretical",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/knowledge_cards.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "building_microservices",
+      "description": "Service decomposition, when to split, service boundaries — distilled from Building Microservices (Newman)",
+      "priority": "supporting",
+      "usage": "theoretical",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/heuristics.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    },
+    {
+      "name": "decision_rules_index",
+      "description": "If-then decision rules for common architectural choices",
+      "priority": "core",
+      "usage": "operational",
+      "source_artifact": "Agente02_SoftwareArchitect/knowledge/decision_rules.md",
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false
+    }
+  ],
+  "blocked_sources": [
+    "raw_books_at_runtime",
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "rag_chunking_strategy": {
+    "context_view": {
+      "chunk_by": "section (## heading)",
+      "preserve_tables": true,
+      "preserve_code_blocks": true,
+      "mark_mandatory_rules": true,
+      "tag_antipatterns_as_high_priority": true
+    },
+    "knowledge_cards": {
+      "chunk_by": "card (### Card NNN heading)",
+      "preserve_code_examples": true
+    },
+    "decision_rules": {
+      "chunk_by": "rule (### DR heading)",
+      "preserve_conditions": true
+    }
+  }
+}

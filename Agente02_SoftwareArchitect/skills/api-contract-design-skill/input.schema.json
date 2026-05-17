@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "api-contract-design-skill Input",
+  "description": "Input contract for producing the OpenAPI 3.1 API_Contract.json",
+  "type": "object",
+  "required": ["architecture_path", "prd_path"],
+  "properties": {
+    "architecture_path": {
+      "type": "string",
+      "description": "Path to completed Architecture.md. Must be post-Gate 2 draft or revision."
+    },
+    "prd_path": {
+      "type": "string",
+      "description": "Path to approved PRD.md (Gate 1 passed)."
+    },
+    "existing_contract_path": {
+      "type": "string",
+      "description": "Optional path to an existing API_Contract.json being revised. If provided, the skill diffs and updates rather than creating from scratch."
+    },
+    "auth_scheme": {
+      "type": "string",
+      "enum": ["BearerAuth", "ApiKey", "None"],
+      "default": "BearerAuth",
+      "description": "Primary authentication scheme. Defaults to BearerAuth (NextAuth v5 JWT). Use ApiKey for machine-to-machine endpoints only."
+    },
+    "pagination_style": {
+      "type": "string",
+      "enum": ["offset", "cursor", "none"],
+      "default": "offset",
+      "description": "Pagination strategy for list endpoints."
+    },
+    "endpoints_to_skip": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of endpoint paths intentionally excluded from this contract (e.g., third-party webhooks handled externally). Requires justification in Architecture.md."
+    },
+    "context_view_path": {
+      "type": "string",
+      "description": "Path to context_view.md. Defaults to Agente02_SoftwareArchitect/context_view.md."
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "deployment-strategy-skill Input",
+  "description": "Input contract for producing Deployment_Strategy.md",
+  "type": "object",
+  "required": ["architecture_path"],
+  "properties": {
+    "architecture_path": {
+      "type": "string",
+      "description": "Path to Architecture.md. Cron jobs, integrations, and component deployment dependencies extracted from here."
+    },
+    "prisma_schema_path": {
+      "type": "string",
+      "description": "Path to Prisma_Schema_Proposal.prisma. Determines migration needs."
+    },
+    "migration_risk_path": {
+      "type": "string",
+      "description": "Optional path to migration risk analysis section in Risk_Register.md or Deployment_Strategy.md from migration-risk-analysis-skill."
+    },
+    "cron_jobs": {
+      "type": "array",
+      "description": "Cron jobs to configure. If omitted, extracted from Architecture.md.",
+      "items": {
+        "type": "object",
+        "required": ["name", "path", "schedule"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable name of the cron job (e.g., 'Nightly Score Sync')."
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/api/cron/[a-z0-9-]+$",
+            "description": "Route path for the cron job (e.g., /api/cron/nightly-score-sync)."
+          },
+          "schedule": {
+            "type": "string",
+            "description": "Cron expression (e.g., '0 2 * * *' for 2am UTC daily)."
+          }
+        }
+      }
+    },
+    "rollback_rto_minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 5,
+      "description": "Recovery Time Objective for application rollback in minutes. Default: 5 minutes via Vercel Instant Rollback."
+    },
+    "staged_rollout_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the PRD requires a staged rollout (10% → 50% → 100%)."
+    },
+    "existing_strategy_path": {
+      "type": "string",
+      "description": "Optional path to existing Deployment_Strategy.md being revised."
+    },
+    "context_view_path": {
+      "type": "string",
+      "description": "Path to context_view.md. Defaults to Agente02_SoftwareArchitect/context_view.md."
+    }
+  }
+}

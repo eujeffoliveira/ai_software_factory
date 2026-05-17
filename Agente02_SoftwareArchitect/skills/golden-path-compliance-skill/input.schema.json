@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "golden-path-compliance-skill Input",
+  "type": "object",
+  "required": ["architecture_md_path"],
+  "properties": {
+    "architecture_md_path": { "type": "string" },
+    "draft_adrs": { "type": "array", "items": { "type": "string" } }
+  }
+}

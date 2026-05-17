@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "architecture-design-skill Output",
+  "type": "object",
+  "required": ["architecture_md_path", "decisions_md_path", "golden_path_status"],
+  "properties": {
+    "architecture_md_path": { "type": "string" },
+    "decisions_md_path": { "type": "string" },
+    "golden_path_status": {
+      "type": "string",
+      "enum": ["FULLY_COMPLIANT", "COMPLIANT_WITH_ADRS", "NON_COMPLIANT_PENDING_ADRS"]
+    },
+    "adrs_required": { "type": "array", "items": { "type": "string" } },
+    "open_questions": { "type": "array", "items": { "type": "string" } }
+  }
+}

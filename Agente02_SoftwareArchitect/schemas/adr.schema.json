@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Architecture Decision Record Schema",
+  "description": "Validates the structured metadata of an ADR produced by Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["adr_id", "title", "status", "date", "context", "decision", "alternatives", "consequences"],
+  "properties": {
+    "adr_id": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{3}$",
+      "description": "ADR identifier in format ADR-NNN"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Short descriptive title of the decision"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Proposed", "Approved", "Rejected", "Superseded"],
+      "description": "Current status — new ADRs from Agente02 start as Proposed"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "context": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Problem, constraint, or opportunity being addressed. Must be substantive."
+    },
+    "decision": {
+      "type": "string",
+      "minLength": 20,
+      "description": "The actual decision made"
+    },
+    "deviation_from_golden_path": {
+      "type": "string",
+      "enum": ["yes", "no"],
+      "description": "Whether this ADR represents a Golden Path deviation"
+    },
+    "golden_path_item_affected": {
+      "type": "string",
+      "description": "Which Golden Path item is being deviated from (if applicable)"
+    },
+    "alternatives": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["alternative", "pros", "cons"],
+        "properties": {
+          "alternative": { "type": "string" },
+          "pros": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "cons": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "consequences": {
+      "type": "object",
+      "required": ["technical", "operational"],
+      "properties": {
+        "technical": { "type": "string" },
+        "operational": { "type": "string" },
+        "financial": { "type": "string" },
+        "maintenance": { "type": "string" }
+      }
+    },
+    "review_criteria": {
+      "type": "string",
+      "description": "When this decision should be re-evaluated"
+    },
+    "supersedes": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{3}$",
+      "description": "ADR this record supersedes, if applicable"
+    }
+  }
+}

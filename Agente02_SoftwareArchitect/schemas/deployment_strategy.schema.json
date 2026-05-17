@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deployment Strategy Schema",
+  "description": "Validates the Deployment_Strategy.md metadata for Agente02_SoftwareArchitect.",
+  "type": "object",
+  "required": ["environments", "migration_policy", "rollback_plan", "cron_jobs", "healthcheck"],
+  "properties": {
+    "environments": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["name", "purpose", "migration_command"],
+        "properties": {
+          "name": { "type": "string", "enum": ["local", "preview", "staging", "production"] },
+          "purpose": { "type": "string" },
+          "platform": { "type": "string" },
+          "migration_command": { "type": "string" },
+          "secrets_source": { "type": "string" }
+        }
+      }
+    },
+    "migration_policy": {
+      "type": "object",
+      "required": ["source_of_truth", "staging_command", "production_command", "prohibited_commands"],
+      "properties": {
+        "source_of_truth": { "type": "string", "const": "Prisma schema + Prisma migrations" },
+        "staging_command": { "type": "string", "const": "prisma migrate deploy" },
+        "production_command": { "type": "string", "const": "prisma migrate deploy" },
+        "prohibited_commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "migrations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["description", "risk_classification"],
+            "properties": {
+              "description": { "type": "string" },
+              "risk_classification": {
+                "type": "string",
+                "enum": ["reversible", "compatible", "irreversible", "destructive"]
+              },
+              "execution_plan": { "type": "string" },
+              "requires_human_approval": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "rollback_plan": {
+      "type": "object",
+      "required": ["trigger_conditions", "steps", "responsible"],
+      "properties": {
+        "trigger_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "responsible": { "type": "string" },
+        "max_decision_time_minutes": { "type": "integer" },
+        "database_impact": { "type": "string" },
+        "post_rollback_validation": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "cron_jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "schedule", "endpoint", "guard_function"],
+        "properties": {
+          "name": { "type": "string" },
+          "schedule": { "type": "string" },
+          "endpoint": { "type": "string" },
+          "guard_function": { "type": "string", "const": "guardCron()" },
+          "idempotent": { "type": "boolean" },
+          "logs_to": { "type": "string" }
+        }
+      }
+    },
+    "healthcheck": {
+      "type": "object",
+      "required": ["endpoint", "validates"],
+      "properties": {
+        "endpoint": { "type": "string", "const": "/api/health" },
+        "validates": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

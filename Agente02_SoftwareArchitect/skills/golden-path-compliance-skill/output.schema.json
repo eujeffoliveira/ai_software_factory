@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "golden-path-compliance-skill Output",
+  "type": "object",
+  "required": ["golden_path_status", "deviations"],
+  "properties": {
+    "golden_path_status": {
+      "type": "string",
+      "enum": ["FULLY_COMPLIANT", "COMPLIANT_WITH_ADRS", "NON_COMPLIANT_PENDING_ADRS"]
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["item", "deviation", "adr_required"],
+        "properties": {
+          "item": { "type": "string" },
+          "deviation": { "type": "string" },
+          "adr_required": { "type": "boolean" },
+          "adr_status": { "type": "string" }
+        }
+      }
+    },
+    "compliant_items": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,101 @@
+// Prisma Schema Proposal — [Project Name]
+// Version: 1.0
+// Date: YYYY-MM-DD
+// Architect: Agente02_SoftwareArchitect
+//
+// Conventions:
+// - Prisma field names: camelCase
+// - DB column names: snake_case (via @map)
+// - DB table names: snake_case_plural (via @@map)
+// - All PII fields annotated with // PII: [classification]
+// - All foreign keys use @db.Uuid for UUID fields
+
+// NOTE: datasource block is intentionally absent — configured in prisma.config.ts
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+// ============================================================
+// AUDIT AND SYNC TABLES (mandatory in all projects)
+// ============================================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String   @map("actor_user_id")
+  actorEmail  String   @map("actor_email") // PII: operational
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
+
+model SyncLog {
+  id         String   @id @default(cuid())
+  job        String
+  executedAt DateTime @default(now()) @map("executed_at")
+  durationMs Int      @map("duration_ms")
+  status     String   // success | error | partial
+  counts     Json?
+  errorMsg   String?  @map("error_msg")
+
+  @@map("sync_logs")
+}
+
+// ============================================================
+// IDENTITY AND AUTH
+// ============================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique // PII: personal
+  name          String?   // PII: personal
+  image         String?
+  role          String    @default("user") // e.g., user, admin
+  status        String    @default("pending") // pending | approved | rejected
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  // [domain]Records [Domain][]
+
+  @@map("users")
+}
+
+// ============================================================
+// DOMAIN MODELS
+// (Replace with your actual domain entities below)
+// ============================================================
+
+// Example domain model — replace with actual entities from PRD
+
+model ExampleEntity {
+  id          String   @id @default(cuid())
+  name        String
+  status      String   @default("active")
+  ownerId     String   @map("owner_id")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  owner       User     @relation(fields: [ownerId], references: [id])
+
+  @@map("example_entities")
+}
+
+// ============================================================
+// NOTES FOR IMPLEMENTATION
+// ============================================================
+// 1. Run `prisma db push` locally to validate schema
+// 2. Run `prisma migrate dev --name [migration-name]` to create migration
+// 3. NEVER run `prisma db push` or `prisma migrate dev` in staging/production
+// 4. Always run `prisma migrate deploy` in CI/CD for staging/production
+// 5. For destructive changes (DROP COLUMN, RENAME), use phased migrations:
+//    Phase 1: Add new structure (backward compatible)
+//    Phase 2: Migrate data
+//    Phase 3: Remove old structure

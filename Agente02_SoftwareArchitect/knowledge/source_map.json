@@ -1,0 +1,143 @@
+{
+  "agent_id": "Agente02_SoftwareArchitect",
+  "build_date": "2026-05-17",
+  "edition": "generic-white-label",
+  "sources_processed_at_build_time": [
+    {
+      "source_title": "Clean Architecture",
+      "source_author": "Robert C. Martin",
+      "source_type": "book",
+      "source_path": "lib/SoftwareArchitect/Clean Architecture – Robert C. Martin.pdf",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md (P1, P2)",
+        "knowledge/heuristics.md (H1, H4, H9)",
+        "knowledge/knowledge_cards.md (Card 001, 002, 003)",
+        "knowledge/decision_rules.md (DR001, DR003)",
+        "checklists/architecture_quality_checklist.md",
+        "skills/architecture-design-skill/skill.md"
+      ]
+    },
+    {
+      "source_title": "Designing Data-Intensive Applications",
+      "source_author": "Martin Kleppmann",
+      "source_type": "book",
+      "source_path": "lib/SoftwareArchitect/Designing Data-Intensive Applications – Martin Kleppmann.pdf",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md (P6, P7)",
+        "knowledge/heuristics.md (H5, H6, H7)",
+        "knowledge/knowledge_cards.md (Card 006, 007, 008)",
+        "knowledge/decision_rules.md (DR007, DR008, DR009)",
+        "checklists/database_modeling_checklist.md",
+        "skills/database-modeling-skill/skill.md",
+        "skills/migration-risk-analysis-skill/skill.md"
+      ]
+    },
+    {
+      "source_title": "Domain-Driven Design",
+      "source_author": "Eric Evans",
+      "source_type": "book",
+      "source_path": "lib/SoftwareArchitect/Domain-Driven Design – Eric Evans.pdf",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md (P4, P5)",
+        "knowledge/heuristics.md (H2, H3)",
+        "knowledge/knowledge_cards.md (Card 004, 005, 009)",
+        "knowledge/decision_rules.md (DR004, DR005)",
+        "checklists/architecture_quality_checklist.md",
+        "skills/architecture-design-skill/skill.md",
+        "skills/api-contract-design-skill/skill.md"
+      ]
+    },
+    {
+      "source_title": "Fundamentals of Software Architecture",
+      "source_author": "Mark Richards and Neal Ford",
+      "source_type": "book",
+      "source_path": "lib/SoftwareArchitect/Fundamentals of Software Architecture – Mark Richards and Neal Ford.pdf",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md (P3, P8)",
+        "knowledge/heuristics.md (H8, H10, H11, H12, H13)",
+        "knowledge/knowledge_cards.md (Card 010, 011)",
+        "knowledge/decision_rules.md (DR002, DR006)",
+        "skills/architecture-tradeoff-analysis-skill/skill.md",
+        "skills/golden-path-compliance-skill/skill.md"
+      ]
+    },
+    {
+      "source_title": "Building Microservices",
+      "source_author": "Sam Newman",
+      "source_type": "book",
+      "source_path": "lib/SoftwareArchitect/Building Microservices – Sam Newman.pdf",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md (P11)",
+        "knowledge/heuristics.md (H12, H13)",
+        "knowledge/knowledge_cards.md (Card 012, 013)",
+        "knowledge/decision_rules.md (DR010, DR011)",
+        "skills/architecture-design-skill/skill.md",
+        "skills/architecture-tradeoff-analysis-skill/skill.md"
+      ]
+    },
+    {
+      "source_title": "Patterns of Enterprise Application Architecture",
+      "source_author": "Martin Fowler",
+      "source_type": "book",
+      "source_path": "lib/SoftwareArchitect/Patterns of Enterprise Application Architecture – Martin Fowler.pdf",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/heuristics.md (H14, H15)",
+        "knowledge/knowledge_cards.md (Card 014, 015, 016)",
+        "knowledge/decision_rules.md (DR012)",
+        "skills/database-modeling-skill/skill.md",
+        "skills/api-contract-design-skill/skill.md"
+      ]
+    },
+    {
+      "source_title": "Reference Architecture v1.1.1 — Golden Model",
+      "source_author": "AI Software Factory",
+      "source_type": "internal_doc",
+      "source_path": "context/reference_architecture_generico.md",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "context_view.md (all sections)",
+        "knowledge/principles.md (P9, P10)",
+        "knowledge/decision_rules.md (DR001, DR005, DR009, DR013, DR014, DR015)",
+        "checklists/golden_path_compliance_checklist.md",
+        "checklists/security_architecture_checklist.md",
+        "checklists/database_modeling_checklist.md",
+        "checklists/deployment_strategy_checklist.md",
+        "checklists/observability_checklist.md",
+        "templates/ADR_Template.md",
+        "templates/Deployment_Strategy.md",
+        "templates/Security_Strategy.md",
+        "templates/Observability_Strategy.md"
+      ]
+    },
+    {
+      "source_title": "Operational Manifesto — AI Software Factory Agents",
+      "source_author": "AI Software Factory",
+      "source_type": "internal_doc",
+      "source_path": "context/integrantes.md",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "prompt.md",
+        "agent_config.json",
+        "skills_manifest.md",
+        "quality_gate.md",
+        "handoff_schema.json",
+        "failure_modes.md",
+        "knowledge/decision_rules.md (DR015)"
+      ]
+    }
+  ],
+  "runtime_access_policy": {
+    "raw_sources_allowed": false,
+    "pdf_access_allowed": false,
+    "bibliography_folder_allowed": false,
+    "global_context_folder_allowed": false,
+    "local_distilled_artifacts_allowed": true,
+    "local_knowledge_path": "Agente02_SoftwareArchitect/knowledge/"
+  }
+}
