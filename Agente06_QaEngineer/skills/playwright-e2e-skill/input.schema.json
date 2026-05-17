@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "playwright-e2e-skill Input",
+  "type": "object",
+  "required": ["feature_path", "acceptance_criteria", "flow_description"],
+  "properties": {
+    "feature_path": { "type": "string" },
+    "acceptance_criteria": { "type": "array", "items": { "type": "string" } },
+    "flow_description": { "type": "string" },
+    "form_fields": { "type": "array", "items": { "type": "string" } },
+    "submit_button_label": { "type": "string" },
+    "expected_success_url": { "type": "string" },
+    "expected_error_text": { "type": "string" }
+  }
+}

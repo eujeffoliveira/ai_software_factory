@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/test-result",
+  "title": "Test Result",
+  "description": "Schema for a single test result entry in the QA Report. Covers both Vitest and Playwright test results.",
+  "type": "object",
+  "required": [
+    "test_id",
+    "framework",
+    "test_file",
+    "test_name",
+    "status",
+    "acceptance_criteria"
+  ],
+  "properties": {
+    "test_id": {
+      "type": "string",
+      "description": "Unique test identifier within the QA Report.",
+      "pattern": "^TEST-[0-9]{3,}$"
+    },
+    "framework": {
+      "type": "string",
+      "enum": ["vitest", "playwright"],
+      "description": "Test framework used."
+    },
+    "test_type": {
+      "type": "string",
+      "enum": ["unit", "integration", "e2e", "api"],
+      "description": "Type of test."
+    },
+    "test_file": {
+      "type": "string",
+      "description": "Path to the test file relative to project root."
+    },
+    "test_name": {
+      "type": "string",
+      "description": "Full test name (describe block + it block name)."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PASSED", "FAILED", "SKIPPED", "FLAKY"],
+      "description": "Test execution result."
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "List of acceptance criterion IDs this test validates.",
+      "items": {
+        "type": "string",
+        "pattern": "^AC-[0-9]{3,}$"
+      }
+    },
+    "failure_message": {
+      "type": "string",
+      "description": "If status is FAILED or FLAKY, the error message from the test runner."
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Test execution duration in milliseconds."
+    },
+    "severity_if_failed": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+      "description": "Bug severity classification if this test is failing."
+    }
+  },
+  "additionalProperties": false
+}

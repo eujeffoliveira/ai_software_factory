@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/api-contract-validation",
+  "title": "API Contract Validation Report",
+  "description": "Schema for the API contract validation results — verifies every endpoint in API_Contract.json has tests for status code, response shape, auth behavior, and error format.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "api_contract_version",
+    "total_endpoints",
+    "endpoints"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^ACV-[0-9]{3,}-C[0-9]+$",
+      "description": "API contract validation report identifier."
+    },
+    "api_contract_version": {
+      "type": "string",
+      "description": "Version or hash of the API_Contract.json file evaluated."
+    },
+    "total_endpoints": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of endpoints defined in API_Contract.json."
+    },
+    "endpoints": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Validation result for each endpoint.",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "method", "is_protected", "checks"],
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "description": "API endpoint path.",
+            "examples": ["/api/tasks", "/api/tasks/:id"]
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+            "description": "HTTP method."
+          },
+          "is_protected": {
+            "type": "boolean",
+            "description": "Whether this endpoint requires authentication."
+          },
+          "checks": {
+            "type": "object",
+            "required": ["success_status_code", "response_shape", "error_format"],
+            "properties": {
+              "success_status_code": {
+                "type": "object",
+                "required": ["status", "test_file", "test_name"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PASSED", "FAILED", "MISSING"] },
+                  "expected_code": { "type": "integer" },
+                  "actual_code": { "type": "integer" },
+                  "test_file": { "type": "string" },
+                  "test_name": { "type": "string" }
+                }
+              },
+              "auth_401": {
+                "type": "object",
+                "description": "Required for protected endpoints only.",
+                "required": ["status"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PASSED", "FAILED", "MISSING", "NOT_APPLICABLE"] },
+                  "test_file": { "type": "string" },
+                  "test_name": { "type": "string" }
+                }
+              },
+              "validation_400": {
+                "type": "object",
+                "description": "For endpoints that accept a request body.",
+                "required": ["status"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PASSED", "FAILED", "MISSING", "NOT_APPLICABLE"] },
+                  "test_file": { "type": "string" },
+                  "test_name": { "type": "string" }
+                }
+              },
+              "ownership_403": {
+                "type": "object",
+                "description": "For endpoints that operate on user-owned resources.",
+                "required": ["status"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PASSED", "FAILED", "MISSING", "NOT_APPLICABLE"] },
+                  "test_file": { "type": "string" },
+                  "test_name": { "type": "string" }
+                }
+              },
+              "response_shape": {
+                "type": "object",
+                "required": ["status", "test_file", "test_name"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PASSED", "FAILED", "MISSING"] },
+                  "shape_diff": {
+                    "type": "string",
+                    "description": "Description of the shape mismatch if FAILED."
+                  },
+                  "test_file": { "type": "string" },
+                  "test_name": { "type": "string" }
+                }
+              },
+              "error_format": {
+                "type": "object",
+                "required": ["status", "test_file", "test_name"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["PASSED", "FAILED", "MISSING"] },
+                  "notes": { "type": "string" },
+                  "test_file": { "type": "string" },
+                  "test_name": { "type": "string" }
+                }
+              }
+            }
+          },
+          "overall_status": {
+            "type": "string",
+            "enum": ["FULLY_VALIDATED", "PARTIALLY_VALIDATED", "NOT_VALIDATED"],
+            "description": "FULLY_VALIDATED = all applicable checks passed; PARTIALLY_VALIDATED = some checks missing/failing; NOT_VALIDATED = no tests for this endpoint."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes for FAILED or MISSING checks."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "fully_validated": { "type": "integer", "minimum": 0 },
+        "partially_validated": { "type": "integer", "minimum": 0 },
+        "not_validated": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "additionalProperties": false
+}

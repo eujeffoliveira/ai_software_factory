@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "qa-reporting-skill Input",
+  "type": "object",
+  "required": ["evaluation_cycle", "vitest_passed", "vitest_failed", "playwright_passed", "playwright_failed", "coverage_percent", "bugs_critical", "bugs_high"],
+  "properties": {
+    "evaluation_cycle": { "type": "integer", "minimum": 1 },
+    "vitest_passed": { "type": "integer", "minimum": 0 },
+    "vitest_failed": { "type": "integer", "minimum": 0 },
+    "playwright_passed": { "type": "integer", "minimum": 0 },
+    "playwright_failed": { "type": "integer", "minimum": 0 },
+    "coverage_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+    "coverage_meets_threshold": { "type": "boolean" },
+    "all_ac_passed": { "type": "boolean" },
+    "api_contract_fully_validated": { "type": "boolean" },
+    "accessibility_primary_flows_passed": { "type": "boolean" },
+    "bugs_critical": { "type": "integer", "minimum": 0 },
+    "bugs_high": { "type": "integer", "minimum": 0 },
+    "bugs_medium": { "type": "integer", "minimum": 0 },
+    "bugs_low": { "type": "integer", "minimum": 0 }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "regression-analysis-skill Input",
+  "type": "object",
+  "required": ["previous_qa_report_id", "evaluation_cycle", "bugs_from_previous_cycle"],
+  "properties": {
+    "previous_qa_report_id": { "type": "string" },
+    "evaluation_cycle": { "type": "integer", "minimum": 2 },
+    "bugs_from_previous_cycle": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["bug_id", "severity", "title"],
+        "properties": {
+          "bug_id": { "type": "string", "pattern": "^BUG-[0-9]{3,}$" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "title": { "type": "string" }
+        }
+      }
+    }
+  }
+}

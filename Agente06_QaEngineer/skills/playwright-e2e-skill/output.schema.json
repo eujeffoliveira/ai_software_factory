@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "playwright-e2e-skill Output",
+  "type": "object",
+  "required": ["test_file_path", "tests_generated", "selector_violations_found"],
+  "properties": {
+    "test_file_path": { "type": "string" },
+    "tests_generated": { "type": "integer", "minimum": 1 },
+    "selector_violations_found": { "type": "integer", "minimum": 0 },
+    "selector_violations": { "type": "array", "items": { "type": "string" } },
+    "accessibility_tests_included": { "type": "boolean" }
+  }
+}

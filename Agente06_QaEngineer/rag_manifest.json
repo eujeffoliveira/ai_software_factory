@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente06_QaEngineer",
+  "version": "1.0.0",
+  "description": "RAG policy for QA Engineer — defines which knowledge collections are accessible at runtime and how retrieval is configured.",
+  "retrieval_policy": {
+    "runtime_local_only": true,
+    "raw_books_at_runtime": false,
+    "raw_pdfs_at_runtime": false,
+    "context_folder_at_runtime": false,
+    "max_chunks": 8,
+    "chunk_size_tokens": 512,
+    "overlap_tokens": 64
+  },
+  "collections": [
+    {
+      "collection_id": "qa_testing_patterns",
+      "priority": "core",
+      "description": "Core QA patterns for the Golden Path — Vitest test structure, Playwright E2E patterns, test pyramid, acceptance criterion mapping, coverage thresholds.",
+      "source_artifacts": [
+        "Agente06_QaEngineer/context_view.md",
+        "Agente06_QaEngineer/knowledge/principles.md",
+        "Agente06_QaEngineer/knowledge/heuristics.md",
+        "Agente06_QaEngineer/knowledge/decision_rules.md",
+        "Agente06_QaEngineer/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "vitest",
+        "playwright",
+        "test-pyramid",
+        "acceptance-criteria",
+        "coverage",
+        "e2e",
+        "unit-tests",
+        "integration-tests"
+      ]
+    },
+    {
+      "collection_id": "gate_4_evaluation",
+      "priority": "normative",
+      "description": "Normative reference — Gate 4 criteria, status codes, decision matrix, blocking conditions, and QA Report requirements. These rules override all other collections.",
+      "source_artifacts": [
+        "Agente06_QaEngineer/agent_config.json",
+        "Agente06_QaEngineer/quality_gate.md",
+        "Agente06_QaEngineer/failure_modes.md",
+        "Agente06_QaEngineer/checklists/qa_quality_checklist.md",
+        "Agente06_QaEngineer/checklists/test_coverage_checklist.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "gate-4",
+        "qa-report",
+        "status-codes",
+        "blocking-conditions",
+        "normative",
+        "decision-matrix"
+      ]
+    },
+    {
+      "collection_id": "bug_classification",
+      "priority": "core",
+      "description": "Bug severity classification, failure mode identification, test failure classification, and escalation triggers.",
+      "source_artifacts": [
+        "Agente06_QaEngineer/knowledge/decision_rules.md",
+        "Agente06_QaEngineer/failure_modes.md",
+        "Agente06_QaEngineer/checklists/failure_severity_checklist.md",
+        "Agente06_QaEngineer/templates/Bug_Report.md",
+        "Agente06_QaEngineer/examples/good_bug_report.md",
+        "Agente06_QaEngineer/examples/bad_bug_report.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "bug-severity",
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "failure-classification",
+        "escalation"
+      ]
+    },
+    {
+      "collection_id": "api_contract_validation",
+      "priority": "core",
+      "description": "API contract test patterns — status code verification, response shape validation, auth behavior testing, error format validation.",
+      "source_artifacts": [
+        "Agente06_QaEngineer/context_view.md",
+        "Agente06_QaEngineer/knowledge/decision_rules.md",
+        "Agente06_QaEngineer/checklists/api_contract_validation_checklist.md",
+        "Agente06_QaEngineer/schemas/api_contract_validation.schema.json"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "api-contract",
+        "endpoint-testing",
+        "status-codes",
+        "response-shape",
+        "auth-behavior",
+        "error-format"
+      ]
+    },
+    {
+      "collection_id": "accessibility_testing",
+      "priority": "supporting",
+      "description": "Accessibility regression patterns — WCAG 2.1 AA, keyboard navigation, ARIA labels, focus management, Playwright accessibility checks.",
+      "source_artifacts": [
+        "Agente06_QaEngineer/context_view.md",
+        "Agente06_QaEngineer/checklists/accessibility_regression_checklist.md",
+        "Agente06_QaEngineer/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "accessibility",
+        "wcag",
+        "keyboard-navigation",
+        "aria",
+        "focus-management",
+        "screen-reader"
+      ]
+    },
+    {
+      "collection_id": "qa_report_templates",
+      "priority": "supporting",
+      "description": "QA Report, Bug Report, Regression Report, and Acceptance Validation templates with example good and bad outputs.",
+      "source_artifacts": [
+        "Agente06_QaEngineer/templates/QA_Report.md",
+        "Agente06_QaEngineer/templates/Bug_Report.md",
+        "Agente06_QaEngineer/templates/Regression_Report.md",
+        "Agente06_QaEngineer/templates/Acceptance_Validation_Report.md",
+        "Agente06_QaEngineer/examples/good_qa_report.md",
+        "Agente06_QaEngineer/examples/bad_qa_report.md",
+        "Agente06_QaEngineer/examples/good_bug_report.md",
+        "Agente06_QaEngineer/examples/bad_bug_report.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "qa-report",
+        "bug-report",
+        "regression-report",
+        "templates",
+        "examples"
+      ]
+    }
+  ],
+  "blocked_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/base_teorica.md",
+    "context/integrantes.md",
+    "context/reference_architecture_generico.md",
+    "context/manual_arquitetura_componentes_generico.md"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "test-failure-classification-skill Input",
+  "type": "object",
+  "required": ["failures"],
+  "properties": {
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["test_name", "failure_message"],
+        "properties": {
+          "test_name": { "type": "string" },
+          "test_file": { "type": "string" },
+          "failure_message": { "type": "string" },
+          "framework": { "type": "string", "enum": ["vitest", "playwright"] }
+        }
+      }
+    },
+    "code_review_findings": { "type": "array", "items": { "type": "string" } }
+  }
+}

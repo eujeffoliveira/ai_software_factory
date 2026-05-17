@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/regression-report",
+  "title": "Regression Report",
+  "description": "Schema for the regression analysis report produced when a resubmission is reviewed after a BLOCKED or RETURNED Gate 4 cycle.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "previous_qa_report_id",
+    "evaluation_cycle",
+    "bugs_from_previous_cycle",
+    "regression_summary"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^REG-[0-9]{3,}-C[0-9]+$",
+      "description": "Regression report identifier.",
+      "examples": ["REG-001-C2"]
+    },
+    "previous_qa_report_id": {
+      "type": "string",
+      "pattern": "^QA-[0-9]{3,}-C[0-9]+$",
+      "description": "The QA Report ID from the previous cycle that issued the block."
+    },
+    "evaluation_cycle": {
+      "type": "integer",
+      "minimum": 2,
+      "description": "Current evaluation cycle (must be >= 2 since this is a resubmission)."
+    },
+    "bugs_from_previous_cycle": {
+      "type": "array",
+      "description": "Each bug from the previous QA cycle and its current resolution status.",
+      "items": {
+        "type": "object",
+        "required": ["bug_id", "severity", "title", "resolution_status"],
+        "properties": {
+          "bug_id": {
+            "type": "string",
+            "pattern": "^BUG-[0-9]{3,}$"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          },
+          "title": {
+            "type": "string"
+          },
+          "resolution_status": {
+            "type": "string",
+            "enum": ["FIXED_WITH_REGRESSION_TEST", "FIXED_NO_REGRESSION_TEST", "NOT_FIXED", "REGRESSED"],
+            "description": "FIXED_WITH_REGRESSION_TEST = complete fix; FIXED_NO_REGRESSION_TEST = code fixed but missing regression test (returned); REGRESSED = was fixed previously but broke again"
+          },
+          "regression_test_file": {
+            "type": "string",
+            "description": "Path to the regression test file (required when status is FIXED_WITH_REGRESSION_TEST)."
+          },
+          "regression_test_name": {
+            "type": "string",
+            "description": "Name of the regression test case."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes for NOT_FIXED or REGRESSED status."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "new_bugs_introduced": {
+      "type": "array",
+      "description": "New bugs found in this resubmission cycle (bugs not present in the previous cycle).",
+      "items": {
+        "type": "object",
+        "required": ["bug_id", "severity", "title"],
+        "properties": {
+          "bug_id": { "type": "string", "pattern": "^BUG-[0-9]{3,}$" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "title": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "regression_summary": {
+      "type": "object",
+      "required": ["total_bugs_from_previous", "fixed_with_regression_test", "fixed_no_test", "not_fixed", "new_bugs_introduced"],
+      "properties": {
+        "total_bugs_from_previous": { "type": "integer", "minimum": 0 },
+        "fixed_with_regression_test": { "type": "integer", "minimum": 0 },
+        "fixed_no_test": { "type": "integer", "minimum": 0 },
+        "not_fixed": { "type": "integer", "minimum": 0 },
+        "new_bugs_introduced": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "regression_verdict": {
+      "type": "string",
+      "enum": ["ALL_FIXED_WITH_REGRESSION_TESTS", "PARTIAL_FIX_MISSING_TESTS", "BUGS_NOT_FIXED", "NEW_BUGS_INTRODUCED"],
+      "description": "Overall verdict of the regression analysis. Informs the gate decision."
+    }
+  },
+  "additionalProperties": false
+}

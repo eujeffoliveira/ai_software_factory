@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "api-contract-test-skill Input",
+  "type": "object",
+  "required": ["total_endpoints", "endpoints"],
+  "properties": {
+    "total_endpoints": { "type": "integer", "minimum": 1 },
+    "endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "method", "is_protected"],
+        "properties": {
+          "path": { "type": "string" },
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+          "is_protected": { "type": "boolean" },
+          "has_request_body": { "type": "boolean" },
+          "response_schema_ref": { "type": "string" }
+        }
+      }
+    }
+  }
+}

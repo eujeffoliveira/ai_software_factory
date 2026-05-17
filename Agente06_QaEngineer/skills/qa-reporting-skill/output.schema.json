@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "qa-reporting-skill Output",
+  "type": "object",
+  "required": ["qa_report_id", "gate_decision", "report_complete"],
+  "properties": {
+    "qa_report_id": { "type": "string", "pattern": "^QA-[0-9]{3,}-C[0-9]+$" },
+    "gate_decision": {
+      "type": "string",
+      "enum": ["APPROVED", "RETURNED_FOR_REVISION", "BLOCKED_MISSING_TESTS", "BLOCKED_QA_FAILURE", "BLOCKED_MISSING_ACCEPTANCE_CRITERIA", "BLOCKED_CRITICAL_RISK"]
+    },
+    "report_complete": { "type": "boolean" },
+    "sections_complete": { "type": "integer", "minimum": 0, "maximum": 8 },
+    "next_agent": { "type": "string" }
+  }
+}

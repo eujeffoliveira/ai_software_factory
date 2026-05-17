@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "test-failure-classification-skill Output",
+  "type": "object",
+  "required": ["critical", "high", "medium", "low", "gate_impact"],
+  "properties": {
+    "critical": { "type": "integer", "minimum": 0 },
+    "high": { "type": "integer", "minimum": 0 },
+    "medium": { "type": "integer", "minimum": 0 },
+    "low": { "type": "integer", "minimum": 0 },
+    "gate_impact": {
+      "type": "string",
+      "enum": ["BLOCKED_CRITICAL_RISK", "BLOCKED_QA_FAILURE", "RETURNED_FOR_REVISION", "NONE"]
+    },
+    "escalation_required": { "type": "boolean" },
+    "bug_reports_produced": { "type": "integer", "minimum": 0 }
+  }
+}

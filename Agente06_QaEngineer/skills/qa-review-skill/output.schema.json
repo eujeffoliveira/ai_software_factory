@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "qa-review-skill Output",
+  "type": "object",
+  "required": ["gate_decision", "qa_report_id", "skills_invoked"],
+  "properties": {
+    "gate_decision": {
+      "type": "string",
+      "enum": ["APPROVED", "RETURNED_FOR_REVISION", "BLOCKED_MISSING_TESTS", "BLOCKED_QA_FAILURE", "BLOCKED_MISSING_ACCEPTANCE_CRITERIA", "BLOCKED_CRITICAL_RISK"]
+    },
+    "qa_report_id": { "type": "string", "pattern": "^QA-[0-9]{3,}-C[0-9]+$" },
+    "skills_invoked": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of skills invoked during this evaluation cycle"
+    },
+    "escalation_triggered": { "type": "boolean" },
+    "escalation_reason": { "type": "string" }
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente06_QaEngineer",
+  "version": "1.0.0",
+  "distillation_date": "2026-05-17",
+  "description": "Maps build-time source documents to the specific runtime artifacts they informed. These sources were processed during build and are NOT accessible at runtime.",
+  "sources": [
+    {
+      "source_id": "TDD_BECK",
+      "title": "Test-Driven Development by Example",
+      "author": "Kent Beck",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P1 (Test-first reveals design problems)", "P10 (Regression tests prevent history repeating)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H1 (hard to test = hard to understand)", "H3 (green tests on wrong code)", "H14 (mutation testing mental model)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 001 (Red-Green-Refactor cycle)"]
+        },
+        {
+          "artifact": "templates/Vitest_Test_Template.ts",
+          "items": ["4-case minimum structure (unauth, invalid, success, error)"]
+        }
+      ]
+    },
+    {
+      "source_id": "UNIT_TESTING_KHORIKOV",
+      "title": "Unit Testing Principles, Practices, and Patterns",
+      "author": "Vladimir Khorikov",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P2 (Tests are documentation)", "P7 (Mock only what you own)", "P8 (Coverage is a means, not an end)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H2 (test behavior not implementation)", "H7 (coverage % vs uncovered branch)", "H11 (error path coverage more valuable)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 002 (Four pillars of a good unit test)", "Card 003 (Test doubles taxonomy)", "Card 006 (London vs Detroit TDD schools)", "Card 012 (Vitest mock patterns)"]
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "items": ["DR001 through DR007 (test structure rules)"]
+        }
+      ]
+    },
+    {
+      "source_id": "GOOS_FREEMAN_PRYCE",
+      "title": "Growing Object-Oriented Software, Guided by Tests",
+      "author": "Steve Freeman & Nat Pryce",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P3 (Test pyramid prevents fragile suites)", "P4 (Acceptance tests are executable specification)", "P7 (Mock only what you own)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H6 (Playwright CSS selectors will break)", "H9 (Mock the boundary, not the internals)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 003 (Test doubles)", "Card 005 (Seam model)", "Card 006 (London vs Detroit)", "Card 007 (Given/When/Then anatomy)", "Card 009 (Page Object Pattern)"]
+        },
+        {
+          "artifact": "templates/Playwright_Test_Template.ts",
+          "items": ["E2E test structure", "accessible selector policy"]
+        },
+        {
+          "artifact": "context_view.md",
+          "items": ["Section 2 (Playwright patterns)", "Section 4 (Acceptance criterion mapping)"]
+        }
+      ]
+    },
+    {
+      "source_id": "LEGACY_CODE_FEATHERS",
+      "title": "Working Effectively with Legacy Code",
+      "author": "Michael Feathers",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P5 (Legacy code without tests is dangerous)", "P6 (Refactoring requires safety net)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H1 (test difficulty = design signal)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 004 (Characterization tests for legacy code)", "Card 005 (Seam model for breaking dependencies)"]
+        }
+      ]
+    },
+    {
+      "source_id": "REFACTORING_FOWLER",
+      "title": "Refactoring: Improving the Design of Existing Code",
+      "author": "Martin Fowler",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P6 (Refactoring requires a safety net of tests)"]
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "items": ["Refactoring PR verification rule (tests existed before refactoring)"]
+        }
+      ]
+    },
+    {
+      "source_id": "MODULO_06_TESTE_SOFTWARE_I",
+      "title": "Módulo 06 — Teste de Software I",
+      "author": "Postgraduate Software Engineering Curriculum",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "context_view.md",
+          "items": ["Section 3 (Test pyramid)", "Section 4 (Acceptance criterion mapping)", "Section 5 (API contract validation)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H4 (vague acceptance criteria escalation)", "H5 (auth failure test first)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 007 (Given/When/Then anatomy)", "Card 008 (API contract testing checklist)"]
+        },
+        {
+          "artifact": "checklists/acceptance_criteria_checklist.md",
+          "items": ["Acceptance criterion validation steps"]
+        }
+      ]
+    },
+    {
+      "source_id": "MODULO_07_TESTE_SOFTWARE_II",
+      "title": "Módulo 07 — Teste de Software II",
+      "author": "Postgraduate Software Engineering Curriculum",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "context_view.md",
+          "items": ["Section 6 (Coverage thresholds)", "Section 11 (QA Report mandatory sections)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H8 (flaky test = failing test)", "H12 (never accept verbal confirmation)", "H15 (document why in bug reports)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 010 (Coverage tool usage with Vitest)"]
+        },
+        {
+          "artifact": "checklists/test_coverage_checklist.md",
+          "items": ["Coverage threshold verification steps"]
+        }
+      ]
+    },
+    {
+      "source_id": "MODULO_08_QUALIDADE_SOFTWARE_I",
+      "title": "Módulo 08 — Qualidade de Software I",
+      "author": "Postgraduate Software Engineering Curriculum",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P9 (QA gate is a quality firewall)", "P11 (Quality is built in, not inspected in)"]
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "items": ["H10 (same area fails twice → escalate)", "H12 (no verbal confirmation without test evidence)"]
+        },
+        {
+          "artifact": "failure_modes.md",
+          "items": ["FM-04 (acceptance criteria not testable)", "FM-09 (QA Report missing sections)"]
+        }
+      ]
+    },
+    {
+      "source_id": "MODULO_09_QUALIDADE_SOFTWARE_II",
+      "title": "Módulo 09 — Qualidade de Software II",
+      "author": "Postgraduate Software Engineering Curriculum",
+      "location": "lib/QaEngineer/",
+      "accessible_at_runtime": false,
+      "distilled_into": [
+        {
+          "artifact": "knowledge/principles.md",
+          "items": ["P12 (Quality models define measurable characteristics)"]
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "items": ["Card 011 (ISO 25010 quality characteristics mapped to Gate 4)"]
+        },
+        {
+          "artifact": "templates/QA_Report.md",
+          "items": ["Quality characteristics framework in report structure"]
+        }
+      ]
+    }
+  ],
+  "build_notes": [
+    "All source materials were processed at build time on 2026-05-17",
+    "Raw book files (*.pdf) are NOT accessible at runtime — use knowledge/ artifacts only",
+    "context/ folder is NOT accessible at runtime — use context_view.md only",
+    "The Golden Path tech stack (Next.js 16, Vitest, Playwright) is embedded in context_view.md and agent_config.json"
+  ]
+}

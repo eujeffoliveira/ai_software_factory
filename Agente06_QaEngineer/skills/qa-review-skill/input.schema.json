@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "qa-review-skill Input",
+  "type": "object",
+  "required": ["evaluation_cycle", "backend_gate_ready", "frontend_gate_ready", "api_contract_available", "acceptance_criteria_available", "vitest_tests_available", "coverage_report_available"],
+  "properties": {
+    "evaluation_cycle": { "type": "integer", "minimum": 1 },
+    "backend_gate_ready": { "type": "boolean" },
+    "frontend_gate_ready": { "type": "boolean" },
+    "api_contract_available": { "type": "boolean" },
+    "acceptance_criteria_available": { "type": "boolean" },
+    "vitest_tests_available": { "type": "boolean" },
+    "playwright_tests_available": { "type": "boolean" },
+    "coverage_report_available": { "type": "boolean" },
+    "previous_qa_report_id": { "type": "string", "description": "Required when evaluation_cycle > 1" }
+  }
+}

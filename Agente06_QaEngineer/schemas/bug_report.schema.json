@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/bug-report",
+  "title": "Bug Report",
+  "description": "Schema for a bug report produced by Agente06_QaEngineer during a Gate 4 evaluation.",
+  "type": "object",
+  "required": [
+    "bug_id",
+    "severity",
+    "title",
+    "component",
+    "file_path",
+    "description",
+    "reproduction_steps",
+    "expected_behavior",
+    "actual_behavior",
+    "acceptance_criterion_violated",
+    "recommendation",
+    "responsible_agent"
+  ],
+  "properties": {
+    "bug_id": {
+      "type": "string",
+      "pattern": "^BUG-[0-9]{3,}$",
+      "description": "Bug identifier. Increment per QA Report.",
+      "examples": ["BUG-001", "BUG-002"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+      "description": "Bug severity: CRITICAL=auth bypass/data loss/security; HIGH=feature broken/user blocked; MEDIUM=degraded UX/workaround exists; LOW=cosmetic"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Short, precise title describing what is wrong."
+    },
+    "component": {
+      "type": "string",
+      "description": "High-level component where the bug was found (e.g., Task Management, Authentication, Navigation)."
+    },
+    "file_path": {
+      "type": "string",
+      "description": "File path where the bug is located (e.g., features/tasks/actions/createTask.ts)."
+    },
+    "line_reference": {
+      "type": "string",
+      "description": "Optional line number or range where the bug manifests (e.g., line 24, lines 30-45)."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Precise description of the bug, including what condition triggers it."
+    },
+    "reproduction_steps": {
+      "type": "array",
+      "minItems": 2,
+      "description": "Ordered steps to reproduce the bug.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_behavior": {
+      "type": "string",
+      "minLength": 10,
+      "description": "What should happen according to the acceptance criterion."
+    },
+    "actual_behavior": {
+      "type": "string",
+      "minLength": 10,
+      "description": "What actually happens (the defect)."
+    },
+    "acceptance_criterion_violated": {
+      "type": "string",
+      "description": "The AC-NNN identifier that this bug violates, or 'SECURITY' / 'COVERAGE' for non-AC findings.",
+      "examples": ["AC-003", "AC-007", "SECURITY", "COVERAGE"]
+    },
+    "test_that_found_it": {
+      "type": "string",
+      "description": "The test file and test name that first revealed this bug, if applicable."
+    },
+    "recommendation": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Specific recommendation for the developer to fix this bug. Include the approach, not just 'fix the bug'."
+    },
+    "responsible_agent": {
+      "type": "string",
+      "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"],
+      "description": "Which Dev agent is responsible for fixing this bug."
+    },
+    "regression_test_required": {
+      "type": "boolean",
+      "description": "True if a regression test must be added alongside the fix (required for all CRITICAL and HIGH bugs)."
+    },
+    "escalate_to_security": {
+      "type": "boolean",
+      "description": "True if this bug should also be escalated to Agente07_DevSecOps (required for CRITICAL security bugs)."
+    }
+  },
+  "additionalProperties": false
+}

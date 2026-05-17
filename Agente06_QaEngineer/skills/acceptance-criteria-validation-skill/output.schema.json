@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "acceptance-criteria-validation-skill Output",
+  "type": "object",
+  "required": ["report_id", "total", "passed", "failed", "no_test", "ambiguous"],
+  "properties": {
+    "report_id": { "type": "string", "pattern": "^AV-[0-9]{3,}-C[0-9]+$" },
+    "total": { "type": "integer", "minimum": 0 },
+    "passed": { "type": "integer", "minimum": 0 },
+    "failed": { "type": "integer", "minimum": 0 },
+    "no_test": { "type": "integer", "minimum": 0 },
+    "ambiguous": { "type": "integer", "minimum": 0 },
+    "escalation_required": { "type": "boolean" },
+    "blocked_status": { "type": "string", "enum": ["BLOCKED_MISSING_TESTS", "BLOCKED_MISSING_ACCEPTANCE_CRITERIA", "NONE"] }
+  }
+}

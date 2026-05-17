@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "api-contract-test-skill Output",
+  "type": "object",
+  "required": ["report_id", "total_endpoints", "fully_validated", "partially_validated", "not_validated"],
+  "properties": {
+    "report_id": { "type": "string", "pattern": "^ACV-[0-9]{3,}-C[0-9]+$" },
+    "total_endpoints": { "type": "integer" },
+    "fully_validated": { "type": "integer" },
+    "partially_validated": { "type": "integer" },
+    "not_validated": { "type": "integer" },
+    "blocked_status": { "type": "string", "enum": ["BLOCKED_MISSING_TESTS", "BLOCKED_QA_FAILURE", "NONE"] }
+  }
+}

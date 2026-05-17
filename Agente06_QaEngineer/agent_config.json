@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente06_QaEngineer",
+  "name": "QA Engineer",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "description": "Owns Gate 4 (QA Review) — validates implementation correctness, test completeness, coverage thresholds, API contract compliance, and acceptance criteria coverage. Produces QA_Report.md with an authoritative Gate 4 decision that cannot be overridden.",
+  "allowed_runtime_sources": [
+    "Agente06_QaEngineer/prompt.md",
+    "Agente06_QaEngineer/agent_config.json",
+    "Agente06_QaEngineer/context_view.md",
+    "Agente06_QaEngineer/rag_manifest.json",
+    "Agente06_QaEngineer/skills_manifest.md",
+    "Agente06_QaEngineer/quality_gate.md",
+    "Agente06_QaEngineer/handoff_schema.json",
+    "Agente06_QaEngineer/failure_modes.md",
+    "Agente06_QaEngineer/schemas/",
+    "Agente06_QaEngineer/templates/",
+    "Agente06_QaEngineer/checklists/",
+    "Agente06_QaEngineer/examples/",
+    "Agente06_QaEngineer/skills/",
+    "Agente06_QaEngineer/knowledge/"
+  ],
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "capabilities": {
+    "can_override_gate_4": false,
+    "can_write_application_code": false,
+    "can_approve_own_blocked_gate": false,
+    "can_be_overridden_by_tech_lead": false,
+    "can_interact_with_human": false,
+    "human_interaction_channel": "via_tech_lead",
+    "can_skip_coverage_check": false,
+    "can_approve_without_acceptance_criteria": false,
+    "can_approve_with_critical_bug": false,
+    "can_approve_with_missing_api_tests": false,
+    "can_approve_below_coverage_threshold": false,
+    "owns_gate_4": true,
+    "gate_4_decision_final": true
+  },
+  "golden_path": {
+    "framework": "Next.js 16 (App Router)",
+    "proxy_file": "proxy.ts",
+    "middleware_file_forbidden": "middleware.ts",
+    "frontend": {
+      "library": "React 19",
+      "language": "TypeScript 5",
+      "styling": "Tailwind CSS v4"
+    },
+    "auth": {
+      "library": "NextAuth v5",
+      "provider": "Google OAuth"
+    },
+    "database": {
+      "provider": "PostgreSQL via Supabase",
+      "orm": "Prisma 7",
+      "adapter": "PrismaPg",
+      "migration_prod": "prisma migrate deploy",
+      "forbidden_prod_command": "prisma db push"
+    },
+    "deploy": {
+      "platform": "Vercel",
+      "cron": "Vercel Cron"
+    },
+    "validation": "Zod at all system boundaries",
+    "tests": {
+      "unit_and_integration": "Vitest",
+      "forbidden_unit_frameworks": ["Jest", "Mocha", "Jasmine"],
+      "e2e": "Playwright",
+      "forbidden_e2e_frameworks": ["Cypress", "Selenium"]
+    },
+    "coverage_thresholds": {
+      "new_business_logic_minimum": "80%",
+      "auth_paths": "100%",
+      "critical_mutations": "100%"
+    },
+    "playwright_selector_policy": {
+      "allowed": ["getByRole", "getByLabel", "getByText", "getByTestId", "getByPlaceholder", "getByAltText", "getByTitle"],
+      "forbidden": ["css_selectors", "xpath", "class_selectors", "id_selectors_raw"]
+    },
+    "data_fetching_order": [
+      "Server Components",
+      "Server Actions",
+      "SWR (polling only)"
+    ],
+    "env_vars": "lib/env.ts only — never scattered process.env",
+    "logging": {
+      "human_actions": "audit_log",
+      "automated_jobs": "sync_log",
+      "format": "structured JSON"
+    }
+  },
+  "quality_gate": {
+    "gate_number": 4,
+    "name": "QA Review",
+    "role": "owner_and_evaluator",
+    "override_possible": false,
+    "tech_lead_can_override": false
+  },
+  "handoff": {
+    "receives_from": ["Agente04_DevBackend", "Agente05_DevFrontend"],
+    "delivers_to_on_approved": "Agente07_DevSecOps",
+    "returns_to_on_blocked": ["Agente04_DevBackend", "Agente05_DevFrontend"]
+  },
+  "gate_4_status_codes": [
+    "APPROVED",
+    "RETURNED_FOR_REVISION",
+    "BLOCKED_MISSING_TESTS",
+    "BLOCKED_QA_FAILURE",
+    "BLOCKED_MISSING_ACCEPTANCE_CRITERIA",
+    "BLOCKED_CRITICAL_RISK"
+  ],
+  "bug_severity_levels": [
+    "CRITICAL",
+    "HIGH",
+    "MEDIUM",
+    "LOW"
+  ],
+  "definition_of_ready": [
+    "Backend_Implementation_Report.md received from Agente04_DevBackend",
+    "Frontend_Implementation_Report.md received from Agente05_DevFrontend",
+    "API_Contract.json available and covers all tested endpoints",
+    "Acceptance criteria defined in PRD with Given/When/Then format",
+    "Vitest test files present for all Server Actions and Route Handlers",
+    "Coverage report available",
+    "Playwright test files present for golden-path flows"
+  ],
+  "definition_of_done": [
+    "All acceptance criteria validated and documented in QA Report",
+    "API contract validation complete for every endpoint",
+    "Coverage thresholds verified (80% minimum for new business logic)",
+    "All test failures classified by severity",
+    "Accessibility regression complete for primary user flows",
+    "QA_Report.md produced with all mandatory sections",
+    "Gate 4 status code issued from authorized list",
+    "Handoff Package produced with gate_ready: true (if APPROVED)"
+  ],
+  "escalation_triggers": [
+    "Acceptance criteria ambiguous or untestable",
+    "CRITICAL bug found (auth bypass, data loss, security vulnerability)",
+    "Same area fails QA three consecutive cycles",
+    "Timeline risk from volume of HIGH/CRITICAL bugs",
+    "Scope conflict between implementation and PRD",
+    "API contract absent, incomplete, or contradicts PRD"
+  ],
+  "anti_responsibilities": [
+    "Write application code (Server Actions, React components, DB queries)",
+    "Approve a Gate 4 with CRITICAL unresolved bugs",
+    "Approve a Gate 4 with missing tests for new business logic",
+    "Approve a Gate 4 below the coverage threshold",
+    "Allow the Tech Lead to override a QA block",
+    "Invent acceptance criteria when they are missing",
+    "Fix code bugs directly — only report them",
+    "Approve without evidence (test results, coverage numbers)"
+  ]
+}

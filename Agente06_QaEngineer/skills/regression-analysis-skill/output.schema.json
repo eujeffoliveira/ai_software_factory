@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "regression-analysis-skill Output",
+  "type": "object",
+  "required": ["report_id", "verdict", "fixed_with_test", "fixed_no_test", "not_fixed", "new_bugs"],
+  "properties": {
+    "report_id": { "type": "string", "pattern": "^REG-[0-9]{3,}-C[0-9]+$" },
+    "verdict": { "type": "string", "enum": ["ALL_FIXED_WITH_REGRESSION_TESTS", "PARTIAL_FIX_MISSING_TESTS", "BUGS_NOT_FIXED", "NEW_BUGS_INTRODUCED"] },
+    "fixed_with_test": { "type": "integer", "minimum": 0 },
+    "fixed_no_test": { "type": "integer", "minimum": 0 },
+    "not_fixed": { "type": "integer", "minimum": 0 },
+    "new_bugs": { "type": "integer", "minimum": 0 }
+  }
+}

@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/agente06-handoff",
+  "title": "Agente06_QaEngineer Handoff Package",
+  "description": "Schema for the Handoff Package produced by Agente06_QaEngineer after Gate 4 evaluation. On APPROVED, delivered to Agente07_DevSecOps. On BLOCKED/RETURNED, delivered back to the responsible Dev agents.",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "gate_decision",
+    "summary",
+    "acceptance_criteria_results",
+    "test_summary",
+    "bugs_found",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "gate_ready"
+  ],
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "Primary artifact produced by this QA evaluation cycle.",
+      "const": "QA_Report.md"
+    },
+    "gate_decision": {
+      "type": "string",
+      "description": "The Gate 4 status code — the authoritative decision of the QA Engineer.",
+      "enum": [
+        "APPROVED",
+        "RETURNED_FOR_REVISION",
+        "BLOCKED_MISSING_TESTS",
+        "BLOCKED_QA_FAILURE",
+        "BLOCKED_MISSING_ACCEPTANCE_CRITERIA",
+        "BLOCKED_CRITICAL_RISK"
+      ]
+    },
+    "gate_decision_rationale": {
+      "type": "string",
+      "description": "One to three sentences explaining why this gate decision was issued. Must reference evidence (test names, coverage %, bug IDs).",
+      "minLength": 20
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level description of the QA evaluation — what was reviewed, how many criteria were validated, what was found.",
+      "minLength": 30
+    },
+    "acceptance_criteria_results": {
+      "type": "array",
+      "description": "Result for every acceptance criterion evaluated in this cycle.",
+      "items": {
+        "type": "object",
+        "required": ["criterion_id", "description", "status"],
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "description": "Acceptance criterion identifier from PRD.",
+            "pattern": "^AC-[0-9]{3,}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the acceptance criterion (the Then clause)."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NO_TEST", "AMBIGUOUS"],
+            "description": "Validation result for this criterion."
+          },
+          "test_file": {
+            "type": "string",
+            "description": "Path to the test file that validates this criterion."
+          },
+          "test_name": {
+            "type": "string",
+            "description": "Name of the specific test case that validates this criterion."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes — used for FAILED or AMBIGUOUS status."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "test_summary": {
+      "type": "object",
+      "description": "Quantitative summary of test execution results.",
+      "required": [
+        "vitest_total",
+        "vitest_passed",
+        "vitest_failed",
+        "playwright_total",
+        "playwright_passed",
+        "playwright_failed",
+        "coverage_percent"
+      ],
+      "properties": {
+        "vitest_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total Vitest tests in the suite."
+        },
+        "vitest_passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Vitest tests that passed."
+        },
+        "vitest_failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Vitest tests that failed."
+        },
+        "playwright_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total Playwright E2E tests in the suite."
+        },
+        "playwright_passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Playwright tests that passed."
+        },
+        "playwright_failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Playwright tests that failed."
+        },
+        "coverage_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall line coverage percentage for new code (from coverage report)."
+        },
+        "coverage_below_threshold": {
+          "type": "boolean",
+          "description": "True if any coverage threshold is not met."
+        },
+        "uncovered_critical_paths": {
+          "type": "array",
+          "description": "List of critical paths (auth, mutations) that are below 100% coverage.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "api_contract_results": {
+      "type": "array",
+      "description": "Validation results for every endpoint in API_Contract.json.",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "method", "status_code_test", "shape_test", "auth_test"],
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "description": "API endpoint path (e.g., /api/tasks)."
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+            "description": "HTTP method."
+          },
+          "status_code_test": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "MISSING"],
+            "description": "HTTP status code validation result."
+          },
+          "shape_test": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "MISSING"],
+            "description": "Response shape (Zod) validation result."
+          },
+          "auth_test": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "MISSING"],
+            "description": "Auth behavior validation result (401 without session)."
+          },
+          "error_format_test": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "MISSING"],
+            "description": "Error format validation result ({ error: string }, no stack trace)."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes for any FAILED or MISSING result."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "bugs_found": {
+      "type": "array",
+      "description": "List of bugs found during this QA evaluation cycle.",
+      "items": {
+        "type": "object",
+        "required": ["bug_id", "severity", "title", "component", "description", "recommendation"],
+        "properties": {
+          "bug_id": {
+            "type": "string",
+            "description": "Bug identifier.",
+            "pattern": "^BUG-[0-9]{3,}$"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+            "description": "Bug severity classification."
+          },
+          "title": {
+            "type": "string",
+            "description": "Short title for the bug.",
+            "minLength": 5
+          },
+          "component": {
+            "type": "string",
+            "description": "The component or file where the bug was found."
+          },
+          "description": {
+            "type": "string",
+            "description": "Precise description of the bug with reproduction steps."
+          },
+          "expected_behavior": {
+            "type": "string",
+            "description": "What should happen."
+          },
+          "actual_behavior": {
+            "type": "string",
+            "description": "What actually happens."
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended fix action for the Dev agent."
+          },
+          "responsible_agent": {
+            "type": "string",
+            "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"],
+            "description": "Which Dev agent is responsible for fixing this bug."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "accessibility_results": {
+      "type": "array",
+      "description": "Accessibility regression results for primary user flows.",
+      "items": {
+        "type": "object",
+        "required": ["flow", "keyboard_navigable", "focus_visible", "aria_labels_present", "form_labels_present", "error_announced"],
+        "properties": {
+          "flow": {
+            "type": "string",
+            "description": "User flow name (e.g., Login, Create Task, View Report)."
+          },
+          "keyboard_navigable": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NOT_TESTED"],
+            "description": "All interactive elements reachable by keyboard."
+          },
+          "focus_visible": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NOT_TESTED"],
+            "description": "Focus indicator visible on all focused elements."
+          },
+          "aria_labels_present": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NOT_TESTED"],
+            "description": "All interactive elements have accessible names."
+          },
+          "form_labels_present": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NOT_TESTED"],
+            "description": "All form inputs have associated labels."
+          },
+          "error_announced": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NOT_TESTED"],
+            "description": "Errors are announced via role='alert' or aria-live."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes for any FAILED result."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumptions made during the QA evaluation.",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "properties": {
+          "assumption": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that may affect the gate decision or subsequent work.",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, this question blocks APPROVED — must be resolved before approval."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Risks identified during QA evaluation.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation", "blocks_gate"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "pattern": "^RISK-[0-9]{3,}$"
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "mitigation": {
+            "type": "string"
+          },
+          "blocks_gate": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "description": "Next agent in the pipeline. Agente07_DevSecOps if APPROVED; responsible Dev agents if BLOCKED/RETURNED.",
+      "enum": ["Agente07_DevSecOps", "Agente04_DevBackend", "Agente05_DevFrontend"]
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True only when gate_decision is APPROVED and all exit criteria are met. False for all BLOCKED/RETURNED decisions."
+    },
+    "evaluation_cycle": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Which QA evaluation cycle this is (1 = first submission, 2 = first resubmission, etc.)."
+    }
+  },
+  "additionalProperties": false
+}

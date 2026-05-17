@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/qa-report",
+  "title": "QA Report",
+  "description": "Schema for the QA_Report.md metadata block. The QA Report is the primary Gate 4 artifact produced by Agente06_QaEngineer.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "evaluation_cycle",
+    "gate_decision",
+    "gate_decision_rationale",
+    "pr_reference",
+    "acceptance_criteria_summary",
+    "test_summary",
+    "api_contract_summary",
+    "accessibility_summary",
+    "bugs_found_count",
+    "evaluator",
+    "timestamp"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique report identifier.",
+      "pattern": "^QA-[0-9]{3,}-C[0-9]+$",
+      "examples": ["QA-001-C1", "QA-002-C2"]
+    },
+    "evaluation_cycle": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "QA evaluation cycle number. 1 = first submission, 2 = first resubmission, etc."
+    },
+    "gate_decision": {
+      "type": "string",
+      "enum": [
+        "APPROVED",
+        "RETURNED_FOR_REVISION",
+        "BLOCKED_MISSING_TESTS",
+        "BLOCKED_QA_FAILURE",
+        "BLOCKED_MISSING_ACCEPTANCE_CRITERIA",
+        "BLOCKED_CRITICAL_RISK"
+      ],
+      "description": "The Gate 4 status code."
+    },
+    "gate_decision_rationale": {
+      "type": "string",
+      "minLength": 30,
+      "description": "Evidence-based rationale for the gate decision."
+    },
+    "pr_reference": {
+      "type": "object",
+      "required": ["backend_pr", "frontend_pr"],
+      "properties": {
+        "backend_pr": {
+          "type": "string",
+          "description": "PR reference for backend implementation."
+        },
+        "frontend_pr": {
+          "type": "string",
+          "description": "PR reference for frontend implementation."
+        }
+      }
+    },
+    "acceptance_criteria_summary": {
+      "type": "object",
+      "required": ["total", "passed", "failed", "no_test", "ambiguous"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "no_test": { "type": "integer", "minimum": 0 },
+        "ambiguous": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "test_summary": {
+      "type": "object",
+      "required": ["vitest_passed", "vitest_failed", "vitest_total", "playwright_passed", "playwright_failed", "playwright_total", "coverage_percent"],
+      "properties": {
+        "vitest_passed": { "type": "integer", "minimum": 0 },
+        "vitest_failed": { "type": "integer", "minimum": 0 },
+        "vitest_total": { "type": "integer", "minimum": 0 },
+        "playwright_passed": { "type": "integer", "minimum": 0 },
+        "playwright_failed": { "type": "integer", "minimum": 0 },
+        "playwright_total": { "type": "integer", "minimum": 0 },
+        "coverage_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "api_contract_summary": {
+      "type": "object",
+      "required": ["total_endpoints", "fully_validated", "missing_tests", "shape_mismatches"],
+      "properties": {
+        "total_endpoints": { "type": "integer", "minimum": 0 },
+        "fully_validated": { "type": "integer", "minimum": 0 },
+        "missing_tests": { "type": "integer", "minimum": 0 },
+        "shape_mismatches": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "accessibility_summary": {
+      "type": "object",
+      "required": ["flows_tested", "flows_passed", "flows_failed"],
+      "properties": {
+        "flows_tested": { "type": "integer", "minimum": 0 },
+        "flows_passed": { "type": "integer", "minimum": 0 },
+        "flows_failed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "bugs_found_count": {
+      "type": "object",
+      "required": ["critical", "high", "medium", "low"],
+      "properties": {
+        "critical": { "type": "integer", "minimum": 0 },
+        "high": { "type": "integer", "minimum": 0 },
+        "medium": { "type": "integer", "minimum": 0 },
+        "low": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "evaluator": {
+      "type": "string",
+      "const": "Agente06_QaEngineer"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the report was produced."
+    }
+  },
+  "additionalProperties": false
+}

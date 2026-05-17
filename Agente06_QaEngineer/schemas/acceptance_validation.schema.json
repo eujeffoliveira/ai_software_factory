@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/acceptance-validation",
+  "title": "Acceptance Validation Report",
+  "description": "Schema for the acceptance criteria validation report that maps every AC-NNN from the PRD to test results.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "prd_version",
+    "total_criteria",
+    "criteria"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^AV-[0-9]{3,}-C[0-9]+$",
+      "description": "Acceptance validation report identifier.",
+      "examples": ["AV-001-C1"]
+    },
+    "prd_version": {
+      "type": "string",
+      "description": "Version or identifier of the PRD document evaluated."
+    },
+    "total_criteria": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of acceptance criteria in the PRD for this feature."
+    },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Detailed result for each acceptance criterion.",
+      "items": {
+        "type": "object",
+        "required": ["criterion_id", "given", "when", "then_clauses", "overall_status"],
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "pattern": "^AC-[0-9]{3,}$",
+            "description": "Acceptance criterion identifier."
+          },
+          "given": {
+            "type": "string",
+            "description": "The Given clause of the acceptance criterion."
+          },
+          "when": {
+            "type": "string",
+            "description": "The When clause of the acceptance criterion."
+          },
+          "then_clauses": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Each Then clause and its test mapping.",
+            "items": {
+              "type": "object",
+              "required": ["clause", "test_file", "test_name", "status"],
+              "properties": {
+                "clause": {
+                  "type": "string",
+                  "description": "The specific Then clause text."
+                },
+                "test_file": {
+                  "type": "string",
+                  "description": "Path to the test file covering this clause."
+                },
+                "test_name": {
+                  "type": "string",
+                  "description": "Test case name that validates this clause."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["PASSED", "FAILED", "NO_TEST", "AMBIGUOUS"],
+                  "description": "Validation status for this Then clause."
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "Notes for non-PASSED status."
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "overall_status": {
+            "type": "string",
+            "enum": ["PASSED", "FAILED", "NO_TEST", "AMBIGUOUS"],
+            "description": "Overall status for this criterion. PASSED requires ALL Then clauses to pass."
+          },
+          "ambiguity_notes": {
+            "type": "string",
+            "description": "If AMBIGUOUS, describe what is unclear and what clarification is needed."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "no_test": { "type": "integer", "minimum": 0 },
+        "ambiguous": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "additionalProperties": false
+}

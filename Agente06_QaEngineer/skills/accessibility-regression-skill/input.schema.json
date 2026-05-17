@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "accessibility-regression-skill Input",
+  "type": "object",
+  "required": ["primary_flows"],
+  "properties": {
+    "primary_flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["flow_name", "path", "is_primary"],
+        "properties": {
+          "flow_name": { "type": "string" },
+          "path": { "type": "string" },
+          "is_primary": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
