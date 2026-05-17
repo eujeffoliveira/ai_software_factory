@@ -1,4 +1,4 @@
-# PROMPT PARA CLAUDE CODE — BUILD DO AGENTE01_PRODUCTOWNER
+# PROMPT PARA CRIAÇÃO DOS AGENTES — BUILD DO AGENTE01_PRODUCTOWNER
 
 Atue como um **Principal AI Systems Engineer** especializado em construção de agentes, sistemas multiagentes, RAG, skills, engenharia de requisitos, product discovery e automação com Claude Code.
 

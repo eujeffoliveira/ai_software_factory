@@ -1,4 +1,4 @@
-# PROMPT PARA CLAUDE CODE — BUILD DO AGENTE06_QAENGINEER
+# PROMPT PARA CRIAÇÃO DOS AGENTES — BUILD DO AGENTE06_QAENGINEER
 
 Atue como um **Principal AI Systems Engineer** especializado em construção de agentes, sistemas multiagentes, RAG, skills, arquitetura de software e automação com Claude Code.
 
