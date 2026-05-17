@@ -1,6 +1,6 @@
 # Arquivos de arquitetura raiz (uso interno)
-00-contexto/manual_arquitetura_componentes_raiz.md
-00-contexto/reference_architecture_raiz.md
+context/manual_arquitetura_componentes_raiz.md
+context/reference_architecture_raiz.md
 
 # Bibliografia completa
-01-bibliografia/
+lib
