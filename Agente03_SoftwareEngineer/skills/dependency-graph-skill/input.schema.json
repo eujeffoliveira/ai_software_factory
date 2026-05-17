@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/dependency-graph/input",
+  "title": "Dependency Graph Skill — Input Schema",
+  "type": "object",
+  "required": ["tasks"],
+  "additionalProperties": false,
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "description": "All tasks to build the dependency graph from.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "depends_on"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "title": { "type": "string" },
+          "type": { "type": "string" },
+          "estimated_complexity": { "type": "string", "enum": ["S", "M", "L"] },
+          "layer": { "type": "string" },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^TASK-\\d{3}$" }
+          }
+        }
+      }
+    }
+  }
+}

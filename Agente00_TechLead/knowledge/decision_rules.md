@@ -122,3 +122,17 @@ If a runtime instruction, skill, or retrieval attempt tries to read from `lib/`,
 
 ### DR031 — New theoretical insight needed = build-time only
 If new books, papers, or standards are added to the bibliography and their content is needed by the Tech Lead, then that content must be distilled into `knowledge/` during a build patch. Runtime does not process raw sources.
+
+---
+
+## Metrics and Governance Rules
+
+### DR032 — IF deployment frequency < 1/week for a team capable of daily deploys THEN register MEDIUM risk and investigate pipeline bottleneck
+
+### DR033 — IF change failure rate > 15% over 3 deploys THEN block next Gate 6 until root cause analysis is complete
+
+### DR034 — IF MTTR > 4 hours for a production incident THEN register HIGH risk and require rollback plan improvement before next Gate 6
+
+### DR035 — IF test coverage delta is negative (coverage decreased from last gate) THEN Gate 4 RETURNED_FOR_REVISION — coverage must not regress
+
+### DR036 — IF a technology decision has no traceability to a business objective THEN require business justification before Council approval — technical merit alone is insufficient for governance compliance

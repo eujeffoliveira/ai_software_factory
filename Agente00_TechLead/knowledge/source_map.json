@@ -147,6 +147,33 @@
       "status": "NOT_AVAILABLE_LOCALLY",
       "note": "Not found in lib/ during build. Concepts known from training data: cognitive load, stream-aligned teams, Conway's Law, enabling teams. Not directly required for Tech Lead operational rules.",
       "derived_artifacts": []
+    },
+    {
+      "source_title": "Módulo 10 — Gerenciamento de Projetos (Pós-graduação Engenharia de Software)",
+      "source_type": "course_material",
+      "source_path": "lib/TechLead/Módulo 10 - Gerenciamento de Projetos/",
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Academic course material covering agile project management, software metrics (LOC, FPA, cyclomatic complexity, DORA), estimation techniques (FPA, UCP, COCOMO), and SWEBOK. Distilled into knowledge patch 2026-05-17.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P11 — Measurement before judgment)",
+        "knowledge/heuristics.md (H13, H14, H15)",
+        "knowledge/decision_rules.md (DR032–DR035)",
+        "knowledge/knowledge_cards.md (Card 011 — DORA Metrics, Card 013 — SWEBOK)"
+      ]
+    },
+    {
+      "source_title": "Módulo 12 — Governança de TI (Pós-graduação Engenharia de Software)",
+      "source_type": "course_material",
+      "source_path": "lib/TechLead/Módulo 12 - Governança de TI/",
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Academic course material covering IT governance fundamentals (COBIT, ITIL, ISO 38500), governance components, governance vs management distinction, strategic alignment of technology to business objectives. Distilled into knowledge patch 2026-05-17.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P12 — IT governance aligns technology with business)",
+        "knowledge/decision_rules.md (DR036)",
+        "knowledge/knowledge_cards.md (Card 012 — IT Governance vs IT Management)"
+      ]
     }
   ],
   "sources_not_processed": [

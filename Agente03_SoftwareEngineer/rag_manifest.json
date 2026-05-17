@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente03_SoftwareEngineer",
+  "version": "1.0.0",
+  "description": "RAG manifest for Software Engineer / Task Planner. All collections are distilled into local knowledge files. Raw sources are never accessible at runtime.",
+
+  "retrieval_policy": {
+    "runtime_local_only": true,
+    "raw_books_at_runtime": false,
+    "max_chunks": 8,
+    "preferred_sources": [
+      "Agente03_SoftwareEngineer/knowledge/",
+      "Agente03_SoftwareEngineer/context_view.md",
+      "Agente03_SoftwareEngineer/skills/"
+    ],
+    "blocked_sources": [
+      "lib/",
+      "context/",
+      "*.pdf"
+    ]
+  },
+
+  "collections": [
+    {
+      "collection_id": "pragmatic_programming",
+      "display_name": "The Pragmatic Programmer (Hunt & Thomas)",
+      "relevance": "core",
+      "description": "Foundational software engineering practices. Distilled into P1, P2, P7 (principles.md), H1, H7, H9 (heuristics.md), Card001, Card003 (knowledge_cards.md), DR011 (decision_rules.md).",
+      "key_concepts": [
+        "DRY — Don't Repeat Yourself",
+        "Orthogonality — single responsibility",
+        "Good enough software — ship incrementally",
+        "Tracer bullets — end-to-end thin slices",
+        "Rubber duck debugging — articulate the task"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "distilled_into": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md",
+        "Agente03_SoftwareEngineer/knowledge/decision_rules.md"
+      ]
+    },
+    {
+      "collection_id": "code_complete",
+      "display_name": "Code Complete (McConnell)",
+      "relevance": "core",
+      "description": "Software construction practices. Distilled into P2, P4 (principles.md), H2, H6, H8 (heuristics.md), Card003, Card006 (knowledge_cards.md).",
+      "key_concepts": [
+        "Construction planning — design before code",
+        "Routine naming — self-documenting functions",
+        "Variable scope minimization",
+        "Pseudo-code programming process",
+        "Code review and inspection",
+        "Testing strategy — unit, integration, system"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "distilled_into": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md"
+      ]
+    },
+    {
+      "collection_id": "software_design",
+      "display_name": "Software Design Reference (McConnell / contextual)",
+      "relevance": "supporting",
+      "description": "Software design principles applicable to task planning. Supports decomposition and modularity decisions.",
+      "key_concepts": [
+        "Modular decomposition",
+        "Cohesion and coupling",
+        "Layered architecture application",
+        "Interface-first design"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "distilled_into": [
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md"
+      ]
+    },
+    {
+      "collection_id": "design_patterns",
+      "display_name": "Design Patterns — Elements of Reusable Object-Oriented Software (Gang of Four)",
+      "relevance": "supporting",
+      "description": "Classic design patterns. Distilled into P5 (principles.md), H3 (heuristics.md), Card002 (knowledge_cards.md). Relevant when planning tasks that implement patterns.",
+      "key_concepts": [
+        "Factory pattern task isolation",
+        "Repository pattern — separate DB access tasks",
+        "Decorator pattern — separate middleware tasks",
+        "Strategy pattern — separate algorithm tasks",
+        "Observer pattern — separate event handler tasks"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "distilled_into": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md"
+      ]
+    },
+    {
+      "collection_id": "integration_patterns",
+      "display_name": "Enterprise Integration Patterns (Hohpe & Woolf)",
+      "relevance": "supporting",
+      "description": "Integration and messaging patterns. Distilled into P3 (principles.md), H4 (heuristics.md), Card007 (knowledge_cards.md). Particularly relevant for API route and cron task planning.",
+      "key_concepts": [
+        "Message channel — API route as integration point",
+        "Message transformation — Zod schema as canonical form",
+        "Idempotent receiver — guardCron() pattern",
+        "Content-based routing — conditional task paths",
+        "Dead letter channel — error handling tasks"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "distilled_into": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md"
+      ]
+    },
+    {
+      "collection_id": "architecture_reference_task_planner_view",
+      "display_name": "Reference Architecture — Task Planner View (internal normative document)",
+      "relevance": "normative",
+      "description": "Distilled view of the Golden Path reference architecture as it applies to task planning. This is the primary normative reference for all technology choices in tasks. Distilled into context_view.md, DR007–DR014, Card008–Card010, all checklists, all templates.",
+      "key_concepts": [
+        "Golden Path mandatory stack",
+        "prisma migrate deploy rule",
+        "guardCron() first-call rule",
+        "Zod at system boundaries rule",
+        "lib/env.ts for all env vars rule",
+        "proxy.ts never middleware.ts rule",
+        "Server Components before Server Actions before SWR rule",
+        "audit_log and sync_log structured JSON rule"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "distilled_into": [
+        "Agente03_SoftwareEngineer/context_view.md",
+        "Agente03_SoftwareEngineer/knowledge/decision_rules.md",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md",
+        "Agente03_SoftwareEngineer/checklists/",
+        "Agente03_SoftwareEngineer/templates/"
+      ]
+    }
+  ]
+}

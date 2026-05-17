@@ -1,0 +1,132 @@
+{
+  "plan_id": "plan-[replace-with-uuid]",
+  "version": "1.0",
+  "project": "[Project Name]",
+  "created_at": "[ISO 8601 timestamp — e.g. 2026-01-01T00:00:00Z]",
+  "architecture_version": "[Architecture.md version — e.g. v1.2]",
+  "prd_version": "[PRD.md version — e.g. v2.0]",
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "title": "Create [entity] table database migration",
+      "description": "Creates the initial Prisma migration for the [entity] table with all fields defined in the approved DB schema. Uses prisma migrate deploy in CI/CD.",
+      "type": "database",
+      "layer": "infrastructure",
+      "file_path": "prisma/migrations/[timestamp]_create_[entity]_table/migration.sql",
+      "function_signatures": [],
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Migration creates [entity] table with all columns specified in approved schema",
+        "Migration is idempotent when run on a clean database",
+        "prisma migrate deploy completes without errors in CI"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "test_notes": "Run migration against test database; verify schema via prisma db pull"
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Migration file — no runtime security requirements. Ensure migration does not drop existing tables."
+      },
+      "estimated_complexity": "S",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-002",
+      "title": "Define [Entity] Prisma model",
+      "description": "Adds the [Entity] model to prisma/schema.prisma with all fields, relations, and indexes as approved. Uses PrismaPg adapter.",
+      "type": "database",
+      "layer": "infrastructure",
+      "file_path": "prisma/schema.prisma",
+      "function_signatures": [],
+      "depends_on": ["TASK-001"],
+      "acceptance_criteria": [
+        "[Entity] model defined with correct field types and constraints",
+        "Relations to other models are correctly mapped",
+        "Indexes are defined for frequently queried fields",
+        "prisma generate succeeds without errors"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "test_notes": "Verify generated Prisma client has correct types via TypeScript compilation"
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Schema definition only. No runtime security requirements."
+      },
+      "estimated_complexity": "S",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-003",
+      "title": "Implement create[Entity] Server Action",
+      "description": "Implements the create[Entity] Server Action in the features/[domain]/actions directory. Validates input with Zod, calls the DAL to persist, and records an audit_log entry.",
+      "context_summary": "This Server Action is the primary mutation entry point for creating [entity] records. It must validate input using the Create[Entity]Schema Zod schema, call the DAL function create[Entity]Record, and write an audit_log entry with event type '[entity].created'. The action runs in an authenticated context — check session via NextAuth before processing.",
+      "type": "backend",
+      "layer": "business-logic",
+      "file_path": "features/[domain]/actions/create[Entity].ts",
+      "function_signatures": [
+        "export async function create[Entity](input: Create[Entity]Input): Promise<ActionResult<[Entity]>>",
+        "type Create[Entity]Input = z.infer<typeof Create[Entity]Schema>"
+      ],
+      "depends_on": ["TASK-001", "TASK-002"],
+      "acceptance_criteria": [
+        "Function validates input using Create[Entity]Schema Zod schema",
+        "Function returns the created entity on success",
+        "Function throws ZodError with field-level details on invalid input",
+        "Function records audit_log entry with event type '[entity].created'",
+        "Function returns error object (not throws) for business rule violations",
+        "Unauthenticated calls return unauthorized error — no data written"
+      ],
+      "test_requirements": {
+        "unit_required": true,
+        "unit_tool": "Vitest",
+        "unit_coverage_target": 85,
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "mock_requirements": [
+          "Prisma client (mock DAL layer for unit tests)",
+          "NextAuth session (mock authenticated user)"
+        ],
+        "test_notes": "Unit test with mocked DAL. Integration test against real test database. Test invalid input, valid input, and unauthenticated scenarios."
+      },
+      "security_requirements": {
+        "auth_required": true,
+        "authorization_check": true,
+        "authorization_level": "authenticated",
+        "input_validation_required": true,
+        "zod_schema_name": "Create[Entity]Schema",
+        "audit_log_required": true,
+        "audit_event_type": "[entity].created",
+        "sql_injection_risk": false,
+        "xss_risk": false,
+        "csrf_risk": false,
+        "devsecops_review_required": false,
+        "security_notes": "Validate session with NextAuth getServerSession. Use Create[Entity]Schema for all user input. Write audit_log before returning success."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    }
+  ],
+  "critical_path": ["TASK-001", "TASK-002", "TASK-003"],
+  "parallel_tracks": [],
+  "total_complexity_estimate": "M",
+  "notes": "Replace all [Entity], [entity], [domain], [timestamp] placeholders with actual values before use.",
+  "gate_status": "APPROVED"
+}

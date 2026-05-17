@@ -121,3 +121,30 @@ Use the Repository pattern (lib/db/[domain].ts) to isolate database access from 
 Active Record (data object knows how to save itself) works for simple CRUD. For complex domains with business rules, Data Mapper (separate persistence layer) keeps domain logic pure.
 
 **Use when:** Deciding whether to put business logic in Prisma model callbacks or in service functions.
+
+---
+
+## H16 — Use case diagrams reveal missing actors before the architecture is committed
+
+Before finalizing the component diagram, draw a use case diagram. Every actor in the use case diagram maps to an entry point in the architecture (a user-facing route, an external integration, or an internal agent). Missing an actor at this stage means missing a system boundary.
+
+**Trigger:** Before finalizing Architecture.md system components section.  
+**Action:** Draw UC diagram, count actors, verify each actor has a corresponding entry-point component in architecture.
+
+---
+
+## H17 — Sequence diagrams expose coupling that class diagrams hide
+
+A class diagram shows that two classes are related. A sequence diagram shows how many messages they exchange to complete a single use case. High message density between two components in a sequence diagram = tight coupling that the static diagram conceals. If a sequence diagram has more than 5 back-and-forth messages between two components, redesign the interaction.
+
+**Trigger:** After drawing component diagram, before finalizing API contracts.  
+**Action:** Trace each use case through the sequence diagram. If component pair exchanges > 5 messages: consider redesigning with an intermediate layer or event-driven handoff.
+
+---
+
+## H18 — Class diagrams must reflect domain language from the PRD
+
+Class names, attribute names, and method names in the domain layer must use the exact vocabulary from the PRD. Any discrepancy between PRD terminology and model naming is a violation of P5 (Ubiquitous Language) and must be resolved before Architecture.md is submitted.
+
+**Trigger:** When reviewing class diagram against PRD.  
+**Action:** Verify every domain class name and attribute name appears with the same meaning in the PRD or has been formally renamed through a terminology alignment.

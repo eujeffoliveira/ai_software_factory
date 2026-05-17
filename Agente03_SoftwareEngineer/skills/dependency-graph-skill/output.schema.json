@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/dependency-graph/output",
+  "title": "Dependency Graph Skill — Output Schema",
+  "type": "object",
+  "required": ["graph_id", "edges", "has_cycles", "topological_order", "critical_path", "mermaid_source"],
+  "additionalProperties": false,
+  "properties": {
+    "graph_id": {
+      "type": "string",
+      "pattern": "^graph-[a-z0-9\\-]+$"
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from_task", "to_task", "dependency_type"],
+        "properties": {
+          "from_task": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "to_task": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "dependency_type": { "type": "string", "enum": ["sequential", "data", "file"] }
+        }
+      }
+    },
+    "parallel_tracks": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+        "minItems": 2
+      }
+    },
+    "critical_path": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+      "minItems": 1
+    },
+    "has_cycles": {
+      "type": "boolean",
+      "const": false,
+      "description": "Must be false for a valid plan. If true, the plan is blocked."
+    },
+    "topological_order": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+      "minItems": 1
+    },
+    "mermaid_source": {
+      "type": "string",
+      "description": "Valid Mermaid flowchart source code.",
+      "minLength": 20
+    },
+    "cycle_details": {
+      "type": ["array", "null"],
+      "description": "If has_cycles would be true, lists the cycle. Always null in valid output.",
+      "items": { "type": "string" }
+    }
+  }
+}

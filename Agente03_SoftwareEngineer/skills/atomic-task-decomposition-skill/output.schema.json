@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/atomic-task-decomposition/output",
+  "title": "Atomic Task Decomposition Skill — Output Schema",
+  "type": "object",
+  "required": ["tasks", "decomposition_rationale", "parent_component"],
+  "additionalProperties": false,
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "description": "Array of atomic tasks produced by decomposition. All must be S or M complexity.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "title", "type", "file_path", "estimated_complexity"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "title": { "type": "string", "maxLength": 80 },
+          "type": { "type": "string", "enum": ["backend", "frontend", "database", "infrastructure", "testing", "security", "config"] },
+          "layer": { "type": "string" },
+          "file_path": { "type": "string", "minLength": 5 },
+          "depends_on": { "type": "array", "items": { "type": "string" } },
+          "estimated_complexity": { "type": "string", "enum": ["S", "M", "L"] }
+        }
+      }
+    },
+    "decomposition_rationale": {
+      "type": "string",
+      "description": "Explanation of the decomposition decisions: why this number of tasks, how criteria were split.",
+      "minLength": 20
+    },
+    "parent_component": {
+      "type": "string",
+      "description": "Name of the parent architectural component from Architecture.md.",
+      "minLength": 1
+    },
+    "xl_eliminated": {
+      "type": "boolean",
+      "description": "Confirms that no XL tasks exist in the output. Must be true for plan to proceed."
+    },
+    "coverage_confirmed": {
+      "type": "boolean",
+      "description": "Confirms that all input acceptance_criteria are covered by at least one output task."
+    }
+  }
+}

@@ -130,6 +130,32 @@
         "failure_modes.md",
         "knowledge/decision_rules.md (DR015)"
       ]
+    },
+    {
+      "source_title": "Módulo 04 — Projeto de Software I (Pós-graduação Engenharia de Software)",
+      "source_type": "course_material",
+      "source_path": "lib/SoftwareArchitect/Módulo 04 -  Projeto de Software I/",
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Course material on software design phase, structured analysis (DFD, data dictionaries, ER), OO analysis fundamentals, cohesion and coupling metrics. Distilled into knowledge patch 2026-05-17.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P13 — Cohesion and coupling)",
+        "knowledge/decision_rules.md (DR019, DR020)"
+      ]
+    },
+    {
+      "source_title": "Módulo 05 — Projeto de Software II (Pós-graduação Engenharia de Software)",
+      "source_type": "course_material",
+      "source_path": "lib/SoftwareArchitect/Módulo 05 - Projeto de Software II/",
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Course material on project vision documentation, UML use case diagrams, sequence diagrams, and class diagrams. Direct applicability to Architecture.md production. Distilled into knowledge patch 2026-05-17.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P12 — UML as communication tool)",
+        "knowledge/heuristics.md (H16 — use case actors, H17 — sequence coupling, H18 — ubiquitous language in diagrams)",
+        "knowledge/decision_rules.md (DR016, DR017, DR018)",
+        "knowledge/knowledge_cards.md (Card 017 — Use Case, Card 018 — Sequence, Card 019 — Class Diagram)"
+      ]
     }
   ],
   "runtime_access_policy": {

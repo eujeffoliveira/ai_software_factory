@@ -241,3 +241,39 @@ features/[domain]/[domain].service.ts = Service Layer
 ```
 
 **Source:** Patterns of Enterprise Application Architecture — Fowler
+
+---
+
+### Card 017 — UML Use Case Diagram
+
+**Summary:** Depicts system functionality from the user's perspective. Key elements: Actors (external entities — users, systems, timers); Use Cases (system functions — ovals); System Boundary (rectangle); Relationships: Include (mandatory sub-flow — dashed arrow with «include»), Extend (optional extension — dashed with «extend»), Generalization (inheritance between actors or use cases). Actors on the left are primary (initiate); actors on the right are secondary (support/receive).
+
+**When to apply:** Before finalizing Architecture.md — identifies all system actors and functional boundaries. Required for stakeholder-facing documentation.
+
+**Golden Path application:** Actors map to: authenticated users (NextAuth session), service accounts (API keys in Route Handlers), cron triggers (Vercel Cron + guardCron), external webhooks (Route Handlers with signature validation).
+
+**Source:** Módulo 05 — Elaborar o diagrama de caso de uso.
+
+---
+
+### Card 018 — UML Sequence Diagram
+
+**Summary:** Depicts object/component interactions over time. Key elements: Lifelines (vertical dashed lines — participants); Activation bars (rectangles on lifelines — active processing); Messages (horizontal arrows — synchronous: solid; asynchronous: open arrowhead; return: dashed); Combined Fragments: alt (if/else), loop, opt (optional), par (parallel). Read top-to-bottom = time order.
+
+**When to apply:** For each primary use case in Architecture.md — shows request/response flow through layers (proxy.ts → Server Component/Action → features/ → lib/db → Prisma → Supabase).
+
+**Golden Path application:** Standard sequence: Browser → proxy.ts → Next.js App Router → Server Component (read) or Server Action (mutation) → features/[domain]/ → lib/db/ → Prisma → PostgreSQL.
+
+**Source:** Módulo 05 — Elaborar o diagrama de sequência.
+
+---
+
+### Card 019 — UML Class Diagram
+
+**Summary:** Depicts static domain structure. Key elements: Class (name, attributes with visibility +public/-private/#protected, methods); Relationships: Association (uses), Aggregation (has-a, hollow diamond), Composition (owns-a, filled diamond), Dependency (uses temporarily, dashed), Generalization/Inheritance (hollow arrow); Multiplicity (1, 0..1, 0..*, 1..*). In the Golden Path: class diagram maps directly to Prisma schema — each class = one model, associations = foreign keys or relation fields.
+
+**When to apply:** When designing the database schema and Prisma models. Class diagram is the design artifact that becomes Prisma_Schema_Proposal.prisma.
+
+**Golden Path application:** Prisma model = class; @id = identity attribute; @relation = association; @map/@@map = snake_case DB ↔ camelCase Prisma mapping.
+
+**Source:** Módulo 05 — Elaborar o diagrama de classes.

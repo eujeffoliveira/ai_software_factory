@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/schemas/task",
+  "title": "Task Schema",
+  "description": "Validates a single atomic task object within Execution_Plan.json.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "description",
+    "type",
+    "layer",
+    "file_path",
+    "depends_on",
+    "acceptance_criteria",
+    "test_requirements",
+    "security_requirements",
+    "estimated_complexity",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique task identifier in TASK-NNN format.",
+      "pattern": "^TASK-\\d{3}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Concise task title. Must describe exactly one action in ≤ 8 words.",
+      "minLength": 5,
+      "maxLength": 80
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this task does, why, and any relevant constraints.",
+      "minLength": 20
+    },
+    "context_summary": {
+      "type": "string",
+      "description": "Optional context summary for L-complexity tasks. Max 200 words. Helps dev agent load relevant context.",
+      "maxLength": 1400
+    },
+    "type": {
+      "type": "string",
+      "description": "Task type classifying which layer of the stack this task belongs to.",
+      "enum": [
+        "backend",
+        "frontend",
+        "database",
+        "infrastructure",
+        "testing",
+        "security",
+        "config"
+      ]
+    },
+    "layer": {
+      "type": "string",
+      "description": "Architectural layer this task belongs to.",
+      "examples": [
+        "infrastructure",
+        "data-access",
+        "business-logic",
+        "api",
+        "presentation",
+        "testing",
+        "configuration"
+      ]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Exact relative path to the file this task creates or modifies. Required for all tasks.",
+      "minLength": 5,
+      "examples": [
+        "prisma/migrations/20260101000000_create_tasks/migration.sql",
+        "features/tasks/actions/createTask.ts",
+        "app/tasks/page.tsx",
+        "__tests__/createTask.test.ts"
+      ]
+    },
+    "function_signatures": {
+      "type": "array",
+      "description": "Pre-specified function signatures for the dev agent. Reduces ambiguity and context overhead.",
+      "items": {
+        "type": "string",
+        "description": "TypeScript function signature.",
+        "examples": [
+          "export async function createTask(input: CreateTaskInput): Promise<Task>",
+          "export default async function TaskListPage(): Promise<JSX.Element>"
+        ]
+      }
+    },
+    "depends_on": {
+      "type": "array",
+      "description": "Array of task IDs this task depends on. Must be declared explicitly — no implicit dependencies.",
+      "items": {
+        "type": "string",
+        "pattern": "^TASK-\\d{3}$"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "Testable acceptance criteria for this task. Minimum 1 required.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "description": "A single, testable acceptance criterion.",
+        "minLength": 10
+      }
+    },
+    "test_requirements": {
+      "type": "object",
+      "description": "Test requirements for this task.",
+      "required": ["unit_required", "integration_required", "e2e_required"],
+      "additionalProperties": false,
+      "properties": {
+        "unit_required": {
+          "type": "boolean",
+          "description": "Whether unit tests are required for this task."
+        },
+        "unit_tool": {
+          "type": "string",
+          "const": "Vitest",
+          "description": "Unit test tool. Always Vitest."
+        },
+        "unit_coverage_target": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Target unit test coverage percentage."
+        },
+        "integration_required": {
+          "type": "boolean",
+          "description": "Whether integration tests are required."
+        },
+        "integration_tool": {
+          "type": "string",
+          "const": "Vitest",
+          "description": "Integration test tool. Always Vitest."
+        },
+        "e2e_required": {
+          "type": "boolean",
+          "description": "Whether E2E tests are required."
+        },
+        "e2e_tool": {
+          "type": "string",
+          "const": "Playwright",
+          "description": "E2E test tool. Always Playwright."
+        },
+        "e2e_flow_description": {
+          "type": "string",
+          "description": "Description of the E2E user flow to test."
+        },
+        "test_data_requirements": {
+          "type": "string",
+          "description": "Test data or fixtures required for this task's tests."
+        },
+        "mock_requirements": {
+          "type": "array",
+          "description": "List of things that need to be mocked in tests.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "test_notes": {
+          "type": "string",
+          "description": "Additional notes for the dev agent about testing this task."
+        }
+      }
+    },
+    "security_requirements": {
+      "type": "object",
+      "description": "Security requirements for this task.",
+      "required": [
+        "auth_required",
+        "authorization_check",
+        "input_validation_required",
+        "audit_log_required"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "auth_required": {
+          "type": "boolean",
+          "description": "Whether authentication is required to invoke this code path."
+        },
+        "authorization_check": {
+          "type": "boolean",
+          "description": "Whether authorization (role/permission check) is required."
+        },
+        "authorization_level": {
+          "type": "string",
+          "description": "Required authorization level.",
+          "enum": ["public", "authenticated", "role-based", "admin"]
+        },
+        "input_validation_required": {
+          "type": "boolean",
+          "description": "Whether Zod input validation is required. True for any task touching user input."
+        },
+        "zod_schema_name": {
+          "type": "string",
+          "description": "Name of the Zod schema to use for validation."
+        },
+        "audit_log_required": {
+          "type": "boolean",
+          "description": "Whether an audit_log entry must be written. True for any sensitive data mutation."
+        },
+        "audit_event_type": {
+          "type": "string",
+          "description": "The audit event type string (e.g., 'task.created', 'user.updated')."
+        },
+        "sql_injection_risk": {
+          "type": "boolean",
+          "description": "Whether this task has SQL injection risk (e.g., dynamic queries)."
+        },
+        "xss_risk": {
+          "type": "boolean",
+          "description": "Whether this task has XSS risk (e.g., rendering user-supplied HTML)."
+        },
+        "csrf_risk": {
+          "type": "boolean",
+          "description": "Whether this task has CSRF risk (e.g., state-changing endpoints without protection)."
+        },
+        "cron_guard_required": {
+          "type": "boolean",
+          "description": "Whether guardCron() must be the first call. True for all cron handler tasks."
+        },
+        "devsecops_review_required": {
+          "type": "boolean",
+          "description": "Whether this task requires DevSecOps review before implementation."
+        },
+        "security_notes": {
+          "type": "string",
+          "description": "Additional security guidance for the dev agent."
+        }
+      }
+    },
+    "estimated_complexity": {
+      "type": "string",
+      "description": "Estimated implementation complexity. XL tasks are blocked.",
+      "enum": ["S", "M", "L", "XL"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current task status.",
+      "enum": ["pending", "in_progress", "completed", "blocked"]
+    },
+    "blocking_reason": {
+      "type": ["string", "null"],
+      "description": "If status is blocked, the reason why."
+    }
+  }
+}

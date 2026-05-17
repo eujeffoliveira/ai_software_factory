@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/atomic-task-decomposition/input",
+  "title": "Atomic Task Decomposition Skill — Input Schema",
+  "type": "object",
+  "required": ["component_name", "component_description", "files_affected", "acceptance_criteria", "estimated_total_complexity"],
+  "additionalProperties": false,
+  "properties": {
+    "component_name": {
+      "type": "string",
+      "description": "Name of the architectural component being decomposed.",
+      "minLength": 1
+    },
+    "component_description": {
+      "type": "string",
+      "description": "Full description of what the component does, from Architecture.md.",
+      "minLength": 10
+    },
+    "files_affected": {
+      "type": "array",
+      "description": "List of files this component is expected to create or modify.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["file_path", "action"],
+        "properties": {
+          "file_path": { "type": "string", "description": "Relative file path." },
+          "action": { "type": "string", "enum": ["create", "modify"] },
+          "description": { "type": "string", "description": "What this file does within the component." }
+        }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "PRD acceptance criteria that this component must satisfy.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["criterion_id", "description"],
+        "properties": {
+          "criterion_id": { "type": "string" },
+          "description": { "type": "string" },
+          "story_id": { "type": "string" }
+        }
+      }
+    },
+    "estimated_total_complexity": {
+      "type": "string",
+      "description": "Overall complexity estimate for the component before decomposition.",
+      "enum": ["S", "M", "L", "XL"]
+    },
+    "architecture_section": {
+      "type": "string",
+      "description": "Optional reference to the Architecture.md section this component is defined in."
+    }
+  }
+}

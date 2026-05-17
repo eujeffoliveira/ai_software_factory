@@ -112,3 +112,43 @@ _Practical decision heuristics distilled at build-time. Runtime: read-only._
 **Trigger:** Gate 1 returns status NEEDS_MORE_REQUIREMENTS with correction feedback.
 
 **Action:** Do NOT silently overwrite the previous version. Create a new iteration entry in the PRD header: "v1.1 — Revision [date] — Addressing Gate 1 feedback: [list of items]." Log each correction item and how it was addressed. This iteration trail is the audit record that proves the PRD improved in response to specific feedback.
+
+---
+
+## H13 — If a Business Process Has More Than One Decision Gateway, Each Branch Generates at Least One Requirement
+
+**Trigger:** A BPMN process map shows one or more decision gateways (XOR, AND, OR).
+
+**Action:** Treat each gateway branch as a requirement source. An XOR gateway (exclusive choice) produces at least 2 requirements — one per branch. An AND gateway (parallel) produces synchronization requirements. Review all gateway branches before declaring requirements for a process complete.
+
+**Why it matters:** Missing gateway branches is the most common source of PRD incompleteness. Exception paths in BPMN are frequently the most critical requirements — they represent what the system must do when things go wrong.
+
+---
+
+## H14 — ISO 25010 Is the NFR Checklist — Use It Explicitly
+
+**Trigger:** Writing non-functional requirements for any PRD.
+
+**Action:** Go through each of the 8 ISO 25010 quality characteristics (functional suitability, reliability, performance efficiency, usability, security, compatibility, maintainability, portability) and explicitly state whether it applies and what the measurable target is. "Not applicable" is a valid answer — but silence is not.
+
+**Why it matters:** Ad-hoc NFR elicitation produces incomplete coverage. The ISO 25010 taxonomy is the canonical checklist that ensures no quality dimension is overlooked.
+
+---
+
+## H15 — MoSCoW Prioritization Must Have a 'Won't Have' Column — Otherwise It's a Wish List
+
+**Trigger:** Running a MoSCoW prioritization session or reviewing a requirements list.
+
+**Action:** Ensure the prioritization produces an explicit W column (Won't Have in this version) that stakeholders have reviewed and agreed to. If every requirement is classified as Must Have or Should Have, the exercise is incomplete — return for re-prioritization.
+
+**Why it matters:** Requirements without explicit "Won't Have" classification enable scope creep. The W column is as important as the M column — it is the formal boundary that prevents backlog items from silently entering the current version.
+
+---
+
+## H16 — A Change to a Baselined Requirement Is a Change Request — Not an Update
+
+**Trigger:** A stakeholder or team member requests a modification to a requirement that was approved at Gate 1.
+
+**Action:** Treat this as a formal change request. Identify the change, assess impact on architecture/testing/timeline, obtain approval, and update the traceability matrix. Do not silently edit the baselined PRD.
+
+**Why it matters:** Informal updates to a baselined PRD invalidate downstream artifacts (architecture decisions, test cases, acceptance criteria) and must trigger a Gate 1 re-review. The version increment and change log are the evidence that the change was controlled.

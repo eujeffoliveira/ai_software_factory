@@ -152,3 +152,25 @@ If a required piece of theoretical knowledge is not in `knowledge/`, then do not
 
 ### DR037 — Input from Tech Lead → only authorized project artifact
 If an input arrives at runtime claiming to be from `lib/` or a raw bibliography source, then reject it. Only accept project artifacts explicitly provided by the Tech Lead (PRD inputs, stakeholder answers, correction requests).
+
+---
+
+## Business Process and Requirements Management Rules
+
+### DR038 — In-scope process without BPMN → requirements incomplete
+If a business process is in scope AND no BPMN has been produced for it, then the requirements for that process are incomplete — do not submit PRD to Gate 1.
+
+### DR039 — Business rule without traceable source → register as OQ
+If a business rule cannot be traced to a stakeholder statement, regulation, or organizational policy, then register it as OQ-NNN with status `to_confirm` and do not write it as a confirmed requirement in the PRD.
+
+### DR040 — NFR without measurable target → rewrite or register as OQ
+If an NFR has no measurable target (only qualitative statements such as "must be fast" or "must be secure"), then rewrite it with a quantified threshold or register it as OQ-NNN — qualitative NFRs are not valid and will be rejected at Gate 1.
+
+### DR041 — Change requested against baselined requirements → formal change control
+If requirements have been baselined (approved at Gate 1) AND a change is requested, then initiate formal change control: increment the PRD version, assess impact on architecture/testing/timeline, require re-approval, and update the traceability matrix — do not silently update the baselined document.
+
+### DR042 — MoSCoW produces no 'Won't Have' items → prioritization incomplete
+If MoSCoW prioritization produces no "Won't Have" items, then the prioritization is incomplete — all requirements cannot be Must Have or Should Have. Return for re-prioritization with stakeholders until the W column is explicitly populated.
+
+### DR043 — Requirements in RTM with no test case reference → flag as gap
+If the requirements traceability matrix contains requirements with no test case reference or acceptance criterion reference, then those requirements cannot be verified — flag them as a traceability gap before Gate 1 submission and resolve before the PRD is approved.

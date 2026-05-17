@@ -1,0 +1,350 @@
+{
+  "plan_id": "plan-taskflow-saas-v1",
+  "version": "1.0",
+  "project": "TaskFlow SaaS",
+  "created_at": "2026-01-15T10:00:00Z",
+  "architecture_version": "v1.2",
+  "prd_version": "v2.0",
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "title": "Create tasks table database migration",
+      "description": "Creates the initial Prisma migration for the tasks table. Includes all fields: id, title, description, status, priority, due_date, created_by, created_at, updated_at.",
+      "type": "database",
+      "layer": "infrastructure",
+      "file_path": "prisma/migrations/20260115000001_create_tasks_table/migration.sql",
+      "function_signatures": [],
+      "depends_on": [],
+      "acceptance_criteria": [
+        "Migration creates tasks table with all specified columns and correct data types",
+        "Migration is idempotent (can be run on a clean database without errors)",
+        "prisma migrate deploy completes successfully in CI pipeline",
+        "All column constraints (NOT NULL, DEFAULT, etc.) match approved schema"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "test_notes": "Run migration against test PostgreSQL database. Verify schema via prisma db pull and compare to expected schema."
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Migration file only. No runtime security requirements. Verify migration does not drop or alter existing tables."
+      },
+      "estimated_complexity": "S",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-002",
+      "title": "Define Task Prisma model",
+      "description": "Adds the Task model to prisma/schema.prisma with all fields, relations to User model, and database indexes. Uses PrismaPg adapter conventions.",
+      "type": "database",
+      "layer": "infrastructure",
+      "file_path": "prisma/schema.prisma",
+      "function_signatures": [],
+      "depends_on": ["TASK-001"],
+      "acceptance_criteria": [
+        "Task model has all required fields with correct Prisma types",
+        "Relation to User model (created_by) is correctly mapped",
+        "Index on (status, created_by) is defined for query performance",
+        "prisma generate succeeds and produces correct TypeScript types",
+        "Model follows PrismaPg adapter conventions"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "test_notes": "TypeScript compilation of generated Prisma client verifies schema correctness."
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Schema definition only. No runtime security requirements."
+      },
+      "estimated_complexity": "S",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-003",
+      "title": "Implement createTask Server Action",
+      "description": "Implements the createTask Server Action. Validates input with Zod CreateTaskSchema, persists via DAL, records audit_log entry, and returns the created Task object or an ActionResult error.",
+      "context_summary": "This is the primary mutation entry point for task creation. It must: 1) Check authentication via NextAuth getServerSession, 2) Validate input with CreateTaskSchema (title: string min 3, status: enum, priority: enum, due_date: optional date), 3) Call the DAL createTaskRecord function, 4) Write audit_log entry with event type 'task.created'. Return type is ActionResult<Task> — a union of success/error. See Architecture.md §4.2 for the ActionResult pattern.",
+      "type": "backend",
+      "layer": "business-logic",
+      "file_path": "features/tasks/actions/createTask.ts",
+      "function_signatures": [
+        "'use server'",
+        "import { z } from 'zod'",
+        "export const CreateTaskSchema = z.object({ title: z.string().min(3).max(255), description: z.string().optional(), status: z.enum(['todo', 'in_progress', 'done']), priority: z.enum(['low', 'medium', 'high']), due_date: z.date().optional() })",
+        "export type CreateTaskInput = z.infer<typeof CreateTaskSchema>",
+        "export async function createTask(input: CreateTaskInput): Promise<ActionResult<Task>>"
+      ],
+      "depends_on": ["TASK-001", "TASK-002"],
+      "acceptance_criteria": [
+        "Function validates input using CreateTaskSchema and returns field-level Zod errors on invalid input",
+        "Function returns the created Task object on success",
+        "Function writes an audit_log entry with event type 'task.created' and user_id",
+        "Unauthenticated calls return { error: 'UNAUTHORIZED' } — no database write occurs",
+        "Function returns { error: 'VALIDATION_ERROR', fields: ... } on Zod validation failure",
+        "Function uses 'use server' directive at top of file"
+      ],
+      "test_requirements": {
+        "unit_required": true,
+        "unit_tool": "Vitest",
+        "unit_coverage_target": 85,
+        "unit_test_file_path": "__tests__/features/tasks/actions/createTask.test.ts",
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "integration_test_file_path": "__tests__/integration/tasks/createTask.integration.test.ts",
+        "e2e_required": false,
+        "mock_requirements": [
+          "Prisma client (vi.mock for unit tests; real test DB for integration)",
+          "NextAuth getServerSession (mock authenticated session and unauthenticated scenario)"
+        ],
+        "test_notes": "Unit test all code paths including validation failure, auth failure, and success. Integration test against real PostgreSQL test database."
+      },
+      "security_requirements": {
+        "auth_required": true,
+        "authorization_check": true,
+        "authorization_level": "authenticated",
+        "input_validation_required": true,
+        "zod_schema_name": "CreateTaskSchema",
+        "audit_log_required": true,
+        "audit_event_type": "task.created",
+        "sql_injection_risk": false,
+        "xss_risk": false,
+        "csrf_risk": false,
+        "devsecops_review_required": false,
+        "security_notes": "Use NextAuth getServerSession at function start. Parse input with CreateTaskSchema.safeParse before any database operation. Write to audit_log table before returning success response."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-004",
+      "title": "Implement GET /api/tasks Route Handler",
+      "description": "Implements the GET /api/tasks Route Handler for fetching a paginated list of tasks belonging to the authenticated user. Returns tasks as JSON. Used by external clients and cron jobs.",
+      "type": "backend",
+      "layer": "api",
+      "file_path": "app/api/tasks/route.ts",
+      "function_signatures": [
+        "import { NextRequest, NextResponse } from 'next/server'",
+        "export async function GET(request: NextRequest): Promise<NextResponse<TaskListResponse | ErrorResponse>>",
+        "type TaskListResponse = { tasks: Task[]; total: number; page: number; pageSize: number }"
+      ],
+      "depends_on": ["TASK-002"],
+      "acceptance_criteria": [
+        "Handler returns 401 for unauthenticated requests",
+        "Handler returns paginated list of tasks for authenticated user",
+        "Response conforms to TaskListResponse schema from API_Contract.json",
+        "Handler validates query params (page, pageSize, status filter) with Zod",
+        "Handler returns only tasks belonging to the authenticated user (no cross-user data leakage)"
+      ],
+      "test_requirements": {
+        "unit_required": true,
+        "unit_tool": "Vitest",
+        "unit_coverage_target": 80,
+        "unit_test_file_path": "__tests__/app/api/tasks/route.test.ts",
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "mock_requirements": [
+          "NextAuth session (authenticated and unauthenticated cases)",
+          "Prisma client (real test DB for integration)"
+        ],
+        "test_notes": "Test pagination, filtering by status, unauthenticated access, and edge cases (empty result set, max pageSize)."
+      },
+      "security_requirements": {
+        "auth_required": true,
+        "authorization_check": true,
+        "authorization_level": "authenticated",
+        "input_validation_required": true,
+        "zod_schema_name": "GetTasksQuerySchema",
+        "audit_log_required": false,
+        "sql_injection_risk": false,
+        "xss_risk": false,
+        "csrf_risk": false,
+        "devsecops_review_required": false,
+        "security_notes": "Check authentication first. Scope all DB queries to current user's ID. Never return tasks from other users."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-005",
+      "title": "Implement TaskList Server Component",
+      "description": "Implements the TaskList Server Component that fetches and renders the list of tasks for the authenticated user. Uses Server Component data fetching (no SWR). Renders TaskCard per task.",
+      "type": "frontend",
+      "layer": "presentation",
+      "file_path": "features/tasks/components/TaskList.tsx",
+      "function_signatures": [
+        "import type { Task } from '@prisma/client'",
+        "export default async function TaskList({ userId }: { userId: string }): Promise<JSX.Element>"
+      ],
+      "depends_on": ["TASK-003"],
+      "acceptance_criteria": [
+        "Component renders a list of tasks fetched via Server Component (direct Prisma query or Server Action call)",
+        "Empty state is displayed when user has no tasks",
+        "Each task shows title, status, priority, and due_date",
+        "Component is accessible (semantic HTML, ARIA where needed)"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": false,
+        "e2e_required": true,
+        "e2e_tool": "Playwright",
+        "e2e_test_file_path": "tests/task-list.spec.ts",
+        "e2e_flow_description": "Authenticated user navigates to /tasks page. Tasks list renders with correct task titles, statuses, and priorities. Empty state shows when no tasks exist.",
+        "test_notes": "Use Playwright to test with a seeded test database. Verify that only the authenticated user's tasks are shown."
+      },
+      "security_requirements": {
+        "auth_required": true,
+        "authorization_check": true,
+        "authorization_level": "authenticated",
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Wrap in authentication check. Server Component should verify session via getServerSession before fetching data."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-006",
+      "title": "Implement TaskForm Client Component",
+      "description": "Implements the TaskForm Client Component for creating new tasks. Calls the createTask Server Action on submit. Handles loading states, validation errors, and success feedback.",
+      "type": "frontend",
+      "layer": "presentation",
+      "file_path": "features/tasks/components/TaskForm.tsx",
+      "function_signatures": [
+        "'use client'",
+        "export default function TaskForm(): JSX.Element"
+      ],
+      "depends_on": ["TASK-005"],
+      "acceptance_criteria": [
+        "Form has fields for: title (required), description (optional), status, priority, due_date",
+        "Form calls createTask Server Action on submit",
+        "Loading state is shown while Server Action is pending",
+        "Validation errors from Zod are displayed per field",
+        "Success state navigates user back to task list or shows success toast"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": false,
+        "e2e_required": true,
+        "e2e_tool": "Playwright",
+        "e2e_test_file_path": "tests/task-creation.spec.ts",
+        "e2e_flow_description": "Authenticated user clicks 'New Task', fills form with valid data, submits, and sees the new task appear in the task list. Also test: submit with empty required field shows error.",
+        "test_notes": "Test happy path and validation error path via Playwright."
+      },
+      "security_requirements": {
+        "auth_required": true,
+        "authorization_check": false,
+        "authorization_level": "authenticated",
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Client Component only handles UI state. Security (auth, validation, audit) is enforced in the createTask Server Action (TASK-003)."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-007",
+      "title": "Write Vitest tests for task Server Actions",
+      "description": "Writes comprehensive Vitest unit and integration tests for the createTask Server Action and GET /api/tasks Route Handler. Covers success paths, validation failures, and auth failures.",
+      "type": "testing",
+      "layer": "testing",
+      "file_path": "__tests__/features/tasks/actions/createTask.test.ts",
+      "function_signatures": [],
+      "depends_on": ["TASK-003", "TASK-004"],
+      "acceptance_criteria": [
+        "Unit tests cover createTask: valid input, invalid input, unauthenticated call",
+        "Unit tests cover GET /api/tasks: valid request, unauthenticated, invalid query params",
+        "Integration tests run against real test database with seed data",
+        "All tests pass with 0 failures",
+        "Coverage report shows ≥ 80% for both action files"
+      ],
+      "test_requirements": {
+        "unit_required": true,
+        "unit_tool": "Vitest",
+        "unit_coverage_target": 80,
+        "integration_required": true,
+        "integration_tool": "Vitest",
+        "e2e_required": false,
+        "test_data_requirements": "Seed test database with 3 tasks per test user before integration tests",
+        "mock_requirements": [
+          "Prisma client (unit tests only)",
+          "NextAuth getServerSession (unit tests only)"
+        ]
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Test file only. Verify security behavior (auth check, input validation) via the test assertions."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "task_id": "TASK-008",
+      "title": "Write Playwright E2E test for task creation flow",
+      "description": "Writes Playwright E2E test covering the complete task creation user flow: login → view task list → open task form → fill and submit → verify task appears in list.",
+      "type": "testing",
+      "layer": "testing",
+      "file_path": "tests/task-creation.spec.ts",
+      "function_signatures": [],
+      "depends_on": ["TASK-005", "TASK-006"],
+      "acceptance_criteria": [
+        "E2E test logs in with test credentials and navigates to /tasks",
+        "E2E test creates a new task via the TaskForm and verifies it appears in TaskList",
+        "E2E test verifies empty state when no tasks exist",
+        "E2E test verifies validation error when title is empty",
+        "All tests pass in CI against staging environment"
+      ],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": false,
+        "e2e_required": true,
+        "e2e_tool": "Playwright",
+        "e2e_flow_description": "Full user journey: authenticate via Google OAuth (mocked in test env) → /tasks → click New Task → fill form → submit → verify task in list",
+        "test_data_requirements": "Test Google OAuth credentials configured in .env.test. Seed database reset before each test run.",
+        "mock_requirements": [
+          "Google OAuth: use Playwright auth state storage or mock provider in test environment"
+        ]
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": "Test file only. E2E tests operate as an authenticated user."
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    }
+  ],
+  "critical_path": ["TASK-001", "TASK-002", "TASK-003", "TASK-005", "TASK-006", "TASK-008"],
+  "parallel_tracks": [
+    ["TASK-003", "TASK-004"],
+    ["TASK-007", "TASK-005"]
+  ],
+  "total_complexity_estimate": "M",
+  "notes": "TASK-003 and TASK-004 can run in parallel after TASK-002 completes. TASK-007 can begin as soon as TASK-003 and TASK-004 are complete, in parallel with frontend development.",
+  "gate_status": "APPROVED"
+}

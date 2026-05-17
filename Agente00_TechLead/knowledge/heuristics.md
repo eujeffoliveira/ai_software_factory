@@ -109,3 +109,30 @@ The agent's knowledge is bounded by its local artifacts and approved RAG collect
 
 **Trigger:** Any retrieval request pointing to a non-approved source.
 **Action:** Refuse. Use approved local artifacts or request a build patch to add the source.
+
+---
+
+## H13 — Use velocity trend, not single-sprint velocity, to assess execution health
+
+A single sprint velocity reading is noise. Three consecutive sprints of declining velocity is a signal requiring Tech Lead action — scope review, risk escalation, or dependency unblock.
+
+**Trigger:** Gate 3 or Gate 4 review with velocity data.
+**Action:** If velocity trending down ≥2 sprints, register risk and investigate before advancing gate.
+
+---
+
+## H14 — If defect density in a component exceeds threshold, return for refactoring before Gate 4
+
+Components with defect density > 1 defect per 100 LOC in a sprint are architecturally fragile. Gate 4 should not pass if QA reports concentrated defect clusters in a single component without a refactoring plan.
+
+**Trigger:** QA report shows defect concentration.
+**Action:** Gate 4 RETURNED_FOR_REVISION with note to address technical debt in flagged component.
+
+---
+
+## H15 — If project scope changed > 20% without formal approval, activate Council
+
+Scope creep is a governance failure. Any accumulated scope change exceeding 20% of original estimate must be formally reviewed — not silently absorbed. Council activation and human escalation if needed.
+
+**Trigger:** Cumulative scope change detected during any gate review.
+**Action:** Council activation + scope change risk registration.

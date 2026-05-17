@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/schemas/task-test-requirements",
+  "title": "Task Test Requirements Schema",
+  "description": "Validates the test requirements object for a single task.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "unit_required",
+    "integration_required",
+    "e2e_required"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Task identifier this test requirements object belongs to.",
+      "pattern": "^TASK-\\d{3}$"
+    },
+    "unit_required": {
+      "type": "boolean",
+      "description": "Whether unit tests are required for this task. True for all pure functions, utilities, and isolated backend logic."
+    },
+    "unit_tool": {
+      "type": "string",
+      "const": "Vitest",
+      "description": "Unit test framework. Always Vitest — no exceptions."
+    },
+    "unit_coverage_target": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Target code coverage percentage for unit tests. Recommended minimum: 80 for backend logic."
+    },
+    "unit_test_file_path": {
+      "type": "string",
+      "description": "Path to the unit test file.",
+      "examples": ["__tests__/createTask.test.ts", "src/features/tasks/__tests__/createTask.test.ts"]
+    },
+    "integration_required": {
+      "type": "boolean",
+      "description": "Whether integration tests are required. True for Server Actions and Route Handlers that interact with the database."
+    },
+    "integration_tool": {
+      "type": "string",
+      "const": "Vitest",
+      "description": "Integration test framework. Always Vitest — no exceptions."
+    },
+    "integration_test_file_path": {
+      "type": "string",
+      "description": "Path to the integration test file."
+    },
+    "e2e_required": {
+      "type": "boolean",
+      "description": "Whether E2E tests are required. True for complete user-facing flows (pages, forms, interactions)."
+    },
+    "e2e_tool": {
+      "type": "string",
+      "const": "Playwright",
+      "description": "E2E test framework. Always Playwright — no exceptions."
+    },
+    "e2e_test_file_path": {
+      "type": "string",
+      "description": "Path to the Playwright test file.",
+      "examples": ["tests/task-creation.spec.ts", "e2e/auth.spec.ts"]
+    },
+    "e2e_flow_description": {
+      "type": "string",
+      "description": "Description of the user flow to be covered by the E2E test. Required when e2e_required is true.",
+      "examples": [
+        "User logs in, navigates to tasks page, creates a new task, verifies it appears in the list",
+        "Unauthenticated user attempts to access protected page and is redirected to login"
+      ]
+    },
+    "test_data_requirements": {
+      "type": "string",
+      "description": "Description of test data, fixtures, or seed data required to run the tests for this task."
+    },
+    "mock_requirements": {
+      "type": "array",
+      "description": "List of external dependencies, services, or modules that need to be mocked in tests.",
+      "items": {
+        "type": "string",
+        "description": "A single mock requirement.",
+        "examples": [
+          "Prisma client (use in-memory SQLite for integration tests)",
+          "NextAuth session (mock authenticated user)",
+          "Vercel Cron authentication header",
+          "External payment API"
+        ]
+      }
+    },
+    "test_notes": {
+      "type": "string",
+      "description": "Additional testing guidance for the dev agent. Include edge cases, boundary conditions, or test setup details."
+    }
+  }
+}

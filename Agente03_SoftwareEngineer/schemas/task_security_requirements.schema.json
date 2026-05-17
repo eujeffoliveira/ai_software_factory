@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/schemas/task-security-requirements",
+  "title": "Task Security Requirements Schema",
+  "description": "Validates the security requirements object for a single task.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "auth_required",
+    "authorization_check",
+    "input_validation_required",
+    "audit_log_required"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Task identifier this security requirements object belongs to.",
+      "pattern": "^TASK-\\d{3}$"
+    },
+    "auth_required": {
+      "type": "boolean",
+      "description": "Whether authentication is required to invoke this code path. True for all non-public routes."
+    },
+    "authorization_check": {
+      "type": "boolean",
+      "description": "Whether an authorization check (role or permission) is required beyond basic authentication."
+    },
+    "authorization_level": {
+      "type": "string",
+      "description": "The required authorization level for this task's code path.",
+      "enum": [
+        "public",
+        "authenticated",
+        "role-based",
+        "admin"
+      ]
+    },
+    "input_validation_required": {
+      "type": "boolean",
+      "description": "Whether Zod input validation is required. Must be true for any task that processes user-submitted data. Rule: DR007."
+    },
+    "zod_schema_name": {
+      "type": "string",
+      "description": "Name of the Zod schema to be created or used for validation. Required when input_validation_required is true.",
+      "examples": ["CreateTaskSchema", "UpdateUserSchema", "LoginFormSchema"]
+    },
+    "audit_log_required": {
+      "type": "boolean",
+      "description": "Whether an audit_log entry must be written when this code path executes. True for any sensitive data mutation. Rule: DR008."
+    },
+    "audit_event_type": {
+      "type": "string",
+      "description": "The audit event type string. Required when audit_log_required is true.",
+      "examples": ["task.created", "task.deleted", "user.role_changed", "settings.updated"]
+    },
+    "sql_injection_risk": {
+      "type": "boolean",
+      "description": "Whether this task has SQL injection risk (e.g., dynamic Prisma raw queries or string interpolation into queries)."
+    },
+    "xss_risk": {
+      "type": "boolean",
+      "description": "Whether this task has XSS risk (e.g., rendering user-supplied content as HTML without sanitization)."
+    },
+    "csrf_risk": {
+      "type": "boolean",
+      "description": "Whether this task has CSRF risk (e.g., a state-changing route accessible without CSRF protection)."
+    },
+    "cron_guard_required": {
+      "type": "boolean",
+      "description": "Whether guardCron() must be the first call in this function. True for all cron handler tasks. Rule: DR012."
+    },
+    "devsecops_review_required": {
+      "type": "boolean",
+      "description": "Whether this task requires explicit DevSecOps review before implementation proceeds. Set for high-risk tasks."
+    },
+    "security_notes": {
+      "type": "string",
+      "description": "Additional security guidance for the dev agent implementing this task. Include specific reminders for high-risk patterns."
+    }
+  },
+  "if": {
+    "properties": {
+      "input_validation_required": { "const": true }
+    },
+    "required": ["input_validation_required"]
+  },
+  "then": {
+    "required": ["zod_schema_name"]
+  }
+}

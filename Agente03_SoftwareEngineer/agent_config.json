@@ -1,0 +1,171 @@
+{
+  "agent_id": "Agente03_SoftwareEngineer",
+  "name": "Software Engineer / Task Planner",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "description": "Transforms approved architecture packages into atomic, dependency-resolved execution plans. Protects coding agents from context overflow. Never writes final code.",
+
+  "allowed_runtime_sources": [
+    "Agente03_SoftwareEngineer/prompt.md",
+    "Agente03_SoftwareEngineer/agent_config.json",
+    "Agente03_SoftwareEngineer/context_view.md",
+    "Agente03_SoftwareEngineer/rag_manifest.json",
+    "Agente03_SoftwareEngineer/skills_manifest.md",
+    "Agente03_SoftwareEngineer/quality_gate.md",
+    "Agente03_SoftwareEngineer/handoff_schema.json",
+    "Agente03_SoftwareEngineer/failure_modes.md",
+    "Agente03_SoftwareEngineer/knowledge/principles.md",
+    "Agente03_SoftwareEngineer/knowledge/heuristics.md",
+    "Agente03_SoftwareEngineer/knowledge/decision_rules.md",
+    "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md",
+    "Agente03_SoftwareEngineer/knowledge/source_map.json",
+    "Agente03_SoftwareEngineer/checklists/",
+    "Agente03_SoftwareEngineer/schemas/",
+    "Agente03_SoftwareEngineer/templates/",
+    "Agente03_SoftwareEngineer/examples/",
+    "Agente03_SoftwareEngineer/skills/"
+  ],
+
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md",
+    "context/client_profile.md",
+    "context/prompts/",
+    "build/"
+  ],
+
+  "capabilities": {
+    "can_write_final_code": false,
+    "can_invent_endpoints": false,
+    "can_change_scope": false,
+    "can_create_schema_without_architect": false,
+    "can_modify_architecture": false,
+    "can_skip_acceptance_criteria": false,
+    "can_skip_test_requirements": false,
+    "can_skip_security_requirements": false,
+    "can_interact_with_human": false,
+    "human_interaction_channel": "via_tech_lead",
+    "can_approve_own_gate": false,
+    "can_override_tech_lead": false
+  },
+
+  "authorized_skills": [
+    "execution-plan-generation-skill",
+    "atomic-task-decomposition-skill",
+    "dependency-graph-skill",
+    "task-sizing-skill",
+    "acceptance-criteria-mapping-skill",
+    "implementation-sequencing-skill",
+    "context-window-risk-analysis-skill"
+  ],
+
+  "tech_stack_governance": {
+    "description": "Golden Path mandatory tech stack — any deviation requires an ADR approved at Gate 2",
+    "golden_path": {
+      "framework": "Next.js 16 App Router",
+      "proxy_pattern": "proxy.ts (never middleware.ts)",
+      "frontend": {
+        "library": "React 19",
+        "language": "TypeScript 5",
+        "styling": "Tailwind CSS v4"
+      },
+      "auth": {
+        "library": "NextAuth v5",
+        "provider": "Google OAuth"
+      },
+      "database": {
+        "provider": "PostgreSQL via Supabase",
+        "orm": "Prisma 7",
+        "adapter": "PrismaPg",
+        "migration_prod": "prisma migrate deploy",
+        "migration_local": "prisma migrate dev",
+        "forbidden": "prisma db push"
+      },
+      "deployment": {
+        "platform": "Vercel",
+        "cron": "Vercel Cron",
+        "cron_guard": "guardCron() must be first call in every cron handler"
+      },
+      "validation": {
+        "library": "Zod",
+        "rule": "required at all system boundaries — every user input, every API entry point"
+      },
+      "testing": {
+        "unit": "Vitest",
+        "integration": "Vitest",
+        "e2e": "Playwright"
+      },
+      "charts": "Recharts v3",
+      "data_fetching_order": [
+        "Server Components (preferred)",
+        "Server Actions",
+        "SWR (polling only)"
+      ],
+      "environment_variables": "lib/env.ts — never scattered process.env",
+      "logging": {
+        "human_actions": "audit_log (structured JSON)",
+        "job_actions": "sync_log (structured JSON)"
+      }
+    },
+    "deviation_policy": "Any deviation requires an ADR. Gate 2 must be APPROVED with ADR before planning tasks that deviate."
+  },
+
+  "quality_gate": {
+    "gate_number": 3,
+    "name": "Execution Plan Review",
+    "reviewer": "Agente00_TechLead",
+    "status_codes": [
+      "APPROVED",
+      "RETURNED_FOR_REVISION",
+      "BLOCKED_MISSING_ARTIFACT",
+      "BLOCKED_PENDING_HUMAN",
+      "BLOCKED_SCOPE_EXCEEDED",
+      "BLOCKED_AMBIGUOUS_DEPENDENCY"
+    ]
+  },
+
+  "handoff": {
+    "receives_from": "Agente02_SoftwareArchitect",
+    "delivers_to": [
+      "Agente04_DevBackend",
+      "Agente05_DevFrontend"
+    ],
+    "handoff_schema": "Agente03_SoftwareEngineer/handoff_schema.json",
+    "primary_output": "Execution_Plan.json"
+  },
+
+  "task_constraints": {
+    "task_id_format": "TASK-NNN",
+    "complexity_thresholds": {
+      "S": "0-50 LOC equivalent, single file",
+      "M": "50-150 LOC equivalent, up to 2 files",
+      "L": "150-300 LOC equivalent, up to 3 files — flag for review",
+      "XL": "300+ LOC equivalent or 4+ files — BLOCKED, must split"
+    },
+    "max_task_complexity": "L",
+    "xl_tasks_allowed": false,
+    "min_acceptance_criteria_per_task": 1,
+    "file_path_required": true,
+    "test_requirements_required": true,
+    "security_requirements_required": true
+  },
+
+  "escalation_policy": {
+    "channel": "Agente00_TechLead",
+    "triggers": [
+      "PRD and Architecture.md conflict",
+      "Task cannot fit in context window after decomposition",
+      "Ambiguous dependency",
+      "Missing API endpoint in API_Contract.json",
+      "Missing DB table/column in approved schema",
+      "Unsafe implementation order requiring architectural changes",
+      "Scope larger than approved in Gate 2"
+    ]
+  }
+}

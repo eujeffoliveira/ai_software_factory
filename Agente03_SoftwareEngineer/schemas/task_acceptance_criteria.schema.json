@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/schemas/task-acceptance-criteria",
+  "title": "Task Acceptance Criteria Schema",
+  "description": "Validates the acceptance criteria object for a single task.",
+  "type": "object",
+  "required": ["task_id", "criteria"],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Task identifier this criteria set belongs to.",
+      "pattern": "^TASK-\\d{3}$"
+    },
+    "criteria": {
+      "type": "array",
+      "description": "Array of acceptance criteria for this task. Minimum 1.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "description",
+          "type",
+          "verification_method",
+          "is_blocking"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "description": "Unique acceptance criterion identifier in AC-NNN format.",
+            "pattern": "^AC-\\d{3}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "Clear, testable description of what must be true for this criterion to pass.",
+            "minLength": 10
+          },
+          "type": {
+            "type": "string",
+            "description": "Criterion classification.",
+            "enum": [
+              "functional",
+              "non-functional",
+              "security",
+              "performance"
+            ]
+          },
+          "verification_method": {
+            "type": "string",
+            "description": "How this criterion is verified.",
+            "enum": [
+              "unit-test",
+              "integration-test",
+              "e2e-test",
+              "manual-review"
+            ]
+          },
+          "is_blocking": {
+            "type": "boolean",
+            "description": "If true, this criterion must pass before the task is considered complete. Blocking criteria cannot be deferred."
+          },
+          "prd_criterion_id": {
+            "type": "string",
+            "description": "Optional reference to the originating PRD acceptance criterion.",
+            "pattern": "^AC-[A-Z0-9\\-]+$"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional clarifying notes for the dev agent or QA reviewer."
+          }
+        }
+      }
+    }
+  }
+}

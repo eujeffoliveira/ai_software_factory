@@ -197,3 +197,17 @@ _Actionable if-then rules distilled at build-time. Runtime: read-only._
 **THEN** escalate to Tech Lead for explicit human approval before Gate 6.
 
 **Source:** Reference Architecture §20 Tech Lead Council; integrantes.md §AGENTE 02 §12.
+
+---
+
+## UML and Design Modeling Rules
+
+## DR016 — IF Architecture.md lacks a sequence diagram for the primary use case THEN the architecture is not reviewable — add before Gate 2 submission
+
+## DR017 — IF a class in the domain model cannot be traced to a noun in the PRD THEN the class is likely an implementation artifact — move to infrastructure layer or remove
+
+## DR018 — IF a use case diagram actor has no corresponding system entry-point (route, webhook, cron) in Architecture.md THEN the architecture is missing a component — add before Gate 2
+
+## DR019 — IF a sequence diagram shows >5 messages between the same two components for one use case THEN coupling is excessive — redesign with a mediator, service, or event
+
+## DR020 — IF cohesion analysis shows a component has >3 independent reasons to change THEN split component — single responsibility must hold at the architectural component level

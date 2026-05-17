@@ -305,7 +305,7 @@ ai_software_factory/
 │
 ├── Agente01_ProductOwner/            # Agente totalmente construído ✅ (10 skills)
 ├── Agente02_SoftwareArchitect/       # Agente totalmente construído ✅ (112 arquivos, 10 skills)
-├── Agente03_SoftwareEngineer/        # Estrutura criada, build pendente
+├── Agente03_SoftwareEngineer/        # Agente totalmente construído ✅ (81 arquivos, 7 skills)
 ├── Agente04_DevBackend/              # Estrutura criada, build pendente
 ├── Agente05_DevFrontend/             # Estrutura criada, build pendente
 ├── Agente06_QaEngineer/              # Estrutura criada, build pendente
@@ -499,19 +499,21 @@ AgenteXX_NomeAgente/
 
 ### Por agente (livros de referência — `lib/`)
 
-| Agente | Livros Principais |
-|--------|------------------|
-| **TechLead** | The Mythical Man-Month (Brooks), Accelerate (Forsgren et al.), The Clean Coder (Martin) |
-| **Product Owner** | Software Requirements (Wiegers), Writing Effective Use Cases (Cockburn), User Stories Applied (Cohn) |
-| **Software Architect** | Clean Architecture, DDIA (Kleppmann), DDD (Evans), Fundamentals of Software Architecture (Richards & Ford), Building Microservices (Newman), PEAA (Fowler) |
-| **Software Engineer** | The Pragmatic Programmer, Code Complete, Design Patterns (GoF), Enterprise Integration Patterns (Hohpe & Woolf), System Design Interview (Xu) |
-| **Dev Backend** | Clean Code, Introduction to Algorithms (Cormen), Microservices Patterns (Richardson), Architecture Patterns with Python, Grokking Algorithms |
-| **Dev Frontend** | Eloquent JavaScript, Designing Interfaces (Tidwell), CSS Secrets (Verou), High Performance Browser Networking (Grigorik) |
-| **QA Engineer** | TDD by Example (Beck), Unit Testing (Khorikov), GOOS (Freeman & Pryce), Working Effectively with Legacy Code (Feathers), Refactoring (Fowler) |
-| **DevSecOps** | Threat Modeling (Shostack), The Web Application Hacker's Handbook, Practical Cloud Security (Dotson) |
-| **DevOps** | Continuous Delivery (Humble & Farley), SRE (Google), The Phoenix Project, The DevOps Handbook (Kim et al.) |
-| **UX/UI Designer** | Laws of UX (Yablonski), Don't Make Me Think (Krug), Lean UX (Gothelf & Seiden) |
-| **Data/Integration Engineer** | Fundamentals of Data Engineering (Reis & Housley), Building Event-Driven Microservices (Bellemare), Data Mesh (Dehghani), Designing Event-Driven Systems (Stopford) |
+| Agente | Livros Principais | Materiais Complementares |
+|--------|------------------|--------------------------|
+| **TechLead** | The Mythical Man-Month (Brooks), Accelerate (Forsgren et al.), The Clean Coder (Martin) | Módulo 10 — Gerenciamento de Projetos (métricas, DORA, SWEBOK), Módulo 12 — Governança de TI |
+| **Product Owner** | Software Requirements (Wiegers), Writing Effective Use Cases (Cockburn), User Stories Applied (Cohn) | Módulo 02 — Engenharia de Requisitos I (BPMN, regras de negócio), Módulo 03 — Engenharia de Requisitos II (ISO 25010, RTM, MoSCoW) |
+| **Software Architect** | Clean Architecture, DDIA (Kleppmann), DDD (Evans), Fundamentals of Software Architecture (Richards & Ford), Building Microservices (Newman), PEAA (Fowler) | Módulo 04 — Projeto de Software I (coesão/acoplamento), Módulo 05 — Projeto de Software II (UML: casos de uso, sequência, classes) |
+| **Software Engineer** | The Pragmatic Programmer, Code Complete, Design Patterns (GoF), Enterprise Integration Patterns (Hohpe & Woolf), System Design Interview (Xu) | Módulo 04 — Projeto de Software I, Módulo 05 — Projeto de Software II (extração de tarefas a partir de diagramas UML) |
+| **Dev Backend** | Clean Code, Introduction to Algorithms (Cormen), Microservices Patterns (Richardson), Architecture Patterns with Python, Grokking Algorithms | — |
+| **Dev Frontend** | Eloquent JavaScript, Designing Interfaces (Tidwell), CSS Secrets (Verou), High Performance Browser Networking (Grigorik) | — |
+| **QA Engineer** | TDD by Example (Beck), Unit Testing (Khorikov), GOOS (Freeman & Pryce), Working Effectively with Legacy Code (Feathers), Refactoring (Fowler) | Módulo 06 — Teste de Software I, Módulo 07 — Teste de Software II, Módulo 08 — Qualidade I, Módulo 09 — Qualidade II (ISO, CMMI, MPS.BR) |
+| **DevSecOps** | Threat Modeling (Shostack), The Web Application Hacker's Handbook, Practical Cloud Security (Dotson) | — |
+| **DevOps** | Continuous Delivery (Humble & Farley), SRE (Google), The Phoenix Project, The DevOps Handbook (Kim et al.) | Módulo 11 — Gerência de Configuração (controle de mudanças, ferramentas de CM) |
+| **UX/UI Designer** | Laws of UX (Yablonski), Don't Make Me Think (Krug), Lean UX (Gothelf & Seiden) | — |
+| **Data/Integration Engineer** | Fundamentals of Data Engineering (Reis & Housley), Building Event-Driven Microservices (Bellemare), Data Mesh (Dehghani), Designing Event-Driven Systems (Stopford) | — |
+
+> **Materiais complementares** = apostilas de pós-graduação em Engenharia de Software copiadas para `lib/` em 2026-05-17. Já destiladas nos `knowledge/` dos agentes construídos; serão usadas no build dos demais.
 
 ### Contexto global (build-time)
 
@@ -545,10 +547,10 @@ context/prompts/
 
 | Agente | Prompt | Build completo | Knowledge | Skills | Status |
 |--------|--------|----------------|-----------|--------|--------|
-| **00 TechLead** | ✅ | ✅ | ✅ | ✅ 9/9 | **Pronto para uso** |
-| **01 ProductOwner** | ✅ | ✅ | ✅ | ✅ 10/10 | **Pronto para uso** |
-| **02 SoftwareArchitect** | ✅ | ✅ | ✅ | ✅ 10/10 | **Pronto para uso** |
-| 03 SoftwareEngineer | ✅ | ⏳ | ❌ | ❌ | Build pendente |
+| **00 TechLead** | ✅ | ✅ | ✅ (+patch) | ✅ 9/9 | **Pronto para uso** |
+| **01 ProductOwner** | ✅ | ✅ | ✅ (+patch) | ✅ 10/10 | **Pronto para uso** |
+| **02 SoftwareArchitect** | ✅ | ✅ | ✅ (+patch) | ✅ 10/10 | **Pronto para uso** |
+| **03 SoftwareEngineer** | ✅ | ✅ | ✅ (+patch) | ✅ 7/7 | **Pronto para uso** |
 | 04 DevBackend | ✅ | ⏳ | ❌ | ❌ | Build pendente |
 | 05 DevFrontend | ✅ | ⏳ | ❌ | ❌ | Build pendente |
 | 06 QaEngineer | ✅ | ⏳ | ❌ | ❌ | Build pendente |
@@ -557,7 +559,7 @@ context/prompts/
 | 09 UxUiDesigner | ✅ | ❌ | ❌ | ❌ | Não iniciado |
 | 10 DataIntegrationEngineer | ✅ | ❌ | ❌ | ❌ | Não iniciado |
 
-> **Todos os 11 prompts genéricos estão prontos em `context/prompts/`.** Agente00, Agente01 e Agente02 têm build completo (artefatos locais, skills, knowledge distillation). Os demais precisam passar pelo processo de build descrito acima.
+> **Todos os 11 prompts genéricos estão prontos em `context/prompts/`.** Agente00, Agente01, Agente02 e Agente03 têm build completo (artefatos locais, skills, knowledge distillation). Os demais precisam passar pelo processo de build descrito acima.
 
 ---
 

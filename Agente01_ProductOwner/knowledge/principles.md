@@ -135,3 +135,34 @@ The `knowledge/` directory contains all necessary theoretical knowledge, pre-dis
 
 Violation: Skill attempts to read "Software Requirements.pdf" to answer a question about elicitation technique.
 Correct: Skill uses `knowledge/heuristics.md` or `knowledge/knowledge_cards.md` for the needed guidance.
+
+---
+
+## P11 — Business Rules Are the Backbone of Functional Requirements
+
+Every functional requirement derives from one or more business rules (BR-NNN). Business rules are not invented by the PO — they are discovered from stakeholders, regulations, and organizational policies. A functional requirement with no traceable business rule is a design assumption masquerading as a requirement.
+
+Source: Módulo 02 — Identificar e documentar regras de negócio.
+
+Violation: Writing "users cannot have more than 3 active sessions" without a BR source.
+Correct: BR-007 "Session limit policy: max 3 concurrent sessions per user. Source: IT Security Policy v2.1." → linked requirement.
+
+---
+
+## P12 — Business Process Mapping Reveals Requirements Gaps That Interviews Miss
+
+A stakeholder interview captures what people think they do. A business process map (BPMN) captures what actually happens — including exception flows, handoffs, waiting states, and decision points that generate hidden requirements. Every core process in scope must be mapped before the PRD is considered complete.
+
+Source: Módulo 02 — Mapear processos de negócio (BPMN).
+
+Application: For each business domain in the PRD, produce a BPMN swimlane diagram showing actors, activities, decisions, and exception paths. Requirements that only emerge from exception flows are often the most critical.
+
+---
+
+## P13 — Requirements Traceability Is Not Optional
+
+Every requirement must have a forward trace (requirement → design → implementation → test) and a backward trace (test → requirement → stakeholder need). Untraceable requirements become zombie features — implemented but never validated. A requirements traceability matrix (RTM) is a mandatory artifact for any PRD that passes Gate 1.
+
+Source: Módulo 03 — Gerenciamento de Requisitos; Módulo 02 — Proposta para melhorar o rastreamento de requisitos.
+
+Application: Maintain an RTM mapping each requirement (FR-NNN, NFR-NNN) to its source stakeholder statement, its acceptance criteria (AC-NNN), and its test case reference.

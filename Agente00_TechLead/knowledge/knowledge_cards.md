@@ -232,3 +232,58 @@ No deviation from the Golden Model is accepted without a formal ADR. The most co
 ### Source mapping
 - `context/reference_architecture_generico.md` (compiled into context_view.md)
 - `agent_config.json` — `tech_stack_governance`
+
+---
+
+## Card 011 — DORA Metrics
+
+### Summary
+Four key metrics from Accelerate/DORA research that predict software delivery performance: (1) Deployment Frequency — how often code deploys to production; (2) Lead Time for Changes — time from commit to production; (3) Change Failure Rate — % of deployments causing incidents; (4) MTTR (Mean Time to Restore) — time to recover from failure. Elite performers deploy multiple times/day with <1h lead time, <5% failure rate, <1h MTTR.
+
+### When to apply
+- Gate 6 (deploy) and Gate 7 (post-deploy) health assessments
+- State Ledger metrics section
+
+### Operational rule
+Target elite/high DORA performance. Declining trends register as risks. Two consecutive poor gates require human escalation.
+
+### Source mapping
+- Módulo 10 — Métricas (course material, build-time only)
+- Accelerate — Forsgren, Humble, Kim (lib/TechLead/)
+- `knowledge/decision_rules.md` — DR032, DR033, DR034
+
+---
+
+## Card 012 — IT Governance vs IT Management
+
+### Summary
+IT Governance (who decides and how accountability is set) vs IT Management (day-to-day execution of decisions). In the context of the AI Software Factory: Governance = gate structure, ADR policy, human escalation triggers, risk thresholds. Management = agent routing, artifact validation, State Ledger maintenance. The Tech Lead exercises both but must distinguish them — governance decisions often require human override capability.
+
+### When to apply
+- When a decision has policy-setting implications (governance) vs execution implications (management)
+
+### Operational rule
+Governance decisions that set precedents (new ADR approval, new risk threshold, pipeline rule change) must be logged as policy decisions in the State Ledger — not as ordinary gate decisions.
+
+### Source mapping
+- Módulo 12 — Governança de TI (course material, build-time only)
+- ISO 38500
+- `knowledge/principles.md` — P12
+- `knowledge/decision_rules.md` — DR036
+
+---
+
+## Card 013 — SWEBOK Knowledge Areas (relevant to Tech Lead)
+
+### Summary
+The Software Engineering Body of Knowledge defines 15 knowledge areas. Most relevant to Tech Lead: Requirements (Gate 1), Design (Gate 2), Construction (Gate 3–4), Testing (Gate 4), Maintenance, Configuration Management (versioning/ADRs), Engineering Management (gates/metrics), Engineering Process (pipeline), Quality (Gates 4–5), Security.
+
+### When to apply
+- When assessing completeness of an agent's output — each knowledge area maps to one or more gates
+
+### Operational rule
+A complete SDLC pipeline should cover all relevant SWEBOK areas. Gaps in the factory's coverage (e.g., no formal Maintenance agent) should be registered as known limitations.
+
+### Source mapping
+- Módulo 10 — SWEBOK (course material, build-time only)
+- `quality_gate.md` — gate-to-knowledge-area mapping

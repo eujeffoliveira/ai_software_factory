@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/handoff-schema",
+  "title": "Agente03 Handoff Package Schema",
+  "description": "Validates the handoff package produced by Agente03_SoftwareEngineer at Gate 3 submission.",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "summary",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "validation_checklist",
+    "execution_plan_summary",
+    "gate_status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "Primary artifact produced by this agent. Always 'Execution_Plan.json' for Gate 3.",
+      "examples": ["Execution_Plan.json"]
+    },
+    "summary": {
+      "type": "string",
+      "description": "1-2 sentence human-readable summary of the execution plan for Tech Lead review.",
+      "minLength": 20,
+      "maxLength": 500
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumptions made during task planning that are not explicitly stated in input artifacts.",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "additionalProperties": false,
+        "properties": {
+          "assumption": {
+            "type": "string",
+            "description": "Statement of the assumption made.",
+            "minLength": 10
+          },
+          "impact": {
+            "type": "string",
+            "description": "What happens if this assumption is wrong.",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that did not block planning but may affect implementation.",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "additionalProperties": false,
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The open question.",
+            "minLength": 10
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, this question must be resolved before dev agents start. If blocking questions exist, gate_status must not be APPROVED."
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Risk register for this execution plan.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation", "blocks_gate"],
+        "additionalProperties": false,
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "description": "Unique risk identifier.",
+            "pattern": "^RISK-\\d{3}$"
+          },
+          "classification": {
+            "type": "string",
+            "description": "Risk severity level.",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the risk.",
+            "minLength": 10
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "How the risk is mitigated or managed.",
+            "minLength": 10
+          },
+          "blocks_gate": {
+            "type": "boolean",
+            "description": "If true and classification is CRITICAL or HIGH, this risk blocks gate approval."
+          }
+        }
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "description": "The first dev agent to receive the execution plan. Backend starts first if backend tasks exist.",
+      "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"]
+    },
+    "validation_checklist": {
+      "type": "array",
+      "description": "Gate 3 exit criteria items that have been verified as passing.",
+      "items": {
+        "type": "string",
+        "minLength": 5
+      },
+      "minItems": 5
+    },
+    "execution_plan_summary": {
+      "type": "object",
+      "description": "Quantitative summary of the execution plan for quick review.",
+      "required": [
+        "total_tasks",
+        "backend_tasks",
+        "frontend_tasks",
+        "infrastructure_tasks",
+        "critical_path_length"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "total_tasks": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of tasks in the plan."
+        },
+        "backend_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tasks with type: backend or security."
+        },
+        "frontend_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tasks with type: frontend."
+        },
+        "infrastructure_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tasks with type: database, infrastructure, or config."
+        },
+        "testing_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tasks with type: testing."
+        },
+        "critical_path_length": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of tasks on the critical path (longest dependency chain)."
+        },
+        "xl_tasks_count": {
+          "type": "integer",
+          "const": 0,
+          "description": "Must always be 0. XL tasks block Gate 3."
+        },
+        "estimated_phases": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4,
+          "description": "Number of implementation phases (max 4)."
+        }
+      }
+    },
+    "gate_status": {
+      "type": "string",
+      "description": "Gate 3 status code. Must match one of the 6 valid codes.",
+      "enum": [
+        "APPROVED",
+        "RETURNED_FOR_REVISION",
+        "BLOCKED_MISSING_ARTIFACT",
+        "BLOCKED_PENDING_HUMAN",
+        "BLOCKED_SCOPE_EXCEEDED",
+        "BLOCKED_AMBIGUOUS_DEPENDENCY"
+      ]
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/execution-plan-generation/input",
+  "title": "Execution Plan Generation Skill — Input Schema",
+  "type": "object",
+  "required": ["architecture_version", "prd_version", "components", "api_endpoints", "db_tables", "adrs"],
+  "additionalProperties": false,
+  "properties": {
+    "architecture_version": {
+      "type": "string",
+      "description": "Version of Architecture.md being planned from.",
+      "minLength": 1
+    },
+    "prd_version": {
+      "type": "string",
+      "description": "Version of PRD.md being planned from.",
+      "minLength": 1
+    },
+    "components": {
+      "type": "array",
+      "description": "List of all architectural components to be implemented.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["api_route", "server_action", "db_table", "server_component", "client_component", "cron_job", "config", "dal_function"]
+          },
+          "description": { "type": "string" },
+          "file_hint": { "type": "string", "description": "Suggested file path from Architecture.md" }
+        }
+      }
+    },
+    "api_endpoints": {
+      "type": "array",
+      "description": "All API endpoints from API_Contract.json.",
+      "items": {
+        "type": "object",
+        "required": ["method", "path"],
+        "properties": {
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+          "path": { "type": "string" },
+          "auth_required": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "db_tables": {
+      "type": "array",
+      "description": "All database tables/models from the approved DB schema.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["table", "model", "view", "enum"] },
+          "migration_required": { "type": "boolean" }
+        }
+      }
+    },
+    "adrs": {
+      "type": "array",
+      "description": "All Architecture Decision Records that constrain implementation.",
+      "items": {
+        "type": "object",
+        "required": ["adr_id", "title", "status"],
+        "properties": {
+          "adr_id": { "type": "string", "pattern": "^ADR-\\d{3}$" },
+          "title": { "type": "string" },
+          "status": { "type": "string", "enum": ["ACCEPTED", "PROPOSED", "REJECTED", "SUPERSEDED"] },
+          "decision_summary": { "type": "string" }
+        }
+      }
+    },
+    "prd_acceptance_criteria": {
+      "type": "array",
+      "description": "Optional: explicit list of PRD acceptance criteria for mapping.",
+      "items": {
+        "type": "object",
+        "required": ["criterion_id", "description"],
+        "properties": {
+          "criterion_id": { "type": "string" },
+          "description": { "type": "string" },
+          "story_id": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "_REVIEW_NOTES": [
+    "THIS IS A BAD EXECUTION PLAN — FOR EDUCATIONAL PURPOSES ONLY",
+    "Problems in this plan:",
+    "1. FM-01: TASK-001 is a mega-task (XL) — 'Implement entire task management feature' covers what should be 8+ separate tasks",
+    "2. FM-06: No file_path on any task — dev agents cannot know which file to create or modify",
+    "3. FM-03: No acceptance_criteria on any task — no way to verify correctness",
+    "4. FM-07: depends_on is empty for all tasks — implicit dependencies hidden, implementation order unknown",
+    "5. FM-09: test_requirements is empty/missing — tests are an afterthought",
+    "6. FM-08: security_requirements is incomplete — no Zod validation, no audit log, no auth check",
+    "7. No critical_path defined — critical path is empty array",
+    "8. gate_status is set to APPROVED despite all these problems — not valid",
+    "GATE 3 VERDICT: RETURNED_FOR_REVISION — 8 blocking conditions found"
+  ],
+  "plan_id": "plan-taskflow-bad",
+  "version": "1.0",
+  "project": "TaskFlow SaaS",
+  "created_at": "2026-01-15T10:00:00Z",
+  "architecture_version": "v1.2",
+  "prd_version": "v2.0",
+  "tasks": [
+    {
+      "_problem": "MEGA-TASK: This single task describes work that should be at least 8 separate tasks. Complexity XL (>300 LOC). No file_path. No acceptance_criteria. No depends_on. Incomplete security. No test requirements.",
+      "task_id": "TASK-001",
+      "title": "Implement entire task management feature",
+      "description": "Build the whole task management system including database, API, and frontend.",
+      "type": "backend",
+      "layer": "business-logic",
+      "file_path": null,
+      "function_signatures": [],
+      "depends_on": [],
+      "acceptance_criteria": [],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": false,
+        "e2e_required": false,
+        "test_notes": "Tests to be added later"
+      },
+      "security_requirements": {
+        "auth_required": true,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false,
+        "security_notes": ""
+      },
+      "estimated_complexity": "L",
+      "_actual_complexity": "XL — this task covers a DB migration, Prisma model, Server Action, Route Handler, Server Component, Client Component, and tests. Actual complexity is >300 LOC across 6+ files.",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "_problem": "VAGUE TASK: No file_path, no acceptance criteria, no dependencies declared, no security requirements, no test requirements. Title uses vague language ('do the backend stuff').",
+      "task_id": "TASK-002",
+      "title": "Do the backend stuff",
+      "description": "Handle backend operations for tasks.",
+      "type": "backend",
+      "layer": "business-logic",
+      "file_path": "",
+      "function_signatures": [],
+      "depends_on": [],
+      "acceptance_criteria": [],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": false,
+        "e2e_required": false
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false
+      },
+      "estimated_complexity": "L",
+      "_actual_complexity": "Unknown — no file_path means dev agent will have to guess what to build. 'L' was guessed, actual could be XL.",
+      "status": "pending",
+      "blocking_reason": null
+    },
+    {
+      "_problem": "FRONTEND BEFORE BACKEND: This frontend task has no depends_on — the implicit assumption is that TASK-001 (backend) is done first, but that's never declared. Also: no file_path, no acceptance_criteria.",
+      "task_id": "TASK-003",
+      "title": "Build the UI",
+      "description": "Create the frontend interface for task management.",
+      "type": "frontend",
+      "layer": "presentation",
+      "file_path": "",
+      "function_signatures": [],
+      "depends_on": [],
+      "_implicit_dependency": "This task implicitly depends on TASK-001 and TASK-002 (the Server Action and model must exist before the UI can call them), but this is NOT declared in depends_on[].",
+      "acceptance_criteria": [],
+      "test_requirements": {
+        "unit_required": false,
+        "integration_required": false,
+        "e2e_required": false
+      },
+      "security_requirements": {
+        "auth_required": false,
+        "authorization_check": false,
+        "input_validation_required": false,
+        "audit_log_required": false
+      },
+      "estimated_complexity": "M",
+      "status": "pending",
+      "blocking_reason": null
+    }
+  ],
+  "critical_path": [],
+  "_critical_path_problem": "Empty critical_path array. With only 3 vague tasks, no critical path can be determined. With properly decomposed tasks, the critical path would be TASK-001 → TASK-002 → TASK-003 → TASK-006 → TASK-008.",
+  "parallel_tracks": [],
+  "total_complexity_estimate": "M",
+  "_total_complexity_problem": "Estimated M is wrong. The actual work described covers 8 tasks of M complexity = overall L plan.",
+  "gate_status": "APPROVED",
+  "_gate_status_problem": "This plan cannot be APPROVED. Gate 3 verdict: RETURNED_FOR_REVISION with 8 blocking conditions. Correct status should be RETURNED_FOR_REVISION."
+}

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/schemas/task-handoff",
+  "title": "Task Handoff Package Schema",
+  "description": "Validates the handoff package for a single task delivered to a dev agent (Agente04 or Agente05).",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "type",
+    "context_summary",
+    "file_path",
+    "acceptance_criteria",
+    "test_requirements",
+    "security_requirements",
+    "dependencies_completed",
+    "golden_path_constraints"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Task identifier in TASK-NNN format.",
+      "pattern": "^TASK-\\d{3}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Task title."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["backend", "frontend", "database", "infrastructure", "testing", "security", "config"]
+    },
+    "context_summary": {
+      "type": "string",
+      "description": "Concise context summary for the dev agent. Max 200 words. What exists, what is needed, what to be careful about.",
+      "maxLength": 1400
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Exact file path this task creates or modifies.",
+      "minLength": 5
+    },
+    "function_signatures": {
+      "type": "array",
+      "description": "Pre-specified function signatures. Dev agent must not deviate without escalation.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "Testable acceptance criteria for this task.",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "test_requirements": {
+      "type": "object",
+      "description": "Test requirements for this task.",
+      "required": ["unit_required", "integration_required", "e2e_required"],
+      "properties": {
+        "unit_required": { "type": "boolean" },
+        "unit_tool": { "type": "string", "const": "Vitest" },
+        "unit_coverage_target": { "type": "number" },
+        "integration_required": { "type": "boolean" },
+        "integration_tool": { "type": "string", "const": "Vitest" },
+        "e2e_required": { "type": "boolean" },
+        "e2e_tool": { "type": "string", "const": "Playwright" },
+        "e2e_flow_description": { "type": "string" },
+        "test_data_requirements": { "type": "string" },
+        "mock_requirements": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "test_notes": { "type": "string" }
+      }
+    },
+    "security_requirements": {
+      "type": "object",
+      "description": "Security requirements for this task.",
+      "required": ["auth_required", "authorization_check", "input_validation_required", "audit_log_required"],
+      "properties": {
+        "auth_required": { "type": "boolean" },
+        "authorization_check": { "type": "boolean" },
+        "authorization_level": {
+          "type": "string",
+          "enum": ["public", "authenticated", "role-based", "admin"]
+        },
+        "input_validation_required": { "type": "boolean" },
+        "zod_schema_name": { "type": "string" },
+        "audit_log_required": { "type": "boolean" },
+        "audit_event_type": { "type": "string" },
+        "cron_guard_required": { "type": "boolean" },
+        "devsecops_review_required": { "type": "boolean" },
+        "security_notes": { "type": "string" }
+      }
+    },
+    "dependencies_completed": {
+      "type": "array",
+      "description": "List of task IDs that must be completed before this task can start.",
+      "items": {
+        "type": "string",
+        "pattern": "^TASK-\\d{3}$"
+      }
+    },
+    "architecture_references": {
+      "type": "array",
+      "description": "Relevant sections from Architecture.md that apply to this task.",
+      "items": {
+        "type": "object",
+        "required": ["section", "relevance"],
+        "properties": {
+          "section": {
+            "type": "string",
+            "description": "Section name or heading in Architecture.md."
+          },
+          "relevance": {
+            "type": "string",
+            "description": "Why this section is relevant to this task."
+          }
+        }
+      }
+    },
+    "api_contract_reference": {
+      "type": "string",
+      "description": "Reference to the relevant API endpoint(s) in API_Contract.json."
+    },
+    "db_schema_reference": {
+      "type": "string",
+      "description": "Reference to the relevant DB tables/models in the DB schema."
+    },
+    "golden_path_constraints": {
+      "type": "array",
+      "description": "Specific Golden Path reminders for this task type. Dev agent must comply.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "description": "A single Golden Path constraint reminder."
+      }
+    }
+  }
+}

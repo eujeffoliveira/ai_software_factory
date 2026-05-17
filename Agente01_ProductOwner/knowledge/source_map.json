@@ -94,13 +94,45 @@
         "checklists/open_questions_checklist.md",
         "checklists/business_rules_checklist.md"
       ]
+    },
+    {
+      "id": "SRC-006",
+      "title": "Módulo 02 — Engenharia de Requisitos I (Pós-graduação Engenharia de Software)",
+      "source_path": "lib/ProductOwner/Módulo 02 -  Engenharia de Requisitos I/",
+      "type": "course_material",
+      "runtime_access": false,
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Academic course material covering requirements fundamentals, business process mapping (BPMN), business rules documentation, and requirements analysis. Distilled into knowledge patch 2026-05-17.",
+      "distilled_into": [
+        "knowledge/principles.md (P11 — Business rules backbone, P12 — Process mapping)",
+        "knowledge/heuristics.md (H13 — BPMN gateway branches, H14 — ISO 25010 checklist)",
+        "knowledge/decision_rules.md (DR038 — BPMN completeness, DR039 — BR traceability)",
+        "knowledge/knowledge_cards.md (Card 011 — BPMN Notation Essentials, Card 013 — RTM)"
+      ]
+    },
+    {
+      "id": "SRC-007",
+      "title": "Módulo 03 — Engenharia de Requisitos II (Pós-graduação Engenharia de Software)",
+      "source_path": "lib/ProductOwner/Módulo 03 -  Engenharia de Requisitos II/",
+      "type": "course_material",
+      "runtime_access": false,
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Academic course material covering functional/non-functional requirements classification (ISO 25010), requirements prioritization (MoSCoW, Kano), requirements management (change control, traceability, baselining). Distilled into knowledge patch 2026-05-17.",
+      "distilled_into": [
+        "knowledge/principles.md (P13 — Requirements traceability)",
+        "knowledge/heuristics.md (H15 — MoSCoW Won't Have, H16 — Change control for baselined requirements)",
+        "knowledge/decision_rules.md (DR040 — NFR measurable target, DR041 — baseline change control, DR042 — MoSCoW completeness, DR043 — RTM test case gap)",
+        "knowledge/knowledge_cards.md (Card 012 — ISO 25010 Quality Model)"
+      ]
     }
   ],
   "cross_cutting_contributions": {
-    "knowledge/principles.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005"],
-    "knowledge/heuristics.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005"],
-    "knowledge/decision_rules.md": ["SRC-001", "SRC-003", "SRC-004", "SRC-005"],
-    "knowledge/knowledge_cards.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005"],
+    "knowledge/principles.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005", "SRC-006", "SRC-007"],
+    "knowledge/heuristics.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005", "SRC-006", "SRC-007"],
+    "knowledge/decision_rules.md": ["SRC-001", "SRC-003", "SRC-004", "SRC-005", "SRC-006", "SRC-007"],
+    "knowledge/knowledge_cards.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005", "SRC-006", "SRC-007"],
     "failure_modes.md": ["SRC-001", "SRC-004", "SRC-005"]
   },
   "runtime_policy": {

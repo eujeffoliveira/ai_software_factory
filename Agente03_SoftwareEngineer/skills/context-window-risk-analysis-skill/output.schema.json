@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/context-window-risk-analysis/output",
+  "title": "Context Window Risk Analysis Skill — Output Schema",
+  "type": "object",
+  "required": ["plan_id", "risk_level", "xl_tasks", "l_tasks_flagged", "risk_factors", "overall_recommendation", "gate_ready"],
+  "additionalProperties": false,
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "description": "ID of the analyzed plan."
+    },
+    "risk_level": {
+      "type": "string",
+      "description": "Overall plan risk level.",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    },
+    "xl_tasks": {
+      "type": "array",
+      "description": "List of XL tasks. Must be empty for gate_ready: true.",
+      "items": { "type": "string", "pattern": "^TASK-\\d{3}$" }
+    },
+    "l_tasks_flagged": {
+      "type": "array",
+      "description": "List of L tasks with mitigation status.",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "has_context_summary", "mitigation_applied"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "has_context_summary": { "type": "boolean" },
+          "mitigation_applied": { "type": "boolean" },
+          "recommendation": { "type": "string" }
+        }
+      }
+    },
+    "risk_factors": {
+      "type": "array",
+      "description": "Per-task risk analysis.",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "risk_score", "factors"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "risk_score": { "type": "integer", "minimum": 0 },
+          "task_risk_level": { "type": "string", "enum": ["none", "low", "medium", "high", "critical"] },
+          "factors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "factor": { "type": "string" },
+                "score": { "type": "integer" }
+              }
+            }
+          },
+          "recommendation": { "type": "string" }
+        }
+      }
+    },
+    "overall_recommendation": {
+      "type": "string",
+      "description": "Human-readable plan-level recommendation.",
+      "minLength": 10
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "false if risk_level is CRITICAL or xl_tasks is non-empty."
+    }
+  }
+}

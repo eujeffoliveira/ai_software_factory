@@ -1,0 +1,120 @@
+{
+  "agent_id": "Agente03_SoftwareEngineer",
+  "inventory_date": "2026-05-17",
+  "edition": "generic-white-label",
+  "bibliography": [
+    {
+      "source_id": "pragmatic_programmer",
+      "source_title": "The Pragmatic Programmer",
+      "source_authors": ["Andrew Hunt", "David Thomas"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/The_Pragmatic_Programmer.pdf",
+      "key_concepts_extracted": [
+        "DRY — Don't Repeat Yourself applied to task decomposition",
+        "Orthogonality — single responsibility per task",
+        "Tracer bullets — thin vertical slices as task planning model",
+        "Naming as design quality signal — task title in ≤ 8 words",
+        "Context and cognitive load management — context window budget"
+      ],
+      "derived_artifacts": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P1",
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P2",
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P7",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H1",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H7",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H9",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card001",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card003",
+        "Agente03_SoftwareEngineer/knowledge/decision_rules.md#DR011"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_id": "code_complete",
+      "source_title": "Code Complete",
+      "source_authors": ["Steve McConnell"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/Code_Complete.pdf",
+      "key_concepts_extracted": [
+        "Construction planning — design before code, requirements before construction",
+        "Requirements traceability — every line traces to a requirement",
+        "Cognitive load management — managing context in construction",
+        "Module cohesion — one responsibility per module (applied to file-per-task rule)",
+        "Interface design as construction specification — function signatures as contracts",
+        "Estimation techniques — sizing based on function count and complexity"
+      ],
+      "derived_artifacts": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P2",
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P4",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H2",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H6",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H8",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card003",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card006"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_id": "design_patterns_gof",
+      "source_title": "Design Patterns — Elements of Reusable Object-Oriented Software",
+      "source_authors": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/Design_Patterns_GoF.pdf",
+      "key_concepts_extracted": [
+        "Separation of pattern infrastructure from pattern use (each becomes a task)",
+        "Construction order in pattern-based systems (dependency relationships)",
+        "Repository pattern — separate DB access tasks from business logic tasks",
+        "Factory pattern — separate factory setup from factory use",
+        "Observer pattern — separate event handler tasks"
+      ],
+      "derived_artifacts": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P5",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H3",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card002"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_id": "enterprise_integration_patterns",
+      "source_title": "Enterprise Integration Patterns",
+      "source_authors": ["Gregor Hohpe", "Bobby Woolf"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/Enterprise_Integration_Patterns.pdf",
+      "key_concepts_extracted": [
+        "Message contracts and explicit coupling — depends_on[] as contract declaration",
+        "Integration points as failure loci — extra scrutiny for API and cron tasks",
+        "Idempotent receiver pattern — guardCron() implementation",
+        "Content-based routing — conditional task paths",
+        "Dead letter channel — error handling tasks for integration points"
+      ],
+      "derived_artifacts": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P3",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H4",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card007"
+      ],
+      "runtime_accessible": false
+    },
+    {
+      "source_id": "system_design_interview",
+      "source_title": "System Design Interview",
+      "source_authors": ["Alex Xu"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/System_Design_Interview.pdf",
+      "key_concepts_extracted": [
+        "The planning layer as architecture enforcement mechanism",
+        "Critical path analysis and scheduling under resource constraints",
+        "Parallelism in system planning — parallel tracks for delivery acceleration",
+        "Delivery time estimation — critical path sessions vs total sessions",
+        "Trade-off analysis — identifying which tasks to optimize first"
+      ],
+      "derived_artifacts": [
+        "Agente03_SoftwareEngineer/knowledge/principles.md#P8",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H5",
+        "Agente03_SoftwareEngineer/knowledge/heuristics.md#H10",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card004",
+        "Agente03_SoftwareEngineer/knowledge/knowledge_cards.md#Card005"
+      ],
+      "runtime_accessible": false
+    }
+  ]
+}

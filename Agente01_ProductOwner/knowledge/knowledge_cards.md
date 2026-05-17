@@ -258,3 +258,95 @@ Status: OPEN | MITIGATED | ACCEPTED | ESCALATED
 **Interview log format:** All questions and answers must be recorded in `Requirements_Interview_Log.md` with: question ID, question text, stakeholder answer, date, clarification needed (yes/no).
 
 **Rule:** Never make an assumption instead of asking a question. The cost of a question is one conversation. The cost of a wrong assumption is one rework cycle.
+
+---
+
+## Card 011 — BPMN Notation Essentials
+
+**Definition:** Business Process Model and Notation (BPMN) is the standard visual language for mapping business processes. It captures who does what, when, and in what sequence — including exception paths.
+
+**Key elements:**
+| Element | Shape | Purpose |
+|---------|-------|---------|
+| Start Event | Circle (thin border) | Triggers the process |
+| Intermediate Event | Circle (double border) | Occurs during the process (timer, message, error) |
+| End Event | Circle (thick border) | Terminates the process |
+| Task | Rectangle (rounded corners) | A single unit of work performed by an actor |
+| Sub-process | Rectangle with + icon | A collapsed set of tasks |
+| XOR Gateway | Diamond with X | Exclusive choice — exactly one outgoing path is taken |
+| AND Gateway | Diamond with + | Parallel — all outgoing paths are taken simultaneously |
+| OR Gateway | Diamond with O | Inclusive — one or more outgoing paths are taken |
+| Sequence Flow | Solid arrow | Order of activities within a pool/lane |
+| Message Flow | Dashed arrow | Communication between pools (organizations) |
+| Pool | Large rectangle | Represents an organization or participant |
+| Lane | Subdivision of a pool | Represents a role or system within the organization |
+
+**Requirement generation rules:**
+- Each lane in a BPMN = potential user role requiring system support
+- Each XOR gateway = at least 2 requirements (one per branch)
+- Each exception path = edge-case requirement that interviews commonly miss
+- Each AND gateway = synchronization requirement
+
+**Operational rule:** Every in-scope business process must be documented as a BPMN swimlane diagram in the PRD appendix or a linked document. Requirements derived from exception flows must be explicitly labeled in the requirements list.
+
+**Source:** Módulo 02 — Mapear processos de negócio.
+
+---
+
+## Card 012 — ISO 25010 Quality Model
+
+**Definition:** ISO/IEC 25010 is the international standard defining the software product quality model. It provides a structured taxonomy of 8 quality characteristics used as the canonical NFR checklist.
+
+**8 Quality Characteristics:**
+
+| # | Characteristic | Key Sub-characteristics |
+|---|---------------|------------------------|
+| 1 | Functional Suitability | Completeness, Correctness, Appropriateness |
+| 2 | Reliability | Maturity, Availability, Fault tolerance, Recoverability |
+| 3 | Performance Efficiency | Time behavior, Resource utilization, Capacity |
+| 4 | Usability | Learnability, Operability, User error protection, Accessibility |
+| 5 | Security | Confidentiality, Integrity, Non-repudiation, Accountability, Authenticity |
+| 6 | Compatibility | Co-existence, Interoperability |
+| 7 | Maintainability | Modularity, Reusability, Analysability, Modifiability, Testability |
+| 8 | Portability | Adaptability, Installability, Replaceability |
+
+**How to apply:**
+1. For each of the 8 characteristics, explicitly assess applicability to the project
+2. For each applicable characteristic, define ≥1 measurable NFR with a quantified threshold
+3. Document "N/A" with a rationale for characteristics that do not apply — silence is not acceptable
+
+**Relationship to existing NFR categories:** ISO 25010 complements the 10 NFR categories in Card 005. ISO 25010 provides the theoretical taxonomy; the 10 categories in Card 005 are the operational implementation for this factory's PRD template.
+
+**Operational rule:** Use ISO 25010 as a completeness check during NFR elicitation. If a characteristic has no coverage in the PRD and no documented "N/A" rationale, the NFR section is incomplete.
+
+**Source:** Módulo 03 — Identificar requisitos não-funcionais.
+
+---
+
+## Card 013 — Requirements Traceability Matrix (RTM)
+
+**Definition:** A Requirements Traceability Matrix (RTM) is an artifact that links requirements to their origins and to the verification artifacts that confirm them. It enables both forward traceability (requirement → implementation → test) and backward traceability (test result → requirement → business need).
+
+**Mandatory columns:**
+
+| Column | Description |
+|--------|-------------|
+| Requirement ID | FR-NNN or NFR-NNN |
+| Description | Short requirement statement |
+| Source | Stakeholder name / document / regulation |
+| Priority (MoSCoW) | M / S / C / W |
+| Acceptance Criterion ID | AC-NNN |
+| Test Case Reference | Test case ID or "pending" |
+| Status | proposed / approved / implemented / verified |
+
+**Traceability directions:**
+- **Forward traceability:** Requirement → Acceptance Criterion → Test Case → Test Result. Ensures every requirement has a verification path.
+- **Backward traceability:** Test Result → Acceptance Criterion → Requirement → Stakeholder Need. Ensures every test maps to a real requirement — no orphan tests.
+
+**Lifecycle:** The RTM is created during PRD development and must be updated whenever: (1) requirements are added or modified, (2) test cases are created or changed, (3) requirements are implemented and verified.
+
+**Gate 1 requirement:** An RTM with requirements that have no test case reference or acceptance criterion is incomplete. These gaps must be resolved before Gate 1 submission.
+
+**Operational rule:** Any requirement in the PRD that cannot be verified by a test case or acceptance criterion is incomplete. The RTM is the evidence that verification is planned — not a post-implementation artifact.
+
+**Source:** Módulo 02 — Proposta para melhorar o rastreamento de requisitos; Módulo 03 — Gerenciamento de Requisitos.

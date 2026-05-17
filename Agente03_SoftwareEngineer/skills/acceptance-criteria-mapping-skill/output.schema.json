@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/acceptance-criteria-mapping/output",
+  "title": "Acceptance Criteria Mapping Skill — Output Schema",
+  "type": "object",
+  "required": ["tasks_with_criteria", "coverage_matrix", "uncovered_criteria"],
+  "additionalProperties": false,
+  "properties": {
+    "tasks_with_criteria": {
+      "type": "array",
+      "description": "Task list with acceptance_criteria[] populated.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "acceptance_criteria"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+          "acceptance_criteria": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "coverage_matrix": {
+      "type": "array",
+      "description": "Mapping of each PRD criterion to the tasks that cover it.",
+      "items": {
+        "type": "object",
+        "required": ["prd_criterion_id", "covered_by_task_ids"],
+        "properties": {
+          "prd_criterion_id": { "type": "string" },
+          "prd_criterion_description": { "type": "string" },
+          "covered_by_task_ids": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "uncovered_criteria": {
+      "type": "array",
+      "description": "PRD criteria with no covering task. Must be empty for Gate 3 to pass.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion_id": { "type": "string" },
+          "description": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}

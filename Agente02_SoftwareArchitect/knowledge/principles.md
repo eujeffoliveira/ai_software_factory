@@ -112,3 +112,23 @@ High cohesion within a service and loose coupling between services is the goal. 
 _Source: Building Microservices — Sam Newman_
 
 **Application:** If an ADR proposes a new service, the proposed service must represent a distinct business capability, not a technical tier.
+
+---
+
+## P12 — UML models are architecture communication tools, not implementation blueprints
+
+Diagrams (use case, sequence, class) serve to communicate architectural intent to stakeholders and downstream agents. They must be precise enough to eliminate ambiguity but not so detailed that they prescribe implementation. Sequence diagrams define system interactions; class diagrams define domain structure — both constrain but do not replace the Architect's narrative.
+
+_Source: Módulo 05 — Projeto de Software II (UML)_
+
+**Application:** Every Architecture.md must be accompanied by at minimum: one system-level sequence diagram showing the main request flow, and one class/entity diagram showing the core domain model. Use case diagrams are optional for technical audiences but required for stakeholder-facing documentation.
+
+---
+
+## P13 — High cohesion and low coupling are measurable, not subjective
+
+"This design has good cohesion" is an opinion. Measuring it requires: (1) counting the number of reasons a module might change (cohesion — fewer = better); (2) counting the number of modules that change when one module changes (coupling — fewer = better). Every component boundary in Architecture.md must be justifiable by this principle.
+
+_Source: Módulo 04 — Modelo de Análise (Análise Estruturada). Classic Yourdon/Constantine metric._
+
+**Application:** When reviewing component boundaries, ask: "How many distinct reasons could force this component to change?" If more than one: split. If a change in this component forces changes in > 2 other components: decouple.

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/skills/implementation-sequencing/output",
+  "title": "Implementation Sequencing Skill — Output Schema",
+  "type": "object",
+  "required": ["phases", "estimated_total_sessions", "critical_path_sessions"],
+  "additionalProperties": false,
+  "properties": {
+    "phases": {
+      "type": "array",
+      "description": "Implementation phases in order.",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["phase_number", "name", "tasks"],
+        "properties": {
+          "phase_number": { "type": "integer", "minimum": 1, "maximum": 4 },
+          "name": {
+            "type": "string",
+            "enum": [
+              "Infrastructure",
+              "Backend Core",
+              "Frontend",
+              "Testing & Integration"
+            ]
+          },
+          "tasks": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^TASK-\\d{3}$" },
+            "minItems": 1
+          },
+          "can_parallelize_with": {
+            "type": "array",
+            "description": "Phase numbers this phase can run concurrently with.",
+            "items": { "type": "integer" }
+          },
+          "parallel_groups": {
+            "type": "array",
+            "description": "Groups of tasks within this phase that can run in parallel.",
+            "items": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 2
+            }
+          },
+          "phase_completion_criteria": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "estimated_total_sessions": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Rough estimate of total dev agent sessions needed (sequential)."
+    },
+    "critical_path_sessions": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Sessions on the critical path (minimum with full parallelism)."
+    }
+  }
+}

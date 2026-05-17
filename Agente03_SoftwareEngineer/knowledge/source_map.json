@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente03_SoftwareEngineer",
+  "version": "1.0.0",
+  "description": "Maps build-time source documents to the distilled artifacts they produced for Agente03.",
+  "generated_at": "2026-05-17",
+
+  "sources": [
+    {
+      "source_id": "pragmatic_programmer",
+      "source_title": "The Pragmatic Programmer",
+      "source_authors": ["Andrew Hunt", "David Thomas"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/The_Pragmatic_Programmer.pdf",
+      "key_concepts_extracted": [
+        "DRY — Don't Repeat Yourself",
+        "Orthogonality and single responsibility",
+        "Tracer bullets — thin vertical slices",
+        "Context and cognitive load management",
+        "Naming as a design quality signal"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md#P1",
+        "knowledge/principles.md#P2",
+        "knowledge/principles.md#P7",
+        "knowledge/heuristics.md#H1",
+        "knowledge/heuristics.md#H7",
+        "knowledge/heuristics.md#H9",
+        "knowledge/knowledge_cards.md#Card001",
+        "knowledge/knowledge_cards.md#Card003",
+        "knowledge/decision_rules.md#DR011"
+      ],
+      "runtime_accessible": false,
+      "note": "Raw source is in lib/ (gitignored). Only distilled artifacts above are accessible at runtime."
+    },
+    {
+      "source_id": "code_complete",
+      "source_title": "Code Complete",
+      "source_authors": ["Steve McConnell"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/Code_Complete.pdf",
+      "key_concepts_extracted": [
+        "Construction planning — design before code",
+        "Requirements traceability",
+        "Cognitive load and context management",
+        "Module cohesion and file-level responsibility",
+        "Interface design as construction specification",
+        "Estimation and sizing techniques"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md#P2",
+        "knowledge/principles.md#P4",
+        "knowledge/heuristics.md#H2",
+        "knowledge/heuristics.md#H6",
+        "knowledge/heuristics.md#H8",
+        "knowledge/knowledge_cards.md#Card003",
+        "knowledge/knowledge_cards.md#Card006"
+      ],
+      "runtime_accessible": false,
+      "note": "Raw source is in lib/ (gitignored). Only distilled artifacts above are accessible at runtime."
+    },
+    {
+      "source_id": "design_patterns_gof",
+      "source_title": "Design Patterns — Elements of Reusable Object-Oriented Software",
+      "source_authors": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/Design_Patterns_GoF.pdf",
+      "key_concepts_extracted": [
+        "Pattern infrastructure separation from pattern use",
+        "Construction order in pattern-based systems",
+        "Repository, Factory, Strategy, Observer patterns applied to task decomposition"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md#P5",
+        "knowledge/heuristics.md#H3",
+        "knowledge/knowledge_cards.md#Card002"
+      ],
+      "runtime_accessible": false,
+      "note": "Raw source is in lib/ (gitignored). Only distilled artifacts above are accessible at runtime."
+    },
+    {
+      "source_id": "enterprise_integration_patterns",
+      "source_title": "Enterprise Integration Patterns",
+      "source_authors": ["Gregor Hohpe", "Bobby Woolf"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/Enterprise_Integration_Patterns.pdf",
+      "key_concepts_extracted": [
+        "Message contracts and explicit coupling",
+        "Integration points as failure loci",
+        "Idempotent receiver pattern",
+        "Content-based routing"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md#P3",
+        "knowledge/heuristics.md#H4",
+        "knowledge/knowledge_cards.md#Card007"
+      ],
+      "runtime_accessible": false,
+      "note": "Raw source is in lib/ (gitignored). Only distilled artifacts above are accessible at runtime."
+    },
+    {
+      "source_id": "system_design_interview",
+      "source_title": "System Design Interview",
+      "source_authors": ["Alex Xu"],
+      "source_type": "book",
+      "source_path": "lib/SoftwareEngineer/System_Design_Interview.pdf",
+      "key_concepts_extracted": [
+        "Planning layer as architecture enforcement mechanism",
+        "Critical path analysis and scheduling",
+        "Parallelism in system planning",
+        "Delivery time estimation"
+      ],
+      "derived_artifacts": [
+        "knowledge/principles.md#P8",
+        "knowledge/heuristics.md#H5",
+        "knowledge/heuristics.md#H10",
+        "knowledge/knowledge_cards.md#Card004",
+        "knowledge/knowledge_cards.md#Card005"
+      ],
+      "runtime_accessible": false,
+      "note": "Raw source is in lib/ (gitignored). Only distilled artifacts above are accessible at runtime."
+    },
+    {
+      "source_id": "reference_architecture_internal",
+      "source_title": "Reference Architecture v1.1.1 (Golden Path)",
+      "source_authors": ["AI Software Factory — internal document"],
+      "source_type": "internal_doc",
+      "source_path": "context/reference_architecture_generico.md",
+      "key_concepts_extracted": [
+        "Golden Path mandatory tech stack",
+        "prisma migrate deploy rule (never prisma db push)",
+        "guardCron() first-call rule",
+        "Zod at all system boundaries",
+        "lib/env.ts for all env vars",
+        "proxy.ts never middleware.ts",
+        "Server Components before Server Actions before SWR",
+        "audit_log and sync_log structured JSON",
+        "Vitest for unit/integration, Playwright for E2E",
+        "NextAuth v5 with Google OAuth"
+      ],
+      "derived_artifacts": [
+        "context_view.md",
+        "knowledge/decision_rules.md#DR007",
+        "knowledge/decision_rules.md#DR008",
+        "knowledge/decision_rules.md#DR009",
+        "knowledge/decision_rules.md#DR012",
+        "knowledge/decision_rules.md#DR013",
+        "knowledge/decision_rules.md#DR014",
+        "knowledge/knowledge_cards.md#Card008",
+        "knowledge/knowledge_cards.md#Card009",
+        "knowledge/knowledge_cards.md#Card010",
+        "checklists/security_requirements_checklist.md",
+        "checklists/test_requirements_checklist.md",
+        "templates/"
+      ],
+      "runtime_accessible": false,
+      "note": "Context file is build-time only. All content distilled into the artifacts listed above."
+    },
+    {
+      "source_id": "operational_manifesto",
+      "source_title": "Operational Manifesto — integrantes.md",
+      "source_authors": ["AI Software Factory — internal document"],
+      "source_type": "internal_doc",
+      "source_path": "context/integrantes.md",
+      "key_concepts_extracted": [
+        "Agent roles, responsibilities, and anti-responsibilities",
+        "Gate definitions and status codes",
+        "Handoff chain and pipeline structure",
+        "Definition of Ready and Definition of Done",
+        "Escalation policy",
+        "Human interaction rules"
+      ],
+      "derived_artifacts": [
+        "prompt.md",
+        "agent_config.json",
+        "skills_manifest.md",
+        "quality_gate.md",
+        "handoff_schema.json",
+        "failure_modes.md"
+      ],
+      "runtime_accessible": false,
+      "note": "Context file is build-time only. All content distilled into the artifacts listed above."
+    },
+    {
+      "source_title": "Módulo 04 — Projeto de Software I (Pós-graduação Engenharia de Software)",
+      "source_type": "course_material",
+      "source_path": "lib/SoftwareEngineer/Módulo 04 -  Projeto de Software I/",
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Course material on structured analysis and OO analysis — cohesion/coupling metrics applied to task-level planning. Distilled into knowledge patch 2026-05-17.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P10 — Cohesion at task level)",
+        "knowledge/heuristics.md (H11 — class diagram to tasks)",
+        "knowledge/decision_rules.md (DR015, DR018)",
+        "knowledge/knowledge_cards.md (Card 012 — Cohesion/Coupling)"
+      ]
+    },
+    {
+      "source_title": "Módulo 05 — Projeto de Software II (Pós-graduação Engenharia de Software)",
+      "source_type": "course_material",
+      "source_path": "lib/SoftwareEngineer/Módulo 05 - Projeto de Software II/",
+      "usage": "build_time_distillation_only",
+      "status": "PROCESSED",
+      "note": "Course material on UML (use case, sequence, class diagrams) — applied as a systematic method for deriving Execution_Plan.json from Architecture.md. Distilled into knowledge patch 2026-05-17.",
+      "derived_artifacts": [
+        "knowledge/principles.md (P9 — Diagrams as authoritative task source)",
+        "knowledge/heuristics.md (H12 — sequence diagram order, H13 — actor-based tasks)",
+        "knowledge/decision_rules.md (DR016, DR017)",
+        "knowledge/knowledge_cards.md (Card 011 — Extracting tasks from diagrams)"
+      ]
+    }
+  ],
+
+  "runtime_access_policy": {
+    "raw_sources_allowed": false,
+    "pdf_access_allowed": false,
+    "bibliography_folder_allowed": false,
+    "context_folder_allowed": false,
+    "local_distilled_artifacts_allowed": true,
+    "allowed_runtime_paths": [
+      "Agente03_SoftwareEngineer/knowledge/",
+      "Agente03_SoftwareEngineer/context_view.md",
+      "Agente03_SoftwareEngineer/schemas/",
+      "Agente03_SoftwareEngineer/templates/",
+      "Agente03_SoftwareEngineer/checklists/",
+      "Agente03_SoftwareEngineer/skills/"
+    ]
+  }
+}

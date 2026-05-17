@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/agente03/schemas/dependency-graph",
+  "title": "Dependency Graph Schema",
+  "description": "Validates the dependency graph structure for an execution plan.",
+  "type": "object",
+  "required": [
+    "graph_id",
+    "project",
+    "nodes",
+    "edges",
+    "has_cycles",
+    "topological_order",
+    "critical_path"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "graph_id": {
+      "type": "string",
+      "description": "Unique identifier for this dependency graph.",
+      "pattern": "^graph-[a-z0-9\\-]+$"
+    },
+    "project": {
+      "type": "string",
+      "description": "Project name this graph belongs to."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of graph generation."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "All task nodes in the graph.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "title", "type", "complexity", "layer"],
+        "additionalProperties": false,
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^TASK-\\d{3}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["backend", "frontend", "database", "infrastructure", "testing", "security", "config"]
+          },
+          "complexity": {
+            "type": "string",
+            "enum": ["S", "M", "L", "XL"]
+          },
+          "layer": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "description": "Directed edges representing dependencies. Edge (A→B) means B depends on A.",
+      "items": {
+        "type": "object",
+        "required": ["from_task", "to_task", "dependency_type"],
+        "additionalProperties": false,
+        "properties": {
+          "from_task": {
+            "type": "string",
+            "pattern": "^TASK-\\d{3}$",
+            "description": "The task that must complete first (the dependency)."
+          },
+          "to_task": {
+            "type": "string",
+            "pattern": "^TASK-\\d{3}$",
+            "description": "The task that depends on from_task."
+          },
+          "dependency_type": {
+            "type": "string",
+            "description": "Nature of the dependency relationship.",
+            "enum": ["sequential", "data", "file"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional human-readable explanation of why this dependency exists."
+          }
+        }
+      }
+    },
+    "parallel_tracks": {
+      "type": "array",
+      "description": "Groups of task IDs that can execute concurrently (no shared transitive dependencies).",
+      "items": {
+        "type": "array",
+        "description": "One parallel track.",
+        "items": {
+          "type": "string",
+          "pattern": "^TASK-\\d{3}$"
+        },
+        "minItems": 2
+      }
+    },
+    "critical_path": {
+      "type": "array",
+      "description": "Ordered list of task IDs forming the critical path (longest chain by complexity weight).",
+      "items": {
+        "type": "string",
+        "pattern": "^TASK-\\d{3}$"
+      },
+      "minItems": 1
+    },
+    "has_cycles": {
+      "type": "boolean",
+      "description": "Whether the graph contains any cycles. Must be false for a valid plan.",
+      "const": false
+    },
+    "topological_order": {
+      "type": "array",
+      "description": "Full topological sort of all task IDs. Implementation must follow this order.",
+      "items": {
+        "type": "string",
+        "pattern": "^TASK-\\d{3}$"
+      },
+      "minItems": 1
+    },
+    "mermaid_source": {
+      "type": "string",
+      "description": "Mermaid flowchart source code for visual representation of the dependency graph."
+    }
+  }
+}
