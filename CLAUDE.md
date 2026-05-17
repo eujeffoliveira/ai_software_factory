@@ -79,9 +79,28 @@ When building a new agent, produce build reports in `build/`:
 | `context/reference_architecture_generico.md` | Golden Model: mandatory tech stack and forbidden patterns |
 | `context/manual_arquitetura_componentes_generico.md` | Artifact structure, handoff contracts, gate definitions |
 | `context/prompts/prompt_*_generico.md` | Ready-to-use system prompts for each agent |
+| `context/client_profile.md` | Client instantiation profile — filled by whoever forks the repo |
+| `context/prompts/instantiation_prompt.md` | Instantiation prompt — run after cloning to adapt agents to a client |
 | `lib/STATUS_DOWNLOADS.md` | Status index of all reference books per agent |
 
 Never modify `context/` files unless explicitly asked to update the master definitions.
+Never modify `context/client_profile.md` on behalf of a client without explicit instruction — it is their source of truth.
+
+---
+
+## Client instantiation workflow
+
+This repo is designed to be forked and customized for any organization. The workflow is:
+
+1. **Fork** this repo on GitHub (keeps the generic version intact as upstream)
+2. **Clone** the fork locally
+3. **Fill in** `context/client_profile.md` — organization identity, stack overrides, integrations, regulatory context, which agents to activate
+4. **Run** `context/prompts/instantiation_prompt.md` in Claude Code — it reads the profile and patches all active agent artifacts
+5. **Commit** the result — the fork now contains the client-specific version of the factory
+
+The instantiation prompt is idempotent: re-run it whenever the client profile changes (new integration, stack update, regulatory change). It only touches the fields mapped to the profile — structural artifacts, gates, schemas, and checklists are never modified.
+
+`context/*_raiz.md` files (gitignored) are a pre-existing example of a completed instantiation for a specific organization and were the source material used to design `client_profile.md`. They are not templates and should not be referenced during new instantiations.
 
 ---
 
@@ -153,3 +172,5 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 - Do not introduce references to specific organizations, client names, or domain-specific terminology in `_generico` files
 - `lib/` is gitignored — do not attempt to commit book files
 - When updating `lib/STATUS_DOWNLOADS.md`, follow the existing table format: ✅ found, ⚠️ partial, ❌ not found, 📂 already in another agent's folder
+- `context/client_profile.md` is a template in the generic repo — do not fill it in unless you are explicitly performing a client instantiation
+- After running `instantiation_prompt.md`, verify `build/instantiation_report.md` before reporting the task as complete

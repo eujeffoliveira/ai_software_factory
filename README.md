@@ -14,6 +14,7 @@ Uma fábrica de software orientada a agentes de IA especializados, onde cada eta
 - [Artefatos e Contratos](#artefatos-e-contratos)
 - [Golden Model — Stack Técnica Obrigatória](#golden-model--stack-técnica-obrigatória)
 - [Estrutura de Pastas](#estrutura-de-pastas)
+- [Como instanciar para uma organização](#como-instanciar-para-uma-organização)
 - [Como criar um agente](#como-criar-um-agente)
 - [Como instalar e usar um agente](#como-instalar-e-usar-um-agente)
 - [Knowledge Distillation — Regra de Isolamento](#knowledge-distillation--regra-de-isolamento)
@@ -234,8 +235,10 @@ ai_software_factory/
 │   ├── integrantes.md                # Manifesto operacional dos agentes (2.300 linhas)
 │   ├── manual_arquitetura_componentes_generico.md
 │   ├── reference_architecture_generico.md  # Golden Model técnico
+│   ├── client_profile.md             # ← PREENCHA ISTO ao instanciar para uma organização
 │   ├── estrutura_projeto.tree
-│   └── prompts/                      # 11 prompts prontos para instalação
+│   └── prompts/                      # 11 prompts de agentes + prompt de instanciação
+│       ├── instantiation_prompt.md   # ← EXECUTE ISTO após preencher client_profile.md
 │       ├── prompt_claude_code_agente00_techlead_generico.md
 │       ├── prompt_claude_code_agente01_productowner_generico.md
 │       └── ... (um arquivo por agente)
@@ -262,6 +265,8 @@ ai_software_factory/
 │                                     # Data Mesh · Designing Event-Driven Systems
 │
 ├── build/                            # Relatórios de build e validação
+│   ├── instantiation_plan.md         # Gerado pelo prompt de instanciação (o que será alterado)
+│   ├── instantiation_report.md       # Gerado pelo prompt de instanciação (o que foi alterado)
 │   ├── Agente00_TechLead_build_report.md
 │   ├── Agente00_TechLead_generated_files_index.md
 │   ├── Agente00_TechLead_runtime_readiness_checklist.md
@@ -556,15 +561,55 @@ context/prompts/
 
 ---
 
-## Edição Genérica vs. Específica
+## Como instanciar para uma organização
 
-Este repositório mantém a **edição genérica (white-label)** dos agentes, sem referências a organizações ou domínios específicos.
+Este repositório é **white-label**: não contém referências a organizações, clientes ou domínios específicos. Para usar a fábrica em uma organização real, siga o fluxo abaixo.
 
-- Todos os arquivos com sufixo `_generico` são white-label
-- Nenhum nome de empresa, produto ou domínio específico aparece nos artefatos
-- O Golden Model (`reference_architecture_generico.md`) define a stack técnica padrão para projetos web modernos
+### Fluxo completo
 
-Para criar uma edição específica de um cliente ou projeto, substitua:
-- `_generico` → `_nomecliente`
-- Stack técnica no `reference_architecture_generico.md` conforme necessário
-- `context/integrantes.md` → versão com nomes de personas reais (opcional)
+```
+1. Fork  →  2. Clone  →  3. Preencher client_profile.md  →  4. Rodar instantiation_prompt.md  →  5. Commit
+```
+
+**1. Fork**
+
+Faça fork deste repositório no GitHub. O fork é o repositório da organização — o upstream (este repo) continua genérico e pode receber atualizações.
+
+**2. Clone**
+
+```bash
+git clone https://github.com/<sua-org>/ai_software_factory.git
+cd ai_software_factory
+```
+
+**3. Preencher `context/client_profile.md`**
+
+Este é o único arquivo que você precisa editar. Ele define:
+
+- Identidade da organização (nome, tipo, idioma)
+- Design system (cores, dark mode, component library)
+- Desvios do Golden Path (auth provider, database host, deploy platform, etc.)
+- Integrações externas (ERP, CRM, LMS, etc.)
+- Contexto regulatório (LGPD, outros frameworks)
+- Quais dos 11 agentes ativar
+
+**4. Executar `context/prompts/instantiation_prompt.md`**
+
+Abra o Claude Code na raiz do repositório e cole/execute o conteúdo de `instantiation_prompt.md`. O prompt irá:
+
+- Ler e validar o `client_profile.md`
+- Atualizar `agent_config.json`, `context_view.md` e `prompt.md` de cada agente ativo
+- Injetar tokens de design, integrações e regras regulatórias nos `knowledge/` relevantes
+- Gerar `build/instantiation_plan.md` e `build/instantiation_report.md`
+
+**5. Commit**
+
+O fork agora contém a versão instanciada da fábrica. Todos os agentes ativos estão adaptados ao contexto da organização.
+
+### Atualizações futuras
+
+O prompt de instanciação é **idempotente** — pode ser executado novamente sempre que o `client_profile.md` for atualizado (nova integração, mudança de stack, novo framework regulatório). Ele sobrescreve apenas os campos mapeados ao perfil; estrutura, gates, schemas e checklists nunca são modificados.
+
+### Sobre os arquivos `_generico`
+
+Todos os arquivos com sufixo `_generico` são white-label e devem permanecer sem referências a organizações específicas no repositório upstream. Eles são as fontes de build — o prompt de instanciação os lê mas não os modifica.
