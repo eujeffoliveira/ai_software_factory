@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_risk.schema.json",
+  "title": "Product Risk",
+  "description": "Schema for a product risk (PRISK-NNN) documented by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["id", "description", "impact", "likelihood", "mitigation"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^PRISK-[0-9]{3}$",
+      "description": "Unique product risk ID: PRISK-NNN",
+      "examples": ["PRISK-001", "PRISK-042"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["scope", "stakeholder", "compliance", "dependency", "user_adoption", "data", "technical_feasibility", "timeline"],
+      "description": "Risk category"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 30,
+      "description": "What could go wrong — specific, not vague"
+    },
+    "trigger": {
+      "type": "string",
+      "description": "Condition that would cause this risk to materialize"
+    },
+    "impact": {
+      "type": "string",
+      "enum": ["HIGH", "MEDIUM", "LOW"],
+      "description": "Severity of impact if the risk materializes"
+    },
+    "impact_description": {
+      "type": "string",
+      "description": "What specifically happens if this risk materializes"
+    },
+    "likelihood": {
+      "type": "string",
+      "enum": ["HIGH", "MEDIUM", "LOW"],
+      "description": "Probability of the risk materializing"
+    },
+    "risk_score": {
+      "type": "string",
+      "enum": ["HIGH", "MEDIUM", "LOW"],
+      "description": "Overall risk score derived from impact × likelihood"
+    },
+    "mitigation": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Action to reduce likelihood or impact of the risk"
+    },
+    "contingency": {
+      "type": "string",
+      "description": "What to do if the risk materializes despite mitigation"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Who is responsible for monitoring and mitigating this risk"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "MITIGATED", "ACCEPTED", "ESCALATED", "CLOSED"],
+      "default": "OPEN"
+    },
+    "escalate_to_tech_lead": {
+      "type": "boolean",
+      "description": "True if this risk requires Tech Lead awareness or action"
+    }
+  },
+  "additionalProperties": false
+}

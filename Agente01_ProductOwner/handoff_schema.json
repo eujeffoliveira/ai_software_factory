@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Agente01_ProductOwner/handoff_schema.json",
+  "title": "Product Owner Handoff Package",
+  "description": "Schema for the handoff package submitted by the Product Owner to Gate 1 — PRD Approval.",
+  "type": "object",
+  "required": [
+    "agent_id",
+    "artifact_produced",
+    "prd_version",
+    "iteration_number",
+    "summary",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "validation_checklist"
+  ],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "const": "Agente01_ProductOwner",
+      "description": "Must always be Agente01_ProductOwner"
+    },
+    "artifact_produced": {
+      "type": "string",
+      "description": "Primary artifact being handed off",
+      "example": "PRD.md v1.0 + Requirements Package"
+    },
+    "prd_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Version of the PRD being submitted (e.g. '1.0', '1.1', '2.0')"
+    },
+    "iteration_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How many times this PRD has been submitted (1 = first submission)"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["description", "story_count", "epic_count", "nfr_count", "open_question_count", "business_rule_count", "product_risk_count"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Objective narrative of what was elicited and produced"
+        },
+        "story_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of user stories in PRD"
+        },
+        "epic_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of epics in PRD"
+        },
+        "nfr_count": {
+          "type": "integer",
+          "minimum": 10,
+          "description": "Total number of NFR entries (minimum 10 — one per category)"
+        },
+        "open_question_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "business_rule_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "product_risk_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumptions made during elicitation that must be confirmed or refuted by the Architect",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "impact_if_wrong"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ASSM-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "impact_if_wrong": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Remaining open questions at handoff time. No BLOCKING items should remain unresolved.",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "criticality", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^OQ-[0-9]{3}$"
+          },
+          "question": {
+            "type": "string"
+          },
+          "criticality": {
+            "type": "string",
+            "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["OPEN", "ESCALATED", "RESOLVED", "DEFERRED"]
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Product risks identified during elicitation",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "impact", "mitigation_status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^PRISK-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM", "LOW"]
+          },
+          "mitigation_status": {
+            "type": "string",
+            "enum": ["DOCUMENTED", "PARTIAL", "NONE"]
+          }
+        }
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "const": "Agente02_SoftwareArchitect",
+      "description": "Always routes to Software Architect after Gate 1 APPROVED"
+    },
+    "validation_checklist": {
+      "type": "object",
+      "description": "Self-validation results before submission",
+      "required": [
+        "prd_complete",
+        "all_stories_invest_compliant",
+        "all_criteria_bdd_format",
+        "nfrs_cover_10_categories",
+        "scope_boundary_explicit",
+        "business_rules_attributed",
+        "no_blocking_oqs_unresolved",
+        "sensitive_data_flagged_in_nfr",
+        "handoff_fields_complete"
+      ],
+      "properties": {
+        "prd_complete": { "type": "boolean" },
+        "all_stories_invest_compliant": { "type": "boolean" },
+        "all_criteria_bdd_format": { "type": "boolean" },
+        "nfrs_cover_10_categories": { "type": "boolean" },
+        "scope_boundary_explicit": { "type": "boolean" },
+        "business_rules_attributed": { "type": "boolean" },
+        "no_blocking_oqs_unresolved": { "type": "boolean" },
+        "sensitive_data_flagged_in_nfr": { "type": "boolean" },
+        "handoff_fields_complete": { "type": "boolean" }
+      }
+    },
+    "revision_notes": {
+      "type": "string",
+      "description": "Notes on what changed since last submission (only required for iteration_number > 1)"
+    }
+  },
+  "if": {
+    "properties": {
+      "iteration_number": { "minimum": 2 }
+    }
+  },
+  "then": {
+    "required": ["revision_notes"]
+  }
+}

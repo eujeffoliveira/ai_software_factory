@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UserStoryMappingOutput",
+  "description": "Output of the user-story-mapping-skill",
+  "type": "object",
+  "required": ["artifact_path", "stories", "mvp_story_ids", "invest_validation_passed"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "description": "Path where User_Story_Map.md was written",
+      "pattern": ".*User_Story_Map\\.md$"
+    },
+    "stories": {
+      "type": "array",
+      "description": "All user stories in the map",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "persona", "activity", "story", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^US-[0-9]{3}$"
+          },
+          "persona": { "type": "string" },
+          "activity": { "type": "string" },
+          "story": {
+            "type": "string",
+            "description": "Full story text in format: As a [user], I want [action], so that [benefit]",
+            "pattern": "^As a .+, I want .+, so that .+$"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["MUST", "SHOULD", "COULD"]
+          },
+          "invest_pass": {
+            "type": "boolean",
+            "description": "Whether this story passed INVEST validation"
+          }
+        }
+      }
+    },
+    "mvp_story_ids": {
+      "type": "array",
+      "description": "List of story IDs that constitute the MVP (all MUST-priority stories)",
+      "items": {
+        "type": "string",
+        "pattern": "^US-[0-9]{3}$"
+      }
+    },
+    "invest_validation_passed": {
+      "type": "boolean",
+      "description": "True if all stories passed INVEST validation"
+    },
+    "invest_failures": {
+      "type": "array",
+      "description": "Stories that failed INVEST validation and the dimension that failed",
+      "items": {
+        "type": "object",
+        "properties": {
+          "story_id": { "type": "string" },
+          "failed_dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["Independent", "Negotiable", "Valuable", "Estimable", "Small", "Testable"]
+            }
+          }
+        }
+      }
+    },
+    "features_without_stories": {
+      "type": "array",
+      "description": "Features from input that have no corresponding user story (coverage gap)",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "interview_question.schema.json",
+  "title": "Requirements Interview Question",
+  "description": "Schema for a structured interview question used during requirements elicitation",
+  "type": "object",
+  "required": ["id", "question", "category", "expected_answer_type", "related_to"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^Q-[0-9]{3}$",
+      "description": "Unique question ID: Q-NNN",
+      "examples": ["Q-001", "Q-042"]
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Interview round number (1 = initial, 2+ = follow-up)"
+    },
+    "question": {
+      "type": "string",
+      "minLength": 20,
+      "description": "The question text — precise, open-ended, non-leading"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "problem_understanding",
+        "target_users",
+        "success_criteria",
+        "scope",
+        "constraints",
+        "priority",
+        "business_rules",
+        "data",
+        "integration",
+        "compliance",
+        "edge_cases"
+      ],
+      "description": "Category of information this question elicits"
+    },
+    "why_it_matters": {
+      "type": "string",
+      "description": "Brief rationale: what PRD section or decision depends on this answer"
+    },
+    "expected_answer_type": {
+      "type": "string",
+      "enum": ["free_text", "yes_no", "choice_from_options", "numeric", "list", "confirmation"],
+      "description": "Format of the expected response"
+    },
+    "options": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "For choice_from_options: list the options"
+    },
+    "related_to": {
+      "type": "string",
+      "description": "PRD section, OQ-NNN, or FR-NNN this question relates to"
+    },
+    "answer": {
+      "type": "string",
+      "description": "Stakeholder's answer — populated after interview"
+    },
+    "answer_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "follow_up_required": {
+      "type": "boolean",
+      "description": "True if the answer raised further questions"
+    },
+    "follow_up_question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^Q-[0-9]{3}$"
+      },
+      "description": "IDs of follow-up questions generated from this answer"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PRDGenerationOutput",
+  "description": "Output of the prd-generation-skill",
+  "type": "object",
+  "required": ["prd_path", "validation_result", "section_status"],
+  "properties": {
+    "prd_path": {
+      "type": "string",
+      "description": "Path where PRD.md was written",
+      "pattern": ".*PRD\\.md$"
+    },
+    "prd_version": {
+      "type": "string",
+      "description": "Version of the PRD produced"
+    },
+    "validation_result": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "PASS_WITH_CONDITIONS"],
+      "description": "Result of running prd_quality_checklist.md against the produced PRD"
+    },
+    "section_status": {
+      "type": "object",
+      "description": "Status of each of the 15 required PRD sections",
+      "properties": {
+        "summary": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "business_problem": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "objectives": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "non_objectives": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "target_users": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "user_stories": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "acceptance_criteria": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "functional_requirements": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "non_functional_requirements": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "business_rules": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "data_requirements": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "product_risks": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "assumptions": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "open_questions": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] },
+        "handoff_status": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE", "MISSING"] }
+      }
+    },
+    "issues_found": {
+      "type": "array",
+      "description": "List of quality issues found during validation. Empty if validation_result is PASS.",
+      "items": {
+        "type": "object",
+        "required": ["section", "issue", "severity"],
+        "properties": {
+          "section": { "type": "string" },
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["BLOCKING", "MAJOR", "MINOR"] }
+        }
+      }
+    },
+    "technology_contamination_detected": {
+      "type": "boolean",
+      "description": "True if any technology decisions were found in the PRD content and removed",
+      "default": false
+    }
+  }
+}

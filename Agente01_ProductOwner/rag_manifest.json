@@ -1,0 +1,101 @@
+{
+  "agent_id": "Agente01_ProductOwner",
+  "version": "1.0.0",
+  "description": "RAG manifest for Product Owner — defines which knowledge sources are queryable at runtime and which are blocked.",
+  "runtime_policy": "local-only",
+  "note": "Raw PDFs, lib/, context/, and global documents are NEVER queried at runtime. All distilled knowledge is pre-built into knowledge/ and examples/.",
+  "allowed_sources": [
+    {
+      "source_id": "po_knowledge",
+      "path": "Agente01_ProductOwner/knowledge/",
+      "description": "Distilled build-time knowledge: principles, heuristics, decision rules, knowledge cards",
+      "indexed": true,
+      "access": "runtime-allowed"
+    },
+    {
+      "source_id": "po_examples",
+      "path": "Agente01_ProductOwner/examples/",
+      "description": "Good/bad examples of PRD, user stories, acceptance criteria, open questions, handoff",
+      "indexed": true,
+      "access": "runtime-allowed"
+    },
+    {
+      "source_id": "po_schemas",
+      "path": "Agente01_ProductOwner/schemas/",
+      "description": "JSON schemas for PRD, user story, acceptance criteria, OQ, BR, NFR, risk, scope",
+      "indexed": true,
+      "access": "runtime-allowed"
+    },
+    {
+      "source_id": "po_templates",
+      "path": "Agente01_ProductOwner/templates/",
+      "description": "Markdown templates for all PO deliverables",
+      "indexed": true,
+      "access": "runtime-allowed"
+    },
+    {
+      "source_id": "po_checklists",
+      "path": "Agente01_ProductOwner/checklists/",
+      "description": "Quality checklists for PRD, INVEST, BDD, NFR, scope, OQ, BR, data, Gate 1",
+      "indexed": true,
+      "access": "runtime-allowed"
+    },
+    {
+      "source_id": "po_skills",
+      "path": "Agente01_ProductOwner/skills/",
+      "description": "Skill definitions for all PO operations",
+      "indexed": true,
+      "access": "runtime-allowed"
+    },
+    {
+      "source_id": "project_inputs",
+      "path": "dynamic",
+      "description": "Briefings, stakeholder answers, previous PRD iterations provided as input",
+      "indexed": false,
+      "access": "runtime-allowed"
+    }
+  ],
+  "blocked_sources": [
+    {
+      "source_id": "raw_pdfs",
+      "path": "lib/ProductOwner/*.pdf",
+      "reason": "Build-time only. Distilled into knowledge/ already.",
+      "access": "blocked"
+    },
+    {
+      "source_id": "global_context",
+      "path": "context/",
+      "reason": "Global context is not a valid PO runtime source.",
+      "access": "blocked"
+    },
+    {
+      "source_id": "raw_bibliography",
+      "path": "lib/",
+      "reason": "Bibliography is build-time input only. Runtime uses knowledge/ distillation.",
+      "access": "blocked"
+    }
+  ],
+  "retrieval_strategy": {
+    "primary": "keyword + semantic search over knowledge/ and examples/",
+    "fallback": "structured lookup in schemas/ and checklists/",
+    "forbidden": "direct PDF or book text retrieval at runtime"
+  },
+  "knowledge_index": [
+    {
+      "file": "knowledge/principles.md",
+      "topics": ["INVEST", "BDD", "scope", "NFR", "open questions", "business rules", "tech neutrality", "runtime isolation"]
+    },
+    {
+      "file": "knowledge/heuristics.md",
+      "topics": ["elicitation", "ambiguity", "scope creep", "story splitting", "sensitive data", "confirmation"]
+    },
+    {
+      "file": "knowledge/decision_rules.md",
+      "topics": ["elicitation decisions", "PRD decisions", "user story decisions", "NFR decisions", "scope decisions", "OQ decisions", "BR decisions", "risk decisions", "handoff decisions"]
+    },
+    {
+      "file": "knowledge/knowledge_cards.md",
+      "topics": ["user story", "BDD", "PRD structure", "Gate 1", "NFR categories", "open question", "scope boundary", "business rule", "product risk", "requirements interview"]
+    }
+  ]
+}

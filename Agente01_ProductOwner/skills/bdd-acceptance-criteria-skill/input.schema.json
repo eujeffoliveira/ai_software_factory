@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BDDAcceptanceCriteriaInput",
+  "description": "Input for the bdd-acceptance-criteria-skill",
+  "type": "object",
+  "required": ["user_stories"],
+  "properties": {
+    "user_stories": {
+      "type": "array",
+      "description": "INVEST-validated user stories for which acceptance criteria will be written",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "story", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^US-[0-9]{3}$"
+          },
+          "story": {
+            "type": "string",
+            "description": "Full story text: As a [user], I want [action], so that [benefit]"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["MUST", "SHOULD", "COULD"]
+          }
+        }
+      }
+    },
+    "scenario_type": {
+      "type": "string",
+      "enum": ["all", "happy_path", "edge_case", "negative"],
+      "default": "all",
+      "description": "Which scenario types to generate. Default is all."
+    },
+    "business_rules": {
+      "type": "array",
+      "description": "Optional: confirmed business rules that constrain story behavior",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^BR-[0-9]{3}$" },
+          "description": { "type": "string" },
+          "applies_to": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^US-[0-9]{3}$" }
+          }
+        }
+      }
+    },
+    "nfr_metrics": {
+      "type": "array",
+      "description": "Optional: NFR metrics to embed in relevant acceptance criteria",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "metric": { "type": "string" },
+          "applies_to": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^US-[0-9]{3}$" }
+          }
+        }
+      }
+    }
+  }
+}

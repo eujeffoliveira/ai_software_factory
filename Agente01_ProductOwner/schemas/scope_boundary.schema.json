@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scope_boundary.schema.json",
+  "title": "Scope Boundary",
+  "description": "Schema for explicit scope boundaries defined by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["in_scope", "out_of_scope", "rationale_for_exclusions"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Version of the scope boundary document (matches PRD version)"
+    },
+    "in_scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^INSCOPE-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "Feature or capability explicitly included in this version"
+          },
+          "related_stories": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^US-[0-9]{3}$" }
+          }
+        }
+      }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^OUTSCOPE-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "Feature or capability explicitly excluded from this version"
+          },
+          "deferred_to": {
+            "type": "string",
+            "description": "Future version or backlog reference",
+            "examples": ["v2.0", "Backlog", "Phase 2"]
+          }
+        }
+      }
+    },
+    "rationale_for_exclusions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["out_of_scope_id", "rationale"],
+        "properties": {
+          "out_of_scope_id": {
+            "type": "string",
+            "pattern": "^OUTSCOPE-[0-9]{3}$"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Why this item was excluded: complexity, timeline, priority, dependencies"
+          }
+        }
+      }
+    },
+    "scope_change_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "change", "requested_by", "decision"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "change": { "type": "string" },
+          "requested_by": { "type": "string" },
+          "decision": {
+            "type": "string",
+            "enum": ["INCLUDED", "DEFERRED", "REJECTED"]
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

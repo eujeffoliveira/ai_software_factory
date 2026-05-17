@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NonFunctionalRequirementsInput",
+  "description": "Input for the non-functional-requirements-skill",
+  "type": "object",
+  "required": ["business_problem", "target_users", "scale_expectations"],
+  "properties": {
+    "business_problem": { "type": "string", "minLength": 20 },
+    "target_users": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["persona_name", "role_description"],
+        "properties": {
+          "persona_name": { "type": "string" },
+          "role_description": { "type": "string" }
+        }
+      }
+    },
+    "scale_expectations": {
+      "type": "object",
+      "required": ["concurrent_users", "records_per_month"],
+      "properties": {
+        "concurrent_users": {
+          "type": "integer",
+          "description": "Expected number of concurrent users at peak",
+          "minimum": 1
+        },
+        "records_per_month": {
+          "type": "integer",
+          "description": "Expected number of primary entity records created per month",
+          "minimum": 1
+        },
+        "growth_rate_annual": {
+          "type": "string",
+          "description": "Expected annual growth rate as a description (e.g., '2x in year 1')"
+        }
+      }
+    },
+    "compliance_context": {
+      "type": "object",
+      "description": "Known regulatory or compliance requirements",
+      "properties": {
+        "privacy_regulation": {
+          "type": "string",
+          "description": "Applicable privacy regulation (e.g., 'GDPR', 'LGPD', 'CCPA', 'None')"
+        },
+        "accessibility_standard": {
+          "type": "string",
+          "description": "Required accessibility standard (e.g., 'WCAG 2.1 AA', 'Section 508', 'None')",
+          "default": "WCAG 2.1 AA"
+        },
+        "data_retention_regulation": {
+          "type": "string",
+          "description": "Regulation driving data retention period, if any"
+        },
+        "industry_specific": {
+          "type": "string",
+          "description": "Industry-specific regulations (e.g., 'HIPAA', 'SOC2', 'None')"
+        }
+      }
+    },
+    "pii_fields": {
+      "type": "array",
+      "description": "List of PII fields identified in data requirements",
+      "items": { "type": "string" }
+    }
+  }
+}

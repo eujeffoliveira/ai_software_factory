@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProductRiskAnalysisOutput",
+  "description": "Output of the product-risk-analysis-skill",
+  "type": "object",
+  "required": ["artifact_path", "risks", "critical_count"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "pattern": ".*Product_Risks\\.md$"
+    },
+    "risks": {
+      "type": "array",
+      "description": "All identified product risks",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "category", "impact", "probability", "mitigation", "owner", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^PRISK-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Risk statement: what could go wrong, why, consequence"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["scope", "business", "user", "data", "regulatory", "integration"]
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM", "LOW"]
+          },
+          "probability": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM", "LOW"]
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Concrete mitigation strategy. HIGH-impact risks must have a specific, actionable mitigation.",
+            "minLength": 10
+          },
+          "contingency": {
+            "type": "string",
+            "description": "What to do if mitigation fails. Required for HIGH×HIGH risks."
+          },
+          "owner": {
+            "type": "string",
+            "description": "Role responsible for monitoring and executing mitigation"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Open", "Mitigated", "Accepted", "Closed"]
+          }
+        }
+      }
+    },
+    "critical_count": {
+      "type": "integer",
+      "description": "Number of HIGH×HIGH risks requiring priority attention",
+      "minimum": 0
+    },
+    "technical_risks_excluded": {
+      "type": "array",
+      "description": "Risk signals found that are technical implementation risks (not product risks) — noted for Architect briefing",
+      "items": {
+        "type": "object",
+        "properties": {
+          "signal": { "type": "string" },
+          "routing": { "type": "string", "default": "Route to Agente02_SoftwareArchitect" }
+        }
+      }
+    }
+  }
+}

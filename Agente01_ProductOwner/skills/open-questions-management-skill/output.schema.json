@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OpenQuestionsManagementOutput",
+  "description": "Output of the open-questions-management-skill",
+  "type": "object",
+  "required": ["artifact_path", "new_entries", "blocking_count"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "pattern": ".*Open_Questions\\.md$"
+    },
+    "new_entries": {
+      "type": "array",
+      "description": "New OQ entries added in this run",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "impact", "criticality", "owner", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^OQ-[0-9]{3}$"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Reformulated specific, answerable question"
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 10,
+            "description": "What artifact or decision is blocked"
+          },
+          "criticality": {
+            "type": "string",
+            "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW"]
+          },
+          "owner": {
+            "type": "string",
+            "description": "Stakeholder role who can answer"
+          },
+          "deadline": {
+            "type": "string",
+            "description": "ISO date string for deadline, or null for MEDIUM/LOW without deadline"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Open", "In Progress", "Resolved", "Deferred"],
+            "default": "Open"
+          }
+        }
+      }
+    },
+    "blocking_count": {
+      "type": "integer",
+      "description": "Number of BLOCKING questions in the register (including pre-existing)",
+      "minimum": 0
+    },
+    "escalation_required": {
+      "type": "boolean",
+      "description": "True if any new BLOCKING questions were created — these must be communicated to Tech Lead"
+    },
+    "duplicates_merged": {
+      "type": "array",
+      "description": "Items from input that were merged into existing OQ entries rather than creating new ones",
+      "items": {
+        "type": "object",
+        "properties": {
+          "raw_question": { "type": "string" },
+          "merged_into": { "type": "string" }
+        }
+      }
+    }
+  }
+}

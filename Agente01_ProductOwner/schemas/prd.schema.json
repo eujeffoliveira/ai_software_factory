@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prd.schema.json",
+  "title": "Product Requirements Document",
+  "description": "Schema for the canonical PRD artifact produced by Agente01_ProductOwner",
+  "type": "object",
+  "required": [
+    "document_id",
+    "version",
+    "status",
+    "summary",
+    "business_problem",
+    "objectives",
+    "non_objectives",
+    "target_users",
+    "user_stories",
+    "functional_requirements",
+    "non_functional_requirements",
+    "business_rules",
+    "data_requirements",
+    "product_risks",
+    "assumptions",
+    "open_questions"
+  ],
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "pattern": "^PRD-[0-9]{4}-[0-9]{3}$",
+      "description": "Unique document ID: PRD-YYYY-NNN",
+      "examples": ["PRD-2026-001"]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Version number in major.minor format",
+      "examples": ["1.0", "1.2"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "SUBMITTED", "APPROVED", "NEEDS_REVISION", "REJECTED"],
+      "description": "Current status of the PRD"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 100,
+      "description": "Executive summary: what product/feature is being built, for whom, and the core value proposition"
+    },
+    "business_problem": {
+      "type": "object",
+      "required": ["problem_statement", "current_state", "desired_state", "business_impact"],
+      "properties": {
+        "problem_statement": {
+          "type": "string",
+          "minLength": 50,
+          "description": "Clear statement of the problem being solved — NOT the solution"
+        },
+        "current_state": {
+          "type": "string",
+          "description": "How things work today without this product/feature"
+        },
+        "desired_state": {
+          "type": "string",
+          "description": "How things should work after the product/feature is built"
+        },
+        "business_impact": {
+          "type": "string",
+          "description": "Measurable business impact of solving this problem"
+        }
+      }
+    },
+    "objectives": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "success_criterion"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^OBJ-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "What we want to achieve"
+          },
+          "success_criterion": {
+            "type": "string",
+            "description": "Measurable criterion for success — must include a metric or threshold"
+          }
+        }
+      }
+    },
+    "non_objectives": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "description": "Explicit statement of what this product/feature does NOT aim to achieve"
+      }
+    },
+    "target_users": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "primary_goals"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^USR-[0-9]{3}$"
+          },
+          "name": {
+            "type": "string",
+            "description": "User type or persona name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Context: who they are, their role, their environment"
+          },
+          "primary_goals": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "pain_points": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "user_stories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "user_story.schema.json"
+      }
+    },
+    "functional_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "related_stories", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^FR-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "What the system must do — no technology specification"
+          },
+          "related_stories": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^US-[0-9]{3}$" }
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"]
+          }
+        }
+      }
+    },
+    "non_functional_requirements": {
+      "type": "object",
+      "required": [
+        "performance",
+        "security",
+        "availability",
+        "scalability",
+        "usability",
+        "maintainability",
+        "data_retention",
+        "compliance",
+        "accessibility",
+        "observability"
+      ],
+      "properties": {
+        "performance": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "security": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "availability": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "scalability": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "usability": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "maintainability": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "data_retention": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "compliance": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "accessibility": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        },
+        "observability": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "non_functional_requirement.schema.json" }
+        }
+      }
+    },
+    "business_rules": {
+      "type": "array",
+      "items": {
+        "$ref": "business_rule.schema.json"
+      }
+    },
+    "data_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entity", "description", "sensitivity"],
+        "properties": {
+          "entity": {
+            "type": "string",
+            "description": "Data entity name (e.g., User, Order, Report)"
+          },
+          "description": {
+            "type": "string",
+            "description": "What data is stored, how it's used"
+          },
+          "sensitivity": {
+            "type": "string",
+            "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "PERSONAL_DATA", "SENSITIVE_PERSONAL_DATA"],
+            "description": "Data sensitivity classification"
+          },
+          "retention_period": {
+            "type": "string",
+            "description": "How long this data is retained"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "product_risks": {
+      "type": "array",
+      "items": {
+        "$ref": "product_risk.schema.json"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ASSM-[0-9]{3}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "What is assumed to be true for this PRD to be valid"
+          },
+          "if_wrong": {
+            "type": "string",
+            "description": "Impact if this assumption turns out to be false"
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "$ref": "open_question.schema.json"
+      }
+    },
+    "revision_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "author", "summary"],
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "author": { "type": "string" },
+          "summary": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "acceptance_criteria.schema.json",
+  "title": "Acceptance Criterion",
+  "description": "Schema for a BDD/Gherkin acceptance criterion produced by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["id", "story_id", "given", "when", "then", "type"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^AC-[0-9]{3}-[0-9]{2}$",
+      "description": "Unique criterion ID: AC-[story number]-[criterion number]",
+      "examples": ["AC-001-01", "AC-001-02", "AC-042-03"]
+    },
+    "story_id": {
+      "type": "string",
+      "pattern": "^US-[0-9]{3}$",
+      "description": "Parent user story ID"
+    },
+    "scenario_title": {
+      "type": "string",
+      "description": "Short descriptive title for the scenario",
+      "examples": ["User submits valid registration form", "User enters mismatched passwords"]
+    },
+    "given": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 5 },
+      "description": "One or more preconditions or context statements (the 'Given' clauses)"
+    },
+    "when": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 5 },
+      "description": "One or more actions performed (the 'When' clauses)"
+    },
+    "then": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 5 },
+      "description": "One or more expected observable outcomes (the 'Then' clauses)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["happy_path", "edge_case", "negative"],
+      "description": "Scenario type: happy_path (main success), edge_case (boundary/unusual), negative (error/unauthorized)"
+    },
+    "automatable": {
+      "type": "boolean",
+      "description": "True if this criterion can be automated with Playwright or Vitest"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context or test data requirements"
+    }
+  },
+  "additionalProperties": false
+}

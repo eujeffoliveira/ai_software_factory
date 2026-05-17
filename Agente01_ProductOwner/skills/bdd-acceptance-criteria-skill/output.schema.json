@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BDDAcceptanceCriteriaOutput",
+  "description": "Output of the bdd-acceptance-criteria-skill",
+  "type": "object",
+  "required": ["artifact_path", "criteria", "bdd_checklist_passed"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "description": "Path where Acceptance_Criteria.md was written",
+      "pattern": ".*Acceptance_Criteria\\.md$"
+    },
+    "criteria": {
+      "type": "array",
+      "description": "All acceptance criteria generated",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "story_id", "scenario_type", "given", "when", "then"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^AC-[0-9]{3}-[0-9]{2}$",
+            "description": "Criterion ID: AC-[STORY_ID]-[SEQ]"
+          },
+          "story_id": {
+            "type": "string",
+            "pattern": "^US-[0-9]{3}$"
+          },
+          "scenario_type": {
+            "type": "string",
+            "enum": ["HP", "EC", "NS"]
+          },
+          "given": {
+            "type": "string",
+            "minLength": 5
+          },
+          "when": {
+            "type": "string",
+            "minLength": 5
+          },
+          "then": {
+            "type": "string",
+            "minLength": 5
+          },
+          "acceptance_metric": {
+            "type": "string",
+            "description": "Measurable threshold if a performance or quantity metric applies. 'N/A' for non-metric criteria."
+          }
+        }
+      }
+    },
+    "bdd_checklist_passed": {
+      "type": "boolean",
+      "description": "True if bdd_acceptance_checklist.md passed for all criteria"
+    },
+    "vague_terms_found": {
+      "type": "array",
+      "description": "List of vague terms found and removed/replaced. Empty if none found.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion_id": { "type": "string" },
+          "term_found": { "type": "string" },
+          "replaced_with": { "type": "string" }
+        }
+      }
+    },
+    "coverage_summary": {
+      "type": "object",
+      "description": "Count of HP, EC, NS scenarios per story",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "HP": { "type": "integer" },
+          "EC": { "type": "integer" },
+          "NS": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

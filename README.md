@@ -541,7 +541,7 @@ context/prompts/
 | Agente | Prompt | Build completo | Knowledge | Skills | Status |
 |--------|--------|----------------|-----------|--------|--------|
 | **00 TechLead** | ✅ | ✅ | ✅ | ✅ 9/9 | **Pronto para uso** |
-| 01 ProductOwner | ✅ | ⏳ | ❌ | ❌ | Build pendente |
+| **01 ProductOwner** | ✅ | ✅ | ✅ | ✅ 10/10 | **Pronto para uso** |
 | 02 SoftwareArchitect | ✅ | ⏳ | ❌ | ❌ | Build pendente |
 | 03 SoftwareEngineer | ✅ | ⏳ | ❌ | ❌ | Build pendente |
 | 04 DevBackend | ✅ | ⏳ | ❌ | ❌ | Build pendente |

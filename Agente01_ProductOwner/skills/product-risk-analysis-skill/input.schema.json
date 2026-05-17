@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProductRiskAnalysisInput",
+  "description": "Input for the product-risk-analysis-skill",
+  "type": "object",
+  "required": ["prd_path"],
+  "properties": {
+    "prd_path": {
+      "type": "string",
+      "description": "Path to the PRD.md draft",
+      "pattern": ".*PRD\\.md$"
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Current unresolved open questions — each represents uncertainty and potential risk",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^OQ-[0-9]{3}$" },
+          "question": { "type": "string" },
+          "criticality": { "type": "string", "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW"] }
+        }
+      }
+    },
+    "scope_boundary_path": {
+      "type": "string",
+      "description": "Optional path to Scope_Boundary.md for out-of-scope deferred items analysis"
+    }
+  }
+}

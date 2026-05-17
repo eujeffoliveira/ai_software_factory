@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "user_story.schema.json",
+  "title": "User Story",
+  "description": "Schema for an INVEST-compliant user story produced by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["id", "title", "as_a", "i_want", "so_that", "priority", "acceptance_criteria", "invest_compliant"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^US-[0-9]{3}$",
+      "description": "Unique story ID: US-NNN",
+      "examples": ["US-001", "US-042"]
+    },
+    "epic": {
+      "type": "string",
+      "pattern": "^EP-[0-9]{3}$",
+      "description": "Parent epic ID",
+      "examples": ["EP-001"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 100,
+      "description": "Concise title that identifies the story"
+    },
+    "as_a": {
+      "type": "string",
+      "minLength": 2,
+      "description": "The user type performing the action — must be specific, not generic 'user'",
+      "examples": ["registered member", "admin user", "guest visitor", "operations manager"]
+    },
+    "i_want": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The action or capability the user wants — observable behavior, not technical implementation"
+    },
+    "so_that": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The benefit or value the user receives — the 'why' behind the want"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3"],
+      "description": "P0=must-have blocker, P1=must-have, P2=should-have, P3=nice-to-have"
+    },
+    "story_points": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8,
+      "description": "Estimated effort in story points. Max 8 — larger stories must be split."
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "acceptance_criteria.schema.json"
+      },
+      "description": "BDD/Gherkin acceptance criteria — must include at minimum one happy path"
+    },
+    "invest_compliant": {
+      "type": "boolean",
+      "description": "True only when all 6 INVEST dimensions have been explicitly verified"
+    },
+    "invest_validation": {
+      "type": "object",
+      "properties": {
+        "independent": { "type": "boolean" },
+        "negotiable": { "type": "boolean" },
+        "valuable": { "type": "boolean" },
+        "estimable": { "type": "boolean" },
+        "small": { "type": "boolean" },
+        "testable": { "type": "boolean" }
+      },
+      "description": "Per-dimension INVEST validation results"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^US-[0-9]{3}$"
+      },
+      "description": "IDs of stories this story depends on — ideally empty (INVEST: Independent)"
+    },
+    "related_business_rules": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^BR-[0-9]{3}$"
+      },
+      "description": "Business rules that apply to this story"
+    },
+    "related_functional_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^FR-[0-9]{3}$"
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context, constraints, or design notes"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UserStoryMappingInput",
+  "description": "Input for the user-story-mapping-skill",
+  "type": "object",
+  "required": ["target_users", "business_problem", "feature_list"],
+  "properties": {
+    "target_users": {
+      "type": "array",
+      "description": "Confirmed user personas with role and goal descriptions",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["persona_name", "role_description", "primary_goal"],
+        "properties": {
+          "persona_name": { "type": "string" },
+          "role_description": { "type": "string" },
+          "primary_goal": { "type": "string" },
+          "pain_points": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "business_problem": {
+      "type": "string",
+      "description": "Confirmed business problem statement from requirements elicitation",
+      "minLength": 20
+    },
+    "feature_list": {
+      "type": "array",
+      "description": "Confirmed list of features or capabilities to be covered in this release",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["feature_name", "description"],
+        "properties": {
+          "feature_name": { "type": "string" },
+          "description": { "type": "string" },
+          "priority_hint": {
+            "type": "string",
+            "enum": ["MUST", "SHOULD", "COULD"],
+            "description": "Stakeholder-indicated priority (may be overridden by Product Owner analysis)"
+          }
+        }
+      }
+    }
+  }
+}

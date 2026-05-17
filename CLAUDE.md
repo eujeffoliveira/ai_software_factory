@@ -10,7 +10,7 @@ This is a **prompt-engineering and agent-design project** — not a runnable sof
 
 The repository implements a multi-agent Software Development Lifecycle (SDLC) framework with 11 specialized agents (Agente00–Agente10). Each agent has a role, a set of skills, JSON schemas, checklists, examples, and distilled operational knowledge.
 
-**Only Agente00_TechLead is fully built.** Agents 01–08 have skeleton folders but incomplete artifacts. Agents 09–10 have no local artifacts yet.
+**Agente00_TechLead and Agente01_ProductOwner are fully built.** Agents 02–08 have skeleton folders but incomplete artifacts. Agents 09–10 have no local artifacts yet.
 
 ---
 

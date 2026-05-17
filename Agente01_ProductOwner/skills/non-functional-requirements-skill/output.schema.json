@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NonFunctionalRequirementsOutput",
+  "description": "Output of the non-functional-requirements-skill",
+  "type": "object",
+  "required": ["artifact_path", "nfr_entries", "categories_complete", "nfr_checklist_passed"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "pattern": ".*Non_Functional_Requirements\\.md$"
+    },
+    "nfr_entries": {
+      "type": "array",
+      "description": "All NFR entries produced",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "description", "metric", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^NFR-(PERF|SEC|PRIV|AVAIL|OBS|AUDIT|ACC|MAINT|SCALE|DRET)-[0-9]{3}$"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["performance", "security", "privacy", "availability", "observability", "auditability", "accessibility", "maintainability", "scalability", "data_retention"]
+          },
+          "description": { "type": "string" },
+          "metric": {
+            "type": "string",
+            "description": "Concrete measurable metric — not vague language",
+            "minLength": 5
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["MUST", "SHOULD", "COULD"]
+          },
+          "acceptance_criterion": {
+            "type": "string",
+            "description": "How this NFR will be verified"
+          }
+        }
+      }
+    },
+    "categories_complete": {
+      "type": "object",
+      "description": "Whether each of the 10 categories has at least one NFR with a metric",
+      "properties": {
+        "performance": { "type": "boolean" },
+        "security": { "type": "boolean" },
+        "privacy": { "type": "boolean" },
+        "availability": { "type": "boolean" },
+        "observability": { "type": "boolean" },
+        "auditability": { "type": "boolean" },
+        "accessibility": { "type": "boolean" },
+        "maintainability": { "type": "boolean" },
+        "scalability": { "type": "boolean" },
+        "data_retention": { "type": "boolean" }
+      }
+    },
+    "nfr_checklist_passed": {
+      "type": "boolean",
+      "description": "True if non_functional_requirements_checklist.md passed for all 10 categories"
+    },
+    "vague_nfrs_found": {
+      "type": "array",
+      "description": "NFRs found to be vague and corrected during this run",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "original": { "type": "string" },
+          "corrected_to": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "agent": "Agente01_ProductOwner",
+  "build_date": "2026-05-17",
+  "distillation_policy": "Build-time only. Raw sources are processed once to generate distilled artifacts. Raw sources are not accessible at runtime.",
+  "sources": [
+    {
+      "id": "SRC-001",
+      "title": "Software Requirements, 3rd Edition",
+      "authors": ["Karl Wiegers", "Joy Beatty"],
+      "source_path": "lib/ProductOwner/",
+      "type": "book",
+      "runtime_access": false,
+      "distilled_into": [
+        "knowledge/principles.md (P1, P2, P3, P6, P7)",
+        "knowledge/heuristics.md (H1, H4, H5, H10, H11)",
+        "knowledge/decision_rules.md (DR001–DR005, DR015–DR018, DR022–DR028)",
+        "knowledge/knowledge_cards.md (Card 003, Card 005, Card 008)",
+        "templates/PRD.md",
+        "templates/Requirements_Interview_Log.md",
+        "checklists/prd_quality_checklist.md",
+        "checklists/non_functional_requirements_checklist.md",
+        "checklists/data_requirements_checklist.md"
+      ]
+    },
+    {
+      "id": "SRC-002",
+      "title": "Writing Effective Use Cases",
+      "authors": ["Alistair Cockburn"],
+      "source_path": "lib/ProductOwner/",
+      "type": "book",
+      "runtime_access": false,
+      "distilled_into": [
+        "knowledge/heuristics.md (H3, H10)",
+        "knowledge/knowledge_cards.md (Card 002 — BDD/Gherkin scenarios)",
+        "checklists/bdd_acceptance_checklist.md",
+        "templates/Acceptance_Criteria.md",
+        "skills/bdd-acceptance-criteria-skill/skill.md"
+      ]
+    },
+    {
+      "id": "SRC-003",
+      "title": "Agile Software Requirements",
+      "authors": ["Dean Leffingwell"],
+      "source_path": "lib/ProductOwner/",
+      "type": "book",
+      "runtime_access": false,
+      "distilled_into": [
+        "knowledge/principles.md (P1, P5, P6)",
+        "knowledge/heuristics.md (H2, H8)",
+        "knowledge/decision_rules.md (DR006–DR010)",
+        "knowledge/knowledge_cards.md (Card 001 — INVEST, Card 003 — PRD, Card 004 — Gate 1)",
+        "templates/User_Story_Map.md",
+        "checklists/invest_checklist.md"
+      ]
+    },
+    {
+      "id": "SRC-004",
+      "title": "User Stories Applied",
+      "authors": ["Mike Cohn"],
+      "source_path": "lib/ProductOwner/",
+      "type": "book",
+      "runtime_access": false,
+      "distilled_into": [
+        "knowledge/principles.md (P1, P3, P4)",
+        "knowledge/heuristics.md (H2, H3, H11)",
+        "knowledge/decision_rules.md (DR006–DR014)",
+        "knowledge/knowledge_cards.md (Card 001 — INVEST, Card 002 — BDD)",
+        "templates/User_Story_Map.md",
+        "checklists/invest_checklist.md",
+        "checklists/bdd_acceptance_checklist.md",
+        "examples/good_user_story.md",
+        "examples/bad_user_story.md",
+        "examples/good_acceptance_criteria.md",
+        "examples/bad_acceptance_criteria.md"
+      ]
+    },
+    {
+      "id": "SRC-005",
+      "title": "Mastering the Requirements Process, 3rd Edition",
+      "authors": ["Suzanne Robertson", "James Robertson"],
+      "source_path": "lib/ProductOwner/",
+      "type": "book",
+      "runtime_access": false,
+      "distilled_into": [
+        "knowledge/principles.md (P2, P6, P7)",
+        "knowledge/heuristics.md (H4, H5, H6, H7, H9, H12)",
+        "knowledge/decision_rules.md (DR022–DR034)",
+        "knowledge/knowledge_cards.md (Card 006 — OQ, Card 007 — Scope, Card 009 — Risk, Card 010 — Interview)",
+        "templates/Open_Questions.md",
+        "templates/Business_Rules.md",
+        "templates/Product_Risks.md",
+        "templates/Scope_Boundary.md",
+        "checklists/scope_boundary_checklist.md",
+        "checklists/open_questions_checklist.md",
+        "checklists/business_rules_checklist.md"
+      ]
+    }
+  ],
+  "cross_cutting_contributions": {
+    "knowledge/principles.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005"],
+    "knowledge/heuristics.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005"],
+    "knowledge/decision_rules.md": ["SRC-001", "SRC-003", "SRC-004", "SRC-005"],
+    "knowledge/knowledge_cards.md": ["SRC-001", "SRC-002", "SRC-003", "SRC-004", "SRC-005"],
+    "failure_modes.md": ["SRC-001", "SRC-004", "SRC-005"]
+  },
+  "runtime_policy": {
+    "raw_pdf_access_allowed": false,
+    "raw_book_access_allowed": false,
+    "bibliography_folder_access_allowed": false,
+    "note": "All source content has been distilled into knowledge/ artifacts. Raw sources must not be accessed at runtime."
+  }
+}

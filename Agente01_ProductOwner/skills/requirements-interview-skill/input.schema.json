@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RequirementsInterviewInput",
+  "description": "Input for the requirements-interview-skill",
+  "type": "object",
+  "required": ["agent_briefing"],
+  "properties": {
+    "agent_briefing": {
+      "type": "string",
+      "description": "The full briefing document provided by Agente00_TechLead. Must be non-empty.",
+      "minLength": 50
+    },
+    "initial_description": {
+      "type": "string",
+      "description": "Raw project description from the original stakeholder request or context. May overlap with agent_briefing.",
+      "minLength": 1
+    },
+    "previous_prd_version": {
+      "type": "string",
+      "description": "Optional: the existing PRD.md content if this is a revision cycle. Used to identify gaps without re-eliciting confirmed information."
+    },
+    "session_number": {
+      "type": "integer",
+      "description": "Which elicitation session this is (1, 2, 3...). Defaults to 1.",
+      "minimum": 1,
+      "default": 1
+    },
+    "focus_areas": {
+      "type": "array",
+      "description": "Optional: limit question generation to specific categories. If empty, all 6 categories are covered.",
+      "items": {
+        "type": "string",
+        "enum": ["business_context", "target_users", "scope", "data", "business_rules", "risks_and_constraints"]
+      }
+    }
+  }
+}

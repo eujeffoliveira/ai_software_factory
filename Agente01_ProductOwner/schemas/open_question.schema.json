@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "open_question.schema.json",
+  "title": "Open Question",
+  "description": "Schema for a documented information gap (OQ-NNN) tracked by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["id", "question", "impact", "criticality", "owner"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^OQ-[0-9]{3}$",
+      "description": "Unique open question ID: OQ-NNN (zero-padded)",
+      "examples": ["OQ-001", "OQ-042"]
+    },
+    "question": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Precise, specific question — not vague. Must be answerable with a specific response."
+    },
+    "context": {
+      "type": "string",
+      "description": "Background context explaining why this question arose"
+    },
+    "impact": {
+      "type": "string",
+      "minLength": 20,
+      "description": "What cannot be decided, written, built, or validated without the answer to this question"
+    },
+    "criticality": {
+      "type": "string",
+      "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW"],
+      "description": "BLOCKING=PRD cannot proceed; HIGH=next gate needs answer; MEDIUM=can resolve post-Gate1; LOW=nice to know"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Who is responsible for getting the answer — typically 'Tech Lead (routes to stakeholder)'"
+    },
+    "deadline": {
+      "type": "string",
+      "description": "Sprint number or gate by which this must be resolved",
+      "examples": ["Gate 1", "Sprint 1", "Before architecture begins"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "ESCALATED", "RESOLVED", "DEFERRED"],
+      "default": "OPEN",
+      "description": "Current status of the open question"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "The answer or decision that resolved this question — populated when status=RESOLVED"
+    },
+    "resolution_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the question was resolved"
+    },
+    "related_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "PRD sections, user stories, or business rules that depend on this answer"
+    }
+  },
+  "additionalProperties": false
+}

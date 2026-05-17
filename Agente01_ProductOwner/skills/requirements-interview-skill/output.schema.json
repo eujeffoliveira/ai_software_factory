@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RequirementsInterviewOutput",
+  "description": "Output of the requirements-interview-skill",
+  "type": "object",
+  "required": ["interview_log", "open_questions_initial", "session_summary"],
+  "properties": {
+    "interview_log": {
+      "type": "object",
+      "description": "Structured interview log content matching templates/Requirements_Interview_Log.md format",
+      "required": ["artifact_path", "questions_by_category", "answers_recorded"],
+      "properties": {
+        "artifact_path": {
+          "type": "string",
+          "description": "Path where Requirements_Interview_Log.md was written",
+          "pattern": ".*Requirements_Interview_Log\\.md$"
+        },
+        "questions_by_category": {
+          "type": "object",
+          "description": "Questions grouped by elicitation category",
+          "properties": {
+            "business_context": { "type": "array", "items": { "type": "string" } },
+            "target_users": { "type": "array", "items": { "type": "string" } },
+            "scope": { "type": "array", "items": { "type": "string" } },
+            "data": { "type": "array", "items": { "type": "string" } },
+            "business_rules": { "type": "array", "items": { "type": "string" } },
+            "risks_and_constraints": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "answers_recorded": {
+          "type": "integer",
+          "description": "Number of questions that received answers in this session",
+          "minimum": 0
+        },
+        "questions_pending": {
+          "type": "integer",
+          "description": "Number of questions awaiting answers (will become OQ-NNN entries)",
+          "minimum": 0
+        }
+      }
+    },
+    "open_questions_initial": {
+      "type": "array",
+      "description": "Initial open questions derived from unanswered interview questions",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "impact", "criticality"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^OQ-[0-9]{3}$"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 10
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 10,
+            "description": "What artifact or decision is blocked by this unanswered question"
+          },
+          "criticality": {
+            "type": "string",
+            "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW"]
+          },
+          "owner": {
+            "type": "string",
+            "description": "Stakeholder role who can answer this question"
+          }
+        }
+      }
+    },
+    "session_summary": {
+      "type": "object",
+      "required": ["gaps_remaining", "blocking_count", "next_session_needed"],
+      "properties": {
+        "gaps_remaining": {
+          "type": "string",
+          "description": "Description of what remains unclear after this session"
+        },
+        "blocking_count": {
+          "type": "integer",
+          "description": "Number of BLOCKING open questions created",
+          "minimum": 0
+        },
+        "next_session_needed": {
+          "type": "boolean",
+          "description": "Whether another elicitation session is needed before drafting the PRD"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RequirementsQualityReviewOutput",
+  "description": "Output of the requirements-quality-review-skill",
+  "type": "object",
+  "required": ["overall_status", "section_results", "issues_requiring_correction"],
+  "properties": {
+    "overall_status": {
+      "type": "string",
+      "enum": ["READY_FOR_GATE_1", "NOT_READY_BLOCKING_ISSUES", "NOT_READY_MAJOR_ISSUES"],
+      "description": "Gate 1 readiness status based on review findings"
+    },
+    "pass_count": {
+      "type": "integer",
+      "description": "Number of checklist items that passed",
+      "minimum": 0
+    },
+    "fail_count": {
+      "type": "integer",
+      "description": "Number of checklist items that failed",
+      "minimum": 0
+    },
+    "section_results": {
+      "type": "array",
+      "description": "Per-section review results",
+      "items": {
+        "type": "object",
+        "required": ["section", "status", "items_passed", "items_failed"],
+        "properties": {
+          "section": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "PARTIAL"] },
+          "items_passed": { "type": "integer" },
+          "items_failed": { "type": "integer" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "issues_requiring_correction": {
+      "type": "array",
+      "description": "Specific issues that must be corrected. Empty if overall_status is READY_FOR_GATE_1.",
+      "items": {
+        "type": "object",
+        "required": ["section", "issue", "severity", "correction_needed"],
+        "properties": {
+          "section": { "type": "string" },
+          "issue": { "type": "string", "minLength": 10 },
+          "severity": { "type": "string", "enum": ["BLOCKING", "MAJOR", "MINOR"] },
+          "correction_needed": { "type": "string", "minLength": 10 }
+        }
+      }
+    },
+    "technology_contamination": {
+      "type": "array",
+      "description": "Technology decisions found in the PRD (should be empty for clean PRD)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "section": { "type": "string" },
+          "found": { "type": "string" },
+          "action": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PRDGenerationInput",
+  "description": "Input for the prd-generation-skill",
+  "type": "object",
+  "required": ["interview_log_path", "user_story_map_path", "acceptance_criteria_path", "nfr_path", "business_rules_path", "open_questions_path", "product_risks_path", "scope_boundary_path"],
+  "properties": {
+    "interview_log_path": {
+      "type": "string",
+      "description": "Path to Requirements_Interview_Log.md"
+    },
+    "user_story_map_path": {
+      "type": "string",
+      "description": "Path to User_Story_Map.md"
+    },
+    "acceptance_criteria_path": {
+      "type": "string",
+      "description": "Path to Acceptance_Criteria.md"
+    },
+    "nfr_path": {
+      "type": "string",
+      "description": "Path to Non_Functional_Requirements.md"
+    },
+    "business_rules_path": {
+      "type": "string",
+      "description": "Path to Business_Rules.md"
+    },
+    "open_questions_path": {
+      "type": "string",
+      "description": "Path to Open_Questions.md"
+    },
+    "product_risks_path": {
+      "type": "string",
+      "description": "Path to Product_Risks.md"
+    },
+    "scope_boundary_path": {
+      "type": "string",
+      "description": "Path to Scope_Boundary.md"
+    },
+    "prd_version": {
+      "type": "string",
+      "description": "Version string for the PRD (e.g., '1.0', '1.1'). Defaults to 1.0.",
+      "default": "1.0"
+    },
+    "revision_reason": {
+      "type": "string",
+      "description": "Optional: reason for revision if this is not the first draft (e.g., 'Gate 1 NEEDS_MORE_REQUIREMENTS — add NFR-PERF-001 metric')"
+    }
+  }
+}

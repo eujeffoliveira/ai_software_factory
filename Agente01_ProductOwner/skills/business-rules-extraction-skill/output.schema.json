@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BusinessRulesExtractionOutput",
+  "description": "Output of the business-rules-extraction-skill",
+  "type": "object",
+  "required": ["artifact_path", "confirmed_rules", "pending_rules", "statements_without_rules"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "pattern": ".*Business_Rules\\.md$"
+    },
+    "confirmed_rules": {
+      "type": "array",
+      "description": "Rules with confirmed traceable sources",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "source", "applies_to"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^BR-[0-9]{3}$" },
+          "description": { "type": "string", "minLength": 10 },
+          "source": {
+            "type": "string",
+            "description": "Stakeholder role + session, or regulation + article",
+            "minLength": 10
+          },
+          "applies_to": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "User stories (US-NNN) or features this rule applies to"
+          },
+          "exceptions": {
+            "type": "string",
+            "description": "Known exceptions to this rule, or 'None'"
+          }
+        }
+      }
+    },
+    "pending_rules": {
+      "type": "array",
+      "description": "Proposed rules that need stakeholder confirmation — each should become an OQ-NNN",
+      "items": {
+        "type": "object",
+        "required": ["proposed_description", "reason_for_pending", "oq_id"],
+        "properties": {
+          "proposed_description": { "type": "string" },
+          "reason_for_pending": { "type": "string" },
+          "oq_id": { "type": "string", "pattern": "^OQ-[0-9]{3}$" }
+        }
+      }
+    },
+    "statements_without_rules": {
+      "type": "array",
+      "description": "Stakeholder statements that were evaluated but contain no extractable business rule",
+      "items": { "type": "string" }
+    },
+    "technical_decisions_found": {
+      "type": "array",
+      "description": "Statements that contained technical decisions (not business rules) — routed to Architect notes",
+      "items": {
+        "type": "object",
+        "properties": {
+          "statement": { "type": "string" },
+          "why_technical": { "type": "string" }
+        }
+      }
+    }
+  }
+}

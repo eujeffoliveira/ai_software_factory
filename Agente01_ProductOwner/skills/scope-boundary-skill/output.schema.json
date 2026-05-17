@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ScopeBoundaryOutput",
+  "description": "Output of the scope-boundary-skill",
+  "type": "object",
+  "required": ["artifact_path", "in_scope", "out_of_scope", "scope_checklist_passed"],
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "pattern": ".*Scope_Boundary\\.md$"
+    },
+    "in_scope": {
+      "type": "array",
+      "description": "Features explicitly in scope for this release",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["feature_name", "description"],
+        "properties": {
+          "feature_name": { "type": "string" },
+          "description": { "type": "string" },
+          "related_stories": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^US-[0-9]{3}$" }
+          }
+        }
+      }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "description": "Features explicitly excluded from this release with reasons",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["feature_name", "reason_for_exclusion"],
+        "properties": {
+          "feature_name": { "type": "string" },
+          "reason_for_exclusion": { "type": "string", "minLength": 10 },
+          "future_scope": {
+            "type": "string",
+            "enum": ["yes", "no", "unknown"],
+            "description": "Whether this may be considered in a future release"
+          }
+        }
+      }
+    },
+    "scope_checklist_passed": {
+      "type": "boolean",
+      "description": "True if scope_boundary_checklist.md passed"
+    },
+    "features_without_coverage": {
+      "type": "array",
+      "description": "Features from input that are neither in_scope nor out_of_scope (coverage gap)",
+      "items": { "type": "string" }
+    }
+  }
+}

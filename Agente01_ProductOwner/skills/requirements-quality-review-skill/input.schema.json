@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RequirementsQualityReviewInput",
+  "description": "Input for the requirements-quality-review-skill",
+  "type": "object",
+  "required": ["prd_path"],
+  "properties": {
+    "prd_path": {
+      "type": "string",
+      "description": "Path to the PRD.md draft to be reviewed",
+      "pattern": ".*PRD\\.md$"
+    },
+    "supporting_artifacts": {
+      "type": "object",
+      "description": "Paths to supporting artifacts for cross-reference validation",
+      "properties": {
+        "user_story_map": { "type": "string" },
+        "acceptance_criteria": { "type": "string" },
+        "nfr": { "type": "string" },
+        "business_rules": { "type": "string" },
+        "open_questions": { "type": "string" },
+        "product_risks": { "type": "string" },
+        "scope_boundary": { "type": "string" }
+      }
+    },
+    "focus_sections": {
+      "type": "array",
+      "description": "Optional: limit review to specific sections (for targeted revision review). Empty = full review.",
+      "items": {
+        "type": "string",
+        "enum": ["document_structure", "business_problem", "user_stories", "acceptance_criteria", "nfrs", "scope", "business_rules", "data", "risks_and_questions", "handoff_readiness"]
+      }
+    }
+  }
+}

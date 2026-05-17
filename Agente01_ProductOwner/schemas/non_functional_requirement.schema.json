@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "non_functional_requirement.schema.json",
+  "title": "Non-Functional Requirement",
+  "description": "Schema for a non-functional requirement (NFR) documented by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["id", "category", "description", "metric", "priority"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^NFR-[A-Z]{3,4}-[0-9]{3}$",
+      "description": "Unique NFR ID: NFR-[CATEGORY]-NNN",
+      "examples": ["NFR-PERF-001", "NFR-SEC-001", "NFR-AVAIL-001", "NFR-COMP-001"]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "performance",
+        "security",
+        "availability",
+        "scalability",
+        "usability",
+        "maintainability",
+        "data_retention",
+        "compliance",
+        "accessibility",
+        "observability"
+      ],
+      "description": "One of the 10 mandatory NFR categories"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "description": "What quality attribute this NFR defines and why it matters"
+    },
+    "metric": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Measurable threshold or criterion. Must be verifiable by QA. No vague qualifiers.",
+      "examples": [
+        "API response time < 200ms at P95 under 100 concurrent users",
+        "Session tokens expire after 30 minutes of inactivity",
+        "System uptime ≥ 99.5% measured monthly",
+        "WCAG 2.1 Level AA compliance verified by automated audit",
+        "All application logs in structured JSON format with correlation ID"
+      ]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3"],
+      "description": "P0=must-meet (Gate 4 blocker), P1=must-meet, P2=should-meet, P3=nice-to-meet"
+    },
+    "verification_method": {
+      "type": "string",
+      "enum": ["automated_test", "performance_test", "audit", "manual_review", "monitoring", "code_review"],
+      "description": "How this NFR will be verified"
+    },
+    "related_stories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^US-[0-9]{3}$"
+      },
+      "description": "User stories this NFR applies to — empty means applies to all"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

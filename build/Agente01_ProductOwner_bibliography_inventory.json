@@ -1,0 +1,101 @@
+{
+  "agent_id": "Agente01_ProductOwner",
+  "build_date": "2026-05-17",
+  "edition": "generic-white-label",
+  "sources": [
+    {
+      "title": "Software Requirements",
+      "author": "Karl Wiegers & Joy Beatty",
+      "path": "lib/ProductOwner/Software Requirements – Karl Wiegers & Joy Beatty.pdf",
+      "status": "PROCESSED",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md",
+        "knowledge/heuristics.md",
+        "knowledge/decision_rules.md",
+        "checklists/prd_quality_checklist.md",
+        "checklists/data_requirements_checklist.md",
+        "skills/requirements-quality-review-skill/skill.md"
+      ]
+    },
+    {
+      "title": "Writing Effective Use Cases",
+      "author": "Alistair Cockburn",
+      "path": "lib/ProductOwner/Writing Effective Use Cases – Alistair Cockburn.pdf",
+      "status": "PROCESSED",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/knowledge_cards.md",
+        "skills/requirements-interview-skill/skill.md",
+        "templates/Requirements_Interview_Log.md"
+      ]
+    },
+    {
+      "title": "User Stories Applied, For Agile Software Development",
+      "author": "Mike Cohn",
+      "path": "lib/ProductOwner/User Stories Applied, For Agile Software Development – Mike Cohn.pdf",
+      "status": "PROCESSED",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/principles.md",
+        "knowledge/knowledge_cards.md",
+        "skills/user-story-mapping-skill/skill.md",
+        "checklists/invest_checklist.md",
+        "examples/good_user_story.md"
+      ]
+    },
+    {
+      "title": "Agile Software Requirements",
+      "author": "Dean Leffingwell",
+      "path": "lib/ProductOwner/Agile Software Requirements – Dean Leffingwell.pdf",
+      "status": "PROCESSED",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/heuristics.md",
+        "skills/non-functional-requirements-skill/skill.md",
+        "templates/Non_Functional_Requirements.md",
+        "checklists/non_functional_requirements_checklist.md"
+      ]
+    },
+    {
+      "title": "Mastering the Requirements Process, Getting Requirements Right",
+      "author": "Suzanne Robertson & James Robertson",
+      "path": "lib/ProductOwner/Mastering the Requirements Process, Getting Requirements Right – Suzanne Robertson & James Robertson.pdf",
+      "status": "PROCESSED",
+      "usage": "build_time_distillation_only",
+      "derived_artifacts": [
+        "knowledge/decision_rules.md",
+        "checklists/gate_1_prd_approval_checklist.md",
+        "templates/PRD.md",
+        "failure_modes.md"
+      ]
+    }
+  ],
+  "not_found": [
+    {
+      "title": "User Story Mapping",
+      "author": "Jeff Patton",
+      "reason": "Not available in lib/ProductOwner/ — key concepts incorporated from training knowledge",
+      "impact": "LOW — core concepts covered by User Stories Applied (Cohn)"
+    },
+    {
+      "title": "Specification by Example",
+      "author": "Gojko Adzic",
+      "reason": "Not available in lib/ProductOwner/ — BDD/Gherkin concepts covered via training knowledge",
+      "impact": "LOW — BDD/Gherkin patterns distilled from training knowledge into bdd-acceptance-criteria-skill"
+    },
+    {
+      "title": "Impact Mapping",
+      "author": "Gojko Adzic",
+      "reason": "Not available in lib/ProductOwner/",
+      "impact": "LOW — impact analysis concepts incorporated into product-risk-analysis-skill"
+    }
+  ],
+  "runtime_access_policy": {
+    "raw_sources_allowed": false,
+    "pdf_access_allowed": false,
+    "bibliography_folder_allowed": false,
+    "local_distilled_artifacts_allowed": true,
+    "local_knowledge_path": "Agente01_ProductOwner/knowledge/"
+  }
+}

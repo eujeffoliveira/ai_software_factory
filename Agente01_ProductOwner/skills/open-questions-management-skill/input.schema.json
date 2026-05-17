@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OpenQuestionsManagementInput",
+  "description": "Input for the open-questions-management-skill",
+  "type": "object",
+  "required": ["unresolved_items"],
+  "properties": {
+    "unresolved_items": {
+      "type": "array",
+      "description": "New unresolved questions or ambiguities to register",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["raw_question", "context"],
+        "properties": {
+          "raw_question": {
+            "type": "string",
+            "description": "The raw question or ambiguity as discovered (will be reformulated into a specific question)",
+            "minLength": 5
+          },
+          "context": {
+            "type": "string",
+            "description": "Where this question came from and which artifacts it affects"
+          },
+          "suggested_criticality": {
+            "type": "string",
+            "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW"],
+            "description": "Optional suggested criticality — will be validated against impact"
+          }
+        }
+      }
+    },
+    "existing_open_questions_path": {
+      "type": "string",
+      "description": "Optional path to existing Open_Questions.md for deduplication and ID sequencing"
+    },
+    "next_id": {
+      "type": "integer",
+      "description": "Next OQ number to use (e.g., 5 means next ID is OQ-005). Computed from existing register if not provided.",
+      "minimum": 1
+    }
+  }
+}

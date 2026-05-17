@@ -1,0 +1,130 @@
+{
+  "agent_id": "Agente01_ProductOwner",
+  "name": "Product Owner",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "primary_responsibility": "requirements_elicitation_and_prd_production",
+  "build_date": "2026-05-17",
+  "allowed_runtime_sources": [
+    "Agente01_ProductOwner/prompt.md",
+    "Agente01_ProductOwner/agent_config.json",
+    "Agente01_ProductOwner/context_view.md",
+    "Agente01_ProductOwner/rag_manifest.json",
+    "Agente01_ProductOwner/skills_manifest.md",
+    "Agente01_ProductOwner/quality_gate.md",
+    "Agente01_ProductOwner/handoff_schema.json",
+    "Agente01_ProductOwner/failure_modes.md",
+    "Agente01_ProductOwner/schemas/",
+    "Agente01_ProductOwner/templates/",
+    "Agente01_ProductOwner/checklists/",
+    "Agente01_ProductOwner/examples/",
+    "Agente01_ProductOwner/skills/",
+    "Agente01_ProductOwner/knowledge/",
+    "project_briefing_from_tech_lead",
+    "stakeholder_answers_via_tech_lead",
+    "previous_prd_iterations"
+  ],
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "raw_pdf_files",
+    "*.pdf",
+    "raw_books",
+    "raw_bibliography",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes_generico.md",
+    "context/base_teorica.md"
+  ],
+  "runtime_knowledge_policy": {
+    "raw_pdf_access_allowed": false,
+    "raw_book_access_allowed": false,
+    "bibliography_folder_access_allowed": false,
+    "global_context_access_allowed": false,
+    "local_distilled_knowledge_allowed": true,
+    "local_knowledge_path": "Agente01_ProductOwner/knowledge/"
+  },
+  "capabilities": {
+    "can_interact_with_human": false,
+    "can_interact_via_tech_lead": true,
+    "can_approve_gates": false,
+    "can_block_gates": false,
+    "can_route_to_agents": false,
+    "can_choose_technology": false,
+    "can_make_architecture_decisions": false,
+    "can_invent_business_rules": false,
+    "can_execute_code": false,
+    "can_deploy": false,
+    "can_override_prd_rejection": false,
+    "can_accept_scope_change_alone": false,
+    "can_bypass_invest": false,
+    "can_bypass_bdd_requirement": false,
+    "must_document_open_questions": true,
+    "must_document_nfrs": true,
+    "must_document_scope_boundary": true
+  },
+  "tech_stack_awareness": {
+    "context": "organizational_constraints_only",
+    "note": "Product Owner knows the stack as limits, not design choices. Technology decisions are the Software Architect's domain.",
+    "known_constraints": {
+      "platform": "Next.js 16 with App Router",
+      "language": "TypeScript 5",
+      "database": "PostgreSQL via Supabase",
+      "orm": "Prisma 7",
+      "deploy": "Vercel",
+      "auth": "NextAuth v5",
+      "css": "Tailwind CSS v4",
+      "validation": "Zod",
+      "unit_tests": "Vitest",
+      "e2e_tests": "Playwright",
+      "charts": "Recharts v3"
+    },
+    "forbidden_po_decisions": [
+      "choosing database schema design",
+      "selecting API patterns (REST vs GraphQL)",
+      "choosing state management libraries",
+      "defining infrastructure topology",
+      "selecting caching strategies",
+      "choosing deployment configuration"
+    ]
+  },
+  "naming_conventions": {
+    "open_questions": "OQ-NNN (zero-padded, e.g. OQ-001)",
+    "product_risks": "PRISK-NNN (zero-padded, e.g. PRISK-001)",
+    "business_rules": "BR-NNN (zero-padded, e.g. BR-001)",
+    "user_stories": "US-NNN (zero-padded, e.g. US-001)",
+    "acceptance_criteria": "AC-NNN-NN (story-id + sequence, e.g. AC-001-01)",
+    "non_functional_requirements": "NFR-CAT-NNN (e.g. NFR-PERF-001)",
+    "epics": "EP-NN (zero-padded, e.g. EP-01)"
+  },
+  "prd_version_policy": {
+    "initial_version": "1.0",
+    "revision_increment": "0.1",
+    "major_revision_increment": "1.0",
+    "trigger_major": "Gate 1 rejection with fundamental scope change",
+    "trigger_minor": "Gate 1 NEEDS_MORE_REQUIREMENTS with targeted gaps"
+  },
+  "gate_target": {
+    "gate_number": 1,
+    "gate_name": "PRD Approval",
+    "gatekeeper": "Agente00_TechLead",
+    "status_codes": [
+      "APPROVED",
+      "NEEDS_MORE_REQUIREMENTS",
+      "REJECTED_OUT_OF_SCOPE"
+    ],
+    "mandatory_artifacts": [
+      "PRD.md",
+      "Requirements_Interview_Log.md",
+      "Open_Questions.md",
+      "User_Story_Map.md",
+      "Acceptance_Criteria.md",
+      "Business_Rules.md",
+      "Non_Functional_Requirements.md",
+      "Scope_Boundary.md",
+      "Product_Risks.md",
+      "Handoff_To_Architect.md"
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "business_rule.schema.json",
+  "title": "Business Rule",
+  "description": "Schema for a business rule (BR-NNN) documented by Agente01_ProductOwner",
+  "type": "object",
+  "required": ["id", "description", "source", "applies_to"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^BR-[0-9]{3}$",
+      "description": "Unique business rule ID: BR-NNN",
+      "examples": ["BR-001", "BR-042"]
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Precise statement of the rule. Must be unambiguous and directly implementable."
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Why this rule exists — business or regulatory reason"
+    },
+    "source": {
+      "type": "string",
+      "description": "Origin of the rule: stakeholder name, document reference, regulation citation, or 'to confirm'",
+      "examples": [
+        "Stakeholder: product owner in interview 2026-05-17",
+        "Regulation: GDPR Article 17 (right to erasure)",
+        "System constraint: existing billing system policy",
+        "to confirm"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["confirmed", "to_confirm"],
+      "default": "to_confirm",
+      "description": "confirmed = stakeholder verified; to_confirm = not yet verified"
+    },
+    "applies_to": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "User stories (US-NNN), features, or system areas where this rule applies"
+    },
+    "exceptions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Known exceptions to this rule"
+    },
+    "related_open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^OQ-[0-9]{3}$"
+      },
+      "description": "Open questions that must be resolved before this rule can be confirmed"
+    }
+  },
+  "additionalProperties": false
+}

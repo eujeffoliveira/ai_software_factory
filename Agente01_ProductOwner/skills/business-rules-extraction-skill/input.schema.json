@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BusinessRulesExtractionInput",
+  "description": "Input for the business-rules-extraction-skill",
+  "type": "object",
+  "required": ["stakeholder_statements"],
+  "properties": {
+    "interview_log_path": {
+      "type": "string",
+      "description": "Optional path to Requirements_Interview_Log.md for full session context"
+    },
+    "stakeholder_statements": {
+      "type": "array",
+      "description": "Direct quotes or accurately summarized statements from elicitation sessions that may contain business rules",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["statement", "source_role", "source_session"],
+        "properties": {
+          "statement": {
+            "type": "string",
+            "description": "The stakeholder statement — verbatim or accurately summarized",
+            "minLength": 10
+          },
+          "source_role": {
+            "type": "string",
+            "description": "Role of the stakeholder who made this statement (e.g., 'Business Owner', 'Operations Manager')"
+          },
+          "source_session": {
+            "type": "string",
+            "description": "Session reference (e.g., 'Session 1, 2026-05-10')"
+          }
+        }
+      }
+    },
+    "existing_rules_path": {
+      "type": "string",
+      "description": "Optional path to existing Business_Rules.md for deduplication and ID sequencing"
+    }
+  }
+}
