@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "migration-deploy-skill Output",
+  "type": "object",
+  "required": ["execution_readiness", "migrations", "overall_risk"],
+  "properties": {
+    "execution_readiness": { "type": "string", "enum": ["READY", "BLOCKED_PENDING_SIGNOFF", "BLOCKED_HIGH_RISK_REVIEW"] },
+    "overall_risk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": { "type": "string" },
+          "is_destructive": { "type": "boolean" },
+          "risk_level": { "type": "string" },
+          "estimated_duration_seconds": { "type": "number" },
+          "human_signoff_required": { "type": "boolean" }
+        }
+      }
+    },
+    "artifact": { "type": "string", "description": "Path to Migration_Deploy_Plan.md" }
+  }
+}

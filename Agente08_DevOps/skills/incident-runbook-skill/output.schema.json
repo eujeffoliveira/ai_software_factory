@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "incident-runbook-skill Output",
+  "type": "object",
+  "required": ["runbooks_produced", "go_live_ready"],
+  "properties": {
+    "runbooks_produced": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "runbook_id": { "type": "string" },
+          "scenario_name": { "type": "string" },
+          "severity": { "type": "string" },
+          "estimated_mttr_typical_minutes": { "type": "number" }
+        }
+      }
+    },
+    "go_live_ready": { "type": "boolean", "description": "True when all 5 required runbooks are complete" },
+    "missing_runbooks": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "environment-validation-skill Input",
+  "type": "object",
+  "required": ["lib_env_content", "staging_variable_names", "production_variable_names"],
+  "properties": {
+    "lib_env_content": { "type": "string", "description": "Contents of lib/env.ts" },
+    "staging_variable_names": { "type": "array", "items": { "type": "string" } },
+    "production_variable_names": { "type": "array", "items": { "type": "string" } },
+    "codebase_files_to_scan": { "type": "array", "items": { "type": "string" }, "description": "File paths to scan for scattered process.env usage" }
+  }
+}

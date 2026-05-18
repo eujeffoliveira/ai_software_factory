@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "migration-deploy-skill Input",
+  "type": "object",
+  "required": ["pending_migration_files", "target_environment"],
+  "properties": {
+    "pending_migration_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["filename", "sql_content"],
+        "properties": {
+          "filename": { "type": "string" },
+          "sql_content": { "type": "string" }
+        }
+      }
+    },
+    "target_environment": { "type": "string", "enum": ["staging", "production"] },
+    "table_row_counts": {
+      "type": "object",
+      "description": "Row counts for tables being migrated, used for duration estimation.",
+      "additionalProperties": { "type": "integer" }
+    }
+  }
+}

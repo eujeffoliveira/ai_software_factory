@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "rollback-planning-skill Input",
+  "type": "object",
+  "required": ["feature_name", "production_url"],
+  "properties": {
+    "feature_name": { "type": "string" },
+    "production_url": { "type": "string" },
+    "previous_deployment_id": { "type": "string", "description": "Vercel deployment ID to roll back to" },
+    "has_pending_migrations": { "type": "boolean" },
+    "migration_descriptions": { "type": "array", "items": { "type": "string" } },
+    "has_destructive_migrations": { "type": "boolean" }
+  }
+}

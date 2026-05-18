@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "environment-validation-skill Output",
+  "type": "object",
+  "required": ["overall_status", "staging_result", "production_result", "isolation_result"],
+  "properties": {
+    "overall_status": { "type": "string", "enum": ["PASS", "FAIL_MISSING_VARS", "FAIL_SHARED_SECRETS", "FAIL_SCATTERED_ENV"] },
+    "staging_result": {
+      "type": "object",
+      "properties": {
+        "all_present": { "type": "boolean" },
+        "missing": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "production_result": {
+      "type": "object",
+      "properties": {
+        "all_present": { "type": "boolean" },
+        "missing": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "isolation_result": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["PASS", "CRITICAL_FAIL"] },
+        "shared_variable_names": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "scattered_env_violations": { "type": "array", "items": { "type": "string" } },
+    "artifact": { "type": "string", "description": "Path to produced Environment_Checklist.md" }
+  }
+}

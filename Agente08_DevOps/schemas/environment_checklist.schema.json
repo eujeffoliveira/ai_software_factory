@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/environment-checklist",
+  "title": "Environment Checklist",
+  "description": "Schema for the Environment_Checklist.md structured data. Produced by environment-validation-skill during Gate 6 preparation. Validates that all environment variables are present, correctly typed, and distinct between staging and production.",
+  "type": "object",
+  "required": [
+    "checked_at",
+    "lib_env_schema_path",
+    "staging_validation",
+    "production_validation",
+    "environment_isolation_check",
+    "overall_status"
+  ],
+  "properties": {
+    "checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the environment check was performed."
+    },
+    "lib_env_schema_path": {
+      "type": "string",
+      "description": "Path to the lib/env.ts file containing the Zod schema.",
+      "const": "lib/env.ts"
+    },
+    "variables_in_schema": {
+      "type": "array",
+      "description": "List of environment variable names defined in the lib/env.ts Zod schema.",
+      "items": { "type": "string" }
+    },
+    "staging_validation": {
+      "type": "object",
+      "description": "Validation results for the staging Vercel environment.",
+      "required": ["environment_name", "variables_checked", "all_present"],
+      "properties": {
+        "environment_name": {
+          "type": "string",
+          "description": "Name of the staging environment in Vercel.",
+          "default": "Preview"
+        },
+        "variables_checked": {
+          "type": "array",
+          "description": "Per-variable validation results for staging.",
+          "items": {
+            "type": "object",
+            "required": ["name", "present", "type_valid"],
+            "properties": {
+              "name": { "type": "string" },
+              "present": { "type": "boolean" },
+              "type_valid": { "type": "boolean" },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "all_present": {
+          "type": "boolean",
+          "description": "True if all variables in the schema are present in staging."
+        },
+        "missing_variables": {
+          "type": "array",
+          "description": "Names of missing variables (empty if all_present is true).",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "production_validation": {
+      "type": "object",
+      "description": "Validation results for the production Vercel environment.",
+      "required": ["environment_name", "variables_checked", "all_present"],
+      "properties": {
+        "environment_name": {
+          "type": "string",
+          "description": "Name of the production environment in Vercel.",
+          "default": "Production"
+        },
+        "variables_checked": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "present", "type_valid"],
+            "properties": {
+              "name": { "type": "string" },
+              "present": { "type": "boolean" },
+              "type_valid": { "type": "boolean" },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "all_present": { "type": "boolean" },
+        "missing_variables": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "environment_isolation_check": {
+      "type": "object",
+      "description": "Check that secrets are not shared between staging and production.",
+      "required": ["status", "shared_secrets_found"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "CRITICAL_FAIL"],
+          "description": "PASS if all secrets are distinct. CRITICAL_FAIL if any secret is shared."
+        },
+        "shared_secrets_found": {
+          "type": "boolean",
+          "description": "True if any secret has the same value in staging and production."
+        },
+        "shared_secret_names": {
+          "type": "array",
+          "description": "Names of secrets found to be shared (empty if none). Note: values must NOT be logged.",
+          "items": { "type": "string" }
+        },
+        "isolation_notes": {
+          "type": "string",
+          "description": "Additional notes on environment isolation."
+        }
+      },
+      "additionalProperties": false
+    },
+    "process_env_usage_check": {
+      "type": "object",
+      "description": "Check for direct process.env usage outside lib/env.ts.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "PASS if no scattered process.env calls found outside lib/env.ts."
+        },
+        "violations_found": {
+          "type": "array",
+          "description": "File paths and line numbers where process.env is used directly outside lib/env.ts.",
+          "items": {
+            "type": "object",
+            "required": ["file_path", "variable_name"],
+            "properties": {
+              "file_path": { "type": "string" },
+              "variable_name": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": ["PASS", "FAIL_MISSING_VARS", "FAIL_SHARED_SECRETS", "FAIL_SCATTERED_ENV"],
+      "description": "Overall environment validation result."
+    }
+  },
+  "additionalProperties": false
+}

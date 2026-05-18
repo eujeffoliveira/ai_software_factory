@@ -10,7 +10,7 @@ This is a **prompt-engineering and agent-design project** — not a runnable sof
 
 The repository implements a multi-agent Software Development Lifecycle (SDLC) framework with 11 specialized agents (Agente00–Agente10). Each agent has a role, a set of skills, JSON schemas, checklists, examples, and distilled operational knowledge.
 
-**Agente00_TechLead, Agente01_ProductOwner, Agente02_SoftwareArchitect, Agente03_SoftwareEngineer, Agente04_DevBackend, Agente05_DevFrontend, Agente06_QaEngineer, and Agente07_DevSecOps are fully built.** Agent 08 has a skeleton folder but incomplete artifacts. Agents 09–10 have no local artifacts yet.
+**Agente00_TechLead through Agente08_DevOps are all fully built** (9 of 11 agents). Agents 09–10 have no local artifacts yet.
 
 Agente00–Agente03 received a **knowledge patch on 2026-05-17**: course materials from a Software Engineering postgraduate curriculum (12 modules) were distilled into each agent's `knowledge/` folder. New principles, heuristics, decision rules, knowledge cards, and source_map entries were added to Agente00 (project metrics + IT governance), Agente01 (BPMN, ISO 25010, requirements traceability), Agente02 (UML diagrams: use case, sequence, class), and Agente03 (extracting tasks from UML, cohesion/coupling at task level).
 
@@ -170,7 +170,7 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 ## When working on this repo
 
 - Read `context/base_teorica.md` to understand an agent's role before building its artifacts
-- Read `Agente00_TechLead/`, `Agente02_SoftwareArchitect/`, `Agente03_SoftwareEngineer/`, `Agente04_DevBackend/`, `Agente05_DevFrontend/`, `Agente06_QaEngineer/`, or `Agente07_DevSecOps/` as reference implementations for fully-built agents
+- Read any `AgenteXX_*/` folder from Agente00 through Agente08 as reference implementations for fully-built agents — `Agente04_DevBackend/` and `Agente07_DevSecOps/` are particularly comprehensive
 - Do not introduce references to specific organizations, client names, or domain-specific terminology in `_generico` files
 - `lib/` is gitignored — do not attempt to commit book files
 - When updating `lib/STATUS_DOWNLOADS.md`, follow the existing table format: ✅ found, ⚠️ partial, ❌ not found, 📂 already in another agent's folder

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente08_DevOps",
+  "build_date": "2026-05-17",
+  "description": "Maps build-time source materials to the distilled knowledge artifacts in Agente08_DevOps/knowledge/. All sources were read at build time. At runtime, agents consult only the distilled artifacts — never the original sources.",
+  "sources": [
+    {
+      "source_id": "continuous-delivery",
+      "title": "Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation",
+      "authors": ["Jez Humble", "David Farley"],
+      "publisher": "Addison-Wesley",
+      "year": 2010,
+      "location": "lib/DevOps/continuous_delivery_humble_farley.pdf",
+      "key_chapters_used": [
+        "Ch. 5: Anatomy of the Deployment Pipeline",
+        "Ch. 10: Deploying and Releasing Applications",
+        "Ch. 11: Managing Infrastructure and Environments",
+        "Ch. 14: Advanced Version Control"
+      ],
+      "distilled_into": {
+        "principles": ["P1", "P2", "P8", "P9"],
+        "heuristics": ["H2", "H3", "H4", "H10", "H13"],
+        "decision_rules": ["DR001", "DR006", "DR013"],
+        "knowledge_cards": ["Card 003", "Card 006"]
+      }
+    },
+    {
+      "source_id": "site-reliability-engineering",
+      "title": "Site Reliability Engineering: How Google Runs Production Systems",
+      "authors": ["Betsy Beyer", "Chris Jones", "Jennifer Petoff", "Niall Richard Murphy"],
+      "publisher": "O'Reilly Media",
+      "year": 2016,
+      "location": "lib/DevOps/site_reliability_engineering_google.pdf",
+      "key_chapters_used": [
+        "Ch. 3: Embracing Risk",
+        "Ch. 4: Service Level Objectives",
+        "Ch. 5: Eliminating Toil",
+        "Ch. 12: Effective Troubleshooting",
+        "Ch. 14: Managing Incidents",
+        "Ch. 15: Postmortem Culture"
+      ],
+      "distilled_into": {
+        "principles": ["P4", "P5", "P7"],
+        "heuristics": ["H5", "H6", "H11", "H14"],
+        "decision_rules": ["DR005", "DR007", "DR015"],
+        "knowledge_cards": ["Card 004", "Card 008", "Card 009", "Card 011"]
+      }
+    },
+    {
+      "source_id": "the-phoenix-project",
+      "title": "The Phoenix Project: A Novel about IT, DevOps, and Helping Your Business Win",
+      "authors": ["Gene Kim", "Kevin Behr", "George Spafford"],
+      "publisher": "IT Revolution Press",
+      "year": 2013,
+      "location": "lib/DevOps/the_phoenix_project_kim.pdf",
+      "key_chapters_used": [
+        "Part III: The Three Ways",
+        "The First Way (Flow)",
+        "The Second Way (Feedback)",
+        "The Third Way (Continual Learning)"
+      ],
+      "distilled_into": {
+        "principles": ["P6"],
+        "heuristics": ["H10"],
+        "decision_rules": [],
+        "knowledge_cards": []
+      }
+    },
+    {
+      "source_id": "devops-handbook",
+      "title": "The DevOps Handbook: How to Create World-Class Agility, Reliability, and Security in Technology Organizations",
+      "authors": ["Gene Kim", "Jez Humble", "Patrick Debois", "John Willis"],
+      "publisher": "IT Revolution Press",
+      "year": 2016,
+      "location": "lib/DevOps/devops_handbook_kim.pdf",
+      "key_chapters_used": [
+        "Part I: The Three Ways",
+        "Part IV: The Second Way: The Technical Practices of Feedback",
+        "DORA metrics chapters"
+      ],
+      "distilled_into": {
+        "principles": ["P10"],
+        "heuristics": ["H3", "H15"],
+        "decision_rules": ["DR013"],
+        "knowledge_cards": ["Card 001"]
+      }
+    },
+    {
+      "source_id": "infrastructure-as-code",
+      "title": "Infrastructure as Code: Managing Servers in the Cloud",
+      "authors": ["Kief Morris"],
+      "publisher": "O'Reilly Media",
+      "year": 2016,
+      "location": "lib/DevOps/infrastructure_as_code_morris.pdf",
+      "key_chapters_used": [
+        "Ch. 2: Principles of Infrastructure as Code",
+        "Ch. 3: Defining Infrastructure",
+        "Ch. 8: Handling Change"
+      ],
+      "distilled_into": {
+        "principles": ["P3"],
+        "heuristics": ["H1", "H7"],
+        "decision_rules": ["DR002", "DR008"],
+        "knowledge_cards": ["Card 012"]
+      }
+    },
+    {
+      "source_id": "modulo-11-gerencia-configuracao",
+      "title": "Módulo 11 — Gerência de Configuração",
+      "authors": ["Postgraduate Software Engineering Curriculum"],
+      "publisher": "Internal curriculum materials",
+      "year": 2024,
+      "location": "lib/Modulo11/gerencia_configuracao.pdf",
+      "key_chapters_used": [
+        "Aula 1: Fundamentos de Gerência de Configuração",
+        "Aula 2: Itens de Configuração e Baseline",
+        "Aula 3: Controle de Mudanças",
+        "Aula 4: Auditoria de Configuração"
+      ],
+      "distilled_into": {
+        "principles": ["P11", "P12"],
+        "heuristics": ["H1"],
+        "decision_rules": ["DR002", "DR004", "DR012"],
+        "knowledge_cards": ["Card 012"]
+      }
+    },
+    {
+      "source_id": "reference-architecture-internal",
+      "title": "Reference Architecture v1.1.1 (internal) — Golden Path Technical Stack",
+      "authors": ["AI Software Factory"],
+      "publisher": "Internal",
+      "year": 2024,
+      "location": "context/reference_architecture_generico.md",
+      "key_sections_used": [
+        "Golden Path Tech Stack",
+        "Vercel Deployment Configuration",
+        "Prisma Migration Rules",
+        "Environment Variable Management",
+        "Cron Job Pattern (guardCron)",
+        "Structured Logging (audit_log, sync_log)"
+      ],
+      "distilled_into": {
+        "principles": [],
+        "heuristics": ["H7", "H12"],
+        "decision_rules": ["DR002", "DR003", "DR009", "DR010", "DR014"],
+        "knowledge_cards": ["Card 002", "Card 003", "Card 005", "Card 007", "Card 010"],
+        "context_view_sections": [
+          "Section 2: Vercel Deployment",
+          "Section 3: CI/CD Pipeline",
+          "Section 4: Environment Variables",
+          "Section 5: Prisma Migrations",
+          "Section 6: Healthcheck Endpoint",
+          "Section 7: Smoke Tests",
+          "Section 8: Rollback Strategy",
+          "Section 9: Observability Stack"
+        ]
+      }
+    }
+  ],
+  "build_notes": [
+    "All 6 bibliography sources were reviewed at build time.",
+    "Knowledge was distilled into principles.md, heuristics.md, decision_rules.md, and knowledge_cards.md.",
+    "The context_view.md was compiled from the Reference Architecture and internal conventions.",
+    "At runtime, this agent reads only from Agente08_DevOps/ — never from lib/ or context/.",
+    "The source_map.json exists for traceability and audit purposes only — it is not consulted at runtime."
+  ]
+}

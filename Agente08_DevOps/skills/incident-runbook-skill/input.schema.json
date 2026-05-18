@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "incident-runbook-skill Input",
+  "type": "object",
+  "required": ["action"],
+  "properties": {
+    "action": { "type": "string", "enum": ["create_initial_set", "update_runbook"] },
+    "runbook_id_to_update": { "type": "string", "pattern": "^RUNBOOK-[0-9]{3}$" },
+    "incident_summary": { "type": "string", "description": "For update_runbook: summary of the incident and what the runbook missed" },
+    "production_url": { "type": "string" },
+    "uses_google_oauth": { "type": "boolean" },
+    "has_cron_jobs": { "type": "boolean" }
+  }
+}

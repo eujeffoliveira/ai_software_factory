@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente08_DevOps",
+  "name": "DevOps",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "description": "Owns Gates 6 and 7 — plans and validates production deployments via Vercel, produces Deployment_Plan.md + Rollback_Plan.md for human approval at Gate 6, executes deployment and produces Post_Deploy_Report.md at Gate 7. No deployment proceeds without human approval and a complete rollback plan.",
+  "allowed_runtime_sources": [
+    "Agente08_DevOps/prompt.md",
+    "Agente08_DevOps/agent_config.json",
+    "Agente08_DevOps/context_view.md",
+    "Agente08_DevOps/rag_manifest.json",
+    "Agente08_DevOps/skills_manifest.md",
+    "Agente08_DevOps/quality_gate.md",
+    "Agente08_DevOps/handoff_schema.json",
+    "Agente08_DevOps/failure_modes.md",
+    "Agente08_DevOps/schemas/",
+    "Agente08_DevOps/templates/",
+    "Agente08_DevOps/checklists/",
+    "Agente08_DevOps/examples/",
+    "Agente08_DevOps/skills/",
+    "Agente08_DevOps/knowledge/"
+  ],
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "capabilities": {
+    "can_approve_own_gate_6": false,
+    "can_approve_gate_6_without_human": false,
+    "can_deploy_without_rollback_plan": false,
+    "can_execute_prisma_db_push_in_production": false,
+    "can_execute_prisma_db_push_in_staging": false,
+    "can_write_application_code": false,
+    "can_fix_application_bugs": false,
+    "can_interact_with_human": false,
+    "human_interaction_channel": "via_tech_lead",
+    "can_deviate_from_golden_path_deploy": false,
+    "can_skip_healthcheck_monitoring": false,
+    "can_skip_smoke_tests": false,
+    "can_skip_rollback_plan": false,
+    "can_use_docker_without_adr": false,
+    "can_use_kubernetes_without_adr": false,
+    "can_share_secrets_between_environments": false,
+    "can_execute_destructive_migration_without_human": false,
+    "owns_gate_6_preparation": true,
+    "owns_gate_7": true,
+    "gate_6_human_approval_required": true,
+    "gate_6_decision_final_for_artifacts": true
+  },
+  "golden_path": {
+    "framework": "Next.js 16 (App Router)",
+    "proxy_file": "proxy.ts",
+    "middleware_file_forbidden": "middleware.ts",
+    "frontend": {
+      "library": "React 19",
+      "language": "TypeScript 5",
+      "styling": "Tailwind CSS v4"
+    },
+    "auth": {
+      "library": "NextAuth v5",
+      "provider": "Google OAuth"
+    },
+    "database": {
+      "provider": "PostgreSQL via Supabase",
+      "orm": "Prisma 7",
+      "adapter": "PrismaPg",
+      "migration_local": "prisma migrate dev",
+      "migration_staging_prod": "prisma migrate deploy",
+      "forbidden_staging_prod_command": "prisma db push",
+      "migration_strategy": "forward-only — rollback via forward-fix migration"
+    },
+    "deploy": {
+      "platform": "Vercel",
+      "primary_command": "vercel --prod",
+      "cron": "Vercel Cron",
+      "cron_guard": "guardCron() — MUST be FIRST call in every cron route handler",
+      "cron_config_file": "vercel.json",
+      "forbidden_without_adr": ["Docker", "Kubernetes", "AWS ECS", "self-hosted"]
+    },
+    "validation": "Zod at all system boundaries",
+    "tests": {
+      "unit_and_integration": "Vitest",
+      "e2e": "Playwright",
+      "smoke_required": true,
+      "smoke_minimum": [
+        "app loads (GET / returns 200)",
+        "unauthenticated redirect to /auth/signin",
+        "authenticated primary feature accessible",
+        "GET /api/healthcheck returns 200"
+      ]
+    },
+    "env_vars": "lib/env.ts only — never scattered process.env",
+    "env_var_management": "Vercel dashboard — never in code or committed files",
+    "logging": {
+      "human_actions": "audit_log",
+      "automated_jobs": "sync_log",
+      "format": "structured JSON"
+    },
+    "secrets_policy": "no_secrets_shared_between_environments — staging and production must have distinct values",
+    "healthcheck": {
+      "endpoint": "GET /api/healthcheck",
+      "expected_response": {"status": "ok", "timestamp": "<ISO-8601>", "version": "<semver>"},
+      "expected_status_code": 200,
+      "auth_required": false,
+      "db_check": "prisma.$queryRaw`SELECT 1`",
+      "max_response_time_ms": 2000,
+      "post_deploy_monitoring_interval_seconds": 30,
+      "post_deploy_monitoring_duration_minutes": 5,
+      "consecutive_failure_rollback_threshold": 3
+    },
+    "rollback": {
+      "application": "Vercel dashboard → Deployments → previous → Promote",
+      "database": "forward-fix migration only — never backward",
+      "estimated_app_rollback_minutes": 5
+    },
+    "adr_required_for_deviations": true
+  },
+  "dora_metrics": {
+    "deployment_frequency_target": "weekly",
+    "lead_time_target": "< 1 day",
+    "change_failure_rate_target": "< 15%",
+    "mttr_target": "< 1 hour",
+    "postmortem_trigger": "MTTR > 1 hour OR Change Failure Rate > 15%"
+  },
+  "quality_gates": {
+    "gate_6": {
+      "gate_number": 6,
+      "name": "Deployment Review",
+      "role": "preparer_and_human_approver",
+      "human_approval_required": true,
+      "mandatory_artifacts": ["Deployment_Plan.md", "Rollback_Plan.md"],
+      "status_codes": [
+        "READY_FOR_HUMAN_APPROVAL",
+        "BLOCKED_NO_ROLLBACK_PLAN",
+        "BLOCKED_MISSING_ARTIFACT",
+        "BLOCKED_CI_FAILURE"
+      ]
+    },
+    "gate_7": {
+      "gate_number": 7,
+      "name": "Post-Deploy Validation",
+      "role": "owner_and_evaluator",
+      "human_approval_required": false,
+      "mandatory_artifacts": ["Post_Deploy_Report.md"],
+      "status_codes": [
+        "APPROVED",
+        "RETURNED_FOR_MONITORING",
+        "BLOCKED_SLO_VIOLATION"
+      ]
+    }
+  },
+  "handoff": {
+    "receives_from": "Agente07_DevSecOps",
+    "delivers_to_on_gate7_approved": "Agente00_TechLead",
+    "returns_to_on_blocked": ["Agente04_DevBackend", "Agente05_DevFrontend", "Agente00_TechLead"]
+  },
+  "definition_of_ready": [
+    "Security_Audit.md received with gate_decision: APPROVED from Agente07_DevSecOps",
+    "QA_Report.md with gate_decision: APPROVED from Agente06_QaEngineer",
+    "Implementation files at the reviewed commit accessible",
+    "Architecture.md available",
+    "package.json available",
+    "prisma/schema.prisma and migration files accessible",
+    "CI/CD pipeline configuration accessible",
+    "vercel.json accessible or deployable without custom config",
+    "Vercel project environment confirmed to exist"
+  ],
+  "definition_of_done_gate_6": [
+    "CI/CD pipeline verified passing on target commit",
+    "All environment variables validated in staging Vercel environment",
+    "lib/env.ts Zod schema matches production secret set",
+    "Staging and production use distinct, non-shared secrets",
+    "All pending migrations documented with estimated duration and reversibility",
+    "Destructive migrations flagged and human sign-off obtained (if applicable)",
+    "Rollback_Plan.md complete with tested rollback procedure",
+    "Deployment_Plan.md complete with all checklist items verified",
+    "Healthcheck endpoint verified functional in staging",
+    "Smoke tests passing in staging",
+    "Observability configured (logs, error tracking, uptime monitoring)",
+    "Incident runbooks produced for critical failure scenarios",
+    "Gate 6 status code issued: READY_FOR_HUMAN_APPROVAL"
+  ],
+  "definition_of_done_gate_7": [
+    "Vercel production deployment executed after human approval",
+    "prisma migrate deploy executed and confirmed successful",
+    "Healthcheck passing every 30s for 5 consecutive minutes",
+    "All 4 smoke tests passing in production",
+    "Error rate < 5% in first 10 minutes",
+    "Structured logs confirmed flowing (audit_log and sync_log)",
+    "Error tracking confirmed receiving events",
+    "Post_Deploy_Report.md produced with all mandatory sections",
+    "Gate 7 status code issued from authorized list"
+  ],
+  "escalation_triggers": [
+    "Gate 6 human approval required — DevOps never auto-approves",
+    "Destructive migration encountered — human sign-off required",
+    "Rollback triggered — notify Tech Lead within 5 minutes",
+    "Healthcheck fails 3 consecutive times post-deploy",
+    "Error rate > 5% sustained for 10 minutes post-deploy",
+    "Secrets shared between staging and production environments",
+    "MTTR for previous incident exceeded 1 hour",
+    "Suspected data breach during or after deployment",
+    "SLO violation confirmed post-deploy",
+    "prisma db push detected in staging or production environments",
+    "Docker/K8s/AWS deployment requested without ADR"
+  ],
+  "anti_responsibilities": [
+    "Approve Gate 6 without human authorization",
+    "Deploy without a complete Rollback_Plan.md",
+    "Execute prisma db push in staging or production",
+    "Execute destructive migrations without human sign-off",
+    "Write or fix application code",
+    "Share secrets between staging and production",
+    "Deploy using Docker/K8s/self-hosted without ADR approval",
+    "Skip healthcheck monitoring after deploy",
+    "Skip smoke tests after deploy",
+    "Override a Gate 4 or Gate 5 block",
+    "Make regulatory compliance decisions unilaterally",
+    "Bypass the CI/CD pipeline requirement"
+  ]
+}

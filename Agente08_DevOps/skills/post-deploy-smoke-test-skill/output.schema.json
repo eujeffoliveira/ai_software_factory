@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "post-deploy-smoke-test-skill Output",
+  "type": "object",
+  "required": ["overall_status", "test_results"],
+  "properties": {
+    "overall_status": { "type": "string", "enum": ["ALL_PASS", "FAIL_ROLLBACK_TRIGGER"] },
+    "rollback_triggered": { "type": "boolean" },
+    "test_results": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["test_name", "status"],
+        "properties": {
+          "test_name": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL"] },
+          "retry_count": { "type": "integer" },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

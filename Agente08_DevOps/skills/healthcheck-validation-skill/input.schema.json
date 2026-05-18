@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "healthcheck-validation-skill Input",
+  "type": "object",
+  "required": ["healthcheck_url", "check_phase"],
+  "properties": {
+    "healthcheck_url": { "type": "string" },
+    "check_phase": { "type": "string", "enum": ["pre_deploy", "post_deploy"] },
+    "route_handler_content": { "type": "string", "description": "app/api/healthcheck/route.ts content (pre_deploy only)" },
+    "monitoring_duration_minutes": { "type": "integer", "default": 5 },
+    "monitoring_interval_seconds": { "type": "integer", "default": 30 }
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/rollback-plan",
+  "title": "Rollback Plan",
+  "description": "Schema for the Rollback_Plan.md structured data. Mandatory Gate 6 companion artifact. Missing or incomplete Rollback_Plan triggers BLOCKED_NO_ROLLBACK_PLAN.",
+  "type": "object",
+  "required": [
+    "feature_name",
+    "prepared_date",
+    "rollback_trigger_conditions",
+    "application_rollback_steps",
+    "database_rollback_strategy",
+    "post_rollback_validation",
+    "estimated_rollback_time_minutes",
+    "rollback_owner"
+  ],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Name of the feature or release this rollback plan covers.",
+      "minLength": 1
+    },
+    "prepared_date": {
+      "type": "string",
+      "description": "Date this rollback plan was prepared.",
+      "format": "date"
+    },
+    "deployment_id_to_rollback_to": {
+      "type": "string",
+      "description": "Vercel deployment ID of the last known-good deployment to roll back to. Required when known."
+    },
+    "rollback_trigger_conditions": {
+      "type": "array",
+      "description": "Conditions that trigger rollback execution. At minimum: healthcheck failure, error rate breach, smoke test failure, manual trigger.",
+      "items": {
+        "type": "object",
+        "required": ["condition", "threshold", "action"],
+        "properties": {
+          "condition": {
+            "type": "string",
+            "description": "The observable condition that triggers rollback."
+          },
+          "threshold": {
+            "type": "string",
+            "description": "The specific threshold value (e.g., '3 consecutive failures', '> 5% for 10 minutes')."
+          },
+          "action": {
+            "type": "string",
+            "enum": ["rollback_immediately", "escalate_and_monitor", "monitor_only"],
+            "description": "Required action when condition is met."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 4
+    },
+    "application_rollback_steps": {
+      "type": "array",
+      "description": "Ordered steps to roll back the application via Vercel dashboard.",
+      "items": {
+        "type": "object",
+        "required": ["step_number", "action", "verification"],
+        "properties": {
+          "step_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "description": "The specific action to perform."
+          },
+          "verification": {
+            "type": "string",
+            "description": "How to verify this step completed successfully."
+          },
+          "estimated_duration_minutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Estimated time for this step."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 3
+    },
+    "database_rollback_strategy": {
+      "type": "object",
+      "description": "Database rollback strategy. Must be forward-fix — no backward migrations.",
+      "required": ["strategy", "has_destructive_migrations", "forward_fix_description"],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "description": "The database rollback approach.",
+          "enum": ["forward_fix_migration", "no_migration_in_this_release"]
+        },
+        "has_destructive_migrations": {
+          "type": "boolean",
+          "description": "True if this release includes destructive database operations."
+        },
+        "forward_fix_description": {
+          "type": "string",
+          "description": "Description of the forward-fix migration that undoes the change, or 'N/A — no database changes in this release'.",
+          "minLength": 5
+        },
+        "forward_fix_migration_file": {
+          "type": "string",
+          "description": "Name of the prepared forward-fix migration file (if applicable)."
+        },
+        "estimated_db_rollback_minutes": {
+          "type": "number",
+          "description": "Estimated time for database rollback (forward-fix application).",
+          "minimum": 0
+        },
+        "data_recovery_possible": {
+          "type": "boolean",
+          "description": "True if any dropped data can be recovered from backup."
+        }
+      },
+      "additionalProperties": false
+    },
+    "post_rollback_validation": {
+      "type": "array",
+      "description": "Validation steps to confirm rollback success.",
+      "items": {
+        "type": "object",
+        "required": ["check", "expected_result"],
+        "properties": {
+          "check": {
+            "type": "string",
+            "description": "What to check after rollback."
+          },
+          "expected_result": {
+            "type": "string",
+            "description": "The expected outcome if rollback was successful."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 3
+    },
+    "estimated_rollback_time_minutes": {
+      "type": "object",
+      "description": "Estimated total rollback time breakdown.",
+      "required": ["application_minutes", "total_minutes"],
+      "properties": {
+        "application_minutes": {
+          "type": "number",
+          "description": "Time to roll back the application via Vercel.",
+          "minimum": 1
+        },
+        "database_minutes": {
+          "type": "number",
+          "description": "Time to execute forward-fix migration (if applicable).",
+          "minimum": 0
+        },
+        "validation_minutes": {
+          "type": "number",
+          "description": "Time to run post-rollback smoke tests and validation.",
+          "minimum": 0
+        },
+        "total_minutes": {
+          "type": "number",
+          "description": "Total estimated rollback time.",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "rollback_owner": {
+      "type": "string",
+      "description": "Role responsible for executing the rollback (e.g., 'Tech Lead (on-call)', 'DevOps Engineer (human)').",
+      "minLength": 5
+    },
+    "rollback_procedure_tested": {
+      "type": "boolean",
+      "description": "True if the rollback procedure has been verified in staging before production deployment."
+    },
+    "rollback_procedure_tested_date": {
+      "type": "string",
+      "description": "Date the rollback procedure was tested in staging.",
+      "format": "date"
+    },
+    "tech_lead_notification_channel": {
+      "type": "string",
+      "description": "How to notify the Tech Lead when rollback is triggered (e.g., 'Slack #incidents channel + direct message')."
+    }
+  },
+  "additionalProperties": false
+}

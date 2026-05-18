@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/incident-runbook",
+  "title": "Incident Runbook",
+  "description": "Schema for incident runbook structured data. Produced by incident-runbook-skill. One runbook per critical failure scenario. Required before first go-live and updated when MTTR > 1 hour.",
+  "type": "object",
+  "required": [
+    "runbook_id",
+    "scenario_name",
+    "severity",
+    "last_updated",
+    "symptoms",
+    "initial_triage_steps",
+    "resolution_steps",
+    "escalation_path",
+    "postmortem_trigger_conditions",
+    "prevention"
+  ],
+  "properties": {
+    "runbook_id": {
+      "type": "string",
+      "description": "Unique runbook identifier.",
+      "pattern": "^RUNBOOK-[0-9]{3}$"
+    },
+    "scenario_name": {
+      "type": "string",
+      "description": "Name of the incident scenario this runbook covers.",
+      "minLength": 5,
+      "examples": [
+        "Application 500 Errors Spike",
+        "Database Connectivity Failure",
+        "Authentication Failure",
+        "Cron Job Failure",
+        "Deployment Failure and Rollback"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "description": "Default incident severity for this scenario.",
+      "enum": ["P1", "P2", "P3"],
+      "description_enum": {
+        "P1": "Service completely down — all users affected",
+        "P2": "Major feature unavailable — significant user impact",
+        "P3": "Minor feature unavailable — limited user impact"
+      }
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this runbook was last reviewed or updated."
+    },
+    "update_history": {
+      "type": "array",
+      "description": "History of runbook updates.",
+      "items": {
+        "type": "object",
+        "required": ["date", "reason"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "symptoms": {
+      "type": "array",
+      "description": "Observable indicators that suggest this runbook applies. Must be specific and measurable.",
+      "items": {
+        "type": "object",
+        "required": ["symptom", "where_to_observe"],
+        "properties": {
+          "symptom": {
+            "type": "string",
+            "description": "The observable symptom."
+          },
+          "where_to_observe": {
+            "type": "string",
+            "description": "Where to see this symptom (e.g., 'Vercel function logs', 'Uptime monitor alert', 'User reports')."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 2
+    },
+    "initial_triage_steps": {
+      "type": "array",
+      "description": "First 5–7 steps to assess and confirm the incident scenario.",
+      "items": {
+        "type": "object",
+        "required": ["step_number", "action", "expected_finding"],
+        "properties": {
+          "step_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "description": "The specific triage action to perform."
+          },
+          "expected_finding": {
+            "type": "string",
+            "description": "What to look for and what it means."
+          },
+          "tool_or_location": {
+            "type": "string",
+            "description": "Where to perform this action (Vercel dashboard, logs, terminal, etc.)."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 3
+    },
+    "resolution_steps": {
+      "type": "array",
+      "description": "Ordered steps to restore service. Must be actionable and specific.",
+      "items": {
+        "type": "object",
+        "required": ["step_number", "action", "verification"],
+        "properties": {
+          "step_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "description": "The specific resolution action."
+          },
+          "command": {
+            "type": "string",
+            "description": "Specific command to run (if applicable)."
+          },
+          "verification": {
+            "type": "string",
+            "description": "How to verify this step succeeded."
+          },
+          "estimated_duration_minutes": {
+            "type": "number",
+            "minimum": 0
+          },
+          "escalation_if_fails": {
+            "type": "string",
+            "description": "What to do if this step does not resolve the issue."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 3
+    },
+    "escalation_path": {
+      "type": "array",
+      "description": "Escalation steps if resolution steps fail.",
+      "items": {
+        "type": "object",
+        "required": ["escalation_level", "trigger", "contact", "channel"],
+        "properties": {
+          "escalation_level": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Escalation level (1 = first escalation, 2 = second, etc.)."
+          },
+          "trigger": {
+            "type": "string",
+            "description": "Condition that triggers this escalation level."
+          },
+          "contact": {
+            "type": "string",
+            "description": "Who to contact (role, not personal name).",
+            "examples": ["Agente00_TechLead (via human)", "Database team", "Security team (Agente07_DevSecOps)"]
+          },
+          "channel": {
+            "type": "string",
+            "description": "How to reach them (placeholder — fill in during instantiation).",
+            "examples": ["project_channel", "incident_channel", "direct_message"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "postmortem_trigger_conditions": {
+      "type": "array",
+      "description": "Conditions that require a blameless postmortem after this incident.",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "examples": [
+        "MTTR > 1 hour",
+        "Data loss occurred",
+        "This incident occurred for the 2nd time in 30 days",
+        "> 100 users affected"
+      ]
+    },
+    "prevention": {
+      "type": "object",
+      "description": "Preventive measures to reduce the likelihood of this incident recurring.",
+      "properties": {
+        "process_improvements": {
+          "type": "array",
+          "description": "Process changes that prevent recurrence.",
+          "items": { "type": "string" }
+        },
+        "code_improvements": {
+          "type": "array",
+          "description": "Code changes that prevent recurrence (for responsible Dev agent).",
+          "items": { "type": "string" }
+        },
+        "monitoring_improvements": {
+          "type": "array",
+          "description": "Observability changes that improve early detection.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "estimated_mttr_minutes": {
+      "type": "object",
+      "description": "Estimated MTTR for this scenario if runbook is followed.",
+      "properties": {
+        "best_case_minutes": { "type": "number", "minimum": 0 },
+        "typical_minutes": { "type": "number", "minimum": 0 },
+        "worst_case_minutes": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

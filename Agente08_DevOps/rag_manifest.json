@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente08_DevOps",
+  "version": "1.0.0",
+  "rag_policy": "local-only-at-runtime",
+  "description": "RAG retrieval policy for Agente08_DevOps. At runtime, only local agent artifacts may be retrieved. Raw bibliography sources (lib/) are blocked. All knowledge has been distilled into the knowledge/ folder.",
+  "collections": [
+    {
+      "collection_id": "devops-knowledge",
+      "description": "Core DevOps principles, heuristics, decision rules, and knowledge cards distilled from build-time bibliography (Continuous Delivery, SRE, DevOps Handbook, Infrastructure as Code, The Phoenix Project, Módulo 11)",
+      "sources": [
+        "Agente08_DevOps/knowledge/principles.md",
+        "Agente08_DevOps/knowledge/heuristics.md",
+        "Agente08_DevOps/knowledge/decision_rules.md",
+        "Agente08_DevOps/knowledge/knowledge_cards.md"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "any deployment planning or validation task"
+    },
+    {
+      "collection_id": "devops-checklists",
+      "description": "Operational checklists for all DevOps tasks — deployment readiness, rollback, environment validation, migration, smoke tests, observability, healthcheck, runtime isolation",
+      "sources": [
+        "Agente08_DevOps/checklists/deployment_readiness_checklist.md",
+        "Agente08_DevOps/checklists/rollback_checklist.md",
+        "Agente08_DevOps/checklists/env_validation_checklist.md",
+        "Agente08_DevOps/checklists/migration_deploy_checklist.md",
+        "Agente08_DevOps/checklists/post_deploy_smoke_checklist.md",
+        "Agente08_DevOps/checklists/observability_checklist.md",
+        "Agente08_DevOps/checklists/healthcheck_checklist.md",
+        "Agente08_DevOps/checklists/runtime_isolation_checklist.md"
+      ],
+      "chunking_strategy": "checklist-item",
+      "chunk_size_tokens": 256,
+      "overlap_tokens": 32,
+      "retrieval_trigger": "executing a deployment skill or pre-deploy check"
+    },
+    {
+      "collection_id": "devops-templates",
+      "description": "Output templates for all DevOps artifacts — Deployment_Plan, Rollback_Plan, Post_Deploy_Report, Healthcheck_Report, Runbook, Environment_Checklist, Migration_Deploy_Plan",
+      "sources": [
+        "Agente08_DevOps/templates/Deployment_Plan.md",
+        "Agente08_DevOps/templates/Rollback_Plan.md",
+        "Agente08_DevOps/templates/Post_Deploy_Report.md",
+        "Agente08_DevOps/templates/Healthcheck_Report.md",
+        "Agente08_DevOps/templates/Runbook_Template.md",
+        "Agente08_DevOps/templates/Environment_Checklist.md",
+        "Agente08_DevOps/templates/Migration_Deploy_Plan.md"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "producing a deployment artifact"
+    },
+    {
+      "collection_id": "devops-schemas",
+      "description": "JSON Schemas for all DevOps I/O contracts — deployment plan, rollback plan, environment checklist, post-deploy report, healthcheck report, migration deploy, incident runbook",
+      "sources": [
+        "Agente08_DevOps/schemas/deployment_plan.schema.json",
+        "Agente08_DevOps/schemas/rollback_plan.schema.json",
+        "Agente08_DevOps/schemas/environment_checklist.schema.json",
+        "Agente08_DevOps/schemas/post_deploy_report.schema.json",
+        "Agente08_DevOps/schemas/healthcheck_report.schema.json",
+        "Agente08_DevOps/schemas/migration_deploy.schema.json",
+        "Agente08_DevOps/schemas/incident_runbook.schema.json"
+      ],
+      "chunking_strategy": "whole-file",
+      "retrieval_trigger": "validating output structure"
+    },
+    {
+      "collection_id": "devops-examples",
+      "description": "Good and bad examples of all DevOps artifacts — deployment plans, rollback plans, post-deploy reports",
+      "sources": [
+        "Agente08_DevOps/examples/good_deployment_plan.md",
+        "Agente08_DevOps/examples/bad_deployment_plan.md",
+        "Agente08_DevOps/examples/good_rollback_plan.md",
+        "Agente08_DevOps/examples/bad_rollback_plan.md",
+        "Agente08_DevOps/examples/good_post_deploy_report.md",
+        "Agente08_DevOps/examples/bad_post_deploy_report.md"
+      ],
+      "chunking_strategy": "whole-file",
+      "retrieval_trigger": "quality self-check before producing output"
+    },
+    {
+      "collection_id": "devops-skills",
+      "description": "Skill definitions, input/output schemas, checklists, and examples for all 9 DevOps skills",
+      "sources": [
+        "Agente08_DevOps/skills/vercel-deployment-skill/",
+        "Agente08_DevOps/skills/ci-cd-pipeline-skill/",
+        "Agente08_DevOps/skills/environment-validation-skill/",
+        "Agente08_DevOps/skills/migration-deploy-skill/",
+        "Agente08_DevOps/skills/rollback-planning-skill/",
+        "Agente08_DevOps/skills/post-deploy-smoke-test-skill/",
+        "Agente08_DevOps/skills/observability-setup-skill/",
+        "Agente08_DevOps/skills/incident-runbook-skill/",
+        "Agente08_DevOps/skills/healthcheck-validation-skill/"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "invoking a skill"
+    },
+    {
+      "collection_id": "devops-context",
+      "description": "Compiled local operational context — replaces context/ at runtime; contains Vercel config, CI/CD pipeline spec, env var rules, migration rules, healthcheck spec, rollback strategy, DORA metrics",
+      "sources": [
+        "Agente08_DevOps/context_view.md",
+        "Agente08_DevOps/quality_gate.md",
+        "Agente08_DevOps/failure_modes.md"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "gate decision, deployment execution, or escalation"
+    }
+  ],
+  "blocked_raw_sources": [
+    "lib/DevOps/",
+    "lib/",
+    "context/",
+    "*.pdf"
+  ],
+  "retrieval_order": [
+    "devops-context",
+    "devops-knowledge",
+    "devops-checklists",
+    "devops-skills",
+    "devops-templates",
+    "devops-schemas",
+    "devops-examples"
+  ],
+  "fallback_policy": "return_empty — if a source is not found in local collections, do not attempt to read from blocked sources"
+}

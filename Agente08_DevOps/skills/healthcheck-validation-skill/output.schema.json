@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "healthcheck-validation-skill Output",
+  "type": "object",
+  "required": ["overall_status", "rollback_triggered"],
+  "properties": {
+    "overall_status": { "type": "string", "enum": ["PASS", "FAIL_ROLLBACK_TRIGGERED", "FAIL_ENDPOINT_MISSING", "FAIL_ENDPOINT_NO_DB_CHECK"] },
+    "rollback_triggered": { "type": "boolean" },
+    "checks_performed": { "type": "integer" },
+    "checks_passed": { "type": "integer" },
+    "max_consecutive_failures": { "type": "integer" },
+    "avg_response_time_ms": { "type": "number" },
+    "artifact": { "type": "string", "description": "Path to Healthcheck_Report.md (post_deploy only)" }
+  }
+}

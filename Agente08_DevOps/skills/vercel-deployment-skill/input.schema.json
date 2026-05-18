@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "vercel-deployment-skill Input",
+  "type": "object",
+  "required": ["staging_deployment_url", "target_commit_sha"],
+  "properties": {
+    "staging_deployment_url": { "type": "string", "description": "Current Vercel staging/preview deployment URL." },
+    "target_commit_sha": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+    "vercel_json_content": { "type": "string", "description": "Contents of vercel.json (if present)." },
+    "cron_route_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file_path", "content"],
+        "properties": {
+          "file_path": { "type": "string" },
+          "content": { "type": "string" }
+        }
+      }
+    },
+    "deployment_platform_request": {
+      "type": "string",
+      "enum": ["vercel", "docker", "kubernetes", "aws_ecs", "other"],
+      "default": "vercel"
+    }
+  }
+}

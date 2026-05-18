@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/post-deploy-report",
+  "title": "Post-Deploy Report",
+  "description": "Schema for the Post_Deploy_Report.md structured data. Produced by Agente08_DevOps as the Gate 7 artifact after production deployment. Contains healthcheck results, smoke test results, migration confirmation, and observability data.",
+  "type": "object",
+  "required": [
+    "gate_status",
+    "project_name",
+    "deploy_date",
+    "deployment_id",
+    "reported_by",
+    "deployment_summary",
+    "healthcheck_results",
+    "smoke_test_results",
+    "migration_confirmation",
+    "observability_results",
+    "gate_decision"
+  ],
+  "properties": {
+    "gate_status": {
+      "type": "string",
+      "description": "Gate 7 status code.",
+      "enum": ["APPROVED", "RETURNED_FOR_MONITORING", "BLOCKED_SLO_VIOLATION"]
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Name of the deployed project.",
+      "minLength": 1
+    },
+    "deploy_date": {
+      "type": "string",
+      "description": "Date and time deployment executed.",
+      "format": "date-time"
+    },
+    "deployment_id": {
+      "type": "string",
+      "description": "Vercel deployment ID.",
+      "minLength": 1
+    },
+    "deployment_url": {
+      "type": "string",
+      "description": "Production URL of the deployment."
+    },
+    "reported_by": {
+      "type": "string",
+      "description": "Agent that produced this report.",
+      "const": "Agente08_DevOps v1.0.0"
+    },
+    "human_approver": {
+      "type": "string",
+      "description": "Name/identifier of the human who approved Gate 6."
+    },
+    "deployment_summary": {
+      "type": "string",
+      "description": "1-2 sentence summary of what was deployed and the outcome.",
+      "minLength": 20
+    },
+    "healthcheck_results": {
+      "type": "array",
+      "description": "Time-series healthcheck results for the 5-minute post-deploy monitoring window. Minimum 5 entries (one per minute for 5 minutes). Expected 10 entries (one per 30 seconds).",
+      "items": {
+        "type": "object",
+        "required": ["time_offset_label", "status_code", "response_time_ms", "db_check"],
+        "properties": {
+          "time_offset_label": {
+            "type": "string",
+            "description": "Human-readable time offset label (e.g., 'T+0m', 'T+30s', 'T+1m')."
+          },
+          "status_code": {
+            "type": "integer",
+            "description": "HTTP status code from healthcheck endpoint.",
+            "minimum": 100,
+            "maximum": 599
+          },
+          "response_time_ms": {
+            "type": "number",
+            "description": "Response time in milliseconds.",
+            "minimum": 0
+          },
+          "db_check": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "TIMEOUT"],
+            "description": "Database connectivity check result."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes (e.g., 'cold start', 'retry')."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 5
+    },
+    "healthcheck_summary": {
+      "type": "object",
+      "description": "Summary of the healthcheck monitoring window.",
+      "properties": {
+        "total_checks": { "type": "integer", "minimum": 1 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "consecutive_failures_max": { "type": "integer", "minimum": 0 },
+        "rollback_triggered": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "smoke_test_results": {
+      "type": "array",
+      "description": "Results for each mandatory smoke test. Must have exactly 4 entries.",
+      "items": {
+        "type": "object",
+        "required": ["test_name", "status"],
+        "properties": {
+          "test_name": {
+            "type": "string",
+            "description": "Smoke test name.",
+            "enum": [
+              "App loads (GET / returns 200)",
+              "Unauthenticated redirect to /auth/signin",
+              "Authenticated primary feature accessible",
+              "API healthcheck returns 200"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PASS", "FAIL"],
+            "description": "Test result."
+          },
+          "retry_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of retries needed (0 = passed first attempt)."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes on test execution or failure details."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "migration_confirmation": {
+      "type": "object",
+      "description": "Database migration execution confirmation.",
+      "properties": {
+        "migrations_applied": {
+          "type": "boolean",
+          "description": "True if migration(s) were applied in this deployment."
+        },
+        "migration_files": {
+          "type": "array",
+          "description": "List of migration files applied.",
+          "items": {
+            "type": "object",
+            "required": ["filename", "applied_at", "success"],
+            "properties": {
+              "filename": { "type": "string" },
+              "applied_at": { "type": "string", "format": "date-time" },
+              "success": { "type": "boolean" },
+              "duration_seconds": { "type": "number", "minimum": 0 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "no_migrations_reason": {
+          "type": "string",
+          "description": "Explanation when migrations_applied is false (e.g., 'No pending migrations in this release')."
+        }
+      },
+      "additionalProperties": false
+    },
+    "observability_results": {
+      "type": "object",
+      "description": "Post-deploy observability verification.",
+      "properties": {
+        "audit_logs_flowing": {
+          "type": "boolean",
+          "description": "True if audit_log entries are appearing in Vercel function logs."
+        },
+        "sync_logs_flowing": {
+          "type": "boolean",
+          "description": "True if sync_log entries are appearing (or no cron jobs in this release)."
+        },
+        "error_tracking_active": {
+          "type": "boolean",
+          "description": "True if error tracking (Sentry or equivalent) is receiving events."
+        },
+        "uptime_monitoring_active": {
+          "type": "boolean",
+          "description": "True if uptime monitor is checking /api/healthcheck."
+        },
+        "error_rate_percent_10min": {
+          "type": "number",
+          "description": "Error rate (% HTTP 5xx) in the first 10 minutes post-deploy.",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "p95_response_time_ms": {
+          "type": "number",
+          "description": "P95 response time in the first 30 minutes post-deploy.",
+          "minimum": 0
+        },
+        "alerts_triggered": {
+          "type": "boolean",
+          "description": "True if any observability alerts fired."
+        },
+        "alert_details": {
+          "type": "string",
+          "description": "Details of any alerts triggered."
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues_found": {
+      "type": "array",
+      "description": "Issues found during post-deploy validation.",
+      "items": {
+        "type": "object",
+        "required": ["issue", "severity", "status"],
+        "properties": {
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "status": { "type": "string", "enum": ["MONITORING", "ESCALATED", "RESOLVED", "ROLLBACK_TRIGGERED"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "rollback_details": {
+      "type": "object",
+      "description": "Rollback details (present only if rollback was triggered).",
+      "properties": {
+        "rollback_triggered": { "type": "boolean" },
+        "rollback_reason": { "type": "string" },
+        "rollback_initiated_at": { "type": "string", "format": "date-time" },
+        "rollback_completed_at": { "type": "string", "format": "date-time" },
+        "rollback_successful": { "type": "boolean" },
+        "tech_lead_notified_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "gate_decision": {
+      "type": "object",
+      "description": "Final Gate 7 decision with rationale.",
+      "required": ["status", "rationale"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["APPROVED", "RETURNED_FOR_MONITORING", "BLOCKED_SLO_VIOLATION"]
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Explanation of the gate decision with specific metrics as evidence.",
+          "minLength": 20
+        },
+        "monitoring_extension": {
+          "type": "string",
+          "description": "For RETURNED_FOR_MONITORING: how long to monitor and what conditions must be met for APPROVED."
+        },
+        "next_agent": {
+          "type": "string",
+          "enum": ["Agente00_TechLead"],
+          "description": "Next agent to receive the handoff."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

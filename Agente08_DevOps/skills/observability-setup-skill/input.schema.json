@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "observability-setup-skill Input",
+  "type": "object",
+  "properties": {
+    "server_action_files": { "type": "array", "items": { "type": "string" } },
+    "cron_handler_files": { "type": "array", "items": { "type": "string" } },
+    "error_tracking_dsn_configured": { "type": "boolean" },
+    "uptime_monitor_configured": { "type": "boolean" },
+    "vercel_analytics_enabled": { "type": "boolean" }
+  }
+}

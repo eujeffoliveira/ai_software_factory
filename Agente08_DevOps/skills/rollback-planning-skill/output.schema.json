@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "rollback-planning-skill Output",
+  "type": "object",
+  "required": ["plan_status", "artifact"],
+  "properties": {
+    "plan_status": { "type": "string", "enum": ["COMPLETE", "INCOMPLETE_MISSING_SECTIONS"] },
+    "estimated_total_rollback_minutes": { "type": "number" },
+    "procedure_tested_in_staging": { "type": "boolean" },
+    "blocking_issues": { "type": "array", "items": { "type": "string" } },
+    "artifact": { "type": "string", "description": "Path to Rollback_Plan.md" }
+  }
+}

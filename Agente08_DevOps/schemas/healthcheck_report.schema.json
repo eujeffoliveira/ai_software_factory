@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/healthcheck-report",
+  "title": "Healthcheck Report",
+  "description": "Schema for the Healthcheck_Report.md structured data. Produced by healthcheck-validation-skill during Gate 7 post-deploy monitoring. Contains time-series results for the mandatory 5-minute monitoring window.",
+  "type": "object",
+  "required": [
+    "monitored_endpoint",
+    "monitoring_started_at",
+    "monitoring_interval_seconds",
+    "monitoring_duration_minutes",
+    "results",
+    "summary",
+    "rollback_triggered",
+    "overall_status"
+  ],
+  "properties": {
+    "monitored_endpoint": {
+      "type": "string",
+      "description": "The healthcheck endpoint URL being monitored.",
+      "pattern": "^https?://.+/api/healthcheck"
+    },
+    "monitoring_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when monitoring began (immediately after deploy completed)."
+    },
+    "monitoring_interval_seconds": {
+      "type": "integer",
+      "description": "Interval between healthcheck calls in seconds.",
+      "const": 30
+    },
+    "monitoring_duration_minutes": {
+      "type": "integer",
+      "description": "Total monitoring duration in minutes.",
+      "const": 5
+    },
+    "results": {
+      "type": "array",
+      "description": "Time-series healthcheck results. One entry per check (every 30s for 5min = 10 entries).",
+      "items": {
+        "type": "object",
+        "required": [
+          "check_number",
+          "time_offset_seconds",
+          "time_offset_label",
+          "status_code",
+          "response_time_ms",
+          "db_check",
+          "response_body_valid"
+        ],
+        "properties": {
+          "check_number": {
+            "type": "integer",
+            "description": "Sequential check number (1–10 for 5-minute window).",
+            "minimum": 1
+          },
+          "time_offset_seconds": {
+            "type": "integer",
+            "description": "Seconds elapsed since monitoring started.",
+            "minimum": 0
+          },
+          "time_offset_label": {
+            "type": "string",
+            "description": "Human-readable time offset (e.g., 'T+0s', 'T+30s', 'T+1m', 'T+5m')."
+          },
+          "status_code": {
+            "type": "integer",
+            "description": "HTTP response status code.",
+            "minimum": 100,
+            "maximum": 599
+          },
+          "response_time_ms": {
+            "type": "number",
+            "description": "Response time in milliseconds.",
+            "minimum": 0
+          },
+          "db_check": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "TIMEOUT", "NOT_CHECKED"],
+            "description": "Database connectivity check result from healthcheck response."
+          },
+          "response_body_valid": {
+            "type": "boolean",
+            "description": "True if response body matches expected schema {status, timestamp, version}."
+          },
+          "response_status_value": {
+            "type": "string",
+            "enum": ["ok", "error", "N/A"],
+            "description": "The 'status' field value from the healthcheck response body."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes (e.g., 'cold start delay', 'timeout - retried', 'rollback triggered after this check')."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 5
+    },
+    "summary": {
+      "type": "object",
+      "description": "Aggregate statistics for the monitoring window.",
+      "required": [
+        "total_checks",
+        "checks_passed",
+        "checks_failed",
+        "max_consecutive_failures",
+        "avg_response_time_ms",
+        "max_response_time_ms"
+      ],
+      "properties": {
+        "total_checks": {
+          "type": "integer",
+          "description": "Total number of healthcheck calls made.",
+          "minimum": 1
+        },
+        "checks_passed": {
+          "type": "integer",
+          "description": "Number of checks that returned HTTP 200 with valid body.",
+          "minimum": 0
+        },
+        "checks_failed": {
+          "type": "integer",
+          "description": "Number of checks that returned non-200 or invalid body.",
+          "minimum": 0
+        },
+        "max_consecutive_failures": {
+          "type": "integer",
+          "description": "Maximum consecutive failures in the monitoring window. >= 3 triggers rollback.",
+          "minimum": 0
+        },
+        "avg_response_time_ms": {
+          "type": "number",
+          "description": "Average response time across all checks.",
+          "minimum": 0
+        },
+        "max_response_time_ms": {
+          "type": "number",
+          "description": "Maximum response time observed.",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "rollback_triggered": {
+      "type": "boolean",
+      "description": "True if 3 consecutive failures triggered the rollback procedure."
+    },
+    "rollback_trigger_check_number": {
+      "type": "integer",
+      "description": "The check number at which the 3rd consecutive failure occurred (and rollback was triggered).",
+      "minimum": 3
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": ["PASS", "FAIL_ROLLBACK_TRIGGERED", "FAIL_INTERMITTENT"],
+      "description": "PASS: all checks passed. FAIL_ROLLBACK_TRIGGERED: 3 consecutive failures triggered rollback. FAIL_INTERMITTENT: failures occurred but did not reach rollback threshold (for RETURNED_FOR_MONITORING)."
+    }
+  },
+  "additionalProperties": false
+}

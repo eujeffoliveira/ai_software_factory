@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "vercel-deployment-skill Output",
+  "type": "object",
+  "required": ["status", "deployment_steps", "cron_inventory"],
+  "properties": {
+    "status": { "type": "string", "enum": ["READY", "BLOCKED_MISSING_GUARD_CRON", "ADR_REQUIRED"] },
+    "deployment_steps": { "type": "array", "items": { "type": "object" } },
+    "cron_inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["route_path", "schedule", "guard_cron_present", "sync_log_in_finally"],
+        "properties": {
+          "route_path": { "type": "string" },
+          "schedule": { "type": "string" },
+          "guard_cron_present": { "type": "boolean" },
+          "sync_log_in_finally": { "type": "boolean" }
+        }
+      }
+    },
+    "blocking_issues": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/agente08-handoff",
+  "title": "Agente08_DevOps Handoff Package",
+  "description": "Schema for the Handoff Package produced by Agente08_DevOps. Gate 6 package requests human approval. Gate 7 package reports deployment outcome. On Gate 7 APPROVED, delivered to Agente00_TechLead for project closure. On BLOCKED_SLO_VIOLATION, escalates to Agente00_TechLead for incident management.",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "gate_number",
+    "gate_decision",
+    "gate_decision_rationale",
+    "summary",
+    "pre_deploy_checks",
+    "migration_status",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "gate_ready"
+  ],
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "Primary artifact produced in this phase.",
+      "enum": ["Deployment_Plan.md", "Post_Deploy_Report.md"]
+    },
+    "companion_artifact": {
+      "type": "string",
+      "description": "Companion artifact (Gate 6 only: Rollback_Plan.md).",
+      "enum": ["Rollback_Plan.md"]
+    },
+    "gate_number": {
+      "type": "integer",
+      "description": "Gate number: 6 for Deployment Review, 7 for Post-Deploy Validation.",
+      "enum": [6, 7]
+    },
+    "gate_decision": {
+      "type": "string",
+      "description": "The gate status code issued by DevOps.",
+      "enum": [
+        "READY_FOR_HUMAN_APPROVAL",
+        "BLOCKED_NO_ROLLBACK_PLAN",
+        "BLOCKED_MISSING_ARTIFACT",
+        "BLOCKED_CI_FAILURE",
+        "APPROVED",
+        "RETURNED_FOR_MONITORING",
+        "BLOCKED_SLO_VIOLATION"
+      ]
+    },
+    "gate_decision_rationale": {
+      "type": "string",
+      "description": "One to three sentences explaining the gate decision. Must reference specific evidence (checklist items, metrics, file names).",
+      "minLength": 20
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level summary of the deployment phase — what was done, what was found, current deployment status.",
+      "minLength": 30
+    },
+    "deployment_id": {
+      "type": "string",
+      "description": "Vercel deployment ID (Gate 7 only — available after vercel --prod executes)."
+    },
+    "deployment_url": {
+      "type": "string",
+      "description": "Production URL confirmed after deployment (Gate 7 only)."
+    },
+    "target_commit_sha": {
+      "type": "string",
+      "description": "Git commit SHA of the deployed revision.",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "pre_deploy_checks": {
+      "type": "object",
+      "description": "Pre-deploy validation results (Gate 6). All checks must be PASS for READY_FOR_HUMAN_APPROVAL.",
+      "properties": {
+        "ci_pipeline": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "GitHub Actions CI/CD pipeline status on target commit."
+        },
+        "staging_env_vars": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "All staging environment variables present and valid."
+        },
+        "production_env_vars": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "All production environment variables present and valid."
+        },
+        "env_isolation": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "Staging and production use distinct, non-shared secrets."
+        },
+        "rollback_plan_complete": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "Rollback_Plan.md present, complete, and procedure verified in staging."
+        },
+        "healthcheck_staging": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "GET /api/healthcheck returns 200 in staging."
+        },
+        "smoke_tests_staging": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_CHECKED"],
+          "description": "All 4 smoke tests passing in staging."
+        },
+        "observability_configured": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "PARTIAL", "NOT_CHECKED"],
+          "description": "Structured logs, error tracking, uptime monitoring all configured."
+        },
+        "cron_guard_verified": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "NOT_APPLICABLE", "NOT_CHECKED"],
+          "description": "guardCron() verified as first call in all cron route handlers."
+        }
+      },
+      "additionalProperties": false
+    },
+    "migration_status": {
+      "type": "object",
+      "description": "Database migration deployment status.",
+      "properties": {
+        "pending_migrations": {
+          "type": "array",
+          "description": "Migration files pending deployment.",
+          "items": {
+            "type": "object",
+            "required": ["filename", "is_destructive", "estimated_duration_seconds"],
+            "properties": {
+              "filename": {
+                "type": "string",
+                "description": "Migration file name (e.g., 20240101120000_add_user_status)."
+              },
+              "is_destructive": {
+                "type": "boolean",
+                "description": "True if migration contains DROP COLUMN, DROP TABLE, or data-truncating ALTER."
+              },
+              "human_signoff_obtained": {
+                "type": "boolean",
+                "description": "True if human signed off on destructive migration. Required when is_destructive is true."
+              },
+              "estimated_duration_seconds": {
+                "type": "number",
+                "description": "Estimated migration execution time in seconds.",
+                "minimum": 0
+              },
+              "backward_compatible": {
+                "type": "boolean",
+                "description": "True if migration is backward-compatible with the current codebase."
+              },
+              "rollback_strategy": {
+                "type": "string",
+                "description": "Forward-fix rollback migration description if needed."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "applied_successfully": {
+          "type": "boolean",
+          "description": "True if prisma migrate deploy completed without errors (Gate 7 only)."
+        },
+        "applied_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when migration was applied (Gate 7 only)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "post_deploy_results": {
+      "type": "object",
+      "description": "Post-deploy validation results (Gate 7 only).",
+      "properties": {
+        "healthcheck_results": {
+          "type": "array",
+          "description": "Time-series healthcheck results for the 5-minute monitoring window.",
+          "items": {
+            "type": "object",
+            "required": ["time_offset_minutes", "status_code", "response_time_ms"],
+            "properties": {
+              "time_offset_minutes": {
+                "type": "number",
+                "description": "Minutes after deployment completed.",
+                "minimum": 0,
+                "maximum": 5
+              },
+              "status_code": {
+                "type": "integer",
+                "description": "HTTP status code returned by healthcheck endpoint.",
+                "minimum": 100,
+                "maximum": 599
+              },
+              "response_time_ms": {
+                "type": "number",
+                "description": "Response time in milliseconds.",
+                "minimum": 0
+              },
+              "db_check": {
+                "type": "string",
+                "enum": ["PASS", "FAIL"],
+                "description": "Database connectivity check result."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "smoke_test_results": {
+          "type": "array",
+          "description": "Results for each smoke test.",
+          "items": {
+            "type": "object",
+            "required": ["test_name", "status"],
+            "properties": {
+              "test_name": {
+                "type": "string",
+                "description": "Smoke test name.",
+                "enum": [
+                  "App loads (GET / returns 200)",
+                  "Unauthenticated redirect to /auth/signin",
+                  "Authenticated primary feature accessible",
+                  "API healthcheck returns 200"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": ["PASS", "FAIL"],
+                "description": "Smoke test result."
+              },
+              "notes": {
+                "type": "string",
+                "description": "Optional notes on test result (e.g., retry count, error message)."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "error_rate_percent": {
+          "type": "number",
+          "description": "Error rate (%) in the first 10 minutes post-deploy. Must be < 5% for APPROVED.",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "p95_response_time_ms": {
+          "type": "number",
+          "description": "P95 response time in milliseconds in the first 30 minutes post-deploy.",
+          "minimum": 0
+        },
+        "alerts_triggered": {
+          "type": "boolean",
+          "description": "True if any observability alerts fired post-deploy."
+        },
+        "alert_details": {
+          "type": "string",
+          "description": "Details of any alerts triggered. Required when alerts_triggered is true."
+        },
+        "rollback_triggered": {
+          "type": "boolean",
+          "description": "True if rollback was initiated during Gate 7 monitoring."
+        },
+        "rollback_reason": {
+          "type": "string",
+          "description": "Reason for rollback. Required when rollback_triggered is true."
+        }
+      },
+      "additionalProperties": false
+    },
+    "human_approval": {
+      "type": "object",
+      "description": "Human approval record (Gate 7 only — documents who approved Gate 6 and when).",
+      "properties": {
+        "approved_by": {
+          "type": "string",
+          "description": "Name or identifier of the human who approved Gate 6 deployment."
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of human approval."
+        },
+        "approval_notes": {
+          "type": "string",
+          "description": "Any notes provided with the approval."
+        }
+      },
+      "additionalProperties": false
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumptions made during deployment planning or execution.",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "properties": {
+          "assumption": {
+            "type": "string",
+            "description": "The assumption made."
+          },
+          "impact": {
+            "type": "string",
+            "description": "What is impacted if the assumption is wrong."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that may affect the deployment or gate decision.",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The unresolved question."
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "True if this question must be answered before proceeding."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Residual deployment risks and their disposition.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation", "blocks_gate"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "description": "Risk identifier.",
+            "pattern": "^RISK-[0-9]{3,}$"
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Risk severity classification."
+          },
+          "description": {
+            "type": "string",
+            "description": "Risk description."
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "How this risk is mitigated."
+          },
+          "blocks_gate": {
+            "type": "boolean",
+            "description": "True if this risk blocks the current gate."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "description": "Next agent or action in the pipeline.",
+      "enum": [
+        "human_approval",
+        "Agente00_TechLead",
+        "Agente04_DevBackend",
+        "Agente05_DevFrontend",
+        "Agente07_DevSecOps"
+      ]
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True only when Gate 7 decision is APPROVED. False for all Gate 6 packages (gate 6 requires human approval) and all BLOCKED/RETURNED decisions."
+    },
+    "deployment_cycle": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Which deployment cycle this is (1 = first production deployment, 2 = first re-deployment, etc.)."
+    }
+  },
+  "additionalProperties": false
+}

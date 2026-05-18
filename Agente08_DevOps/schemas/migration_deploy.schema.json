@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/migration-deploy",
+  "title": "Migration Deploy Plan",
+  "description": "Schema for the Migration_Deploy_Plan.md structured data. Produced by migration-deploy-skill. Documents all pending migrations, their risk assessment, execution plan, and rollback strategy.",
+  "type": "object",
+  "required": [
+    "prepared_at",
+    "target_environment",
+    "prisma_migrate_command",
+    "current_migration_state",
+    "pending_migrations",
+    "overall_risk",
+    "rollback_strategy",
+    "human_signoff_required"
+  ],
+  "properties": {
+    "prepared_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "target_environment": {
+      "type": "string",
+      "enum": ["staging", "production"],
+      "description": "Target environment for this migration deployment."
+    },
+    "prisma_migrate_command": {
+      "type": "string",
+      "description": "The exact command to execute.",
+      "const": "prisma migrate deploy"
+    },
+    "forbidden_command": {
+      "type": "string",
+      "description": "Command that is forbidden in this environment.",
+      "const": "prisma db push"
+    },
+    "current_migration_state": {
+      "type": "object",
+      "description": "Current state of migrations in the target environment.",
+      "properties": {
+        "last_applied_migration": {
+          "type": "string",
+          "description": "Filename of the last migration applied to the target database."
+        },
+        "pending_count": {
+          "type": "integer",
+          "description": "Number of pending migration files not yet applied.",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "pending_migrations": {
+      "type": "array",
+      "description": "Ordered list of migration files to be applied. Applied in chronological order by filename timestamp.",
+      "items": {
+        "type": "object",
+        "required": [
+          "order",
+          "filename",
+          "operations_summary",
+          "is_destructive",
+          "is_backward_compatible",
+          "estimated_duration_seconds",
+          "risk_level"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "description": "Application order (1 = first to be applied).",
+            "minimum": 1
+          },
+          "filename": {
+            "type": "string",
+            "description": "Migration file name (e.g., 20240101120000_add_user_status)."
+          },
+          "operations_summary": {
+            "type": "string",
+            "description": "Human-readable summary of what SQL operations this migration performs."
+          },
+          "is_destructive": {
+            "type": "boolean",
+            "description": "True if migration contains DROP COLUMN, DROP TABLE, TRUNCATE, or narrowing ALTER."
+          },
+          "destructive_operations": {
+            "type": "array",
+            "description": "Specific destructive operations found (empty if is_destructive is false).",
+            "items": { "type": "string" }
+          },
+          "is_backward_compatible": {
+            "type": "boolean",
+            "description": "True if current codebase works correctly with both old and new schema (allows parallel deploy)."
+          },
+          "estimated_duration_seconds": {
+            "type": "number",
+            "description": "Estimated execution time in seconds.",
+            "minimum": 0
+          },
+          "affected_table_row_count": {
+            "type": "integer",
+            "description": "Approximate row count of the primary affected table (for duration estimate accuracy).",
+            "minimum": 0
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Risk level for this migration."
+          },
+          "risk_rationale": {
+            "type": "string",
+            "description": "Explanation of the risk assessment."
+          },
+          "human_signoff_required": {
+            "type": "boolean",
+            "description": "True if this migration requires human sign-off before execution (always true for CRITICAL, usually true for HIGH)."
+          },
+          "human_signoff_obtained": {
+            "type": "boolean",
+            "description": "True if human sign-off has been documented. Required when human_signoff_required is true."
+          },
+          "human_signoff_approver": {
+            "type": "string",
+            "description": "Name/identifier of the human who approved this migration."
+          },
+          "human_signoff_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of human approval."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "overall_risk": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Overall risk for the migration deployment (max risk of all individual migrations)."
+    },
+    "rollback_strategy": {
+      "type": "object",
+      "description": "Database rollback strategy — always forward-fix, never backward.",
+      "required": ["strategy_type", "forward_fix_description"],
+      "properties": {
+        "strategy_type": {
+          "type": "string",
+          "enum": ["forward_fix_migration", "no_db_changes"],
+          "description": "Rollback approach type."
+        },
+        "forward_fix_description": {
+          "type": "string",
+          "description": "Description of the forward-fix migration that undoes the change."
+        },
+        "forward_fix_sql_preview": {
+          "type": "string",
+          "description": "Preview of the SQL that would be in the forward-fix migration."
+        },
+        "forward_fix_migration_prepared": {
+          "type": "boolean",
+          "description": "True if the forward-fix migration file is already prepared and ready."
+        }
+      },
+      "additionalProperties": false
+    },
+    "human_signoff_required": {
+      "type": "boolean",
+      "description": "True if any pending migration requires human sign-off before execution."
+    },
+    "all_signoffs_obtained": {
+      "type": "boolean",
+      "description": "True if all required human sign-offs have been documented."
+    },
+    "execution_readiness": {
+      "type": "string",
+      "enum": ["READY", "BLOCKED_PENDING_SIGNOFF", "BLOCKED_HIGH_RISK_REVIEW"],
+      "description": "Whether the migration deployment is ready to execute."
+    }
+  },
+  "additionalProperties": false
+}

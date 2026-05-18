@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/deployment-plan",
+  "title": "Deployment Plan",
+  "description": "Schema for the Deployment_Plan.md structured data. Produced by Agente08_DevOps as the primary Gate 6 artifact. Requires human approval before production deployment executes.",
+  "type": "object",
+  "required": [
+    "gate_status",
+    "project_name",
+    "release_description",
+    "target_environment",
+    "planned_deploy_date",
+    "prepared_by",
+    "pre_deploy_checklist",
+    "deployment_steps",
+    "environment_variables_summary",
+    "migrations_summary",
+    "rollback_plan_reference",
+    "monitoring_plan"
+  ],
+  "properties": {
+    "gate_status": {
+      "type": "string",
+      "description": "Gate 6 status code.",
+      "enum": [
+        "READY_FOR_HUMAN_APPROVAL",
+        "BLOCKED_NO_ROLLBACK_PLAN",
+        "BLOCKED_MISSING_ARTIFACT",
+        "BLOCKED_CI_FAILURE"
+      ]
+    },
+    "gate_status_rationale": {
+      "type": "string",
+      "description": "Explanation of the gate status decision with specific evidence.",
+      "minLength": 20
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Name of the project being deployed.",
+      "minLength": 1
+    },
+    "release_description": {
+      "type": "string",
+      "description": "Brief description of what is being deployed in this release.",
+      "minLength": 10
+    },
+    "target_environment": {
+      "type": "string",
+      "description": "Target deployment environment.",
+      "const": "Production"
+    },
+    "planned_deploy_date": {
+      "type": "string",
+      "description": "Planned production deployment date (ISO 8601 date).",
+      "format": "date"
+    },
+    "prepared_by": {
+      "type": "string",
+      "description": "Agent that prepared this document.",
+      "const": "Agente08_DevOps v1.0.0"
+    },
+    "target_commit_sha": {
+      "type": "string",
+      "description": "Git commit SHA of the version being deployed.",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "prerequisite_gates": {
+      "type": "object",
+      "description": "Status of prerequisite gates.",
+      "properties": {
+        "gate_4_qa": {
+          "type": "string",
+          "enum": ["APPROVED", "NOT_VERIFIED"],
+          "description": "Gate 4 QA review status."
+        },
+        "gate_5_security": {
+          "type": "string",
+          "enum": ["APPROVED", "NOT_VERIFIED"],
+          "description": "Gate 5 Security review status."
+        }
+      },
+      "additionalProperties": false
+    },
+    "pre_deploy_checklist": {
+      "type": "array",
+      "description": "Pre-deployment checklist items with completion status.",
+      "items": {
+        "type": "object",
+        "required": ["item", "status"],
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "Checklist item description."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "NOT_APPLICABLE", "PENDING"],
+            "description": "Completion status."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes on this item."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 10
+    },
+    "deployment_steps": {
+      "type": "array",
+      "description": "Ordered deployment execution steps.",
+      "items": {
+        "type": "object",
+        "required": ["step_number", "description", "command_or_action"],
+        "properties": {
+          "step_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": {
+            "type": "string",
+            "description": "What this step does."
+          },
+          "command_or_action": {
+            "type": "string",
+            "description": "The specific command or UI action to perform."
+          },
+          "requires_human": {
+            "type": "boolean",
+            "description": "True if this step requires a human action (not automatable)."
+          },
+          "verification": {
+            "type": "string",
+            "description": "How to verify this step completed successfully."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 5
+    },
+    "environment_variables_summary": {
+      "type": "object",
+      "description": "Summary of environment variable changes in this release.",
+      "properties": {
+        "new_variables": {
+          "type": "array",
+          "description": "New environment variables added in this release.",
+          "items": {
+            "type": "object",
+            "required": ["name", "description", "environments_required"],
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "environments_required": {
+                "type": "array",
+                "items": { "type": "string", "enum": ["staging", "production"] }
+              },
+              "configured_in_staging": { "type": "boolean" },
+              "configured_in_production": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "modified_variables": {
+          "type": "array",
+          "description": "Existing environment variables changed in this release.",
+          "items": {
+            "type": "object",
+            "required": ["name", "change_description"],
+            "properties": {
+              "name": { "type": "string" },
+              "change_description": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "all_variables_validated": {
+          "type": "boolean",
+          "description": "True if all env vars in lib/env.ts Zod schema are present in both staging and production."
+        }
+      },
+      "additionalProperties": false
+    },
+    "migrations_summary": {
+      "type": "object",
+      "description": "Summary of database migrations in this release.",
+      "properties": {
+        "has_pending_migrations": {
+          "type": "boolean",
+          "description": "True if there are pending migration files to apply."
+        },
+        "migration_files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["filename", "is_destructive", "estimated_duration_seconds"],
+            "properties": {
+              "filename": { "type": "string" },
+              "is_destructive": { "type": "boolean" },
+              "human_signoff_obtained": { "type": "boolean" },
+              "estimated_duration_seconds": { "type": "number", "minimum": 0 },
+              "backward_compatible": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "migration_plan_reference": {
+          "type": "string",
+          "description": "Reference to the Migration_Deploy_Plan.md document."
+        }
+      },
+      "additionalProperties": false
+    },
+    "rollback_plan_reference": {
+      "type": "string",
+      "description": "Path or reference to the companion Rollback_Plan.md document. Must be 'Rollback_Plan.md' for READY_FOR_HUMAN_APPROVAL.",
+      "minLength": 1
+    },
+    "monitoring_plan": {
+      "type": "object",
+      "description": "Post-deploy monitoring configuration.",
+      "properties": {
+        "healthcheck_endpoint": {
+          "type": "string",
+          "description": "Healthcheck URL to monitor.",
+          "pattern": "^/api/healthcheck"
+        },
+        "healthcheck_interval_seconds": {
+          "type": "integer",
+          "description": "Interval between healthcheck calls.",
+          "const": 30
+        },
+        "healthcheck_duration_minutes": {
+          "type": "integer",
+          "description": "Duration of post-deploy monitoring window.",
+          "const": 5
+        },
+        "error_rate_threshold_percent": {
+          "type": "number",
+          "description": "Error rate threshold that triggers rollback.",
+          "const": 5
+        },
+        "rollback_trigger_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "observability_status": {
+      "type": "object",
+      "description": "Observability configuration status.",
+      "properties": {
+        "structured_logs": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] },
+        "error_tracking": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] },
+        "uptime_monitoring": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] },
+        "performance_monitoring": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] }
+      },
+      "additionalProperties": false
+    },
+    "human_approval_section": {
+      "type": "object",
+      "description": "Human approval documentation — to be filled in by the approving human.",
+      "properties": {
+        "approved_by": { "type": "string" },
+        "approved_at": { "type": "string", "format": "date-time" },
+        "approval_notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

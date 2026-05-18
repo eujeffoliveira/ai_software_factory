@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ci-cd-pipeline-skill Input",
+  "type": "object",
+  "required": ["target_commit_sha"],
+  "properties": {
+    "target_commit_sha": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+    "ci_workflow_file_content": { "type": "string" },
+    "ci_run_id": { "type": "string" },
+    "ci_run_status": { "type": "string", "enum": ["success", "failure", "pending", "not_found"] },
+    "step_statuses": {
+      "type": "object",
+      "properties": {
+        "typecheck": { "type": "string", "enum": ["PASS", "FAIL", "MISSING"] },
+        "lint": { "type": "string", "enum": ["PASS", "FAIL", "MISSING"] },
+        "unit_tests": { "type": "string", "enum": ["PASS", "FAIL", "MISSING"] },
+        "build": { "type": "string", "enum": ["PASS", "FAIL", "MISSING"] },
+        "e2e_tests": { "type": "string", "enum": ["PASS", "FAIL", "MISSING", "NOT_APPLICABLE"] }
+      }
+    }
+  }
+}

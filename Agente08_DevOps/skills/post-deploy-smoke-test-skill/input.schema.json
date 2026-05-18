@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "post-deploy-smoke-test-skill Input",
+  "type": "object",
+  "required": ["target_url", "test_environment"],
+  "properties": {
+    "target_url": { "type": "string" },
+    "test_environment": { "type": "string", "enum": ["staging", "production"] },
+    "has_auth_test_credentials": { "type": "boolean" }
+  }
+}

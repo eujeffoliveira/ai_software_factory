@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "observability-setup-skill Output",
+  "type": "object",
+  "required": ["overall_status", "components"],
+  "properties": {
+    "overall_status": { "type": "string", "enum": ["ALL_CONFIGURED", "GAPS_FOUND"] },
+    "components": {
+      "type": "object",
+      "properties": {
+        "audit_log": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] },
+        "sync_log": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL", "NOT_APPLICABLE"] },
+        "error_tracking": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] },
+        "uptime_monitoring": { "type": "string", "enum": ["CONFIGURED", "MISSING", "PARTIAL"] },
+        "performance_monitoring": { "type": "string", "enum": ["CONFIGURED", "MISSING", "OPTIONAL"] }
+      }
+    },
+    "gaps": { "type": "array", "items": { "type": "string" } }
+  }
+}
