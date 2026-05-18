@@ -354,7 +354,10 @@ Escolha o script conforme o seu terminal:
 .\install.ps1
 ```
 
-> Se aparecer erro de política de execução: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+> Se aparecer erro `is not recognized` ou `running scripts is disabled`, execute primeiro (linha inteira):
+> ```powershell
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
 
 **Git Bash / Linux / macOS:**
 ```bash

@@ -32,17 +32,22 @@ gemini --version
 
 ### PowerShell (Windows)
 
-A partir da raiz do repositório `ai_software_factory`:
+Abra o **PowerShell** (não o CMD), navegue até a raiz do repositório e certifique-se de estar com a versão mais recente antes de instalar:
 
 ```powershell
+cd C:\Dev\ai_software_factory   # ajuste para o seu caminho
+git pull
 .\install.ps1
 ```
 
-Se aparecer erro de política de execução:
+Se aparecer o erro `is not recognized` ou `running scripts is disabled`, a política de execução está bloqueando scripts. Corrija com o comando completo abaixo e depois re-execute:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 .\install.ps1
 ```
+
+> **Atenção:** o comando `Set-ExecutionPolicy` precisa dos dois argumentos na mesma linha — `-ExecutionPolicy RemoteSigned` e `-Scope CurrentUser`. Executar só até `-Scope` sem o valor causa erro.
 
 ### Git Bash / Linux / macOS
 
@@ -140,10 +145,10 @@ factory Agente00_TechLead claude 'Qual o status atual do projeto?'
 
 | Situação | O que fazer |
 |----------|-------------|
-| Clonou o repo em nova máquina | Re-execute o installer |
-| Moveu a pasta `ai_software_factory` | Re-execute o installer |
-| Editou um `prompt.md` de agente | Re-execute o installer para propagar a mudança |
-| Adicionou um novo agente | Adicione ao array `$agents` no installer, depois re-execute |
+| Nova máquina ou pasta desatualizada | `git pull` → `.\install.ps1` |
+| Moveu a pasta `ai_software_factory` | `.\install.ps1` |
+| Editou um `prompt.md` de agente | `.\install.ps1` para propagar a mudança |
+| Adicionou um novo agente | Adicione ao array `$agents` no installer → `.\install.ps1` |
 
 ---
 
@@ -175,4 +180,5 @@ rm ~/.claude/agents/techlead.md ~/.claude/agents/po.md  # etc.
 | `gemini: command not found` | `npm install -g @google/gemini-cli` |
 | `claude: command not found` | `npm install -g @anthropic-ai/claude-code` |
 | Agente responde com comportamento errado | O `prompt.md` foi atualizado? Re-execute o installer |
-| Execution policy error (PowerShell) | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| `is not recognized` ou `running scripts is disabled` | Execute `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` e tente novamente |
+| `Missing an argument for parameter 'Scope'` | O comando foi executado incompleto — copie a linha inteira: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
