@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui-state-design-skill Output",
+  "description": "Output produced by the ui-state-design-skill.",
+  "type": "object",
+  "required": ["artifacts", "feature_name", "components_specified", "all_states_complete", "all_tokens_generic", "accessibility_specified"],
+  "properties": {
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["UI_Spec.md", "Screen_States.md"] },
+      "minItems": 2,
+      "description": "Artifacts produced by this skill."
+    },
+    "feature_name": { "type": "string" },
+    "components_specified": {
+      "type": "array",
+      "description": "Components for which full specifications were produced.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["component_name", "has_loading", "has_error", "has_empty", "has_populated", "has_props_interface", "has_accessibility_section"],
+        "properties": {
+          "component_name": { "type": "string" },
+          "has_loading": { "type": "boolean" },
+          "has_error": { "type": "boolean" },
+          "has_empty": { "type": "boolean" },
+          "has_populated": { "type": "boolean" },
+          "has_props_interface": { "type": "boolean" },
+          "has_accessibility_section": { "type": "boolean" },
+          "has_responsive_table": { "type": "boolean" },
+          "empty_state_variants": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of empty state variants (1 for simple, 3 for search+filter variants)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "all_states_complete": {
+      "type": "boolean",
+      "description": "True if every async component has all 4 states fully specified."
+    },
+    "all_tokens_generic": {
+      "type": "boolean",
+      "description": "True if zero hardcoded hex values appear in any specification."
+    },
+    "accessibility_specified": {
+      "type": "boolean",
+      "description": "True if all interactive elements have ARIA labels and accessibility sections are present."
+    },
+    "api_data_gaps": {
+      "type": "array",
+      "description": "TypeScript interface fields not found in API_Contract.json.",
+      "items": { "type": "string" }
+    },
+    "ready_for_usability_review": {
+      "type": "boolean",
+      "description": "True if specifications are complete and ready for usability-review-skill."
+    }
+  },
+  "additionalProperties": false
+}

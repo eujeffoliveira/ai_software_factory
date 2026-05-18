@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/wireframe",
+  "title": "Wireframe",
+  "description": "Schema for validating wireframe metadata produced by Agente09_UxUiDesigner. The actual wireframe content is ASCII art in Markdown — this schema validates the metadata wrapper.",
+  "type": "object",
+  "required": ["feature", "date", "screens"],
+  "properties": {
+    "feature": {
+      "type": "string",
+      "description": "Feature name matching the UX Flow feature name.",
+      "minLength": 3
+    },
+    "date": {
+      "type": "string",
+      "description": "Design date in ISO 8601 format.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "screens": {
+      "type": "array",
+      "description": "All screens wireframed in this document.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "screen_id",
+          "name",
+          "route",
+          "has_desktop_layout",
+          "has_mobile_layout",
+          "states_annotated",
+          "components_listed"
+        ],
+        "properties": {
+          "screen_id": {
+            "type": "string",
+            "description": "Screen identifier.",
+            "pattern": "^SCREEN-[0-9]{3,}$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable screen name.",
+            "examples": ["Entity List", "Entity Detail", "Create Entity Modal"]
+          },
+          "route": {
+            "type": "string",
+            "description": "URL route for this screen.",
+            "examples": ["/entity/list", "/entity/[id]", "/entity/new"]
+          },
+          "layout_type": {
+            "type": "string",
+            "enum": ["full-page", "modal", "drawer", "inline-component"],
+            "description": "Whether this is a full page or a sub-component layout."
+          },
+          "has_desktop_layout": {
+            "type": "boolean",
+            "description": "True if a desktop wireframe (lg: and above) is present."
+          },
+          "has_mobile_layout": {
+            "type": "boolean",
+            "description": "True if a mobile wireframe (< sm:) is present."
+          },
+          "has_tablet_layout": {
+            "type": "boolean",
+            "description": "True if a tablet wireframe (sm: to lg:) is present. Optional — only when the tablet layout differs significantly."
+          },
+          "states_annotated": {
+            "type": "array",
+            "description": "Which states are annotated in this wireframe.",
+            "items": {
+              "type": "string",
+              "enum": ["loading", "error", "empty", "populated"]
+            },
+            "minItems": 4,
+            "uniqueItems": true
+          },
+          "components_listed": {
+            "type": "array",
+            "description": "Named components that appear in this wireframe (for cross-reference with UI_Spec.md).",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "examples": ["EntityCard", "SearchBar", "FilterDropdown", "Pagination"]
+            }
+          },
+          "navigation_zone": {
+            "type": "object",
+            "description": "Navigation elements present on this screen.",
+            "properties": {
+              "has_header": { "type": "boolean" },
+              "has_sidebar": { "type": "boolean" },
+              "has_breadcrumb": { "type": "boolean" },
+              "has_footer": { "type": "boolean" }
+            }
+          },
+          "ux_flow_steps": {
+            "type": "array",
+            "description": "Which UX Flow step numbers this screen corresponds to.",
+            "items": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

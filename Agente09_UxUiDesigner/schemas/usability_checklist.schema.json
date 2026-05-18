@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/usability-checklist",
+  "title": "Usability Checklist",
+  "description": "Schema for a completed Usability_Checklist.md metadata block — tracks which usability principles were evaluated and the outcome.",
+  "type": "object",
+  "required": ["feature", "date", "evaluator", "sections", "overall_verdict"],
+  "properties": {
+    "feature": {
+      "type": "string",
+      "description": "Feature name under review.",
+      "minLength": 3
+    },
+    "date": {
+      "type": "string",
+      "description": "Review date in ISO 8601 format.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "evaluator": {
+      "type": "string",
+      "const": "Agente09_UxUiDesigner",
+      "description": "Always the UX/UI Designer — self-review before submission."
+    },
+    "sections": {
+      "type": "array",
+      "description": "Checklist sections and their results.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["section_name", "items_total", "items_passed", "issues_found"],
+        "properties": {
+          "section_name": {
+            "type": "string",
+            "description": "Name of the usability checklist section.",
+            "examples": [
+              "Cognitive Load",
+              "Navigation Clarity",
+              "Form Usability",
+              "Error Prevention and Recovery",
+              "Accessibility Basics",
+              "Mobile Usability",
+              "Visual Hierarchy"
+            ]
+          },
+          "items_total": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Total checklist items in this section."
+          },
+          "items_passed": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Checklist items that passed."
+          },
+          "issues_found": {
+            "type": "array",
+            "description": "Issues found in this section.",
+            "items": {
+              "type": "object",
+              "required": ["issue", "severity", "action"],
+              "properties": {
+                "issue": {
+                  "type": "string",
+                  "description": "Description of the usability issue found.",
+                  "minLength": 10
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": ["critical", "high", "medium", "low"],
+                  "description": "Severity: critical = blocks task completion; high = significant friction; medium = notable issue; low = cosmetic."
+                },
+                "action": {
+                  "type": "string",
+                  "enum": ["fixed", "deferred", "accepted", "escalated"],
+                  "description": "Action taken: fixed = resolved before submission; deferred = noted for backlog; accepted = acceptable trade-off; escalated = sent to Tech Lead."
+                },
+                "resolution": {
+                  "type": "string",
+                  "description": "How the issue was resolved (required if action is 'fixed').",
+                  "minLength": 10
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "overall_verdict": {
+      "type": "string",
+      "enum": ["PASS", "PASS_WITH_NOTES", "FAIL"],
+      "description": "PASS: no critical or high issues unresolved. PASS_WITH_NOTES: medium/low issues deferred. FAIL: critical or high issues not resolved — cannot submit."
+    },
+    "critical_issues_unresolved": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of critical-severity issues not yet resolved. Must be 0 for PASS or PASS_WITH_NOTES."
+    },
+    "high_issues_unresolved": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of high-severity issues not yet resolved. Must be 0 for PASS."
+    }
+  },
+  "additionalProperties": false
+}

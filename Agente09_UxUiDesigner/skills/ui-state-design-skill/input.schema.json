@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui-state-design-skill Input",
+  "description": "Input requirements for the ui-state-design-skill.",
+  "type": "object",
+  "required": ["feature_name", "wireframes_complete", "components_to_spec"],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Feature name.",
+      "minLength": 3
+    },
+    "wireframes_complete": {
+      "type": "boolean",
+      "const": true,
+      "description": "Must be true — UI spec follows wireframes."
+    },
+    "components_to_spec": {
+      "type": "array",
+      "description": "Components from the wireframe component inventory that need full state specification.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["component_name", "route", "fetches_async_data"],
+        "properties": {
+          "component_name": {
+            "type": "string",
+            "description": "PascalCase component name from wireframe inventory.",
+            "examples": ["TaskListPage", "TaskCard", "DashboardWidget"]
+          },
+          "route": {
+            "type": "string",
+            "description": "URL route this component belongs to."
+          },
+          "fetches_async_data": {
+            "type": "boolean",
+            "description": "True if this component fetches data from an API or Server Action. All 4 states required."
+          },
+          "data_source": {
+            "type": "string",
+            "description": "API endpoint or Server Action that provides data.",
+            "examples": ["GET /api/tasks", "getTasksAction()", "SWR /api/dashboard"]
+          },
+          "wireframe_ref": {
+            "type": "string",
+            "description": "Reference to the wireframe showing this component.",
+            "examples": ["Wireframes.md §Screen 1"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

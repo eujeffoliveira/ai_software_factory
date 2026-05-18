@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente09_UxUiDesigner",
+  "version": "1.0.0",
+  "build_date": "2026-05-17",
+  "description": "Build-time source map — tracks which raw sources contributed to which distilled artifacts. Not used at runtime.",
+  "sources": [
+    {
+      "source_id": "SRC-01",
+      "title": "Laws of UX",
+      "author": "Jon Yablonski",
+      "format": "book",
+      "path": "lib/UxUiDesigner/laws-of-ux-yablonski.pdf",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/principles.md",
+          "sections": ["P1 (Hick's Law)", "P2 (Fitts's Law)", "P3 (Miller's Law)", "P4 (Gestalt Proximity)"],
+          "notes": "Core cognitive load and interaction design laws distilled into actionable principles."
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "sections": ["H1 (5-second rule)", "H2 (familiar over novel)", "H10 (mobile touch targets)"],
+          "notes": "Practical heuristics derived from Hick's, Fitts's, and Miller's Law applications."
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "sections": ["Card 001 (Hick's Law)", "Card 002 (Fitts's Law)", "Card 003 (Miller's Law)", "Card 004 (Gestalt Proximity)"],
+          "notes": "Reference cards for runtime consultation on the three primary UX laws and Gestalt."
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "sections": ["DR001 (4 states for async)", "DR002 (empty state spec)", "DR010 (mobile primary actions)"],
+          "notes": "Decision rules derived from Fitts's Law (mobile accessibility) and cognitive load principles."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Don't Make Me Think",
+      "author": "Steve Krug",
+      "format": "book",
+      "path": "lib/UxUiDesigner/dont-make-me-think-krug.pdf",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/principles.md",
+          "sections": ["P5 (Convention over novelty)", "P6 (Progressive disclosure)", "P9 (Feedback confirms action)", "P10 (Error prevention)"],
+          "notes": "Krug's usability principles: web conventions, progressive disclosure, and error handling."
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "sections": ["H3 (document both branches)", "H4 (design form from error state)", "H6 (empty state before populated)", "H9 (error copy formula)", "H13 (icon vs labeled controls)"],
+          "notes": "Practical heuristics derived from Krug's usability testing observations."
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "sections": ["Card 005 (Progressive Disclosure)", "Card 008 (Error State Pattern)", "Card 009 (Empty State Pattern)", "Card 010 (Mobile Navigation)", "Card 011 (Form Design)"],
+          "notes": "Usability-focused knowledge cards for common design patterns."
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "sections": ["DR003 (existing components first)", "DR005 (ambiguous AC requires escalation)", "DR008 (form field spec)", "DR015 (verify API data exists)"],
+          "notes": "Decision rules derived from Krug's 'don't make users think' and navigation clarity principles."
+        },
+        {
+          "artifact": "checklists/usability_checklist.md",
+          "sections": ["Navigation clarity section", "Form usability section", "Error and feedback section"],
+          "notes": "Usability checklist derived from Krug's common usability testing findings."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Lean UX",
+      "author": "Jeff Gothelf & Josh Seiden",
+      "format": "book",
+      "path": "lib/UxUiDesigner/lean-ux-gothelf-seiden.pdf",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/principles.md",
+          "sections": ["P7 (Lean UX: design minimum to validate hypothesis)", "P11 (Design is a specification)"],
+          "notes": "Lean UX hypothesis-driven approach and minimum viable design artifacts."
+        },
+        {
+          "artifact": "knowledge/heuristics.md",
+          "sections": ["H5 (choose less for first release)", "H7 (when in doubt, be more accessible)"],
+          "notes": "Lean UX prioritization heuristics: MVP approach and iteration over perfection."
+        },
+        {
+          "artifact": "context_view.md",
+          "sections": ["§3 UX Flow Conventions", "§4 Wireframe Conventions"],
+          "notes": "Lean UX lightweight artifact conventions: Markdown-based flows and ASCII wireframes instead of high-fidelity tools."
+        },
+        {
+          "artifact": "templates/UX_Flow.md",
+          "sections": ["Full template"],
+          "notes": "Lean UX flow documentation format — structured but lightweight."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "Reference Architecture v1.1.1 (Golden Path)",
+      "author": "AI Software Factory internal",
+      "format": "markdown",
+      "path": "context/reference_architecture_generico.md",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "agent_config.json",
+          "sections": ["golden_path section — tech stack, design tokens, breakpoints"],
+          "notes": "Golden Path stack definitions for design: Next.js 16, React 19, Tailwind CSS v4, Recharts v3, NextAuth v5."
+        },
+        {
+          "artifact": "context_view.md",
+          "sections": ["§2 Frontend Tech Stack", "§6 Design Tokens", "§9 Recharts Design Specifications"],
+          "notes": "Frontend implementation constraints that design artifacts must be compatible with."
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "sections": ["DR009 (image dimensions for next/image)", "DR012 (Recharts spec)", "DR013 (WCAG contrast escalation)", "DR014 (READY_FOR_FRONTEND conditions)"],
+          "notes": "Technical constraints from the Golden Path that translate into design decision rules."
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "sections": ["Card 006 (WCAG AA Quick Reference)", "Card 007 (Loading State Pattern)", "Card 012 (Recharts Guide)"],
+          "notes": "Implementation-specific knowledge cards for the Golden Path stack."
+        },
+        {
+          "artifact": "schemas/ui_spec.schema.json",
+          "sections": ["TypeScript props interface format", "design token enforcement"],
+          "notes": "JSON Schema for UI_Spec derived from Golden Path component conventions."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "WCAG 2.1 Level AA (W3C)",
+      "author": "W3C Web Accessibility Initiative",
+      "format": "specification",
+      "path": "https://www.w3.org/TR/WCAG21/",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/principles.md",
+          "sections": ["P8 (Accessibility is not an add-on)"],
+          "notes": "WCAG AA as the mandatory accessibility standard."
+        },
+        {
+          "artifact": "context_view.md",
+          "sections": ["§8 WCAG 2.1 AA Accessibility Requirements"],
+          "notes": "Full WCAG AA requirements distilled for design specification work."
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "sections": ["DR006 (color requires secondary indicator)", "DR013 (contrast failure escalation)"],
+          "notes": "WCAG SC 1.4.1 (Use of Color) and SC 1.4.3 (Contrast Minimum) as design decision rules."
+        },
+        {
+          "artifact": "knowledge/knowledge_cards.md",
+          "sections": ["Card 006 (WCAG AA Quick Reference)"],
+          "notes": "Condensed WCAG AA reference for runtime consultation."
+        },
+        {
+          "artifact": "checklists/accessibility_basics_checklist.md",
+          "sections": ["Full checklist"],
+          "notes": "WCAG AA requirements translated into a pre-submission design checklist."
+        }
+      ]
+    }
+  ]
+}

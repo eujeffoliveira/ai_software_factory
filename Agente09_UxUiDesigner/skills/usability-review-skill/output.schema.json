@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "usability-review-skill Output",
+  "description": "Output produced by the usability-review-skill.",
+  "type": "object",
+  "required": ["feature_name", "verdict", "issues_found", "checklist_completed"],
+  "properties": {
+    "feature_name": { "type": "string" },
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "PASS_WITH_NOTES", "FAIL"],
+      "description": "PASS: no critical/high issues. PASS_WITH_NOTES: medium/low deferred. FAIL: critical/high unresolved."
+    },
+    "issues_found": {
+      "type": "array",
+      "description": "All usability issues found during review.",
+      "items": {
+        "type": "object",
+        "required": ["issue_id", "description", "screen", "principle_violated", "severity", "action"],
+        "properties": {
+          "issue_id": {
+            "type": "string",
+            "pattern": "^U-[0-9]{3,}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "Specific description of the usability issue.",
+            "minLength": 20
+          },
+          "screen": {
+            "type": "string",
+            "description": "Screen or component where the issue was found."
+          },
+          "principle_violated": {
+            "type": "string",
+            "description": "Which principle, heuristic, or decision rule this violates.",
+            "examples": ["P1 (Hick's Law)", "H4 (form error state first)", "DR006 (color secondary indicator)"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "action": {
+            "type": "string",
+            "enum": ["fixed", "deferred", "escalated", "accepted"]
+          },
+          "resolution": {
+            "type": "string",
+            "description": "How the issue was resolved (required when action is 'fixed')."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "critical_unresolved": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of critical-severity issues not yet resolved. Must be 0 for PASS."
+    },
+    "high_unresolved": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of high-severity issues not yet resolved. Must be 0 for PASS."
+    },
+    "checklist_completed": {
+      "type": "boolean",
+      "description": "True if Usability_Checklist.md has been completed and signed off."
+    },
+    "ready_for_handoff": {
+      "type": "boolean",
+      "description": "True if verdict is PASS or PASS_WITH_NOTES and checklist is completed."
+    }
+  },
+  "additionalProperties": false
+}

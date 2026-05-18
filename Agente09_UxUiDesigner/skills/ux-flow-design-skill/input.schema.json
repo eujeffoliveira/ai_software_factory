@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ux-flow-design-skill Input",
+  "description": "Input requirements for the ux-flow-design-skill.",
+  "type": "object",
+  "required": ["feature_name", "prd_reference", "design_briefing_summary"],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Name of the feature to map — must match a user story or section in PRD.md.",
+      "minLength": 3
+    },
+    "prd_reference": {
+      "type": "object",
+      "required": ["user_story_ids", "acceptance_criteria_ids"],
+      "description": "PRD references for this feature.",
+      "properties": {
+        "user_story_ids": {
+          "type": "array",
+          "description": "User story IDs from PRD.md.",
+          "minItems": 1,
+          "items": { "type": "string", "examples": ["US-003", "US-004"] }
+        },
+        "acceptance_criteria_ids": {
+          "type": "array",
+          "description": "Acceptance criteria IDs from PRD.md.",
+          "minItems": 1,
+          "items": { "type": "string", "examples": ["AC-3.1", "AC-3.2", "AC-3.3"] }
+        },
+        "prd_gate_status": {
+          "type": "string",
+          "const": "APPROVED",
+          "description": "PRD must be Gate 1 APPROVED before design begins."
+        }
+      },
+      "additionalProperties": false
+    },
+    "design_briefing_summary": {
+      "type": "string",
+      "description": "Brief from Agente00_TechLead specifying the scope and focus of this design activation.",
+      "minLength": 20
+    },
+    "api_contract_available": {
+      "type": "boolean",
+      "description": "True if API_Contract.json is available for endpoint and data shape verification."
+    },
+    "architecture_gate_status": {
+      "type": "string",
+      "enum": ["APPROVED", "APPROVED_WITH_ADR", "pending"],
+      "description": "Architecture.md gate status. Should be APPROVED or APPROVED_WITH_ADR."
+    },
+    "known_actors": {
+      "type": "array",
+      "description": "Actor roles identified from the PRD (optional — can be derived during skill execution).",
+      "items": { "type": "string", "examples": ["Authenticated User", "Admin", "Guest"] }
+    }
+  },
+  "additionalProperties": false
+}

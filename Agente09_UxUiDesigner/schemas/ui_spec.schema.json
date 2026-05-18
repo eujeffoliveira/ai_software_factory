@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/ui-spec",
+  "title": "UI Specification",
+  "description": "Schema for validating the metadata envelope of a UI_Spec.md produced by Agente09_UxUiDesigner. The actual component spec is Markdown prose — this schema validates the machine-readable summary.",
+  "type": "object",
+  "required": ["feature", "date", "implementation_target", "components"],
+  "properties": {
+    "feature": {
+      "type": "string",
+      "description": "Feature name matching the PRD and UX Flow feature name.",
+      "minLength": 3
+    },
+    "date": {
+      "type": "string",
+      "description": "Design date in ISO 8601 format.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "implementation_target": {
+      "type": "string",
+      "const": "Agente05_DevFrontend",
+      "description": "The agent that will implement this specification."
+    },
+    "components": {
+      "type": "array",
+      "description": "All components specified in this UI_Spec document.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "component_id",
+          "component_name",
+          "route",
+          "component_type",
+          "has_loading_state",
+          "has_error_state",
+          "has_empty_state",
+          "has_populated_state",
+          "has_props_interface",
+          "has_responsive_table",
+          "has_accessibility_section",
+          "has_exact_copy_text",
+          "design_tokens_only"
+        ],
+        "properties": {
+          "component_id": {
+            "type": "string",
+            "description": "Component identifier.",
+            "pattern": "^COMP-[0-9]{3,}$"
+          },
+          "component_name": {
+            "type": "string",
+            "description": "PascalCase component name matching Architecture.md.",
+            "examples": ["EntityListPage", "EntityCard", "CreateEntityModal"]
+          },
+          "route": {
+            "type": "string",
+            "description": "URL route this component belongs to.",
+            "examples": ["/entity/list", "/entity/[id]", "/dashboard"]
+          },
+          "component_type": {
+            "type": "string",
+            "enum": ["Server Component", "Client Component"],
+            "description": "Whether this is a React Server Component or Client Component."
+          },
+          "client_component_justification": {
+            "type": "string",
+            "description": "Required when component_type is 'Client Component'. Must justify: interactivity / browser API / real-time.",
+            "minLength": 10
+          },
+          "fetches_async_data": {
+            "type": "boolean",
+            "description": "True if this component fetches data asynchronously. If true, all 4 states are mandatory."
+          },
+          "has_loading_state": {
+            "type": "boolean",
+            "description": "True if a loading skeleton state is specified."
+          },
+          "has_error_state": {
+            "type": "boolean",
+            "description": "True if an error state is specified."
+          },
+          "has_empty_state": {
+            "type": "boolean",
+            "description": "True if an empty state is specified."
+          },
+          "has_populated_state": {
+            "type": "boolean",
+            "description": "True if a populated (data-filled) state is specified."
+          },
+          "has_props_interface": {
+            "type": "boolean",
+            "description": "True if a TypeScript props interface is included."
+          },
+          "has_responsive_table": {
+            "type": "boolean",
+            "description": "True if a responsive behavior table (breakpoint → layout change) is included."
+          },
+          "has_accessibility_section": {
+            "type": "boolean",
+            "description": "True if an accessibility section (focus order, ARIA, keyboard behavior) is included."
+          },
+          "has_exact_copy_text": {
+            "type": "boolean",
+            "description": "True if all user-facing text is exact final copy (no placeholder text)."
+          },
+          "design_tokens_only": {
+            "type": "boolean",
+            "description": "True if all visual properties use generic design tokens (no hardcoded hex values)."
+          },
+          "wireframe_ref": {
+            "type": "string",
+            "description": "Reference to the corresponding wireframe in Wireframes.md.",
+            "examples": ["Wireframes.md §Screen 1 — Entity List"]
+          },
+          "prd_requirements": {
+            "type": "array",
+            "description": "PRD acceptance criteria this component satisfies.",
+            "items": {
+              "type": "string",
+              "examples": ["AC-1.1", "AC-2.3"]
+            }
+          },
+          "interactive_elements": {
+            "type": "array",
+            "description": "Interactive elements in this component.",
+            "items": {
+              "type": "object",
+              "required": ["element", "type", "aria_label"],
+              "properties": {
+                "element": {
+                  "type": "string",
+                  "description": "Element name or description.",
+                  "examples": ["Create button", "Search input", "Delete action"]
+                },
+                "type": {
+                  "type": "string",
+                  "description": "HTML/React element type.",
+                  "examples": ["Button", "Input", "Select", "Link", "IconButton"]
+                },
+                "aria_label": {
+                  "type": "string",
+                  "description": "ARIA label value for this element.",
+                  "minLength": 3
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "component_type": { "const": "Client Component" }
+          }
+        },
+        "then": {
+          "required": ["client_component_justification"]
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

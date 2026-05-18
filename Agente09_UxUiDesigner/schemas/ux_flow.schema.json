@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/ux-flow",
+  "title": "UX Flow",
+  "description": "Schema for validating a UX Flow document structure produced by Agente09_UxUiDesigner.",
+  "type": "object",
+  "required": ["feature", "prd_section", "date", "actors", "entry_points", "happy_path", "error_paths", "edge_cases"],
+  "properties": {
+    "feature": {
+      "type": "string",
+      "description": "Feature name matching the PRD feature name.",
+      "minLength": 3
+    },
+    "prd_section": {
+      "type": "string",
+      "description": "PRD section or user story reference.",
+      "examples": ["US-03", "Section 2.1 — Task Management", "AC-1.1 through AC-1.5"]
+    },
+    "date": {
+      "type": "string",
+      "description": "Design date in ISO 8601 format.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "actors": {
+      "type": "array",
+      "description": "All actors (user roles) involved in this flow.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["role", "goal"],
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "Actor role name.",
+            "examples": ["Authenticated User", "Admin", "Guest"]
+          },
+          "goal": {
+            "type": "string",
+            "description": "What this actor wants to accomplish.",
+            "minLength": 10
+          },
+          "type": {
+            "type": "string",
+            "enum": ["primary", "secondary"],
+            "description": "Primary actor is who the flow is designed for; secondary actors are affected."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry_points": {
+      "type": "array",
+      "description": "URL routes or app states where this flow can begin.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["route", "context"],
+        "properties": {
+          "route": {
+            "type": "string",
+            "description": "URL route or app state.",
+            "examples": ["/dashboard", "/entity/list", "Notification email link"]
+          },
+          "context": {
+            "type": "string",
+            "description": "From what context or trigger the user arrives at this entry point."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "happy_path": {
+      "type": "array",
+      "description": "Ordered steps of the successful user journey.",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["step", "name", "actor", "action", "screen", "state", "outcome"],
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Step number."
+          },
+          "name": {
+            "type": "string",
+            "description": "Short name for this step.",
+            "minLength": 3
+          },
+          "actor": {
+            "type": "string",
+            "description": "Which actor performs the action in this step."
+          },
+          "action": {
+            "type": "string",
+            "description": "What the actor does.",
+            "minLength": 10
+          },
+          "screen": {
+            "type": "string",
+            "description": "URL route or screen the user is on.",
+            "examples": ["/entity/list", "/entity/new", "/entity/[id]"]
+          },
+          "state": {
+            "type": "string",
+            "enum": ["loading", "populated", "empty", "error", "transition"],
+            "description": "State of the screen at this step."
+          },
+          "outcome": {
+            "type": "string",
+            "description": "What happens as a result of this action.",
+            "minLength": 10
+          },
+          "auth_required": {
+            "type": "boolean",
+            "description": "True if this step requires an active authentication session."
+          },
+          "annotations": {
+            "type": "array",
+            "description": "Special annotations for this step.",
+            "items": {
+              "type": "string",
+              "examples": ["[AUTH REQUIRED]", "[LOADING]", "[DECISION: condition → A | B]", "[PERMISSION: admin]"]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "error_paths": {
+      "type": "array",
+      "description": "Error scenarios with their triggers, screens, and recovery paths. Minimum 1 error path required.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "trigger", "screen", "recovery"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Error path name.",
+            "examples": ["Authentication Required", "Data Load Failure", "Validation Error", "Permission Denied"]
+          },
+          "trigger": {
+            "type": "string",
+            "description": "The condition that causes this error path to be shown.",
+            "minLength": 10
+          },
+          "screen": {
+            "type": "string",
+            "description": "What the user sees when this error occurs."
+          },
+          "recovery": {
+            "type": "string",
+            "description": "How the user can recover from this error.",
+            "minLength": 10
+          },
+          "step_triggered_at": {
+            "type": "integer",
+            "description": "Happy path step number where this error can occur."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "edge_cases": {
+      "type": "array",
+      "description": "Edge case scenarios (empty states, permission restrictions, data variations).",
+      "items": {
+        "type": "object",
+        "required": ["condition", "behavior"],
+        "properties": {
+          "condition": {
+            "type": "string",
+            "description": "The condition that triggers this edge case.",
+            "examples": ["No items exist yet", "User has read-only access", "Data set has 1000+ items"]
+          },
+          "behavior": {
+            "type": "string",
+            "description": "How the system behaves in this edge case.",
+            "minLength": 10
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decision_points": {
+      "type": "array",
+      "description": "Decision branches in the flow where user or system choices lead to different paths.",
+      "items": {
+        "type": "object",
+        "required": ["step", "condition", "path_a", "path_b"],
+        "properties": {
+          "step": {
+            "type": "integer",
+            "description": "Happy path step number where this decision occurs."
+          },
+          "condition": {
+            "type": "string",
+            "description": "The condition being evaluated."
+          },
+          "path_a": {
+            "type": "string",
+            "description": "Where path A leads."
+          },
+          "path_b": {
+            "type": "string",
+            "description": "Where path B leads."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

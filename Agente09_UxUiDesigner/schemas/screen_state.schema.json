@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/screen-state",
+  "title": "Screen State Specification",
+  "description": "Schema for validating that all four states are fully specified for a given screen or component.",
+  "type": "object",
+  "required": ["component_name", "route", "loading_state", "error_state", "empty_state", "populated_state"],
+  "properties": {
+    "component_name": {
+      "type": "string",
+      "description": "PascalCase component name.",
+      "examples": ["EntityListPage", "DashboardWidget", "TaskCard"]
+    },
+    "route": {
+      "type": "string",
+      "description": "URL route for this component.",
+      "examples": ["/entity/list", "/dashboard", "/entity/[id]"]
+    },
+    "loading_state": {
+      "type": "object",
+      "description": "Loading skeleton state specification.",
+      "required": [
+        "skeleton_description",
+        "aria_role",
+        "aria_label",
+        "animation_class",
+        "skeleton_color_token"
+      ],
+      "properties": {
+        "skeleton_description": {
+          "type": "string",
+          "description": "Description of the skeleton layout — how many skeleton items, their dimensions, and how they mirror the populated state.",
+          "minLength": 20
+        },
+        "aria_role": {
+          "type": "string",
+          "const": "status",
+          "description": "ARIA role must be 'status' for loading states."
+        },
+        "aria_label": {
+          "type": "string",
+          "description": "ARIA label for the loading state container.",
+          "pattern": "^Loading ",
+          "examples": ["Loading tasks...", "Loading user profile...", "Loading dashboard data..."]
+        },
+        "animation_class": {
+          "type": "string",
+          "description": "CSS animation class applied to skeleton blocks.",
+          "examples": ["animate-pulse", "animate-shimmer"]
+        },
+        "skeleton_color_token": {
+          "type": "string",
+          "description": "Design token for skeleton block color.",
+          "examples": ["bg-muted", "bg-muted/50"]
+        },
+        "implementation_note": {
+          "type": "string",
+          "description": "Additional implementation note for the developer.",
+          "minLength": 5
+        }
+      },
+      "additionalProperties": false
+    },
+    "error_state": {
+      "type": "object",
+      "description": "Error state specification — shown when data fetch fails.",
+      "required": [
+        "heading",
+        "body_copy",
+        "retry_action",
+        "aria_role",
+        "icon"
+      ],
+      "properties": {
+        "heading": {
+          "type": "string",
+          "description": "User-friendly error heading. Must not contain technical error details.",
+          "minLength": 5,
+          "examples": ["Something went wrong", "Tasks couldn't load", "Unable to connect"]
+        },
+        "body_copy": {
+          "type": "string",
+          "description": "Explanation of what to do. Must not expose stack traces or error codes.",
+          "minLength": 20,
+          "examples": ["We had trouble loading your tasks. Please try again."]
+        },
+        "retry_action": {
+          "type": "object",
+          "required": ["label", "action"],
+          "description": "The retry action button specification.",
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Button label text.",
+              "examples": ["Try again", "Retry", "Refresh"]
+            },
+            "action": {
+              "type": "string",
+              "description": "What the retry action does.",
+              "minLength": 10
+            }
+          },
+          "additionalProperties": false
+        },
+        "aria_role": {
+          "type": "string",
+          "const": "alert",
+          "description": "ARIA role must be 'alert' for error states — announces immediately to screen readers."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon name from the design system for the error illustration.",
+          "examples": ["alert-triangle", "wifi-off", "server-off", "cloud-off"]
+        },
+        "secondary_action": {
+          "type": "object",
+          "description": "Optional secondary action (e.g., contact support).",
+          "required": ["label", "action"],
+          "properties": {
+            "label": { "type": "string" },
+            "action": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "empty_state": {
+      "type": "object",
+      "description": "Empty state specification — shown when fetch succeeds but result set is zero items.",
+      "required": [
+        "heading",
+        "body_copy",
+        "icon"
+      ],
+      "properties": {
+        "heading": {
+          "type": "string",
+          "description": "Heading explaining what is empty.",
+          "minLength": 5,
+          "examples": ["No tasks yet", "Your dashboard is empty", "No results found"]
+        },
+        "body_copy": {
+          "type": "string",
+          "description": "Explanation of why empty and what to do.",
+          "minLength": 20
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon name from the design system.",
+          "examples": ["inbox", "file-question", "search-x", "clipboard-list"]
+        },
+        "icon_color_token": {
+          "type": "string",
+          "description": "Design token for icon color.",
+          "examples": ["text-muted-foreground"]
+        },
+        "cta": {
+          "type": "object",
+          "description": "Optional CTA — only present when the user can take action to populate the state.",
+          "required": ["label", "action"],
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "CTA button label.",
+              "examples": ["Create your first task", "Add entity", "Clear filters"]
+            },
+            "action": {
+              "type": "string",
+              "description": "What the CTA does — route or action.",
+              "examples": ["/entity/new", "opens create modal", "clears active filters"]
+            },
+            "variant": {
+              "type": "string",
+              "enum": ["primary", "secondary", "outline", "ghost"],
+              "description": "Button visual variant."
+            }
+          },
+          "additionalProperties": false
+        },
+        "empty_type": {
+          "type": "string",
+          "enum": ["new_user", "filter_empty", "search_empty", "no_data"],
+          "description": "The semantic type of empty state — affects copy and CTA strategy."
+        }
+      },
+      "additionalProperties": false
+    },
+    "populated_state": {
+      "type": "object",
+      "description": "Summary of the populated (data-filled) state.",
+      "required": ["description", "wireframe_ref"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Brief description of the populated state layout.",
+          "minLength": 20
+        },
+        "wireframe_ref": {
+          "type": "string",
+          "description": "Reference to the wireframe showing this populated state.",
+          "examples": ["Wireframes.md §Screen 1 — Desktop Populated State"]
+        },
+        "pagination_type": {
+          "type": "string",
+          "enum": ["numbered", "load_more", "infinite_scroll", "none"],
+          "description": "Pagination pattern used (if this is a list component)."
+        },
+        "max_items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of items per page (if paginated)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

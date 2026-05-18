@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "design-system-application-skill Output",
+  "description": "Output produced by the design-system-application-skill.",
+  "type": "object",
+  "required": ["feature_name", "hardcoded_values_found", "org_specific_tokens_found", "token_gaps", "new_component_proposals_justified", "checklist_completed", "verdict"],
+  "properties": {
+    "feature_name": { "type": "string" },
+    "hardcoded_values_found": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of hardcoded hex/rgb/hsl values found. Must be 0 for a passing audit."
+    },
+    "org_specific_tokens_found": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of org-specific token names found. Must be 0 for a passing audit."
+    },
+    "violations_fixed": {
+      "type": "array",
+      "description": "List of violations that were corrected in the spec.",
+      "items": {
+        "type": "object",
+        "required": ["location", "original_value", "corrected_value"],
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "Where in UI_Spec.md the violation was found."
+          },
+          "original_value": {
+            "type": "string",
+            "description": "The hardcoded or org-specific value that was replaced.",
+            "examples": ["#3B82F6", "raiz-orange", "rgb(255, 87, 51)"]
+          },
+          "corrected_value": {
+            "type": "string",
+            "description": "The generic token that replaced it.",
+            "examples": ["bg-primary-color", "text-destructive", "bg-muted"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "token_gaps": {
+      "type": "array",
+      "description": "Visual properties that needed a token not in the authorized set. Each requires Tech Lead escalation.",
+      "items": {
+        "type": "object",
+        "required": ["token_needed", "usage", "escalation_status"],
+        "properties": {
+          "token_needed": { "type": "string" },
+          "usage": { "type": "string" },
+          "escalation_status": {
+            "type": "string",
+            "enum": ["pending", "approved", "substituted"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "new_component_proposals_justified": {
+      "type": "boolean",
+      "description": "True if all new component proposals have explicit justification or were removed (replaced with existing components)."
+    },
+    "components_reuse_opportunities": {
+      "type": "array",
+      "description": "New component proposals that were replaced with existing components.",
+      "items": {
+        "type": "object",
+        "required": ["proposed_component", "replaced_with"],
+        "properties": {
+          "proposed_component": { "type": "string" },
+          "replaced_with": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "checklist_completed": {
+      "type": "boolean",
+      "description": "True if design_system_application_checklist.md was completed."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "PASS_WITH_TOKEN_GAPS", "FAIL"],
+      "description": "PASS: zero violations, all reuse checked. PASS_WITH_TOKEN_GAPS: violations fixed but token gaps escalated. FAIL: violations remain unfixed."
+    }
+  },
+  "additionalProperties": false
+}

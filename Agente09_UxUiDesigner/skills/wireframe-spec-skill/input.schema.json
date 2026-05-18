@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "wireframe-spec-skill Input",
+  "description": "Input requirements for the wireframe-spec-skill.",
+  "type": "object",
+  "required": ["feature_name", "screens_to_wireframe", "ux_flow_complete"],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Feature name — must match UX_Flow.md feature name.",
+      "minLength": 3
+    },
+    "ux_flow_complete": {
+      "type": "boolean",
+      "const": true,
+      "description": "Must be true — wireframes cannot be produced before UX_Flow.md is complete (DR004)."
+    },
+    "screens_to_wireframe": {
+      "type": "array",
+      "description": "List of screens from ux-flow-design-skill output that need wireframes.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["screen_name", "route", "layout_type"],
+        "properties": {
+          "screen_name": {
+            "type": "string",
+            "description": "Human-readable screen name.",
+            "examples": ["Task List", "Create Task Modal", "Task Detail"]
+          },
+          "route": {
+            "type": "string",
+            "description": "URL route for this screen.",
+            "examples": ["/tasks", "/tasks/[id]", "/tasks (modal)"]
+          },
+          "layout_type": {
+            "type": "string",
+            "enum": ["full-page", "modal", "bottom-sheet", "drawer", "inline-component"],
+            "description": "Type of layout for this screen."
+          },
+          "ux_flow_steps": {
+            "type": "array",
+            "description": "Which UX flow step numbers this screen appears in.",
+            "items": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

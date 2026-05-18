@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "design-system-application-skill Input",
+  "description": "Input requirements for the design-system-application-skill.",
+  "type": "object",
+  "required": ["feature_name", "ui_spec_draft_available"],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Feature name.",
+      "minLength": 3
+    },
+    "ui_spec_draft_available": {
+      "type": "boolean",
+      "const": true,
+      "description": "UI_Spec.md must be present before this skill can run."
+    },
+    "audit_scope": {
+      "type": "array",
+      "description": "Optional: specific sections or components to audit. If empty, entire UI_Spec is audited.",
+      "items": { "type": "string" }
+    },
+    "known_violations": {
+      "type": "array",
+      "description": "Optional: previously identified token violations to re-check.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "location": { "type": "string" },
+          "violation": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

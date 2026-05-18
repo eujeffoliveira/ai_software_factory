@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ux-flow-design-skill Output",
+  "description": "Output produced by the ux-flow-design-skill.",
+  "type": "object",
+  "required": ["artifact", "feature_name", "screens_identified", "error_paths_count", "prd_coverage_complete", "escalations"],
+  "properties": {
+    "artifact": {
+      "type": "string",
+      "const": "UX_Flow.md",
+      "description": "The primary artifact produced."
+    },
+    "feature_name": {
+      "type": "string",
+      "description": "Feature name matching the input."
+    },
+    "screens_identified": {
+      "type": "array",
+      "description": "All screens identified in the happy path and error paths that will need wireframes.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["screen_name", "route"],
+        "properties": {
+          "screen_name": { "type": "string" },
+          "route": { "type": "string" },
+          "requires_wireframe": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "happy_path_step_count": {
+      "type": "integer",
+      "minimum": 2,
+      "description": "Number of steps in the happy path."
+    },
+    "error_paths_count": {
+      "type": "integer",
+      "minimum": 2,
+      "description": "Number of error paths documented. Minimum 2."
+    },
+    "edge_cases_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of edge cases documented."
+    },
+    "decision_points_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of decision points documented."
+    },
+    "prd_coverage_complete": {
+      "type": "boolean",
+      "description": "True if all PRD acceptance criteria in scope are covered by the flow."
+    },
+    "uncovered_prd_criteria": {
+      "type": "array",
+      "description": "PRD acceptance criteria not yet covered by the flow (should be empty for complete submission).",
+      "items": { "type": "string" }
+    },
+    "escalations": {
+      "type": "array",
+      "description": "Ambiguous PRD criteria or missing data that requires Tech Lead escalation before design can proceed.",
+      "items": {
+        "type": "object",
+        "required": ["escalation_id", "reason"],
+        "properties": {
+          "escalation_id": { "type": "string", "pattern": "^ESC-[0-9]{3,}$" },
+          "reason": { "type": "string", "minLength": 20 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "api_data_gaps": {
+      "type": "array",
+      "description": "Data fields or endpoints referenced in the flow that do not exist in API_Contract.json.",
+      "items": {
+        "type": "object",
+        "required": ["field_or_endpoint", "reason"],
+        "properties": {
+          "field_or_endpoint": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ready_for_wireframing": {
+      "type": "boolean",
+      "description": "True if all escalations are resolved, all PRD criteria covered, and flow is ready for wireframe-spec-skill."
+    }
+  },
+  "additionalProperties": false
+}

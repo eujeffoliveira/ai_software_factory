@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente09_UxUiDesigner",
+  "version": "1.0.0",
+  "description": "RAG policy for UX/UI Designer — defines which knowledge collections are accessible at runtime and how retrieval is configured.",
+  "retrieval_policy": {
+    "runtime_local_only": true,
+    "raw_books_at_runtime": false,
+    "raw_pdfs_at_runtime": false,
+    "context_folder_at_runtime": false,
+    "max_chunks": 8,
+    "chunk_size_tokens": 512,
+    "overlap_tokens": 64
+  },
+  "collections": [
+    {
+      "collection_id": "ux_design_principles",
+      "priority": "core",
+      "description": "Core UX design principles distilled from Laws of UX, Don't Make Me Think, and Lean UX — cognitive load, progressive disclosure, usability conventions, hypothesis-driven design.",
+      "source_artifacts": [
+        "Agente09_UxUiDesigner/knowledge/principles.md",
+        "Agente09_UxUiDesigner/knowledge/heuristics.md",
+        "Agente09_UxUiDesigner/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "cognitive-load",
+        "fitts-law",
+        "millers-law",
+        "hicks-law",
+        "gestalt",
+        "progressive-disclosure",
+        "usability",
+        "lean-ux"
+      ]
+    },
+    {
+      "collection_id": "design_conventions",
+      "priority": "core",
+      "description": "UX flow conventions, wireframe syntax, UI spec format, and screen state design patterns for the Golden Path frontend stack.",
+      "source_artifacts": [
+        "Agente09_UxUiDesigner/context_view.md",
+        "Agente09_UxUiDesigner/templates/UX_Flow.md",
+        "Agente09_UxUiDesigner/templates/Wireframes.md",
+        "Agente09_UxUiDesigner/templates/UI_Spec.md",
+        "Agente09_UxUiDesigner/templates/Screen_States.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "ux-flow",
+        "wireframe",
+        "ui-spec",
+        "screen-states",
+        "loading",
+        "error",
+        "empty",
+        "populated"
+      ]
+    },
+    {
+      "collection_id": "accessibility_standards",
+      "priority": "core",
+      "description": "WCAG 2.1 AA requirements distilled for design specification — contrast ratios, keyboard navigation, ARIA roles, form accessibility, screen reader support.",
+      "source_artifacts": [
+        "Agente09_UxUiDesigner/context_view.md",
+        "Agente09_UxUiDesigner/checklists/accessibility_basics_checklist.md",
+        "Agente09_UxUiDesigner/knowledge/decision_rules.md",
+        "Agente09_UxUiDesigner/knowledge/knowledge_cards.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "wcag-aa",
+        "color-contrast",
+        "keyboard-navigation",
+        "aria",
+        "screen-reader",
+        "form-accessibility",
+        "focus-management"
+      ]
+    },
+    {
+      "collection_id": "design_system_tokens",
+      "priority": "core",
+      "description": "Generic design token definitions, Tailwind CSS v4 breakpoint conventions, and design-to-implementation mapping for the Golden Path tech stack.",
+      "source_artifacts": [
+        "Agente09_UxUiDesigner/context_view.md",
+        "Agente09_UxUiDesigner/checklists/design_system_application_checklist.md",
+        "Agente09_UxUiDesigner/knowledge/decision_rules.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "design-tokens",
+        "tailwind",
+        "breakpoints",
+        "responsive",
+        "mobile-first",
+        "primary-color",
+        "bg-muted",
+        "text-foreground"
+      ]
+    },
+    {
+      "collection_id": "usability_patterns",
+      "priority": "supporting",
+      "description": "Usability heuristics and decision rules for common design problems — navigation clarity, error prevention, progressive disclosure, empty states, form design.",
+      "source_artifacts": [
+        "Agente09_UxUiDesigner/knowledge/heuristics.md",
+        "Agente09_UxUiDesigner/knowledge/decision_rules.md",
+        "Agente09_UxUiDesigner/templates/Usability_Checklist.md",
+        "Agente09_UxUiDesigner/examples/good_ux_flow.md",
+        "Agente09_UxUiDesigner/examples/good_wireframe.md",
+        "Agente09_UxUiDesigner/examples/good_ui_spec.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "navigation",
+        "error-prevention",
+        "empty-states",
+        "progressive-disclosure",
+        "form-design",
+        "usability-heuristics"
+      ]
+    },
+    {
+      "collection_id": "quality_normative",
+      "priority": "normative",
+      "description": "Normative rules — quality gate criteria, failure modes, status codes, and blocking conditions. These rules override all other collections.",
+      "source_artifacts": [
+        "Agente09_UxUiDesigner/agent_config.json",
+        "Agente09_UxUiDesigner/quality_gate.md",
+        "Agente09_UxUiDesigner/failure_modes.md",
+        "Agente09_UxUiDesigner/checklists/ui_spec_checklist.md",
+        "Agente09_UxUiDesigner/checklists/usability_checklist.md",
+        "Agente09_UxUiDesigner/checklists/runtime_isolation_checklist.md"
+      ],
+      "runtime_accessible": true,
+      "raw_source_accessible_at_runtime": false,
+      "chunking_strategy": "by_section",
+      "tags": [
+        "quality-gate",
+        "design-review",
+        "failure-modes",
+        "status-codes",
+        "blocking-conditions",
+        "normative"
+      ]
+    }
+  ],
+  "blocked_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/base_teorica.md",
+    "context/integrantes.md",
+    "context/reference_architecture_generico.md",
+    "context/manual_arquitetura_componentes_generico.md"
+  ]
+}

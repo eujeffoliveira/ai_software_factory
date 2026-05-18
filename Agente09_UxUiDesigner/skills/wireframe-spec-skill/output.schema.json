@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "wireframe-spec-skill Output",
+  "description": "Output produced by the wireframe-spec-skill.",
+  "type": "object",
+  "required": ["artifact", "feature_name", "screens_wireframed", "all_screens_have_mobile", "all_screens_have_desktop", "all_states_annotated"],
+  "properties": {
+    "artifact": {
+      "type": "string",
+      "const": "Wireframes.md",
+      "description": "The primary artifact produced."
+    },
+    "feature_name": {
+      "type": "string",
+      "description": "Feature name matching the input."
+    },
+    "screens_wireframed": {
+      "type": "array",
+      "description": "All screens wireframed in this output.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["screen_id", "screen_name", "route", "has_mobile_layout", "has_desktop_layout", "states_annotated", "components_named"],
+        "properties": {
+          "screen_id": {
+            "type": "string",
+            "pattern": "^SCREEN-[0-9]{3,}$"
+          },
+          "screen_name": { "type": "string" },
+          "route": { "type": "string" },
+          "has_mobile_layout": { "type": "boolean" },
+          "has_desktop_layout": { "type": "boolean" },
+          "states_annotated": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["loading", "error", "empty", "populated"] },
+            "minItems": 4
+          },
+          "components_named": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "all_screens_have_mobile": {
+      "type": "boolean",
+      "description": "True only if every screen in screens_wireframed has has_mobile_layout: true."
+    },
+    "all_screens_have_desktop": {
+      "type": "boolean",
+      "description": "True only if every screen has has_desktop_layout: true."
+    },
+    "all_states_annotated": {
+      "type": "boolean",
+      "description": "True only if every screen has all 4 states annotated."
+    },
+    "ready_for_ui_spec": {
+      "type": "boolean",
+      "description": "True if wireframes are complete and ready for ui-state-design-skill."
+    }
+  },
+  "additionalProperties": false
+}

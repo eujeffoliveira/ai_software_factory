@@ -311,7 +311,7 @@ ai_software_factory/
 ├── Agente06_QaEngineer/              # Agente totalmente construído ✅ (92 arquivos, 9 skills)
 ├── Agente07_DevSecOps/               # Agente totalmente construído ✅ (99 arquivos, 10 skills)
 ├── Agente08_DevOps/                  # Agente totalmente construído ✅ (95 arquivos, 9 skills)
-├── Agente09_UxUiDesigner/            # Não iniciado
+├── Agente09_UxUiDesigner/            # Agente totalmente construído ✅ (66 arquivos, 5 skills)
 └── Agente10_DataIntegrationEngineer/ # Não iniciado
 ```
 
@@ -556,10 +556,10 @@ context/prompts/
 | **06 QaEngineer** | ✅ | ✅ | ✅ | ✅ 9/9 | **Pronto para uso** |
 | **07 DevSecOps** | ✅ | ✅ | ✅ | ✅ 10/10 | **Pronto para uso** |
 | **08 DevOps** | ✅ | ✅ | ✅ | ✅ 9/9 | **Pronto para uso** |
-| 09 UxUiDesigner | ✅ | ❌ | ❌ | ❌ | Não iniciado |
+| **09 UxUiDesigner** | ✅ | ✅ | ✅ | ✅ 5/5 | **Pronto para uso** |
 | 10 DataIntegrationEngineer | ✅ | ❌ | ❌ | ❌ | Não iniciado |
 
-> **Todos os 11 prompts genéricos estão prontos em `context/prompts/`.** Agente00 a Agente08 têm build completo (artefatos locais, skills, knowledge distillation). Agente09 e Agente10 precisam passar pelo processo de build descrito acima.
+> **Todos os 11 prompts genéricos estão prontos em `context/prompts/`.** Agente00 a Agente09 têm build completo (artefatos locais, skills, knowledge distillation). Apenas Agente10 precisa passar pelo processo de build descrito acima.
 
 ---
 

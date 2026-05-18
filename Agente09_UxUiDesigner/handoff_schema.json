@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/agente09-handoff",
+  "title": "Agente09_UxUiDesigner Handoff Package",
+  "description": "Schema for the Design Package Handoff produced by Agente09_UxUiDesigner and delivered to Agente05_DevFrontend via Agente00_TechLead.",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "summary",
+    "screens_designed",
+    "prd_coverage",
+    "assumptions",
+    "open_questions",
+    "escalations",
+    "required_next_agent",
+    "validation_checklist",
+    "implementation_notes",
+    "gate_ready"
+  ],
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "The primary artifact produced. Always 'Design_Package' for this agent.",
+      "const": "Design_Package"
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level description of the design work — which feature, how many screens, which skills were applied.",
+      "minLength": 20
+    },
+    "screens_designed": {
+      "type": "array",
+      "description": "List of all screens included in this design package.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["screen_id", "route", "states_designed", "wireframe_ref", "spec_ref"],
+        "properties": {
+          "screen_id": {
+            "type": "string",
+            "description": "Screen identifier.",
+            "pattern": "^SCREEN-[0-9]{3,}$"
+          },
+          "route": {
+            "type": "string",
+            "description": "URL route for this screen.",
+            "examples": ["/entity/list", "/entity/[id]", "/entity/new"]
+          },
+          "screen_name": {
+            "type": "string",
+            "description": "Human-readable name of the screen.",
+            "examples": ["Entity List", "Entity Detail", "Create Entity"]
+          },
+          "states_designed": {
+            "type": "array",
+            "description": "Which screen states were designed for this screen.",
+            "items": {
+              "type": "string",
+              "enum": ["loading", "error", "empty", "populated"]
+            },
+            "minItems": 4,
+            "uniqueItems": true
+          },
+          "has_mobile_wireframe": {
+            "type": "boolean",
+            "description": "True if a mobile (< sm:) wireframe was produced for this screen."
+          },
+          "has_desktop_wireframe": {
+            "type": "boolean",
+            "description": "True if a desktop (lg:+) wireframe was produced for this screen."
+          },
+          "wireframe_ref": {
+            "type": "string",
+            "description": "Reference to the wireframe in Wireframes.md.",
+            "examples": ["Wireframes.md §Screen 1"]
+          },
+          "spec_ref": {
+            "type": "string",
+            "description": "Reference to the component spec in UI_Spec.md.",
+            "examples": ["UI_Spec.md §EntityListPage"]
+          },
+          "prd_requirements": {
+            "type": "array",
+            "description": "PRD acceptance criteria this screen addresses.",
+            "items": {
+              "type": "string",
+              "examples": ["AC-1.1", "AC-2.3"]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "prd_coverage": {
+      "type": "array",
+      "description": "Traceability map: PRD acceptance criterion → design artifact.",
+      "items": {
+        "type": "object",
+        "required": ["prd_section", "design_artifact", "status"],
+        "properties": {
+          "prd_section": {
+            "type": "string",
+            "description": "PRD section or acceptance criterion identifier.",
+            "examples": ["AC-1.1", "AC-2.3", "US-05 acceptance criterion 2"]
+          },
+          "design_artifact": {
+            "type": "string",
+            "description": "The design artifact that covers this PRD requirement.",
+            "examples": ["UX_Flow.md §Happy Path Step 2", "UI_Spec.md §EntityCard populated state"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["covered", "partially_covered", "not_covered", "escalated"],
+            "description": "Coverage status. 'escalated' means the requirement is ambiguous and has been flagged to Tech Lead."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes on partial coverage or escalation reason."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Design assumptions made where PRD or Architecture did not provide complete guidance.",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "properties": {
+          "assumption": {
+            "type": "string",
+            "description": "The design assumption made."
+          },
+          "impact": {
+            "type": "string",
+            "description": "What breaks or changes in the design if this assumption is wrong."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that may affect frontend implementation.",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The open question."
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, this blocks READY_FOR_FRONTEND — must be resolved before submission."
+          },
+          "directed_to": {
+            "type": "string",
+            "description": "Which agent or role should resolve this question.",
+            "examples": ["Agente01_ProductOwner", "Agente00_TechLead", "Agente02_SoftwareArchitect"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "escalations": {
+      "type": "array",
+      "description": "Items escalated to Tech Lead during this design cycle.",
+      "items": {
+        "type": "object",
+        "required": ["escalation_id", "reason", "status"],
+        "properties": {
+          "escalation_id": {
+            "type": "string",
+            "description": "Escalation identifier.",
+            "pattern": "^ESC-[0-9]{3,}$"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why this was escalated."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "resolved", "incorporated"],
+            "description": "Current status of the escalation."
+          },
+          "resolution": {
+            "type": "string",
+            "description": "How the escalation was resolved (if status is resolved or incorporated)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "const": "Agente05_DevFrontend",
+      "description": "Always Agente05_DevFrontend — the Design Package is consumed by the Frontend Developer."
+    },
+    "validation_checklist": {
+      "type": "array",
+      "description": "Self-review items — each must be confirmed before gate_ready: true.",
+      "minItems": 10,
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "All 4 states designed for every async component",
+          "Mobile and desktop wireframes present for all primary screens",
+          "All design elements use generic tokens (no hardcoded hex values)",
+          "All interactive elements have ARIA labels specified",
+          "All form fields have labels, placeholders, validation messages",
+          "All images have alt text and dimensions specified (for next/image)",
+          "All copy text is exact (no placeholders like '[text here]')",
+          "All UX flow error paths documented",
+          "All PRD acceptance criteria traced to design artifacts",
+          "Usability review completed — no critical friction points unresolved",
+          "Design System Application checklist completed — no hardcoded values",
+          "Accessibility basics checklist completed — WCAG AA requirements addressed"
+        ]
+      ]
+    },
+    "implementation_notes": {
+      "type": "object",
+      "description": "Summary of implementation-relevant design decisions for Agente05_DevFrontend.",
+      "required": ["screens_count", "async_components_count", "new_components_proposed", "design_token_gaps"],
+      "properties": {
+        "screens_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of screens in this design package."
+        },
+        "async_components_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of components that fetch async data (each requires all 4 states)."
+        },
+        "new_components_proposed": {
+          "type": "array",
+          "description": "New UI components proposed (each must be justified — existing components should be used when possible).",
+          "items": {
+            "type": "object",
+            "required": ["component_name", "justification"],
+            "properties": {
+              "component_name": {
+                "type": "string"
+              },
+              "justification": {
+                "type": "string",
+                "description": "Why no existing component covers this need."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "design_token_gaps": {
+          "type": "array",
+          "description": "Design tokens needed but not in the generic set. Each must be escalated to Tech Lead.",
+          "items": {
+            "type": "object",
+            "required": ["token_name", "usage", "escalation_status"],
+            "properties": {
+              "token_name": {
+                "type": "string",
+                "description": "The token name needed."
+              },
+              "usage": {
+                "type": "string",
+                "description": "Where and how this token would be used."
+              },
+              "escalation_status": {
+                "type": "string",
+                "enum": ["pending", "approved", "substituted"],
+                "description": "Status of the escalation for this token."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True only when all validation checklist items are confirmed, no blocking open questions remain, and all escalations are resolved."
+    }
+  },
+  "additionalProperties": false
+}

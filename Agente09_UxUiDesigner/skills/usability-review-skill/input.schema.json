@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "usability-review-skill Input",
+  "description": "Input requirements for the usability-review-skill.",
+  "type": "object",
+  "required": ["feature_name", "artifacts_present"],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Feature being reviewed.",
+      "minLength": 3
+    },
+    "artifacts_present": {
+      "type": "object",
+      "required": ["ux_flow", "wireframes", "ui_spec", "screen_states"],
+      "description": "All design artifacts must be present before usability review can begin.",
+      "properties": {
+        "ux_flow": { "type": "boolean", "const": true },
+        "wireframes": { "type": "boolean", "const": true },
+        "ui_spec": { "type": "boolean", "const": true },
+        "screen_states": { "type": "boolean", "const": true }
+      },
+      "additionalProperties": false
+    },
+    "screens_in_scope": {
+      "type": "array",
+      "description": "SCREEN-NNN IDs to include in the usability review.",
+      "items": { "type": "string", "pattern": "^SCREEN-[0-9]{3,}$" }
+    },
+    "review_focus": {
+      "type": "array",
+      "description": "Optional focus areas if a targeted review is requested.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "cognitive_load",
+          "navigation",
+          "forms",
+          "error_handling",
+          "mobile",
+          "accessibility",
+          "empty_states",
+          "destructive_actions"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}
