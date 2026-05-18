@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dependency Security Review Skill Output",
+  "type": "object",
+  "required": ["status", "packages_reviewed", "vulnerabilities"],
+  "properties": {
+    "status": { "type": "string", "enum": ["CLEAN", "CRITICAL_CVE_FOUND", "HIGH_CVE_FOUND", "MEDIUM_CVE_FOUND"] },
+    "packages_reviewed": { "type": "integer", "minimum": 0 },
+    "lock_file_present": { "type": "boolean" },
+    "vulnerabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "package", "version", "cve", "cvss_score", "severity", "decision_rule"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "package": { "type": "string" },
+          "version": { "type": "string" },
+          "cve": { "type": "string" },
+          "cvss_score": { "type": "number", "minimum": 0, "maximum": 10 },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "decision_rule": { "type": "string" },
+          "remediation": { "type": "string" },
+          "is_dev_dependency": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

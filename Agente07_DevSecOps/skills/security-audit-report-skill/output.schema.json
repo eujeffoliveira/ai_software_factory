@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Audit Report Skill Output",
+  "type": "object",
+  "required": ["gate_decision", "security_audit_md_produced", "handoff_package_produced", "remediation_guide_required"],
+  "properties": {
+    "gate_decision": {
+      "type": "string",
+      "enum": ["APPROVED","RETURNED_FOR_REVISION","BLOCKED_CRITICAL_RISK","BLOCKED_SECRET_EXPOSED","BLOCKED_AUTH_BYPASS","BLOCKED_PRIVACY_VIOLATION","BLOCKED_PENDING_HUMAN"]
+    },
+    "gate_decision_rationale": { "type": "string", "minLength": 20 },
+    "security_audit_md_produced": { "type": "boolean" },
+    "security_audit_md_path": { "type": "string" },
+    "handoff_package_produced": { "type": "boolean" },
+    "gate_ready": { "type": "boolean" },
+    "remediation_guide_required": { "type": "boolean" },
+    "required_next_agent": { "type": "string" },
+    "critical_count": { "type": "integer", "minimum": 0 },
+    "high_count": { "type": "integer", "minimum": 0 },
+    "medium_count": { "type": "integer", "minimum": 0 },
+    "low_count": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Secure Code Remediation Skill Output",
+  "type": "object",
+  "required": ["remediation_guide_produced", "findings_remediated"],
+  "properties": {
+    "remediation_guide_produced": { "type": "boolean" },
+    "remediation_guide_path": { "type": "string" },
+    "findings_remediated": { "type": "integer", "minimum": 0 },
+    "systemic_patterns_found": { "type": "integer", "minimum": 0 },
+    "additional_artifacts_suggested": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

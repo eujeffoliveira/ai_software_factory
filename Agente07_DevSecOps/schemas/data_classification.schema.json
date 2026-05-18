@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/data-classification",
+  "title": "Data Classification Report",
+  "description": "Schema for the Data_Classification.md produced by Agente07_DevSecOps to classify all data entities handled by a feature.",
+  "type": "object",
+  "required": [
+    "feature_name",
+    "classification_date",
+    "entities",
+    "highest_tier",
+    "restricted_human_signoff_required"
+  ],
+  "properties": {
+    "feature_name": { "type": "string", "minLength": 1 },
+    "classification_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "entities": {
+      "type": "array",
+      "description": "Classification of every data entity (table, field, or concept) handled by the feature.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["entity_id", "entity_name", "entity_type", "classification", "classification_rationale"],
+        "properties": {
+          "entity_id": { "type": "string" },
+          "entity_name": {
+            "type": "string",
+            "description": "Name of the data entity (e.g., User.email, Task.title, prisma table name)."
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["TABLE", "FIELD", "API_RESPONSE", "LOG_ENTRY", "EXTERNAL_DATA"],
+            "description": "Type of the data entity."
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"],
+            "description": "Assigned classification tier."
+          },
+          "classification_rationale": {
+            "type": "string",
+            "description": "Why this classification was assigned."
+          },
+          "pii_fields": {
+            "type": "array",
+            "description": "Specific PII fields within this entity.",
+            "items": { "type": "string" }
+          },
+          "regulatory_obligations": {
+            "type": "array",
+            "description": "Specific regulatory obligations that apply (e.g., LGPD, GDPR, HIPAA).",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "highest_tier": {
+      "type": "string",
+      "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"],
+      "description": "The highest classification tier found across all entities. Controls the review depth."
+    },
+    "restricted_human_signoff_required": {
+      "type": "boolean",
+      "description": "True if any RESTRICTED entities were found — requires BLOCKED_PENDING_HUMAN."
+    },
+    "human_signoff": {
+      "type": "object",
+      "description": "Documentation of human sign-off for RESTRICTED data (if obtained).",
+      "properties": {
+        "approved_by": { "type": "string" },
+        "approval_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "approval_reference": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "privacy_review_required": {
+      "type": "boolean",
+      "description": "True if CONFIDENTIAL or RESTRICTED entities found — triggers privacy-review-skill."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/security-audit",
+  "title": "Security Audit Report",
+  "description": "Schema for the Security_Audit.md structured output produced by Agente07_DevSecOps at Gate 5.",
+  "type": "object",
+  "required": [
+    "gate_decision",
+    "project",
+    "feature_pr",
+    "audit_date",
+    "audited_by",
+    "executive_summary",
+    "scope",
+    "owasp_coverage",
+    "findings",
+    "privacy_assessment_summary",
+    "threat_model_status",
+    "gate_5_sign_off"
+  ],
+  "properties": {
+    "gate_decision": {
+      "type": "string",
+      "enum": [
+        "APPROVED",
+        "RETURNED_FOR_REVISION",
+        "BLOCKED_CRITICAL_RISK",
+        "BLOCKED_SECRET_EXPOSED",
+        "BLOCKED_AUTH_BYPASS",
+        "BLOCKED_PRIVACY_VIOLATION",
+        "BLOCKED_PENDING_HUMAN"
+      ],
+      "description": "The authoritative Gate 5 decision."
+    },
+    "project": {
+      "type": "string",
+      "description": "Project name.",
+      "minLength": 1
+    },
+    "feature_pr": {
+      "type": "string",
+      "description": "Feature or PR description being audited.",
+      "minLength": 1
+    },
+    "audit_date": {
+      "type": "string",
+      "description": "Date of the audit (ISO 8601 date).",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "audited_by": {
+      "type": "string",
+      "const": "Agente07_DevSecOps v1.0.0"
+    },
+    "executive_summary": {
+      "type": "string",
+      "description": "1-2 sentences: overall security posture and gate decision rationale.",
+      "minLength": 20
+    },
+    "scope": {
+      "type": "object",
+      "required": ["architecture_md_version", "api_contract_version", "files_reviewed"],
+      "properties": {
+        "architecture_md_version": { "type": "string" },
+        "api_contract_version": { "type": "string" },
+        "files_reviewed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "packages_reviewed": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "owasp_coverage": {
+      "type": "array",
+      "description": "One entry per OWASP Top 10 category. Must have exactly 10 entries.",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["category_id", "category_name", "status"],
+        "properties": {
+          "category_id": {
+            "type": "string",
+            "pattern": "^A(0[1-9]|10)$"
+          },
+          "category_name": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "NOT_APPLICABLE"]
+          },
+          "finding_ids": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" }
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Evidence note — what was checked and what was found."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "object",
+      "required": ["critical", "high", "medium", "low"],
+      "properties": {
+        "critical": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/finding" }
+        },
+        "high": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/finding" }
+        },
+        "medium": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/finding" }
+        },
+        "low": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/finding" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "privacy_assessment_summary": {
+      "type": "object",
+      "required": ["status", "data_classification_highest_tier"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["COMPLIANT", "NON_COMPLIANT", "PENDING_HUMAN", "NOT_APPLICABLE"]
+        },
+        "data_classification_highest_tier": {
+          "type": "string",
+          "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED", "NOT_ASSESSED"]
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "threat_model_status": {
+      "type": "object",
+      "required": ["exists", "stride_coverage", "open_threats"],
+      "properties": {
+        "exists": { "type": "boolean" },
+        "stride_coverage": {
+          "type": "string",
+          "enum": ["COMPLETE", "INCOMPLETE", "MISSING", "NOT_REQUIRED"]
+        },
+        "open_threats": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "gate_5_sign_off": {
+      "type": "object",
+      "required": [
+        "all_critical_resolved",
+        "all_high_resolved",
+        "owasp_reviewed",
+        "secrets_scan_clean",
+        "authz_review_complete",
+        "privacy_assessment_complete",
+        "threat_model_current",
+        "no_pii_in_logs",
+        "dependencies_reviewed"
+      ],
+      "properties": {
+        "all_critical_resolved": { "type": "boolean" },
+        "all_high_resolved": { "type": "boolean" },
+        "owasp_reviewed": { "type": "boolean" },
+        "secrets_scan_clean": { "type": "boolean" },
+        "authz_review_complete": { "type": "boolean" },
+        "privacy_assessment_complete": { "type": "boolean" },
+        "threat_model_current": { "type": "boolean" },
+        "no_pii_in_logs": { "type": "boolean" },
+        "dependencies_reviewed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["finding_id", "title", "owasp_category", "location", "description", "decision_rule"],
+      "properties": {
+        "finding_id": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" },
+        "title": { "type": "string", "minLength": 5 },
+        "owasp_category": { "type": "string", "pattern": "^A(0[1-9]|10)$" },
+        "location": { "type": "string", "description": "File path and line number." },
+        "description": { "type": "string", "minLength": 10 },
+        "decision_rule": { "type": "string", "pattern": "^DR[0-9]{3,}$" },
+        "remediation": { "type": "string" },
+        "responsible_agent": {
+          "type": "string",
+          "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

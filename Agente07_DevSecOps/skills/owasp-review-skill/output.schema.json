@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OWASP Review Skill Output",
+  "type": "object",
+  "required": ["categories_reviewed", "categories_passed", "categories_failed", "category_results", "findings"],
+  "properties": {
+    "categories_reviewed": { "type": "integer", "minimum": 10, "maximum": 10 },
+    "categories_passed": { "type": "integer", "minimum": 0, "maximum": 10 },
+    "categories_failed": { "type": "integer", "minimum": 0, "maximum": 10 },
+    "category_results": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["category_id", "category_name", "status", "evidence"],
+        "properties": {
+          "category_id": { "type": "string", "pattern": "^A(0[1-9]|10)$" },
+          "category_name": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+          "evidence": { "type": "string" },
+          "finding_ids": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "severity", "owasp_category", "location", "description", "decision_rule"],
+        "properties": {
+          "finding_id": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "owasp_category": { "type": "string" },
+          "location": { "type": "string" },
+          "description": { "type": "string" },
+          "decision_rule": { "type": "string" },
+          "remediation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

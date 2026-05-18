@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Logging Privacy Review Skill Input",
+  "type": "object",
+  "required": ["implementation_files"],
+  "properties": {
+    "implementation_files": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "data_classification_highest_tier": { "type": "string" }
+  },
+  "additionalProperties": false
+}

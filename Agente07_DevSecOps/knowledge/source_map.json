@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente07_DevSecOps",
+  "build_date": "2026-05-17",
+  "version": "1.0.0",
+  "description": "Maps build-time bibliography sources to the distilled runtime artifacts they produced. Used for traceability and knowledge patch auditing.",
+  "sources": [
+    {
+      "source_id": "SRC-01",
+      "title": "Threat Modeling: Designing for Security",
+      "author": "Adam Shostack",
+      "location": "lib/DevSecOps/Threat_Modeling_Shostack.pdf",
+      "type": "book",
+      "key_chapters": [
+        "Chapter 1 — Dive In and Threat Model!",
+        "Chapter 3 — STRIDE per Element",
+        "Chapter 4 — Threats, Mitigations, and Compliant Behavior",
+        "Chapter 10 — Wrapping Up"
+      ],
+      "distilled_into": {
+        "principles": ["P1 — Security by Design", "P9 — STRIDE Covers the Threat Landscape"],
+        "heuristics": ["H13 — STRIDE Repudiation and DoS Under-Analyzed"],
+        "decision_rules": ["DR009 — Threat Model Missing → Gate Blocked"],
+        "knowledge_cards": ["Card 001 — STRIDE"],
+        "templates": ["Threat_Model.md"],
+        "skills": ["threat-modeling-skill"],
+        "checklists": []
+      }
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "The Web Application Hacker's Handbook",
+      "author": "Dafydd Stuttard and Marcus Pinto",
+      "location": "lib/DevSecOps/Web_Application_Hackers_Handbook.pdf",
+      "type": "book",
+      "key_chapters": [
+        "Chapter 2 — Core Defense Mechanisms",
+        "Chapter 3 — Web Application Technologies",
+        "Chapter 6 — Attacking Authentication",
+        "Chapter 8 — Attacking Access Controls",
+        "Chapter 9 — Attacking Data Stores",
+        "Chapter 11 — Attacking Application Logic"
+      ],
+      "distilled_into": {
+        "principles": [
+          "P5 — Don't Trust Client Input",
+          "P11 — Authentication Is the First Gate, Authorization Is the Second"
+        ],
+        "heuristics": [
+          "H1 — Auth Check Last Is Always a Bug",
+          "H2 — If Input Can Contain a User ID It Shouldn't",
+          "H3 — Prisma Query Without userId Is Suspicious",
+          "H6 — catch error.message Is Always Wrong",
+          "H10 — OWASP A01 Is Where Most Real Vulnerabilities Live"
+        ],
+        "decision_rules": [
+          "DR002 — Auth Check Missing → CRITICAL Block",
+          "DR003 — Raw SQL Concatenation → CRITICAL Block",
+          "DR010 — IDOR → CRITICAL Block",
+          "DR011 — userId from Request Body → CRITICAL Block"
+        ],
+        "knowledge_cards": [
+          "Card 003 — IDOR",
+          "Card 004 — Parameterized Queries vs. SQL Injection",
+          "Card 012 — NextAuth v5 Auth Pattern"
+        ],
+        "templates": ["Security_Audit.md", "Remediation_Guide.md"],
+        "skills": ["authz-review-skill", "owasp-review-skill", "secret-scanning-skill"],
+        "checklists": ["owasp_top_10_checklist.md", "authz_checklist.md"]
+      }
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Practical Cloud Security",
+      "author": "Chris Dotson",
+      "location": "lib/DevSecOps/Practical_Cloud_Security_Dotson.pdf",
+      "type": "book",
+      "key_chapters": [
+        "Chapter 2 — Cloud Security Concepts",
+        "Chapter 4 — Identity and Access Management",
+        "Chapter 5 — Secrets Management",
+        "Chapter 6 — Network Security",
+        "Chapter 7 — Data Security"
+      ],
+      "distilled_into": {
+        "principles": [
+          "P6 — Secrets Are Not Code",
+          "P10 — Vulnerable Dependencies Are Attack Surface",
+          "P3 — Defense in Depth"
+        ],
+        "heuristics": [
+          "H4 — String Literals That Look Like Secrets Should Be Flagged",
+          "H5 — process.env Outside lib/env.ts Is a Finding",
+          "H8 — Dependencies Updated Less Than 6 Months Are Lower Risk",
+          "H11 — Clean npm audit Is Necessary but Not Sufficient"
+        ],
+        "decision_rules": [
+          "DR001 — Hardcoded Secret → CRITICAL Block",
+          "DR006 — CVSS ≥ 9.0 Dependency → CRITICAL Block",
+          "DR007 — CVSS 7.0–8.9 Dependency → HIGH Finding",
+          "DR008 — process.env Outside lib/env.ts → MEDIUM Finding"
+        ],
+        "knowledge_cards": [
+          "Card 006 — CVSS",
+          "Card 007 — Least Privilege",
+          "Card 005 — Defense in Depth"
+        ],
+        "templates": [],
+        "skills": ["secret-scanning-skill", "dependency-security-review-skill"],
+        "checklists": ["secrets_checklist.md", "dependency_security_checklist.md"]
+      }
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "Reference Architecture Golden Path v1.1.1",
+      "author": "AI Software Factory internal",
+      "location": "context/reference_architecture_generico.md",
+      "type": "internal_document",
+      "key_sections": [
+        "Golden Model — tech stack",
+        "Logging — audit_log and sync_log spec",
+        "Cron — guardCron() pattern",
+        "Auth — NextAuth v5 check pattern",
+        "Gate 5 — Security Review ownership",
+        "Privacy — LGPD/GDPR compliance framework",
+        "Data Classification — four-tier model"
+      ],
+      "distilled_into": {
+        "principles": [
+          "P4 — Fail Securely",
+          "P7 — Audit Trails Are Non-Negotiable",
+          "P8 — Privacy by Design",
+          "P12 — Regulatory Risk Requires Human Decision"
+        ],
+        "heuristics": [
+          "H7 — metadata Fields in audit_log Are a Privacy Risk Until Proven Safe",
+          "H9 — It's Only for Internal Use Does Not Reduce Requirements",
+          "H12 — Sensitive Operations Without audit_log Are a Repudiation Gap",
+          "H14 — Privacy Review Scope Is Determined by Highest Classification Tier",
+          "H15 — Re-Audit After Fixes Must Cover All Affected Areas"
+        ],
+        "decision_rules": [
+          "DR004 — Stack Trace Exposed → HIGH Finding",
+          "DR005 — PII in Logs → HIGH Finding, Privacy Violation",
+          "DR012 — LGPD/GDPR Decision Needed → Escalate",
+          "DR013 — All Clear → APPROVED",
+          "DR014 — Remediation Must Include Specific Location",
+          "DR015 — Same Vulnerability 3+ Locations → Systemic Issue"
+        ],
+        "knowledge_cards": [
+          "Card 008 — Privacy by Design",
+          "Card 009 — Data Classification Tiers",
+          "Card 010 — audit_log Schema",
+          "Card 011 — guardCron() Pattern",
+          "Card 002 — OWASP Top 10"
+        ],
+        "templates": [
+          "Security_Audit.md",
+          "Privacy_Assessment.md",
+          "Data_Classification.md",
+          "Security_Blockers.md"
+        ],
+        "skills": [
+          "privacy-review-skill",
+          "logging-privacy-review-skill",
+          "data-classification-skill",
+          "security-audit-report-skill"
+        ],
+        "checklists": [
+          "privacy_compliance_checklist.md",
+          "logging_privacy_checklist.md",
+          "data_classification_checklist.md",
+          "runtime_isolation_checklist.md"
+        ]
+      }
+    }
+  ],
+  "knowledge_coverage_summary": {
+    "principles_count": 12,
+    "heuristics_count": 15,
+    "decision_rules_count": 15,
+    "knowledge_cards_count": 12,
+    "all_sources_covered": true,
+    "gaps_identified": []
+  }
+}

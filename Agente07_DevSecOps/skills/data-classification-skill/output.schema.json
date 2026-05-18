@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Data Classification Skill Output",
+  "type": "object",
+  "required": ["highest_tier", "restricted_human_signoff_required", "privacy_review_required", "entities"],
+  "properties": {
+    "highest_tier": { "type": "string", "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] },
+    "restricted_human_signoff_required": { "type": "boolean" },
+    "privacy_review_required": { "type": "boolean" },
+    "data_classification_md_produced": { "type": "boolean" },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entity_name", "classification", "pii_fields"],
+        "properties": {
+          "entity_name": { "type": "string" },
+          "classification": { "type": "string", "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] },
+          "pii_fields": { "type": "array", "items": { "type": "string" } },
+          "regulatory_obligations": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "immediate_action": {
+      "type": "string",
+      "enum": ["BLOCKED_PENDING_HUMAN", "PROCEED_WITH_PRIVACY_REVIEW", "LOG_CHECK_ONLY"]
+    }
+  },
+  "additionalProperties": false
+}

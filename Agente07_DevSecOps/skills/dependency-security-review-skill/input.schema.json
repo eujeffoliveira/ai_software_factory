@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dependency Security Review Skill Input",
+  "type": "object",
+  "required": ["package_json_path"],
+  "properties": {
+    "package_json_path": { "type": "string" },
+    "package_lock_path": { "type": "string" },
+    "npm_audit_output": { "type": "string", "description": "Raw npm audit JSON output if available." }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Threat Modeling Skill Input",
+  "type": "object",
+  "required": ["feature_name", "has_auth", "data_classification_highest_tier"],
+  "properties": {
+    "feature_name": { "type": "string" },
+    "has_auth": { "type": "boolean", "description": "True if feature uses auth() or session." },
+    "has_external_integrations": { "type": "boolean" },
+    "data_classification_highest_tier": {
+      "type": "string",
+      "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]
+    },
+    "existing_threat_model_path": { "type": "string", "description": "Path to existing Threat_Model.md if present." },
+    "architecture_md_path": { "type": "string" },
+    "api_contract_path": { "type": "string" },
+    "prisma_schema_path": { "type": "string" },
+    "implementation_files": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

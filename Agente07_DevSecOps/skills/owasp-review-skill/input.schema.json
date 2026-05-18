@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OWASP Review Skill Input",
+  "type": "object",
+  "required": ["implementation_files", "package_json_path"],
+  "properties": {
+    "implementation_files": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "package_json_path": { "type": "string" },
+    "prisma_schema_path": { "type": "string" },
+    "threat_model_path": { "type": "string" },
+    "secrets_scan_result": { "type": "string", "enum": ["CLEAN", "EXPOSED", "NOT_SCANNED"] },
+    "auth_review_result": { "type": "string", "enum": ["PASS", "FAIL", "NOT_SCANNED"] },
+    "dependency_scan_result": { "type": "string", "enum": ["CLEAN", "CRITICAL_CVE_FOUND", "HIGH_CVE_FOUND", "MEDIUM_CVE_FOUND", "NOT_SCANNED"] },
+    "logging_privacy_result": { "type": "string", "enum": ["PASS", "FAIL", "NOT_SCANNED"] }
+  },
+  "additionalProperties": false
+}

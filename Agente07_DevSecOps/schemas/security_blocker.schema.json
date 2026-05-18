@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/security-blocker",
+  "title": "Security Blocker",
+  "description": "Schema for an individual security blocker entry in Security_Blockers.md. Each blocker represents a finding that prevents Gate 5 approval.",
+  "type": "object",
+  "required": [
+    "blocker_id",
+    "severity",
+    "gate_status_code",
+    "title",
+    "owasp_category",
+    "location",
+    "description",
+    "decision_rule",
+    "remediation_steps",
+    "responsible_agent",
+    "escalate_to_tech_lead"
+  ],
+  "properties": {
+    "blocker_id": {
+      "type": "string",
+      "description": "Unique blocker identifier.",
+      "pattern": "^SEC-[0-9]{3,}$"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH"],
+      "description": "Only CRITICAL and HIGH findings are blockers."
+    },
+    "gate_status_code": {
+      "type": "string",
+      "enum": [
+        "BLOCKED_CRITICAL_RISK",
+        "BLOCKED_SECRET_EXPOSED",
+        "BLOCKED_AUTH_BYPASS",
+        "BLOCKED_PRIVACY_VIOLATION",
+        "BLOCKED_PENDING_HUMAN"
+      ],
+      "description": "The Gate 5 status code this blocker triggers."
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title for the blocker.",
+      "minLength": 5
+    },
+    "owasp_category": {
+      "type": "string",
+      "description": "OWASP Top 10 category.",
+      "pattern": "^A(0[1-9]|10)$"
+    },
+    "location": {
+      "type": "string",
+      "description": "Exact file path and line number (e.g., app/api/users/route.ts:42).",
+      "minLength": 5
+    },
+    "description": {
+      "type": "string",
+      "description": "Precise description of the vulnerability with evidence and impact.",
+      "minLength": 20
+    },
+    "vulnerable_code_snippet": {
+      "type": "string",
+      "description": "The exact vulnerable code snippet (quoted from source)."
+    },
+    "decision_rule": {
+      "type": "string",
+      "description": "Decision rule that triggered this blocker.",
+      "pattern": "^DR[0-9]{3,}$"
+    },
+    "remediation_steps": {
+      "type": "array",
+      "description": "Ordered remediation steps for the Dev agent.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step", "description"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 1 },
+          "description": { "type": "string" },
+          "correct_code_pattern": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "responsible_agent": {
+      "type": "string",
+      "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"],
+      "description": "Which Dev agent is responsible for fixing this blocker."
+    },
+    "escalate_to_tech_lead": {
+      "type": "boolean",
+      "description": "True if Tech Lead must also be notified (always true for CRITICAL findings)."
+    },
+    "secret_rotation_required": {
+      "type": "boolean",
+      "description": "True if a secret was exposed and must be rotated in addition to code fix."
+    },
+    "systemic_pattern": {
+      "type": "boolean",
+      "description": "True if this vulnerability class was found in 3+ locations (DR015)."
+    }
+  },
+  "additionalProperties": false
+}

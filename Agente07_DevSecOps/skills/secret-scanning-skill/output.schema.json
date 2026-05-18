@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Secret Scanning Skill Output",
+  "type": "object",
+  "required": ["status", "files_scanned", "secrets_found", "process_env_violations"],
+  "properties": {
+    "status": { "type": "string", "enum": ["CLEAN", "EXPOSED"] },
+    "files_scanned": { "type": "integer", "minimum": 0 },
+    "secrets_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "pattern_type", "location", "decision_rule"],
+        "properties": {
+          "finding_id": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" },
+          "pattern_type": { "type": "string" },
+          "location": { "type": "string" },
+          "snippet": { "type": "string" },
+          "decision_rule": { "type": "string", "const": "DR001" },
+          "rotation_required": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "process_env_violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "location", "variable_name", "severity"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "location": { "type": "string" },
+          "variable_name": { "type": "string" },
+          "severity": { "type": "string", "enum": ["MEDIUM", "HIGH"] },
+          "decision_rule": { "type": "string", "const": "DR008" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gitignore_env_excluded": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

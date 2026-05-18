@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/threat-model",
+  "title": "Threat Model",
+  "description": "Schema for the Threat_Model.md structured output produced by Agente07_DevSecOps using the STRIDE methodology.",
+  "type": "object",
+  "required": [
+    "feature_name",
+    "date",
+    "system_overview",
+    "trust_boundaries",
+    "assets",
+    "threat_analysis",
+    "open_threats"
+  ],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Name of the feature being threat-modeled.",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "description": "Date of threat model (ISO 8601).",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "system_overview": {
+      "type": "string",
+      "description": "Brief description of what the feature does and its security relevance.",
+      "minLength": 20
+    },
+    "trust_boundaries": {
+      "type": "array",
+      "description": "List of trust boundaries — points where data or control crosses from one trust domain to another.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["boundary_id", "description", "crossing"],
+        "properties": {
+          "boundary_id": { "type": "string", "description": "e.g., TB-01" },
+          "description": { "type": "string" },
+          "crossing": { "type": "string", "description": "What crosses this boundary (e.g., user input, API response, cron trigger)." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assets": {
+      "type": "array",
+      "description": "Data and functionality assets worth protecting.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "name", "classification", "why_valuable"],
+        "properties": {
+          "asset_id": { "type": "string" },
+          "name": { "type": "string" },
+          "classification": {
+            "type": "string",
+            "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]
+          },
+          "why_valuable": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "threat_analysis": {
+      "type": "object",
+      "description": "STRIDE threat analysis. All six categories are required.",
+      "required": ["spoofing", "tampering", "repudiation", "information_disclosure", "denial_of_service", "elevation_of_privilege"],
+      "properties": {
+        "spoofing": { "$ref": "#/$defs/stride_category" },
+        "tampering": { "$ref": "#/$defs/stride_category" },
+        "repudiation": { "$ref": "#/$defs/stride_category" },
+        "information_disclosure": { "$ref": "#/$defs/stride_category" },
+        "denial_of_service": { "$ref": "#/$defs/stride_category" },
+        "elevation_of_privilege": { "$ref": "#/$defs/stride_category" }
+      },
+      "additionalProperties": false
+    },
+    "open_threats": {
+      "type": "array",
+      "description": "Threats that are identified but not yet mitigated, with disposition.",
+      "items": {
+        "type": "object",
+        "required": ["threat_id", "description", "disposition"],
+        "properties": {
+          "threat_id": { "type": "string" },
+          "description": { "type": "string" },
+          "disposition": {
+            "type": "string",
+            "enum": ["ACCEPTED", "ESCALATED", "DEFERRED", "MITIGATING_CONTROL_PLANNED"]
+          },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "stride_category": {
+      "type": "object",
+      "required": ["threats"],
+      "properties": {
+        "threats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["threat_id", "threat", "component", "likelihood", "impact", "mitigation"],
+            "properties": {
+              "threat_id": { "type": "string", "description": "e.g., S-01, T-01, R-01" },
+              "threat": { "type": "string", "description": "Description of the threat." },
+              "component": { "type": "string", "description": "System component where this threat applies." },
+              "likelihood": {
+                "type": "string",
+                "enum": ["LOW", "MEDIUM", "HIGH"],
+                "description": "Likelihood of this threat being realized."
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+                "description": "Impact if this threat is realized."
+              },
+              "mitigation": {
+                "type": "string",
+                "description": "Specific mitigation — code pattern, control, or configuration."
+              },
+              "mitigation_status": {
+                "type": "string",
+                "enum": ["IMPLEMENTED", "PARTIAL", "MISSING"],
+                "description": "Current status of the mitigation."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

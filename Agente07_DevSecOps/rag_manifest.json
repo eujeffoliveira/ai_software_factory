@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente07_DevSecOps",
+  "version": "1.0.0",
+  "rag_policy": "local-only-at-runtime",
+  "description": "RAG retrieval policy for Agente07_DevSecOps. At runtime, only local agent artifacts may be retrieved. Raw bibliography sources (lib/) are blocked. All knowledge has been distilled into the knowledge/ folder.",
+  "collections": [
+    {
+      "collection_id": "devsecops-knowledge",
+      "description": "Core security principles, heuristics, decision rules, and knowledge cards distilled from build-time bibliography",
+      "sources": [
+        "Agente07_DevSecOps/knowledge/principles.md",
+        "Agente07_DevSecOps/knowledge/heuristics.md",
+        "Agente07_DevSecOps/knowledge/decision_rules.md",
+        "Agente07_DevSecOps/knowledge/knowledge_cards.md"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "any security evaluation task"
+    },
+    {
+      "collection_id": "devsecops-checklists",
+      "description": "Operational checklists for all security review tasks",
+      "sources": [
+        "Agente07_DevSecOps/checklists/owasp_top_10_checklist.md",
+        "Agente07_DevSecOps/checklists/privacy_compliance_checklist.md",
+        "Agente07_DevSecOps/checklists/secrets_checklist.md",
+        "Agente07_DevSecOps/checklists/authz_checklist.md",
+        "Agente07_DevSecOps/checklists/logging_privacy_checklist.md",
+        "Agente07_DevSecOps/checklists/dependency_security_checklist.md",
+        "Agente07_DevSecOps/checklists/data_classification_checklist.md",
+        "Agente07_DevSecOps/checklists/runtime_isolation_checklist.md"
+      ],
+      "chunking_strategy": "checklist-item",
+      "chunk_size_tokens": 256,
+      "overlap_tokens": 32,
+      "retrieval_trigger": "executing a security skill"
+    },
+    {
+      "collection_id": "devsecops-templates",
+      "description": "Output templates for all Security Review artifacts",
+      "sources": [
+        "Agente07_DevSecOps/templates/Security_Audit.md",
+        "Agente07_DevSecOps/templates/Threat_Model.md",
+        "Agente07_DevSecOps/templates/Privacy_Assessment.md",
+        "Agente07_DevSecOps/templates/Security_Blockers.md",
+        "Agente07_DevSecOps/templates/Remediation_Guide.md",
+        "Agente07_DevSecOps/templates/Data_Classification.md"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "producing a security artifact"
+    },
+    {
+      "collection_id": "devsecops-schemas",
+      "description": "JSON Schemas for all Security Review I/O contracts",
+      "sources": [
+        "Agente07_DevSecOps/schemas/security_audit.schema.json",
+        "Agente07_DevSecOps/schemas/threat_model.schema.json",
+        "Agente07_DevSecOps/schemas/privacy_assessment.schema.json",
+        "Agente07_DevSecOps/schemas/security_blocker.schema.json",
+        "Agente07_DevSecOps/schemas/remediation_guide.schema.json",
+        "Agente07_DevSecOps/schemas/data_classification.schema.json"
+      ],
+      "chunking_strategy": "whole-file",
+      "retrieval_trigger": "validating output structure"
+    },
+    {
+      "collection_id": "devsecops-examples",
+      "description": "Good and bad examples of all security review artifacts",
+      "sources": [
+        "Agente07_DevSecOps/examples/good_security_audit.md",
+        "Agente07_DevSecOps/examples/bad_security_audit.md",
+        "Agente07_DevSecOps/examples/good_threat_model.md",
+        "Agente07_DevSecOps/examples/bad_threat_model.md",
+        "Agente07_DevSecOps/examples/good_privacy_assessment.md",
+        "Agente07_DevSecOps/examples/bad_privacy_assessment.md"
+      ],
+      "chunking_strategy": "whole-file",
+      "retrieval_trigger": "quality self-check before producing output"
+    },
+    {
+      "collection_id": "devsecops-skills",
+      "description": "Skill definitions, input/output schemas, checklists, and examples for all 10 security skills",
+      "sources": [
+        "Agente07_DevSecOps/skills/threat-modeling-skill/",
+        "Agente07_DevSecOps/skills/owasp-review-skill/",
+        "Agente07_DevSecOps/skills/privacy-review-skill/",
+        "Agente07_DevSecOps/skills/secret-scanning-skill/",
+        "Agente07_DevSecOps/skills/authz-review-skill/",
+        "Agente07_DevSecOps/skills/security-audit-report-skill/",
+        "Agente07_DevSecOps/skills/dependency-security-review-skill/",
+        "Agente07_DevSecOps/skills/secure-code-remediation-skill/",
+        "Agente07_DevSecOps/skills/logging-privacy-review-skill/",
+        "Agente07_DevSecOps/skills/data-classification-skill/"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "invoking a skill"
+    },
+    {
+      "collection_id": "devsecops-context",
+      "description": "Compiled local operational context — replaces context/ at runtime",
+      "sources": [
+        "Agente07_DevSecOps/context_view.md",
+        "Agente07_DevSecOps/quality_gate.md",
+        "Agente07_DevSecOps/failure_modes.md"
+      ],
+      "chunking_strategy": "section",
+      "chunk_size_tokens": 512,
+      "overlap_tokens": 64,
+      "retrieval_trigger": "gate decision or escalation"
+    }
+  ],
+  "blocked_raw_sources": [
+    "lib/DevSecOps/",
+    "lib/",
+    "context/",
+    "*.pdf"
+  ],
+  "retrieval_order": [
+    "devsecops-context",
+    "devsecops-knowledge",
+    "devsecops-checklists",
+    "devsecops-skills",
+    "devsecops-templates",
+    "devsecops-schemas",
+    "devsecops-examples"
+  ],
+  "fallback_policy": "return_empty — if a source is not found in local collections, do not attempt to read from blocked sources"
+}

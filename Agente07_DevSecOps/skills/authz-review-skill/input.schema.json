@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Authz Review Skill Input",
+  "type": "object",
+  "required": ["server_actions", "route_handlers"],
+  "properties": {
+    "server_actions": { "type": "array", "items": { "type": "string" } },
+    "route_handlers": { "type": "array", "items": { "type": "string" } },
+    "cron_routes": { "type": "array", "items": { "type": "string" } },
+    "dal_files": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/remediation-guide",
+  "title": "Remediation Guide",
+  "description": "Schema for the Remediation_Guide.md produced by Agente07_DevSecOps for every BLOCKED or RETURNED gate decision. Provides specific, actionable fix guidance for each finding.",
+  "type": "object",
+  "required": [
+    "gate_decision",
+    "audit_date",
+    "project",
+    "feature_pr",
+    "target_agents",
+    "remediation_items",
+    "resubmission_requirements"
+  ],
+  "properties": {
+    "gate_decision": {
+      "type": "string",
+      "enum": [
+        "RETURNED_FOR_REVISION",
+        "BLOCKED_CRITICAL_RISK",
+        "BLOCKED_SECRET_EXPOSED",
+        "BLOCKED_AUTH_BYPASS",
+        "BLOCKED_PRIVACY_VIOLATION",
+        "BLOCKED_PENDING_HUMAN"
+      ]
+    },
+    "audit_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "project": { "type": "string" },
+    "feature_pr": { "type": "string" },
+    "target_agents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"]
+      },
+      "minItems": 1
+    },
+    "remediation_items": {
+      "type": "array",
+      "description": "One item per finding that requires remediation.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "finding_id",
+          "severity",
+          "title",
+          "location",
+          "description",
+          "wrong_pattern",
+          "correct_pattern",
+          "responsible_agent"
+        ],
+        "properties": {
+          "finding_id": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "title": { "type": "string", "minLength": 5 },
+          "location": {
+            "type": "string",
+            "description": "Exact file path and line number."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the problem is and why it is a security risk."
+          },
+          "wrong_pattern": {
+            "type": "string",
+            "description": "The exact code that must be removed or changed (quoted from source)."
+          },
+          "correct_pattern": {
+            "type": "string",
+            "description": "The correct code pattern that should replace the wrong pattern."
+          },
+          "additional_steps": {
+            "type": "array",
+            "description": "Additional steps beyond the code change (e.g., rotate secret, update schema).",
+            "items": { "type": "string" }
+          },
+          "responsible_agent": {
+            "type": "string",
+            "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"]
+          },
+          "decision_rule": { "type": "string", "pattern": "^DR[0-9]{3,}$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "systemic_recommendations": {
+      "type": "array",
+      "description": "Systemic remediation recommendations for patterns found in 3+ locations (DR015).",
+      "items": {
+        "type": "object",
+        "required": ["pattern", "occurrences", "recommendation"],
+        "properties": {
+          "pattern": { "type": "string" },
+          "occurrences": { "type": "integer", "minimum": 3 },
+          "recommendation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "resubmission_requirements": {
+      "type": "object",
+      "required": ["all_critical_must_be_fixed", "all_high_must_be_fixed", "re_audit_required"],
+      "properties": {
+        "all_critical_must_be_fixed": { "type": "boolean" },
+        "all_high_must_be_fixed": { "type": "boolean" },
+        "re_audit_required": { "type": "boolean" },
+        "resubmit_with": {
+          "type": "array",
+          "description": "Artifacts that must accompany the resubmission.",
+          "items": { "type": "string" }
+        },
+        "additional_instructions": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

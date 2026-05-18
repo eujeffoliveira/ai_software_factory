@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Secure Code Remediation Skill Input",
+  "type": "object",
+  "required": ["gate_decision", "findings_to_remediate"],
+  "properties": {
+    "gate_decision": { "type": "string" },
+    "project": { "type": "string" },
+    "feature_pr": { "type": "string" },
+    "target_agents": { "type": "array", "items": { "type": "string" } },
+    "findings_to_remediate": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "severity", "title", "location", "description", "decision_rule"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "title": { "type": "string" },
+          "location": { "type": "string" },
+          "description": { "type": "string" },
+          "vulnerable_code_snippet": { "type": "string" },
+          "decision_rule": { "type": "string" },
+          "responsible_agent": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

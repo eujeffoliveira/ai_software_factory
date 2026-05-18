@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Privacy Review Skill Input",
+  "type": "object",
+  "required": ["feature_name", "highest_data_tier", "confidential_entities"],
+  "properties": {
+    "feature_name": { "type": "string" },
+    "highest_data_tier": { "type": "string", "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] },
+    "confidential_entities": { "type": "array", "items": { "type": "string" } },
+    "restricted_entities": { "type": "array", "items": { "type": "string" } },
+    "prisma_schema_path": { "type": "string" },
+    "prd_reference": { "type": "string" },
+    "implementation_files": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

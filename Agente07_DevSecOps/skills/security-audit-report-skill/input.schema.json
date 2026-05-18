@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security Audit Report Skill Input",
+  "type": "object",
+  "required": ["project", "feature_pr", "audit_date", "all_findings", "owasp_results", "skill_results"],
+  "properties": {
+    "project": { "type": "string" },
+    "feature_pr": { "type": "string" },
+    "audit_date": { "type": "string" },
+    "files_reviewed": { "type": "array", "items": { "type": "string" } },
+    "all_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "severity", "owasp_category", "location", "description", "decision_rule"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "owasp_category": { "type": "string" },
+          "location": { "type": "string" },
+          "description": { "type": "string" },
+          "decision_rule": { "type": "string" },
+          "remediation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "owasp_results": { "type": "array", "minItems": 10, "maxItems": 10 },
+    "skill_results": {
+      "type": "object",
+      "properties": {
+        "secrets_scan_status": { "type": "string" },
+        "auth_review_status": { "type": "string" },
+        "dependency_scan_status": { "type": "string" },
+        "logging_privacy_status": { "type": "string" },
+        "threat_model_status": { "type": "string" },
+        "privacy_status": { "type": "string" },
+        "data_classification_highest_tier": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

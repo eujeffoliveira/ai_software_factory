@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/privacy-assessment",
+  "title": "Privacy Assessment",
+  "description": "Schema for the Privacy_Assessment.md produced by Agente07_DevSecOps for features handling CONFIDENTIAL or RESTRICTED data.",
+  "type": "object",
+  "required": [
+    "feature_name",
+    "assessment_date",
+    "data_classification_summary",
+    "legal_basis_assessment",
+    "data_minimization_assessment",
+    "consent_assessment",
+    "deletion_support_assessment",
+    "third_party_sharing",
+    "overall_status",
+    "findings"
+  ],
+  "properties": {
+    "feature_name": { "type": "string", "minLength": 1 },
+    "assessment_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "data_classification_summary": {
+      "type": "object",
+      "required": ["highest_tier", "entities"],
+      "properties": {
+        "highest_tier": {
+          "type": "string",
+          "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["entity_name", "classification", "pii_fields"],
+            "properties": {
+              "entity_name": { "type": "string" },
+              "classification": {
+                "type": "string",
+                "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]
+              },
+              "pii_fields": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "legal_basis_assessment": {
+      "type": "object",
+      "required": ["has_documented_basis", "basis_type", "status"],
+      "properties": {
+        "has_documented_basis": { "type": "boolean" },
+        "basis_type": {
+          "type": "string",
+          "enum": ["CONSENT", "CONTRACT", "LEGAL_OBLIGATION", "LEGITIMATE_INTEREST", "NOT_DOCUMENTED", "NOT_APPLICABLE"]
+        },
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "data_minimization_assessment": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+        "unnecessary_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "consent_assessment": {
+      "type": "object",
+      "required": ["required", "implemented", "status"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "implemented": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "deletion_support_assessment": {
+      "type": "object",
+      "required": ["required", "implemented", "status"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "implemented": { "type": "boolean" },
+        "cascade_delete_configured": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "third_party_sharing": {
+      "type": "object",
+      "required": ["has_third_party_sharing", "status"],
+      "properties": {
+        "has_third_party_sharing": { "type": "boolean" },
+        "third_parties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "data_shared", "dpa_in_place"],
+            "properties": {
+              "name": { "type": "string" },
+              "data_shared": { "type": "string" },
+              "dpa_in_place": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": ["COMPLIANT", "NON_COMPLIANT", "PENDING_HUMAN", "NOT_APPLICABLE"]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "severity", "description", "remediation"],
+        "properties": {
+          "finding_id": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "description": { "type": "string" },
+          "remediation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "human_escalation_required": { "type": "boolean" },
+    "escalation_reason": { "type": "string" }
+  },
+  "additionalProperties": false
+}

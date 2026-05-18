@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Authz Review Skill Output",
+  "type": "object",
+  "required": ["status", "routes_reviewed", "routes_passing", "routes_failing", "findings"],
+  "properties": {
+    "status": { "type": "string", "enum": ["PASS", "FAIL"] },
+    "routes_reviewed": { "type": "integer", "minimum": 0 },
+    "routes_passing": { "type": "integer", "minimum": 0 },
+    "routes_failing": { "type": "integer", "minimum": 0 },
+    "route_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "type", "auth_check_first", "session_guard_present", "ownership_check_present"],
+        "properties": {
+          "file": { "type": "string" },
+          "type": { "type": "string", "enum": ["SERVER_ACTION", "ROUTE_HANDLER", "CRON_ROUTE"] },
+          "auth_check_first": { "type": "boolean" },
+          "session_guard_present": { "type": "boolean" },
+          "ownership_check_present": { "type": "boolean" },
+          "userid_from_session": { "type": "boolean" },
+          "finding_ids": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "severity", "location", "description", "decision_rule"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "location": { "type": "string" },
+          "description": { "type": "string" },
+          "decision_rule": { "type": "string" },
+          "remediation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

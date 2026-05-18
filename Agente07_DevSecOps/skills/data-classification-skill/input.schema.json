@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Data Classification Skill Input",
+  "type": "object",
+  "required": ["feature_name"],
+  "properties": {
+    "feature_name": { "type": "string" },
+    "prisma_schema_path": { "type": "string" },
+    "architecture_md_path": { "type": "string" },
+    "api_contract_path": { "type": "string" },
+    "implementation_files": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

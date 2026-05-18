@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Logging Privacy Review Skill Output",
+  "type": "object",
+  "required": ["status", "call_sites_reviewed", "findings"],
+  "properties": {
+    "status": { "type": "string", "enum": ["PASS", "FAIL"] },
+    "call_sites_reviewed": { "type": "integer", "minimum": 0 },
+    "audit_log_calls_reviewed": { "type": "integer", "minimum": 0 },
+    "sync_log_calls_reviewed": { "type": "integer", "minimum": 0 },
+    "console_calls_reviewed": { "type": "integer", "minimum": 0 },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "severity", "log_type", "location", "pii_found", "description", "remediation"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "log_type": { "type": "string", "enum": ["audit_log", "sync_log", "console"] },
+          "location": { "type": "string" },
+          "pii_found": { "type": "string" },
+          "description": { "type": "string" },
+          "remediation": { "type": "string" },
+          "decision_rule": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

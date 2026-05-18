@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/agente07-handoff",
+  "title": "Agente07_DevSecOps Handoff Package",
+  "description": "Schema for the Handoff Package produced by Agente07_DevSecOps after Gate 5 evaluation. On APPROVED, delivered to Agente08_DevOps. On BLOCKED/RETURNED, delivered back to the responsible Dev agents with Remediation_Guide.md.",
+  "type": "object",
+  "required": [
+    "artifact_produced",
+    "gate_decision",
+    "summary",
+    "findings",
+    "owasp_summary",
+    "threat_model_status",
+    "privacy_status",
+    "secrets_scan_status",
+    "dependency_scan_status",
+    "assumptions",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "gate_ready"
+  ],
+  "properties": {
+    "artifact_produced": {
+      "type": "string",
+      "description": "Primary artifact produced by this Security Review cycle.",
+      "const": "Security_Audit.md"
+    },
+    "gate_decision": {
+      "type": "string",
+      "description": "The Gate 5 status code — the authoritative decision of the DevSecOps Engineer.",
+      "enum": [
+        "APPROVED",
+        "RETURNED_FOR_REVISION",
+        "BLOCKED_CRITICAL_RISK",
+        "BLOCKED_SECRET_EXPOSED",
+        "BLOCKED_AUTH_BYPASS",
+        "BLOCKED_PRIVACY_VIOLATION",
+        "BLOCKED_PENDING_HUMAN"
+      ]
+    },
+    "gate_decision_rationale": {
+      "type": "string",
+      "description": "One to three sentences explaining why this gate decision was issued. Must reference specific evidence (file paths, finding IDs, CVSS scores).",
+      "minLength": 20
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level description of the security audit — what was reviewed, what was found, and overall security posture.",
+      "minLength": 30
+    },
+    "findings": {
+      "type": "object",
+      "description": "Security findings classified by severity tier.",
+      "required": ["critical", "high", "medium", "low"],
+      "properties": {
+        "critical": {
+          "type": "array",
+          "description": "CRITICAL severity findings — each blocks Gate 5.",
+          "items": { "$ref": "#/$defs/finding" }
+        },
+        "high": {
+          "type": "array",
+          "description": "HIGH severity findings — must remediate before APPROVED.",
+          "items": { "$ref": "#/$defs/finding" }
+        },
+        "medium": {
+          "type": "array",
+          "description": "MEDIUM severity findings — tracked, can proceed with documented plan.",
+          "items": { "$ref": "#/$defs/finding" }
+        },
+        "low": {
+          "type": "array",
+          "description": "LOW severity findings — informational.",
+          "items": { "$ref": "#/$defs/finding" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "owasp_summary": {
+      "type": "object",
+      "description": "OWASP Top 10 (2021) review coverage summary.",
+      "required": ["categories_reviewed", "categories_passed", "categories_failed"],
+      "properties": {
+        "categories_reviewed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Number of OWASP categories reviewed (must be 10 for APPROVED)."
+        },
+        "categories_passed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Number of OWASP categories that passed."
+        },
+        "categories_failed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Number of OWASP categories that failed."
+        },
+        "category_results": {
+          "type": "array",
+          "description": "Per-category results.",
+          "items": {
+            "type": "object",
+            "required": ["category_id", "category_name", "status"],
+            "properties": {
+              "category_id": {
+                "type": "string",
+                "description": "OWASP category ID (e.g., A01).",
+                "pattern": "^A(0[1-9]|10)$"
+              },
+              "category_name": {
+                "type": "string",
+                "description": "OWASP category name."
+              },
+              "status": {
+                "type": "string",
+                "enum": ["PASS", "FAIL", "NOT_APPLICABLE"],
+                "description": "Review result for this category."
+              },
+              "finding_ids": {
+                "type": "array",
+                "description": "Finding IDs (SEC-NNN) associated with this category failure.",
+                "items": { "type": "string", "pattern": "^SEC-[0-9]{3,}$" }
+              },
+              "notes": {
+                "type": "string",
+                "description": "Evidence notes for this category."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "threat_model_status": {
+      "type": "string",
+      "enum": ["COMPLETE", "INCOMPLETE", "MISSING", "NOT_REQUIRED"],
+      "description": "Status of STRIDE threat model coverage."
+    },
+    "threat_model_notes": {
+      "type": "string",
+      "description": "Notes on threat model coverage gaps or open threats."
+    },
+    "privacy_status": {
+      "type": "string",
+      "enum": ["COMPLIANT", "NON_COMPLIANT", "PENDING_HUMAN", "NOT_APPLICABLE"],
+      "description": "Privacy compliance status."
+    },
+    "privacy_notes": {
+      "type": "string",
+      "description": "Notes on privacy compliance gaps or pending decisions."
+    },
+    "secrets_scan_status": {
+      "type": "string",
+      "enum": ["CLEAN", "EXPOSED", "NOT_SCANNED"],
+      "description": "Result of secrets scanning. EXPOSED triggers BLOCKED_SECRET_EXPOSED."
+    },
+    "dependency_scan_status": {
+      "type": "string",
+      "enum": ["CLEAN", "CRITICAL_CVE_FOUND", "HIGH_CVE_FOUND", "MEDIUM_CVE_FOUND", "NOT_SCANNED"],
+      "description": "Result of dependency vulnerability assessment."
+    },
+    "auth_review_status": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "NOT_SCANNED"],
+      "description": "Result of authentication and authorization pattern review."
+    },
+    "logging_privacy_status": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "NOT_SCANNED"],
+      "description": "Result of logging privacy audit."
+    },
+    "data_classification_summary": {
+      "type": "object",
+      "description": "Summary of data classification results.",
+      "properties": {
+        "has_public": { "type": "boolean" },
+        "has_internal": { "type": "boolean" },
+        "has_confidential": { "type": "boolean" },
+        "has_restricted": { "type": "boolean" },
+        "restricted_approved_by_human": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "additional_artifacts": {
+      "type": "array",
+      "description": "Additional artifacts produced beyond Security_Audit.md.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Threat_Model.md",
+          "Remediation_Guide.md",
+          "Privacy_Assessment.md",
+          "Data_Classification.md",
+          "Security_Blockers.md"
+        ]
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumptions made during the security audit.",
+      "items": {
+        "type": "object",
+        "required": ["assumption", "impact"],
+        "properties": {
+          "assumption": { "type": "string" },
+          "impact": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that may affect the gate decision.",
+      "items": {
+        "type": "object",
+        "required": ["question", "blocking"],
+        "properties": {
+          "question": { "type": "string" },
+          "blocking": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Residual risks identified and their disposition.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation", "blocks_gate"],
+        "properties": {
+          "risk_id": { "type": "string", "pattern": "^RISK-[0-9]{3,}$" },
+          "classification": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "description": { "type": "string" },
+          "mitigation": { "type": "string" },
+          "blocks_gate": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "description": "Next agent in the pipeline. Agente08_DevOps if APPROVED; responsible Dev agents if BLOCKED/RETURNED.",
+      "enum": ["Agente08_DevOps", "Agente04_DevBackend", "Agente05_DevFrontend", "Agente00_TechLead"]
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True only when gate_decision is APPROVED and all exit criteria are met. False for all BLOCKED/RETURNED decisions."
+    },
+    "evaluation_cycle": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Which security evaluation cycle this is (1 = first submission, 2 = first resubmission, etc.)."
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["finding_id", "title", "owasp_category", "location", "description", "decision_rule"],
+      "properties": {
+        "finding_id": {
+          "type": "string",
+          "description": "Security finding identifier.",
+          "pattern": "^SEC-[0-9]{3,}$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Short title for the finding.",
+          "minLength": 5
+        },
+        "owasp_category": {
+          "type": "string",
+          "description": "OWASP Top 10 category this finding falls under (e.g., A01).",
+          "pattern": "^A(0[1-9]|10)$"
+        },
+        "location": {
+          "type": "string",
+          "description": "Specific file path and line number (e.g., app/api/users/route.ts:42)."
+        },
+        "description": {
+          "type": "string",
+          "description": "Precise description of the vulnerability with evidence.",
+          "minLength": 10
+        },
+        "decision_rule": {
+          "type": "string",
+          "description": "The decision rule that triggered this finding (e.g., DR001).",
+          "pattern": "^DR[0-9]{3,}$"
+        },
+        "remediation": {
+          "type": "string",
+          "description": "Specific remediation guidance for the Dev agent."
+        },
+        "responsible_agent": {
+          "type": "string",
+          "enum": ["Agente04_DevBackend", "Agente05_DevFrontend"],
+          "description": "Which Dev agent is responsible for fixing this finding."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
