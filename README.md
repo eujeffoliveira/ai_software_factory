@@ -14,6 +14,7 @@ Uma fábrica de software orientada a agentes de IA especializados, onde cada eta
 - [Artefatos e Contratos](#artefatos-e-contratos)
 - [Golden Model — Stack Técnica Obrigatória](#golden-model--stack-técnica-obrigatória)
 - [Estrutura de Pastas](#estrutura-de-pastas)
+- [Universal Factory CLI](#universal-factory-cli)
 - [Como instanciar para uma organização](#como-instanciar-para-uma-organização)
 - [Como criar um agente](#como-criar-um-agente)
 - [Como instalar e usar um agente](#como-instalar-e-usar-um-agente)
@@ -230,6 +231,20 @@ O **Golden Model** define a stack obrigatória de todos os projetos. Qualquer de
 ```
 ai_software_factory/
 │
+├── install.sh                        # ← CLI installer — execute uma vez por máquina
+├── docs/
+│   └── INSTALL_CLI.md                # Manual da Universal Factory CLI
+│
+├── tools/                            # Ferramentas compartilhadas — acessíveis em runtime
+│   ├── factory-scripts/              # validate-framework.sh, validate-skills.sh,
+│   │                                 # credential-preflight.sh, memory-guard.sh, agent-metrics.sh
+│   ├── mcp-knowledge-search/         # Servidor MCP de busca full-text (FastMCP + SQLite FTS5)
+│   └── document-generation/          # spellcheck_document.py, validate_office_file.py
+│
+├── bibliography/
+│   └── playbooks/                    # 12 playbooks operacionais (prompt engineering, segurança,
+│                                     # DevOps, UX, testes, MCPs, automação, dados, etc.)
+│
 ├── context/                          # Contexto global — BUILD-TIME apenas
 │   ├── base_teorica.md               # Prompts e bases de conhecimento de todos os agentes
 │   ├── integrantes.md                # Manifesto operacional dos agentes (2.300 linhas)
@@ -308,12 +323,69 @@ ai_software_factory/
 ├── Agente03_SoftwareEngineer/        # Agente totalmente construído ✅ (81 arquivos, 7 skills)
 ├── Agente04_DevBackend/              # Agente totalmente construído ✅ (111 arquivos, 11 skills)
 ├── Agente05_DevFrontend/             # Agente totalmente construído ✅ (99 arquivos, 10 skills)
-├── Agente06_QaEngineer/              # Agente totalmente construído ✅ (92 arquivos, 9 skills)
-├── Agente07_DevSecOps/               # Agente totalmente construído ✅ (99 arquivos, 10 skills)
-├── Agente08_DevOps/                  # Agente totalmente construído ✅ (95 arquivos, 9 skills)
-├── Agente09_UxUiDesigner/            # Agente totalmente construído ✅ (66 arquivos, 5 skills)
-└── Agente10_DataIntegrationEngineer/ # Agente totalmente construído ✅ (80 arquivos, 7 skills)
+├── Agente06_QaEngineer/              # Agente totalmente construído ✅ (9 skills)
+│   └── tools/e2e-templates/          # Playwright E2E templates + audit script
+├── Agente07_DevSecOps/               # Agente totalmente construído ✅ (10 skills)
+│   └── tools/
+│       ├── git-hooks/                # Bash guards, config-guard, secret-scan, security-gate
+│       └── sentinel/                 # Framework SENTINEL: k6, certificate, state scoring
+├── Agente08_DevOps/                  # Agente totalmente construído ✅ (9 skills)
+│   └── tools/git-hooks/              # Branch protection + parallel-agent locking hooks
+├── Agente09_UxUiDesigner/            # Agente totalmente construído ✅ (5 skills)
+│   └── knowledge/data/               # 11 CSVs de referência UX/UI
+└── Agente10_DataIntegrationEngineer/ # Agente totalmente construído ✅ (7 skills)
+    └── tools/predictive-rigor/       # Governance framework: PFC, LAIG, baseline parity,
+                                      # sunk-cost guard, goalpost lock (6 templates + 8 scripts)
 ```
+
+---
+
+## Universal Factory CLI
+
+O `install.sh` instala um wrapper `factory` em `~/.local/bin/factory` e injeta 11 aliases no seu shell. Com isso, qualquer agente pode ser chamado **de qualquer diretório** — sem abrir o projeto da fábrica.
+
+### Instalação
+
+```bash
+# Na raiz do repositório:
+chmod +x install.sh && ./install.sh
+source ~/.bashrc   # ou ~/.zshrc
+```
+
+O installer é idempotente — pode ser executado novamente a qualquer momento.
+
+### Aliases disponíveis
+
+| Alias | Agente | Papel |
+|-------|--------|-------|
+| `techlead` | Agente00_TechLead | Orquestração, gates, ADRs |
+| `po` | Agente01_ProductOwner | User stories, critérios de aceite |
+| `architect` | Agente02_SoftwareArchitect | Arquitetura, UML, decisões técnicas |
+| `engineer` | Agente03_SoftwareEngineer | Decomposição de tarefas, plano de execução |
+| `devbackend` | Agente04_DevBackend | APIs, banco de dados, lógica de negócio |
+| `devfrontend` | Agente05_DevFrontend | Componentes React, páginas, UI |
+| `qa` | Agente06_QaEngineer | Testes unitários, integração, E2E |
+| `devsecops` | Agente07_DevSecOps | Auditorias de segurança, hardening |
+| `devops` | Agente08_DevOps | CI/CD, infraestrutura, deploy |
+| `uxui` | Agente09_UxUiDesigner | UX research, wireframes, design system |
+| `dataengineer` | Agente10_DataIntegrationEngineer | Pipelines de dados, integrações |
+
+### Uso
+
+```bash
+# Sessão interativa (sem query)
+cd meu-projeto/
+architect
+
+# One-shot com query
+qa 'Escreva testes Playwright para o fluxo de login'
+devsecops 'Audite o middleware de autenticação para OWASP Top 10'
+
+# Escolher engine (padrão: claude)
+factory Agente02_SoftwareArchitect gemini 'Projete uma API REST para pagamentos'
+```
+
+Documentação completa: [`docs/INSTALL_CLI.md`](docs/INSTALL_CLI.md)
 
 ---
 
@@ -387,7 +459,11 @@ Ao final do build, gerar em `build/`:
 
 ## Como instalar e usar um agente
 
-### Instalação (qualquer plataforma de IA)
+### Opção 1 — Universal Factory CLI (recomendado)
+
+Execute `install.sh` uma vez e use os aliases de qualquer diretório. Ver seção [Universal Factory CLI](#universal-factory-cli) acima.
+
+### Opção 2 — System Prompt manual (qualquer plataforma de IA)
 
 Os agentes são definidos por **prompts de sistema em texto puro** e funcionam com qualquer modelo de linguagem que suporte system prompts — Claude, GPT-4, Gemini, Mistral, ou modelos locais via Ollama.
 
@@ -514,6 +590,25 @@ AgenteXX_NomeAgente/
 | **Data/Integration Engineer** | Fundamentals of Data Engineering (Reis & Housley), Building Event-Driven Microservices (Bellemare), Data Mesh (Dehghani), Designing Event-Driven Systems (Stopford) | — |
 
 > **Materiais complementares** = apostilas de pós-graduação em Engenharia de Software copiadas para `lib/` em 2026-05-17. Já destiladas nos `knowledge/` dos agentes construídos; serão usadas no build dos demais.
+
+### Playbooks operacionais (`bibliography/playbooks/`)
+
+12 guias de referência rápida sobre práticas de engenharia, acessíveis em build-time para enriquecer o conhecimento dos agentes:
+
+| # | Playbook |
+|---|----------|
+| 01 | Prompt Engineering Patterns |
+| 02 | Code Review Checklist |
+| 03 | Segurança e Privacidade |
+| 04 | Performance e Escalabilidade |
+| 05 | Testes e Qualidade |
+| 06 | DevOps / CI-CD |
+| 07 | UX / UI Design |
+| 08 | Gestão de Memória e Contexto |
+| 09 | Integração de MCPs |
+| 10 | Automação de Workflows |
+| 11 | Incorporação de Software Existente |
+| 12 | Dados e Integração |
 
 ### Contexto global (build-time)
 
