@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "api-ingestion-skill Input",
+  "type": "object",
+  "required": ["integration_id", "external_system", "api_documentation_available"],
+  "properties": {
+    "integration_id": { "type": "string", "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$" },
+    "external_system": { "type": "string" },
+    "api_type": { "type": "string", "enum": ["REST", "GraphQL", "SOAP", "gRPC"] },
+    "api_documentation_available": { "type": "boolean" },
+    "has_webhook_support": { "type": "boolean" },
+    "latency_requirement": { "type": "string", "enum": ["real_time", "near_real_time", "hourly", "daily"] }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/data-quality-checklist",
+  "title": "Data Quality Checklist",
+  "description": "Schema for Data_Quality_Checklist.md metadata block. Defines acceptance criteria for incoming data.",
+  "type": "object",
+  "required": [
+    "checklist_id",
+    "integration_id",
+    "quality_dimensions",
+    "field_validations",
+    "record_disposition_policy",
+    "deduplication_config"
+  ],
+  "properties": {
+    "checklist_id": {
+      "type": "string",
+      "pattern": "^DQ-[A-Z0-9]+-[0-9]{3}$",
+      "examples": ["DQ-CRM-001"]
+    },
+    "integration_id": {
+      "type": "string",
+      "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$"
+    },
+    "quality_dimensions": {
+      "type": "object",
+      "required": ["completeness_threshold", "timeliness_max_age_hours"],
+      "properties": {
+        "completeness_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum percentage of required fields that must be present. Records below this threshold are quarantined."
+        },
+        "timeliness_max_age_hours": {
+          "type": ["integer", "null"],
+          "description": "Maximum age of a record's updated_at before it is considered stale. Null if timeliness is not checked."
+        },
+        "uniqueness_enforced": {
+          "type": "boolean",
+          "description": "Whether duplicate detection is active."
+        }
+      },
+      "additionalProperties": false
+    },
+    "field_validations": {
+      "type": "array",
+      "description": "Per-field validation rules, expressed as Zod-compatible constraints.",
+      "items": {
+        "type": "object",
+        "required": ["field", "rule", "disposition_on_failure"],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "External field name being validated."
+          },
+          "rule": {
+            "type": "string",
+            "description": "Validation rule description.",
+            "examples": [
+              "z.string().min(1) — non-empty string",
+              "z.string().email() — valid email format",
+              "z.enum(['active', 'inactive', 'pending'])",
+              "z.coerce.date() — parseable as ISO8601 date"
+            ]
+          },
+          "criticality": {
+            "type": "string",
+            "enum": ["critical", "non_critical"],
+            "description": "Critical fields affect record disposition more severely on failure."
+          },
+          "disposition_on_failure": {
+            "type": "string",
+            "enum": ["QUARANTINE", "REJECT", "ACCEPT_WITH_FLAG", "USE_DEFAULT"],
+            "description": "What happens when this field's validation fails."
+          },
+          "default_value": {
+            "type": ["string", "number", "boolean", "null"],
+            "description": "Default value when disposition is USE_DEFAULT."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "record_disposition_policy": {
+      "type": "object",
+      "required": ["on_all_critical_pass", "on_any_critical_fail", "on_only_non_critical_fail", "on_duplicate"],
+      "properties": {
+        "on_all_critical_pass": {
+          "type": "string",
+          "enum": ["ACCEPT", "ACCEPT_WITH_FLAG"],
+          "description": "Disposition when all critical validations pass."
+        },
+        "on_any_critical_fail": {
+          "type": "string",
+          "enum": ["QUARANTINE", "REJECT"],
+          "description": "Disposition when any critical validation fails."
+        },
+        "on_only_non_critical_fail": {
+          "type": "string",
+          "enum": ["ACCEPT", "ACCEPT_WITH_FLAG", "QUARANTINE"],
+          "description": "Disposition when only non-critical validations fail."
+        },
+        "on_duplicate": {
+          "type": "string",
+          "enum": ["SKIP", "OVERWRITE", "QUARANTINE"],
+          "description": "Disposition when a duplicate record is detected."
+        }
+      },
+      "additionalProperties": false
+    },
+    "deduplication_config": {
+      "type": "object",
+      "required": ["deduplication_key"],
+      "properties": {
+        "deduplication_key": {
+          "type": "string",
+          "description": "Field or combination of fields used to detect duplicates.",
+          "examples": ["externalId", "email + externalSystem"]
+        },
+        "deduplication_window": {
+          "type": "string",
+          "description": "Time window for deduplication. Null means all-time.",
+          "examples": ["24 hours", "7 days", "all-time"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "quality_metrics_in_sync_log": {
+      "type": "array",
+      "description": "Quality metrics that should be captured in sync_log.counts.",
+      "items": {
+        "type": "string",
+        "enum": ["processed", "accepted", "quarantined", "rejected", "skipped_duplicate", "flagged"]
+      }
+    },
+    "alert_thresholds": {
+      "type": "object",
+      "properties": {
+        "max_quarantine_per_run": {
+          "type": "integer",
+          "description": "Maximum quarantined records per run before triggering an alert."
+        },
+        "max_error_rate_percent": {
+          "type": "number",
+          "description": "Maximum percentage of errors before triggering an alert."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

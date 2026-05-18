@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente10_DataIntegrationEngineer",
+  "version": "1.0.0",
+  "description": "Maps each distilled artifact (principle, heuristic, decision rule, knowledge card) to its build-time source material. Used for audit trail and knowledge updates.",
+  "sources": [
+    {
+      "source_id": "FDENG",
+      "title": "Fundamentals of Data Engineering",
+      "authors": ["Joe Reis", "Matt Housley"],
+      "publisher": "O'Reilly Media",
+      "year": 2022,
+      "availability": "lib/Agente10_DataIntegrationEngineer/",
+      "key_chapters": [
+        "Ch. 6: Storage",
+        "Ch. 7: Serving Data and Batch Processing",
+        "Ch. 8: Queries, Modeling, and Transformation",
+        "Ch. 9: Ingestion"
+      ]
+    },
+    {
+      "source_id": "BEDM",
+      "title": "Building Event-Driven Microservices",
+      "authors": ["Adam Bellemare"],
+      "publisher": "O'Reilly Media",
+      "year": 2020,
+      "availability": "lib/Agente10_DataIntegrationEngineer/",
+      "key_chapters": [
+        "Ch. 2: Event-Driven Architecture",
+        "Ch. 3: Event-Driven Data Contracts",
+        "Ch. 4: Integrating Event-Driven Architectures with Existing Systems",
+        "Ch. 5: Event-Driven Microservices Patterns",
+        "Ch. 7: Failures, Recovery, and the Art of Reliability"
+      ]
+    },
+    {
+      "source_id": "DMESH",
+      "title": "Data Mesh: Delivering Data-Driven Value at Scale",
+      "authors": ["Zhamak Dehghani"],
+      "publisher": "O'Reilly Media",
+      "year": 2022,
+      "availability": "lib/Agente10_DataIntegrationEngineer/ (partial — 90 pages)",
+      "key_chapters": [
+        "Ch. 4: Domain Data Ownership",
+        "Ch. 5: Data as a Product",
+        "Ch. 6: Data Mesh Architecture"
+      ]
+    },
+    {
+      "source_id": "DEDS",
+      "title": "Designing Event-Driven Systems",
+      "authors": ["Ben Stopford"],
+      "publisher": "O'Reilly Media",
+      "year": 2018,
+      "availability": "lib/Agente10_DataIntegrationEngineer/",
+      "key_chapters": [
+        "Ch. 4: Streaming Patterns",
+        "Ch. 5: Event Streaming Patterns",
+        "Ch. 6: Scaling Microservices with Kafka"
+      ]
+    },
+    {
+      "source_id": "EIP",
+      "title": "Enterprise Integration Patterns",
+      "authors": ["Gregor Hohpe", "Bobby Woolf"],
+      "publisher": "Addison-Wesley",
+      "year": 2003,
+      "availability": "Cross-reference from Agente03_SoftwareEngineer/lib/",
+      "key_patterns": [
+        "Message Channel",
+        "Dead Letter Channel",
+        "Idempotent Receiver",
+        "Message Router",
+        "Content Enricher",
+        "Normalizer",
+        "Aggregator",
+        "Throttling"
+      ]
+    },
+    {
+      "source_id": "DDIA",
+      "title": "Designing Data-Intensive Applications",
+      "authors": ["Martin Kleppmann"],
+      "publisher": "O'Reilly Media",
+      "year": 2017,
+      "availability": "Cross-reference from Agente02_SoftwareArchitect/lib/",
+      "key_chapters": [
+        "Ch. 4: Encoding and Evolution",
+        "Ch. 8: The Trouble with Distributed Systems",
+        "Ch. 11: Stream Processing (Change Data Capture)"
+      ]
+    },
+    {
+      "source_id": "LGPD",
+      "title": "Lei Geral de Proteção de Dados Pessoais",
+      "reference": "Lei 13.709/2018 — Brazil",
+      "availability": "Public law — no lib file",
+      "key_articles": [
+        "Art. 5 — Definitions (Personal Data, Sensitive Data)",
+        "Art. 7 — Legal Bases for Personal Data Processing",
+        "Art. 11 — Special Categories (Sensitive Data)",
+        "Art. 15 — Data Retention",
+        "Art. 16 — Deletion After End of Legal Basis",
+        "Art. 46 — Security Requirements"
+      ]
+    }
+  ],
+  "artifact_map": [
+    {
+      "artifact": "principles.md",
+      "items": [
+        { "id": "P1", "title": "Idempotency First", "sources": ["DDIA:Ch11", "FDENG:Ch7"] },
+        { "id": "P2", "title": "Data Privacy by Design", "sources": ["LGPD:Art7", "LGPD:Art11"] },
+        { "id": "P3", "title": "Source of Truth Ownership", "sources": ["DMESH:Ch4", "EIP:MessageRouting"] },
+        { "id": "P4", "title": "Zod at Every Boundary", "sources": ["FDENG:Ch6", "Agente04_DevBackend:P2"] },
+        { "id": "P5", "title": "Sync Observability", "sources": ["FDENG:Ch9", "Agente04_DevBackend:P6"] },
+        { "id": "P6", "title": "Decoupled Integration", "sources": ["BEDM:Ch3", "EIP:MessageChannel"] },
+        { "id": "P7", "title": "Forward-Compatible Contracts", "sources": ["DDIA:Ch4"] },
+        { "id": "P8", "title": "Data Quality Gates", "sources": ["FDENG:Ch8", "DMESH:Ch5"] },
+        { "id": "P9", "title": "Explicit Dependency Direction", "sources": ["DMESH:Ch6", "EIP:MessageRouter"] },
+        { "id": "P10", "title": "Fail Fast, Log Always", "sources": ["DDIA:Ch8", "BEDM:Ch7"] }
+      ]
+    },
+    {
+      "artifact": "heuristics.md",
+      "items": [
+        { "id": "H1", "title": "Idempotency Key = External ID", "sources": ["FDENG:Ch7"] },
+        { "id": "H2", "title": "Prefer Webhooks, Fall Back to Polling", "sources": ["BEDM:Ch5"] },
+        { "id": "H3", "title": "Cursor Beats Offset for Pagination", "sources": ["DDIA:Ch11"] },
+        { "id": "H4", "title": "One Zod Schema Per Response Shape", "sources": ["P4"] },
+        { "id": "H5", "title": "Deduplication Key ≠ Idempotency Key", "sources": ["EIP:IdempotentReceiver"] },
+        { "id": "H6", "title": "LGPD Trigger: Any Identifying Field", "sources": ["LGPD:Art5"] },
+        { "id": "H7", "title": "Retry with Jitter, Not Fixed Interval", "sources": ["BEDM:Ch7"] },
+        { "id": "H8", "title": "Circuit Breaker Threshold: 5 Failures in 60s", "sources": ["DDIA:Ch8"] },
+        { "id": "H9", "title": "Dead Letter = Quarantine Table", "sources": ["EIP:DeadLetterChannel"] },
+        { "id": "H10", "title": "Data Lineage: Every Field Has a Source", "sources": ["DMESH:Ch5"] },
+        { "id": "H11", "title": "Batch Size Sweet Spot: 100–500 Records", "sources": ["FDENG:Ch7"] },
+        { "id": "H12", "title": "Webhook Replay: Test the Sad Path", "sources": ["BEDM:Ch4"] },
+        { "id": "H13", "title": "ETL vs ELT Decision: Target Schema Flexibility", "sources": ["FDENG:Ch8"] },
+        { "id": "H14", "title": "Conflict Resolution: External Wins for Master Data", "sources": ["DMESH:Ch4", "EIP"] },
+        { "id": "H15", "title": "LGPD Retention: Match the Shorter Period", "sources": ["LGPD:Art15", "LGPD:Art16"] }
+      ]
+    },
+    {
+      "artifact": "decision_rules.md",
+      "items": [
+        { "id": "DR001", "title": "Webhook vs Polling Topology", "sources": ["H2", "BEDM:Ch5"] },
+        { "id": "DR002", "title": "Polling When Webhook Not Available", "sources": ["H2", "H3", "FDENG:Ch7"] },
+        { "id": "DR003", "title": "Upsert Required for Sync Jobs", "sources": ["P1", "H1"] },
+        { "id": "DR004", "title": "LGPD Assessment Required", "sources": ["P2", "H6", "LGPD:Art5"] },
+        { "id": "DR005", "title": "Sensitive PII Requires Explicit Consent", "sources": ["P2", "LGPD:Art11"] },
+        { "id": "DR006", "title": "Cursor Pagination Above 1,000 Records", "sources": ["H3", "H11", "DDIA:Ch11"] },
+        { "id": "DR007", "title": "Message Queue Above 100k Events/Day", "sources": ["BEDM:Ch2"] },
+        { "id": "DR008", "title": "Conflict Resolution for Bidirectional Sync", "sources": ["P3", "H14", "EIP"] },
+        { "id": "DR009", "title": "Block: PII Without Legal Basis", "sources": ["P2", "LGPD:Art7"] },
+        { "id": "DR010", "title": "Block: Missing Idempotency Key", "sources": ["P1", "FM-01"] },
+        { "id": "DR011", "title": "Block: External Call Inside Transaction", "sources": ["P6", "FM-04"] },
+        { "id": "DR012", "title": "Zod Schema for Every External Response", "sources": ["P4", "FM-03"] },
+        { "id": "DR013", "title": "sync_log Required for Every Automated Job", "sources": ["P5", "FM-05"] },
+        { "id": "DR014", "title": "ETL Pattern for Operational DB", "sources": ["H13", "FDENG:Ch8"] },
+        { "id": "DR015", "title": "Rate Limit: Honor Retry-After", "sources": ["H7", "EIP:Throttling"] },
+        { "id": "DR016", "title": "Webhook Signature Verification: Mandatory", "sources": ["H12", "Card005"] },
+        { "id": "DR017", "title": "Dead Letter Queue for Failed Records", "sources": ["H9", "EIP:DeadLetterChannel"] },
+        { "id": "DR018", "title": "API Versioning: Pin in Client Base URL", "sources": ["P7", "Card009"] },
+        { "id": "DR019", "title": "Data Retention: Apply Shorter Period", "sources": ["H15", "LGPD:Art15"] },
+        { "id": "DR020", "title": "Escalate: New Service Not in Golden Model", "sources": ["CLAUDE.md:GoldenModel"] }
+      ]
+    },
+    {
+      "artifact": "knowledge_cards.md",
+      "items": [
+        { "id": "Card001", "title": "Idempotency Key Pattern", "sources": ["DDIA:Ch11", "EIP:IdempotentReceiver"] },
+        { "id": "Card002", "title": "At-Least-Once vs Exactly-Once Delivery", "sources": ["BEDM:Ch3", "DDIA:Ch11"] },
+        { "id": "Card003", "title": "ETL vs ELT", "sources": ["FDENG:Ch8"] },
+        { "id": "Card004", "title": "Change Data Capture (CDC)", "sources": ["DDIA:Ch11", "FDENG"] },
+        { "id": "Card005", "title": "Webhook Security: HMAC Signature Verification", "sources": ["BEDM:Ch4"] },
+        { "id": "Card006", "title": "Cursor-Based Pagination", "sources": ["DDIA:Ch11", "H3"] },
+        { "id": "Card007", "title": "LGPD Legal Bases", "sources": ["LGPD:Art7", "LGPD:Art11"] },
+        { "id": "Card008", "title": "Data Mesh: Domain Data Ownership", "sources": ["DMESH:Ch4"] },
+        { "id": "Card009", "title": "API Versioning Strategies", "sources": ["P7", "FDENG"] },
+        { "id": "Card010", "title": "Conflict Resolution Strategies", "sources": ["DMESH", "EIP"] },
+        { "id": "Card011", "title": "Exponential Backoff with Jitter", "sources": ["BEDM:Ch7", "H7"] },
+        { "id": "Card012", "title": "Dead Letter Channel Pattern", "sources": ["EIP:DeadLetterChannel", "H9"] },
+        { "id": "Card013", "title": "Circuit Breaker Pattern", "sources": ["DDIA:Ch8", "H8"] },
+        { "id": "Card014", "title": "sync_log Schema", "sources": ["P5", "Agente04_DevBackend:P6"] },
+        { "id": "Card015", "title": "PII Classification Framework", "sources": ["LGPD:Art5", "LGPD:Art11", "P2"] },
+        { "id": "Card016", "title": "Data Quality Dimensions", "sources": ["FDENG:Ch8", "DMESH:Ch5", "P8"] }
+      ]
+    }
+  ]
+}

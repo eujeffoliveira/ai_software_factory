@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-quality-validation-skill Input",
+  "type": "object",
+  "required": ["integration_id", "mapping_id", "estimated_volume_per_run"],
+  "properties": {
+    "integration_id": { "type": "string", "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$" },
+    "mapping_id": { "type": "string", "pattern": "^MAP-[A-Z0-9]+-[0-9]{3}$" },
+    "estimated_volume_per_run": { "type": "string" },
+    "timeliness_required": { "type": "boolean", "default": false },
+    "timeliness_max_age_hours": { "type": "integer" }
+  },
+  "additionalProperties": false
+}

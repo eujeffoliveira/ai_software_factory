@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-mapping-skill Input",
+  "type": "object",
+  "required": ["integration_id", "external_system", "external_entity_name", "internal_prisma_model", "data_direction"],
+  "properties": {
+    "integration_id": { "type": "string", "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$" },
+    "external_system": { "type": "string" },
+    "external_entity_name": { "type": "string", "examples": ["Contact", "Transaction", "Product"] },
+    "internal_prisma_model": { "type": "string", "examples": ["Contact", "Payment", "Product"] },
+    "data_direction": { "type": "string", "enum": ["inbound", "outbound", "bidirectional"] },
+    "external_api_documentation_ref": { "type": "string", "description": "Reference to the external API documentation section for this entity." },
+    "api_assessment_id": { "type": "string", "pattern": "^API-[A-Z0-9]+-[0-9]{3}$" }
+  },
+  "additionalProperties": false
+}

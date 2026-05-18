@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/data-risks",
+  "title": "Data Risks",
+  "description": "Schema for Data_Risks.md metadata block. Catalogs all identified risks for data integration flows.",
+  "type": "object",
+  "required": ["risks_document_id", "integration_ids_covered", "risks"],
+  "properties": {
+    "risks_document_id": {
+      "type": "string",
+      "pattern": "^RISKS-[A-Z0-9]+-[0-9]{3}$",
+      "examples": ["RISKS-PROJ-001"]
+    },
+    "integration_ids_covered": {
+      "type": "array",
+      "description": "List of integration IDs this risks document covers.",
+      "items": {
+        "type": "string",
+        "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$"
+      },
+      "minItems": 1
+    },
+    "risks": {
+      "type": "array",
+      "description": "Individual risk entries.",
+      "items": {
+        "type": "object",
+        "required": [
+          "risk_id",
+          "risk_type",
+          "classification",
+          "description",
+          "affected_integration",
+          "mitigation",
+          "blocks_gate",
+          "escalate_to"
+        ],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "pattern": "^RISK-[0-9]{3,}$",
+            "examples": ["RISK-001", "RISK-002"]
+          },
+          "risk_type": {
+            "type": "string",
+            "enum": [
+              "LGPD_COMPLIANCE",
+              "IDEMPOTENCY",
+              "DATA_QUALITY",
+              "EXTERNAL_API_RELIABILITY",
+              "SECURITY",
+              "PERFORMANCE",
+              "DATA_LOSS",
+              "VENDOR_LOCK_IN",
+              "ARCHITECTURAL"
+            ]
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+          },
+          "description": {
+            "type": "string",
+            "description": "What the risk is, what could go wrong, and the potential impact.",
+            "minLength": 20
+          },
+          "affected_integration": {
+            "type": "string",
+            "description": "Integration ID or external system name affected by this risk."
+          },
+          "likelihood": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH"],
+            "description": "Likelihood of the risk materializing."
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Impact if the risk materializes."
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Concrete action(s) that mitigate or eliminate the risk.",
+            "minLength": 10
+          },
+          "mitigation_status": {
+            "type": "string",
+            "enum": ["DEFINED", "IN_PROGRESS", "IMPLEMENTED", "ACCEPTED", "NONE"],
+            "description": "Current status of the mitigation."
+          },
+          "blocks_gate": {
+            "type": "boolean",
+            "description": "CRITICAL risks without mitigation block Gate 3.5."
+          },
+          "escalate_to": {
+            "type": "string",
+            "enum": ["Agente00_TechLead", "Agente07_DevSecOps", "client_dpo", "none"],
+            "description": "Who must be informed about this risk."
+          },
+          "lgpd_detail": {
+            "type": "object",
+            "description": "Required for LGPD_COMPLIANCE risk type.",
+            "properties": {
+              "pii_fields_involved": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "pii_classification": {
+                "type": "string",
+                "enum": ["SENSITIVE", "PERSONAL", "PSEUDONYMIZED"]
+              },
+              "legal_basis": {
+                "type": ["string", "null"],
+                "enum": ["CONSENT", "CONTRACT", "LEGAL_OBLIGATION", "VITAL_INTERESTS", "PUBLIC_INTEREST", "LEGITIMATE_INTEREST", null]
+              },
+              "legal_basis_documented": {
+                "type": "boolean"
+              },
+              "data_retention_days": {
+                "type": ["integer", "null"]
+              },
+              "dpa_required": {
+                "type": "boolean"
+              },
+              "dpa_status": {
+                "type": "string",
+                "enum": ["signed", "pending", "not_required", "unknown"]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total": { "type": "integer" },
+        "critical": { "type": "integer" },
+        "high": { "type": "integer" },
+        "medium": { "type": "integer" },
+        "low": { "type": "integer" },
+        "lgpd_risks": { "type": "integer" },
+        "blocking_gate_35": { "type": "integer" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

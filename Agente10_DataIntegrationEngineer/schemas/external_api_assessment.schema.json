@@ -1,0 +1,266 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/external-api-assessment",
+  "title": "External API Assessment",
+  "description": "Schema for External_API_Assessment.md metadata block. Evaluates external API capabilities and specifies the client design.",
+  "type": "object",
+  "required": [
+    "assessment_id",
+    "integration_id",
+    "external_system",
+    "api_maturity",
+    "authentication_assessment",
+    "rate_limits",
+    "reliability_profile",
+    "client_specification",
+    "resilience_patterns",
+    "zod_schema_requirements"
+  ],
+  "properties": {
+    "assessment_id": {
+      "type": "string",
+      "pattern": "^API-[A-Z0-9]+-[0-9]{3}$",
+      "examples": ["API-CRM-001"]
+    },
+    "integration_id": {
+      "type": "string",
+      "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$"
+    },
+    "external_system": {
+      "type": "string"
+    },
+    "api_base_url_env_var": {
+      "type": "string",
+      "description": "Environment variable name for the API base URL.",
+      "examples": ["CRM_BASE_URL", "PAYMENT_API_URL"]
+    },
+    "api_version": {
+      "type": "string",
+      "examples": ["v2", "2024-01-01"]
+    },
+    "api_maturity": {
+      "type": "object",
+      "required": ["stability", "versioning_strategy", "documentation_quality"],
+      "properties": {
+        "stability": {
+          "type": "string",
+          "enum": ["STABLE", "BETA", "ALPHA", "UNDOCUMENTED"],
+          "description": "API stability classification."
+        },
+        "versioning_strategy": {
+          "type": "string",
+          "enum": ["url_versioning", "header_versioning", "query_param", "none"],
+          "description": "How the API handles versioning."
+        },
+        "documentation_quality": {
+          "type": "string",
+          "enum": ["EXCELLENT", "GOOD", "PARTIAL", "POOR", "NONE"]
+        },
+        "changelog_available": {
+          "type": "boolean"
+        },
+        "forward_compatibility_risk": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"],
+          "description": "Risk that the API breaks our integration without notice."
+        }
+      },
+      "additionalProperties": false
+    },
+    "authentication_assessment": {
+      "type": "object",
+      "required": ["method", "security_rating", "env_vars_required"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["api_key", "oauth2_client_credentials", "oauth2_authorization_code", "bearer_token", "hmac", "basic_auth", "mtls"]
+        },
+        "security_rating": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW"],
+          "description": "Security quality of the authentication method."
+        },
+        "token_expiration": {
+          "type": ["string", "null"],
+          "examples": ["1 hour", "24 hours", "never", null]
+        },
+        "refresh_mechanism": {
+          "type": "string",
+          "enum": ["automatic", "manual", "not_applicable"]
+        },
+        "env_vars_required": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "rate_limits": {
+      "type": "object",
+      "required": ["documented"],
+      "properties": {
+        "documented": { "type": "boolean" },
+        "requests_per_minute": { "type": ["integer", "null"] },
+        "requests_per_hour": { "type": ["integer", "null"] },
+        "requests_per_day": { "type": ["integer", "null"] },
+        "burst_limit": { "type": ["integer", "null"] },
+        "retry_after_header": { "type": "boolean" },
+        "rate_limit_headers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "examples": [["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"]]
+        },
+        "estimated_consumption_per_sync": {
+          "type": "string",
+          "description": "Estimated API calls per sync run.",
+          "examples": ["~50 calls", "5–50 calls depending on batch"]
+        },
+        "within_limits": {
+          "type": "boolean",
+          "description": "Whether the sync strategy fits within the rate limits."
+        }
+      },
+      "additionalProperties": false
+    },
+    "reliability_profile": {
+      "type": "object",
+      "properties": {
+        "documented_sla": { "type": ["string", "null"], "examples": ["99.9% uptime", null] },
+        "known_downtime_windows": { "type": ["string", "null"] },
+        "p99_latency_ms": { "type": ["integer", "null"] },
+        "has_status_page": { "type": "boolean" },
+        "supports_webhooks": { "type": "boolean" },
+        "webhook_retry_policy": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "client_specification": {
+      "type": "object",
+      "required": ["file_path", "timeout_ms", "methods"],
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "pattern": "^lib/integrations/[a-z0-9-]+\\.client\\.ts$"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 60000,
+          "default": 10000
+        },
+        "methods": {
+          "type": "array",
+          "description": "Public methods the client exposes.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["method_name", "http_method", "endpoint", "description"],
+            "properties": {
+              "method_name": {
+                "type": "string",
+                "examples": ["listContacts", "getContact", "createContact"]
+              },
+              "http_method": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+              },
+              "endpoint": {
+                "type": "string",
+                "examples": ["/v2/contacts", "/v2/contacts/{id}"]
+              },
+              "description": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "resilience_patterns": {
+      "type": "object",
+      "required": ["retry", "circuit_breaker"],
+      "properties": {
+        "retry": {
+          "type": "object",
+          "required": ["max_attempts", "backoff_strategy"],
+          "properties": {
+            "max_attempts": { "type": "integer", "minimum": 0, "maximum": 10 },
+            "backoff_strategy": {
+              "type": "string",
+              "enum": ["exponential_with_jitter", "linear", "fixed", "none"]
+            },
+            "base_delay_ms": { "type": "integer" },
+            "max_delay_ms": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "circuit_breaker": {
+          "type": "object",
+          "required": ["enabled"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "failure_threshold": { "type": "integer" },
+            "window_seconds": { "type": "integer" },
+            "open_duration_seconds": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "dead_letter": {
+          "type": "string",
+          "enum": ["integration_quarantine_table", "error_log_only", "none"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "zod_schema_requirements": {
+      "type": "array",
+      "description": "Zod schema requirements for each response shape from this API.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["schema_name", "response_shape_description", "min_required_fields", "unknown_fields_handling"],
+        "properties": {
+          "schema_name": {
+            "type": "string",
+            "examples": ["CrmContactSchema", "CrmListResponseSchema"]
+          },
+          "response_shape_description": {
+            "type": "string",
+            "description": "Which endpoint(s) return this shape."
+          },
+          "min_required_fields": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "unknown_fields_handling": {
+            "type": "string",
+            "enum": ["passthrough", "strip", "strict"],
+            "description": "Use passthrough by default. strict only for pinned, versioned stable APIs."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "recommended_patterns": {
+      "type": "array",
+      "description": "Recommended integration patterns based on the API assessment.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "cursor_pagination",
+          "webhook_primary_polling_fallback",
+          "circuit_breaker",
+          "exponential_backoff",
+          "dead_letter_quarantine",
+          "api_version_pinning",
+          "rate_limit_monitoring",
+          "signature_verification",
+          "idempotency_key_table"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

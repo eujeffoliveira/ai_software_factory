@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente10_DataIntegrationEngineer",
+  "version": "1.0.0",
+  "description": "RAG policy for Agente10. Defines which collections are indexed, how documents are chunked, and which raw sources are blocked from retrieval at runtime.",
+  "collections": [
+    {
+      "collection_id": "agent10-core",
+      "description": "Core agent artifacts: prompt, config, context view, skill manifest, quality gate, failure modes",
+      "sources": [
+        "Agente10_DataIntegrationEngineer/prompt.md",
+        "Agente10_DataIntegrationEngineer/agent_config.json",
+        "Agente10_DataIntegrationEngineer/context_view.md",
+        "Agente10_DataIntegrationEngineer/skills_manifest.md",
+        "Agente10_DataIntegrationEngineer/quality_gate.md",
+        "Agente10_DataIntegrationEngineer/failure_modes.md",
+        "Agente10_DataIntegrationEngineer/handoff_schema.json"
+      ],
+      "chunking": {
+        "strategy": "section",
+        "delimiter": "^## ",
+        "max_chunk_tokens": 512,
+        "overlap_tokens": 64
+      },
+      "retrieval": {
+        "top_k": 5,
+        "similarity_threshold": 0.75
+      }
+    },
+    {
+      "collection_id": "agent10-knowledge",
+      "description": "Distilled knowledge: principles, heuristics, decision rules, knowledge cards",
+      "sources": [
+        "Agente10_DataIntegrationEngineer/knowledge/principles.md",
+        "Agente10_DataIntegrationEngineer/knowledge/heuristics.md",
+        "Agente10_DataIntegrationEngineer/knowledge/decision_rules.md",
+        "Agente10_DataIntegrationEngineer/knowledge/knowledge_cards.md"
+      ],
+      "chunking": {
+        "strategy": "item",
+        "delimiter": "^## (P|H|DR|Card)[0-9]",
+        "max_chunk_tokens": 384,
+        "overlap_tokens": 32
+      },
+      "retrieval": {
+        "top_k": 8,
+        "similarity_threshold": 0.70
+      }
+    },
+    {
+      "collection_id": "agent10-skills",
+      "description": "Skill definitions, checklists, schemas, and examples",
+      "sources": [
+        "Agente10_DataIntegrationEngineer/skills/",
+        "Agente10_DataIntegrationEngineer/checklists/",
+        "Agente10_DataIntegrationEngineer/schemas/",
+        "Agente10_DataIntegrationEngineer/templates/",
+        "Agente10_DataIntegrationEngineer/examples/"
+      ],
+      "chunking": {
+        "strategy": "file",
+        "max_chunk_tokens": 1024,
+        "overlap_tokens": 128
+      },
+      "retrieval": {
+        "top_k": 4,
+        "similarity_threshold": 0.72
+      }
+    }
+  ],
+  "blocked_raw_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/base_teorica.md",
+    "context/integrantes.md",
+    "context/reference_architecture_generico.md",
+    "context/manual_arquitetura_componentes_generico.md"
+  ],
+  "retrieval_policy": {
+    "fallback_on_no_match": "use_context_view",
+    "cite_sources_in_output": false,
+    "allow_cross_agent_retrieval": false,
+    "note": "Cross-agent retrieval is blocked. Agente10 operates only from its own folder and project input artifacts provided at runtime."
+  }
+}

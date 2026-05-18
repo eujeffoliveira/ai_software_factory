@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "api-ingestion-skill Output",
+  "type": "object",
+  "required": ["assessment_id", "artifact_file", "client_file_path_specified", "zod_schemas_defined", "timeout_specified", "env_vars_listed", "checklist_passed"],
+  "properties": {
+    "assessment_id": { "type": "string", "pattern": "^API-[A-Z0-9]+-[0-9]{3}$" },
+    "artifact_file": { "type": "string" },
+    "client_file_path_specified": { "type": "boolean", "description": "Must be lib/integrations/[service].client.ts" },
+    "zod_schemas_defined": { "type": "boolean" },
+    "timeout_specified": { "type": "boolean" },
+    "env_vars_listed": { "type": "boolean" },
+    "literal_credentials_present": { "type": "boolean", "description": "Must be false — credential violation if true." },
+    "webhook_signature_verified": { "type": ["boolean", "null"], "description": "True if webhook is used and signature verification specified. null if no webhook." },
+    "checklist_passed": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

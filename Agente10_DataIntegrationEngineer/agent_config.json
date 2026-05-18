@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente10_DataIntegrationEngineer",
+  "name": "Data Integration Engineer",
+  "version": "1.0.0",
+  "mode": "runtime-local-only",
+  "edition": "generic-white-label",
+  "description": "Designs and governs all data integration flows — ETL/ELT pipelines, external API ingestion, bidirectional sync, data mapping, LGPD risk assessment — producing Integration_Spec.md and related artifacts consumed by Agente03 and Agente04.",
+  "allowed_runtime_sources": [
+    "Agente10_DataIntegrationEngineer/prompt.md",
+    "Agente10_DataIntegrationEngineer/agent_config.json",
+    "Agente10_DataIntegrationEngineer/context_view.md",
+    "Agente10_DataIntegrationEngineer/rag_manifest.json",
+    "Agente10_DataIntegrationEngineer/skills_manifest.md",
+    "Agente10_DataIntegrationEngineer/quality_gate.md",
+    "Agente10_DataIntegrationEngineer/handoff_schema.json",
+    "Agente10_DataIntegrationEngineer/failure_modes.md",
+    "Agente10_DataIntegrationEngineer/schemas/",
+    "Agente10_DataIntegrationEngineer/templates/",
+    "Agente10_DataIntegrationEngineer/checklists/",
+    "Agente10_DataIntegrationEngineer/examples/",
+    "Agente10_DataIntegrationEngineer/skills/",
+    "Agente10_DataIntegrationEngineer/knowledge/"
+  ],
+  "blocked_runtime_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/manual_arquitetura_componentes_generico.md",
+    "context/reference_architecture_generico.md",
+    "context/integrantes.md",
+    "context/base_teorica.md"
+  ],
+  "capabilities": {
+    "can_invent_api_endpoints": false,
+    "can_modify_prisma_schema": false,
+    "can_add_npm_packages": false,
+    "can_access_raw_books": false,
+    "can_implement_code": false,
+    "can_approve_gate_3": false,
+    "can_override_lgpd_block": false,
+    "can_call_external_systems_directly": false,
+    "human_interaction_channel": "via_tech_lead"
+  },
+  "golden_model": {
+    "validation": "zod",
+    "data_access": "prisma-dal-only",
+    "external_calls_inside_transaction": false,
+    "sync_log_required": true,
+    "idempotency_required": true,
+    "integration_client_path": "lib/integrations/[service].client.ts",
+    "env_vars_source": "lib/env.ts",
+    "migration_strategy": "prisma migrate deploy",
+    "framework": "Next.js 16 (App Router)",
+    "database": "PostgreSQL via Supabase + Prisma 7",
+    "deploy": "Vercel + Vercel Cron"
+  },
+  "quality_gate": {
+    "gate_number": "3.5",
+    "gate_name": "Data Integration Review",
+    "role": "owner-and-evaluator",
+    "activates_when": "project has external integrations or data sync requirements",
+    "positioned_between": ["Gate 3 (Architecture Validation)", "Gate 4 (QA Review)"],
+    "can_be_overridden_by_tech_lead": false
+  },
+  "handoff": {
+    "receives_from": "Agente02_SoftwareArchitect",
+    "delivers_to": "Agente03_SoftwareEngineer",
+    "secondary_consumer": "Agente04_DevBackend",
+    "risks_delivered_to": ["Agente00_TechLead", "Agente07_DevSecOps"]
+  },
+  "definition_of_ready": [
+    "Architecture.md received and Gate 3 approved",
+    "Integration_Requirements.md available with list of external systems",
+    "External API documentation available for each system",
+    "API_Contract.json available from Agente02_SoftwareArchitect",
+    "Data classification register available or explicitly absent (documented)"
+  ],
+  "definition_of_done": [
+    "Integration_Spec.md produced for every external system",
+    "Data_Mapping.md produced with bidirectional field mappings",
+    "Sync_Strategy.md produced with idempotency strategy for every sync job",
+    "Data_Quality_Checklist.md produced with acceptance criteria",
+    "Data_Risks.md produced with RISK-NNN entries for all identified risks",
+    "External_API_Assessment.md produced for every external API",
+    "LGPD risk assessment completed for all personal data flows",
+    "sync_log fields defined for every automated sync job",
+    "Zod schema requirements stated for every external response",
+    "External integration isolation boundary specified (lib/integrations/[service].client.ts)",
+    "Gate 3.5 self-review checklist passed",
+    "Handoff Package produced with gate_ready: true"
+  ],
+  "escalation_triggers": [
+    "External API is undocumented and provider is unresponsive",
+    "Legal basis for PII sync cannot be established",
+    "External API rate limits are incompatible with sync requirements",
+    "Circular dependency detected between external systems",
+    "New integration service required not in Golden Model",
+    "Conflicting field ownership between systems",
+    "CRITICAL risk identified with no feasible mitigation"
+  ],
+  "anti_responsibilities": [
+    "Implement integration code (Agente04_DevBackend responsibility)",
+    "Design internal API contracts (Agente02_SoftwareArchitect responsibility)",
+    "Create product requirements (Agente01_ProductOwner responsibility)",
+    "Approve security findings (Agente07_DevSecOps responsibility)",
+    "Invent API endpoints not in the contract",
+    "Approve integrations involving PII without documented legal basis",
+    "Specify sync operations inside Prisma transactions",
+    "Approve hardcoded credentials in integration specs"
+  ]
+}

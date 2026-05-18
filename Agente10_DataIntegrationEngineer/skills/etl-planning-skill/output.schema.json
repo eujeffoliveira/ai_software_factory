@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "etl-planning-skill Output",
+  "type": "object",
+  "required": ["etl_plan_produced", "load_order_defined", "rollback_plan_defined", "idempotency_specified", "performance_estimate"],
+  "properties": {
+    "etl_plan_produced": { "type": "boolean" },
+    "load_order_defined": { "type": "boolean" },
+    "rollback_plan_defined": { "type": "boolean" },
+    "idempotency_specified": { "type": "boolean" },
+    "performance_estimate": {
+      "type": "object",
+      "properties": {
+        "estimated_duration_minutes": { "type": "integer" },
+        "total_api_calls": { "type": "integer" },
+        "within_vercel_timeout": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "sync-strategy-skill Input",
+  "type": "object",
+  "required": ["integration_id", "job_name", "trigger_type", "estimated_volume_per_run", "latency_requirement"],
+  "properties": {
+    "integration_id": { "type": "string", "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$" },
+    "job_name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "trigger_type": { "type": "string", "enum": ["cron", "webhook", "event", "manual"] },
+    "cron_expression": { "type": "string" },
+    "estimated_volume_per_run": { "type": "string" },
+    "latency_requirement": { "type": "string", "enum": ["real_time", "near_real_time", "hourly", "daily"] },
+    "data_direction": { "type": "string", "enum": ["inbound", "outbound", "bidirectional"] },
+    "mapping_id": { "type": "string", "pattern": "^MAP-[A-Z0-9]+-[0-9]{3}$" }
+  },
+  "additionalProperties": false
+}

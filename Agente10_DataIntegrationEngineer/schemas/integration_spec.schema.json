@@ -1,0 +1,197 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/integration-spec",
+  "title": "Integration Specification",
+  "description": "Schema for Integration_Spec.md metadata block. One per external system integration.",
+  "type": "object",
+  "required": [
+    "integration_id",
+    "external_system",
+    "system_type",
+    "integration_topology",
+    "authentication",
+    "idempotency_strategy",
+    "client_file_path",
+    "sync_log_defined",
+    "has_personal_data",
+    "rate_limits",
+    "error_handling",
+    "artifacts_produced"
+  ],
+  "properties": {
+    "integration_id": {
+      "type": "string",
+      "description": "Unique identifier for this integration spec.",
+      "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$",
+      "examples": ["INT-CRM-001", "INT-PAY-001"]
+    },
+    "external_system": {
+      "type": "string",
+      "description": "Human-readable name of the external system.",
+      "examples": ["crm-platform", "payment-gateway", "erp-system"]
+    },
+    "system_type": {
+      "type": "string",
+      "enum": ["ERP", "CRM", "payment_gateway", "external_api", "data_warehouse", "message_queue", "identity_provider", "other"]
+    },
+    "integration_topology": {
+      "type": "string",
+      "enum": ["push_webhook", "pull_polling", "event_driven", "hybrid", "etl_batch"],
+      "description": "Data flow topology for this integration."
+    },
+    "data_direction": {
+      "type": "string",
+      "enum": ["inbound", "outbound", "bidirectional"],
+      "description": "Direction of data flow."
+    },
+    "authentication": {
+      "type": "object",
+      "required": ["method", "env_var_name"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["api_key", "oauth2_client_credentials", "oauth2_authorization_code", "bearer_token", "hmac", "basic_auth", "mtls"]
+        },
+        "env_var_name": {
+          "type": "string",
+          "description": "Environment variable name from lib/env.ts (not the value).",
+          "examples": ["CRM_API_KEY", "PAYMENT_GATEWAY_SECRET"]
+        },
+        "token_refresh_required": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "idempotency_strategy": {
+      "type": "object",
+      "required": ["mechanism", "key_field"],
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "enum": ["upsert_external_id", "idempotency_key_table", "cursor_pagination", "event_deduplication", "not_applicable"]
+        },
+        "key_field": {
+          "type": "string",
+          "description": "The field name used as the idempotency key.",
+          "examples": ["externalId", "crmContactId", "erpOrderNumber"]
+        },
+        "upsert_where_clause": {
+          "type": "string",
+          "description": "Prisma upsert where clause. Required when mechanism is upsert_external_id.",
+          "examples": ["{ externalId: record.id }"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "client_file_path": {
+      "type": "string",
+      "description": "File path for the integration client — must follow Golden Model convention.",
+      "pattern": "^lib/integrations/[a-z0-9-]+\\.client\\.ts$",
+      "examples": ["lib/integrations/crm-platform.client.ts"]
+    },
+    "sync_log_defined": {
+      "type": "boolean",
+      "description": "Whether sync_log fields are defined for all automated jobs in this integration."
+    },
+    "has_personal_data": {
+      "type": "boolean",
+      "description": "Whether this integration processes personal data subject to LGPD."
+    },
+    "lgpd_legal_basis": {
+      "type": "string",
+      "enum": ["CONSENT", "CONTRACT", "LEGAL_OBLIGATION", "VITAL_INTERESTS", "PUBLIC_INTEREST", "LEGITIMATE_INTEREST"],
+      "description": "Required when has_personal_data is true."
+    },
+    "rate_limits": {
+      "type": "object",
+      "properties": {
+        "requests_per_minute": { "type": ["integer", "null"] },
+        "requests_per_day": { "type": ["integer", "null"] },
+        "retry_after_header": { "type": "boolean" },
+        "quota_monitoring": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "error_handling": {
+      "type": "object",
+      "required": ["timeout_ms", "max_retries", "dead_letter_mechanism"],
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 60000,
+          "default": 10000
+        },
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "default": 3
+        },
+        "backoff_strategy": {
+          "type": "string",
+          "enum": ["exponential_with_jitter", "linear", "fixed", "none"],
+          "default": "exponential_with_jitter"
+        },
+        "dead_letter_mechanism": {
+          "type": "string",
+          "enum": ["integration_quarantine_table", "error_log_only", "alert_only", "none"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "webhook_config": {
+      "type": "object",
+      "description": "Required when integration_topology is push_webhook.",
+      "properties": {
+        "endpoint_path": {
+          "type": "string",
+          "pattern": "^app/api/webhooks/[a-z0-9-]+/route\\.ts$"
+        },
+        "signature_algorithm": {
+          "type": "string",
+          "enum": ["hmac_sha256", "hmac_sha512", "provider_specific"]
+        },
+        "signature_header": {
+          "type": "string",
+          "examples": ["X-Webhook-Signature", "X-Hub-Signature-256"]
+        },
+        "signature_secret_env_var": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifacts_produced": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Integration_Spec.md",
+          "Data_Mapping.md",
+          "Sync_Strategy.md",
+          "Data_Quality_Checklist.md",
+          "Data_Risks.md",
+          "External_API_Assessment.md"
+        ]
+      },
+      "minItems": 1
+    },
+    "api_version": {
+      "type": "string",
+      "description": "API version being targeted.",
+      "examples": ["v2", "2024-01-01", "3"]
+    },
+    "environment_variables_required": {
+      "type": "array",
+      "description": "List of env var names that must be added to lib/env.ts.",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]+$"
+      }
+    }
+  },
+  "additionalProperties": false
+}

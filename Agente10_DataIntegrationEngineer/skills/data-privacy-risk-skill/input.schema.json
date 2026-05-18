@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-privacy-risk-skill Input",
+  "type": "object",
+  "required": ["integration_id", "mapping_id", "pii_fields_identified", "external_system"],
+  "properties": {
+    "integration_id": { "type": "string", "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$" },
+    "mapping_id": { "type": "string", "pattern": "^MAP-[A-Z0-9]+-[0-9]{3}$" },
+    "external_system": { "type": "string" },
+    "pii_fields_identified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_name", "pii_classification"],
+        "properties": {
+          "field_name": { "type": "string" },
+          "pii_classification": { "type": "string", "enum": ["SENSITIVE", "PERSONAL", "PSEUDONYMIZED"] }
+        }
+      },
+      "minItems": 1
+    },
+    "data_direction": { "type": "string", "enum": ["inbound", "outbound", "bidirectional"] },
+    "cross_border_transfer": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

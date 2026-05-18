@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-mapping-skill Output",
+  "type": "object",
+  "required": ["mapping_id", "artifact_file", "pii_fields_detected", "lgpd_assessment_required", "zod_schema_produced"],
+  "properties": {
+    "mapping_id": { "type": "string", "pattern": "^MAP-[A-Z0-9]+-[0-9]{3}$" },
+    "artifact_file": { "type": "string", "description": "Path to the produced Data_Mapping.md file." },
+    "total_fields_mapped": { "type": "integer", "minimum": 0 },
+    "total_fields_dropped": { "type": "integer", "minimum": 0 },
+    "pii_fields_detected": { "type": "boolean", "description": "True if any PERSONAL or SENSITIVE fields were found." },
+    "lgpd_assessment_required": { "type": "boolean", "description": "True if data-privacy-risk-skill must be invoked next." },
+    "zod_schema_produced": { "type": "boolean" },
+    "field_ownership_table_produced": { "type": "boolean", "description": "True for bidirectional integrations." },
+    "checklist_passed": { "type": "boolean", "description": "True when data_mapping_checklist.md is fully checked." }
+  },
+  "additionalProperties": false
+}

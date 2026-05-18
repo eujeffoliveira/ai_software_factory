@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-privacy-risk-skill Output",
+  "type": "object",
+  "required": ["risks_produced", "all_flows_have_legal_basis", "sensitive_pii_consent_verified", "dpa_status_documented", "escalation_required", "checklist_passed"],
+  "properties": {
+    "risks_produced": { "type": "integer", "minimum": 1, "description": "Number of RISK-NNN entries added to Data_Risks.md." },
+    "all_flows_have_legal_basis": { "type": "boolean", "description": "True only when every personal data flow has a documented legal basis. Must be true for Gate 3.5 APPROVED." },
+    "sensitive_pii_consent_verified": { "type": "boolean", "description": "True if all SENSITIVE PII fields have CONSENT or LEGAL_OBLIGATION basis." },
+    "dpa_status_documented": { "type": "boolean" },
+    "retention_periods_documented": { "type": "boolean" },
+    "escalation_required": { "type": "boolean", "description": "True if legal basis cannot be established and Agente00_TechLead must be notified." },
+    "checklist_passed": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

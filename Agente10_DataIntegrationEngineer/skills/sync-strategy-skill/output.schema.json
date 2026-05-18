@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "sync-strategy-skill Output",
+  "type": "object",
+  "required": ["strategy_id", "artifact_file", "sync_log_in_finally", "idempotency_mechanism", "uses_cursor_pagination", "dead_letter_defined", "checklist_passed"],
+  "properties": {
+    "strategy_id": { "type": "string", "pattern": "^SYNC-[A-Z0-9]+-[0-9]{3}$" },
+    "artifact_file": { "type": "string" },
+    "sync_log_in_finally": { "type": "boolean", "description": "Must be true. syncLog() must be in a finally block." },
+    "idempotency_mechanism": { "type": "string", "enum": ["upsert_external_id", "idempotency_key_table", "cursor_state", "event_id_deduplication"] },
+    "uses_cursor_pagination": { "type": "boolean" },
+    "dead_letter_defined": { "type": "boolean" },
+    "external_call_in_transaction": { "type": "boolean", "description": "Must be false. External calls must not be inside Prisma transactions." },
+    "checklist_passed": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

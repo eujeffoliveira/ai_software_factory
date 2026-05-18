@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "idempotent-sync-design-skill Input",
+  "type": "object",
+  "required": ["integration_id", "operation_name", "operation_type", "external_id_field", "has_irreversible_side_effects"],
+  "properties": {
+    "integration_id": { "type": "string", "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$" },
+    "operation_name": { "type": "string", "examples": ["crm-contact-sync", "payment-webhook-handler"] },
+    "operation_type": { "type": "string", "enum": ["cron_batch_sync", "webhook_event_handler", "manual_trigger", "event_consumer"] },
+    "external_id_field": { "type": "string", "examples": ["id", "transaction_id", "event_id"] },
+    "has_irreversible_side_effects": { "type": "boolean", "description": "True if the operation sends payments, emails, SMS — anything that cannot be undone." },
+    "estimated_volume_per_run": { "type": "string" }
+  },
+  "additionalProperties": false
+}

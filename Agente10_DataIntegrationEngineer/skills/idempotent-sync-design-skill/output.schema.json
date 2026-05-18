@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "idempotent-sync-design-skill Output",
+  "type": "object",
+  "required": ["mechanism", "idempotency_key_field", "upsert_where_clause", "test_scenarios_produced", "checklist_passed"],
+  "properties": {
+    "mechanism": { "type": "string", "enum": ["upsert_external_id", "idempotency_key_table", "cursor_state", "event_id_deduplication"] },
+    "idempotency_key_field": { "type": "string" },
+    "upsert_where_clause": { "type": "string", "description": "Prisma upsert where clause specification." },
+    "processed_events_table_required": { "type": "boolean" },
+    "cursor_storage_required": { "type": "boolean" },
+    "test_scenarios_produced": { "type": "boolean", "description": "At least 3 idempotency test scenarios produced." },
+    "checklist_passed": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

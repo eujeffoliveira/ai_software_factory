@@ -1,0 +1,176 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/sync-strategy",
+  "title": "Sync Strategy",
+  "description": "Schema for Sync_Strategy.md metadata block. Defines sync mechanism, idempotency, observability, and error handling for one automated sync job.",
+  "type": "object",
+  "required": [
+    "strategy_id",
+    "integration_id",
+    "job_name",
+    "trigger",
+    "idempotency",
+    "sync_log_config",
+    "error_handling",
+    "batch_config"
+  ],
+  "properties": {
+    "strategy_id": {
+      "type": "string",
+      "pattern": "^SYNC-[A-Z0-9]+-[0-9]{3}$",
+      "examples": ["SYNC-CRM-001"]
+    },
+    "integration_id": {
+      "type": "string",
+      "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$"
+    },
+    "job_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Kebab-case job identifier. Used as the sync_log.job field.",
+      "examples": ["crm-contact-sync", "payment-reconciliation"]
+    },
+    "cron_route_path": {
+      "type": "string",
+      "pattern": "^app/api/cron/[a-z0-9-]+/route\\.ts$",
+      "examples": ["app/api/cron/crm-contact-sync/route.ts"]
+    },
+    "job_file_path": {
+      "type": "string",
+      "pattern": "^lib/jobs/[a-z0-9-]+\\.ts$",
+      "examples": ["lib/jobs/crm-contact-sync.ts"]
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["cron", "webhook", "event", "manual"]
+        },
+        "cron_expression": {
+          "type": "string",
+          "description": "Required when type is cron.",
+          "examples": ["0 2 * * *", "*/15 * * * *", "0 */4 * * *"]
+        },
+        "vercel_cron_config": {
+          "type": "string",
+          "description": "Entry for vercel.json crons array.",
+          "examples": ["{ \"path\": \"/api/cron/crm-contact-sync\", \"schedule\": \"0 2 * * *\" }"]
+        },
+        "webhook_event_types": {
+          "type": "array",
+          "description": "Required when type is webhook.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "idempotency": {
+      "type": "object",
+      "required": ["mechanism", "idempotency_key_field"],
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "enum": ["upsert_external_id", "idempotency_key_table", "cursor_state", "event_id_deduplication"]
+        },
+        "idempotency_key_field": {
+          "type": "string",
+          "description": "The field used as the idempotency/deduplication key.",
+          "examples": ["externalId", "crmContactId"]
+        },
+        "cursor_field": {
+          "type": "string",
+          "description": "Field used as cursor for pagination. Required when mechanism is cursor_state.",
+          "examples": ["updatedAt", "createdAt", "id"]
+        },
+        "cursor_storage": {
+          "type": "string",
+          "description": "How the cursor is persisted between runs.",
+          "examples": ["sync_cursors table", "Redis key: sync:crm-contact-sync:cursor"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "sync_log_config": {
+      "type": "object",
+      "required": ["job_identifier", "counts_fields", "placed_in_finally"],
+      "properties": {
+        "job_identifier": {
+          "type": "string",
+          "description": "Value of sync_log.job field.",
+          "examples": ["crm-contact-sync"]
+        },
+        "counts_fields": {
+          "type": "array",
+          "description": "Fields included in the sync_log counts object.",
+          "items": {
+            "type": "string",
+            "enum": ["processed", "created", "updated", "skipped", "errors", "quarantined"]
+          },
+          "minItems": 3
+        },
+        "placed_in_finally": {
+          "type": "boolean",
+          "description": "Must be true — syncLog() must be in a finally block.",
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "batch_config": {
+      "type": "object",
+      "required": ["batch_size"],
+      "properties": {
+        "batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000,
+          "default": 100
+        },
+        "pagination_strategy": {
+          "type": "string",
+          "enum": ["cursor_based", "offset_based", "none"],
+          "description": "cursor_based is required for batches above 1,000 records."
+        },
+        "estimated_records_per_run": {
+          "type": "string",
+          "examples": ["~500", "1k–10k", "< 100"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "error_handling": {
+      "type": "object",
+      "required": ["timeout_ms", "max_retries", "dead_letter_mechanism"],
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 300000,
+          "default": 10000
+        },
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "backoff_strategy": {
+          "type": "string",
+          "enum": ["exponential_with_jitter", "linear", "fixed", "none"]
+        },
+        "dead_letter_mechanism": {
+          "type": "string",
+          "enum": ["integration_quarantine_table", "error_log_only", "alert_only", "none"]
+        },
+        "alert_on_consecutive_failures": {
+          "type": "integer",
+          "description": "Number of consecutive job failures before alerting.",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

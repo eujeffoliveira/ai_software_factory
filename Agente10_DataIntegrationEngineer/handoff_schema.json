@@ -1,0 +1,324 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/agente10-handoff",
+  "title": "Agente10_DataIntegrationEngineer Handoff Package",
+  "description": "Schema for the Handoff Package produced by Agente10_DataIntegrationEngineer after Gate 3.5 (Data Integration Review) is approved. Delivered to Agente03_SoftwareEngineer for task planning.",
+  "type": "object",
+  "required": [
+    "handoff_id",
+    "produced_by",
+    "produced_at",
+    "gate_decision",
+    "gate_status_code",
+    "artifact_set",
+    "integration_surface",
+    "idempotency_coverage",
+    "lgpd_flows",
+    "sync_jobs",
+    "blocking_issues",
+    "open_questions",
+    "risks",
+    "required_next_agent",
+    "gate_ready"
+  ],
+  "properties": {
+    "handoff_id": {
+      "type": "string",
+      "description": "Unique identifier for this handoff package.",
+      "pattern": "^HANDOFF-A10-[0-9]{8}-[0-9]{4}$",
+      "examples": ["HANDOFF-A10-20260517-0001"]
+    },
+    "produced_by": {
+      "type": "string",
+      "const": "Agente10_DataIntegrationEngineer"
+    },
+    "produced_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of handoff package production."
+    },
+    "gate_decision": {
+      "type": "string",
+      "enum": ["APPROVED", "APPROVED_WITH_CONDITIONS", "BLOCKED", "RETURNED"],
+      "description": "Overall Gate 3.5 decision."
+    },
+    "gate_status_code": {
+      "type": "string",
+      "enum": [
+        "APPROVED",
+        "APPROVED_WITH_CONDITIONS",
+        "BLOCKED_MISSING_IDEMPOTENCY",
+        "BLOCKED_LGPD_VIOLATION",
+        "BLOCKED_MISSING_SYNC_LOG",
+        "BLOCKED_TRANSACTION_VIOLATION",
+        "BLOCKED_MISSING_ZOD",
+        "BLOCKED_CREDENTIAL_VIOLATION",
+        "BLOCKED_UNMITIGATED_CRITICAL_RISK",
+        "BLOCKED_MISSING_DOCS",
+        "RETURNED_FOR_REVISION"
+      ],
+      "description": "Specific status code from Gate 3.5 evaluation."
+    },
+    "artifact_set": {
+      "type": "array",
+      "description": "List of all artifacts produced in this integration cycle.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["artifact_name", "file_path", "status"],
+        "properties": {
+          "artifact_name": {
+            "type": "string",
+            "enum": [
+              "Integration_Spec.md",
+              "Data_Mapping.md",
+              "Sync_Strategy.md",
+              "Data_Quality_Checklist.md",
+              "Data_Risks.md",
+              "External_API_Assessment.md"
+            ]
+          },
+          "file_path": {
+            "type": "string",
+            "description": "Relative file path within the project.",
+            "examples": ["docs/integration/Integration_Spec.md"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["complete", "partial", "not_required"],
+            "description": "Completeness status of the artifact."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes about partial status or gaps."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "integration_surface": {
+      "type": "array",
+      "description": "List of all external systems in scope for this integration cycle.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "system_name",
+          "system_type",
+          "integration_topology",
+          "has_personal_data",
+          "idempotency_strategy",
+          "sync_log_defined",
+          "zod_schema_required"
+        ],
+        "properties": {
+          "system_name": {
+            "type": "string",
+            "description": "Name of the external system.",
+            "examples": ["payment-gateway", "erp-system", "crm-platform"]
+          },
+          "system_type": {
+            "type": "string",
+            "enum": ["ERP", "CRM", "payment_gateway", "external_api", "data_warehouse", "message_queue", "other"],
+            "description": "Classification of the external system."
+          },
+          "integration_topology": {
+            "type": "string",
+            "enum": ["push_webhook", "pull_polling", "event_driven", "hybrid", "etl_batch"],
+            "description": "Data flow topology."
+          },
+          "has_personal_data": {
+            "type": "boolean",
+            "description": "Whether this integration processes personal data subject to LGPD."
+          },
+          "lgpd_legal_basis": {
+            "type": "string",
+            "enum": ["CONSENT", "CONTRACT", "LEGAL_OBLIGATION", "VITAL_INTERESTS", "PUBLIC_INTEREST", "LEGITIMATE_INTEREST"],
+            "description": "LGPD legal basis. Required when has_personal_data is true."
+          },
+          "idempotency_strategy": {
+            "type": "string",
+            "enum": ["upsert_external_id", "idempotency_key_table", "cursor_pagination", "event_deduplication", "not_applicable"],
+            "description": "Idempotency mechanism for this integration."
+          },
+          "sync_log_defined": {
+            "type": "boolean",
+            "description": "Whether sync_log fields are defined for all automated jobs in this integration."
+          },
+          "zod_schema_required": {
+            "type": "boolean",
+            "description": "Whether Zod schema requirements are specified for the external API response."
+          },
+          "client_file_path": {
+            "type": "string",
+            "description": "Specified path for the integration client.",
+            "examples": ["lib/integrations/payment-gateway.client.ts"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "idempotency_coverage": {
+      "type": "object",
+      "description": "Summary of idempotency coverage across all sync operations.",
+      "required": ["total_sync_operations", "covered", "uncovered"],
+      "properties": {
+        "total_sync_operations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "covered": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of sync operations with documented idempotency strategy."
+        },
+        "uncovered": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of sync operations WITHOUT idempotency strategy. Must be 0 for APPROVED."
+        }
+      },
+      "additionalProperties": false
+    },
+    "lgpd_flows": {
+      "type": "object",
+      "description": "Summary of LGPD compliance across all personal data flows.",
+      "required": ["total_personal_data_flows", "with_legal_basis", "missing_legal_basis"],
+      "properties": {
+        "total_personal_data_flows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "with_legal_basis": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_legal_basis": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of personal data flows without documented legal basis. Must be 0 for APPROVED."
+        }
+      },
+      "additionalProperties": false
+    },
+    "sync_jobs": {
+      "type": "array",
+      "description": "List of all automated sync jobs defined in this integration cycle.",
+      "items": {
+        "type": "object",
+        "required": ["job_name", "trigger", "sync_log_fields_defined", "idempotency_strategy"],
+        "properties": {
+          "job_name": {
+            "type": "string",
+            "description": "Kebab-case job identifier.",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "trigger": {
+            "type": "string",
+            "enum": ["cron", "webhook", "event", "manual"]
+          },
+          "cron_expression": {
+            "type": "string",
+            "description": "Cron schedule if trigger is cron.",
+            "examples": ["0 2 * * *", "*/15 * * * *"]
+          },
+          "sync_log_fields_defined": {
+            "type": "boolean"
+          },
+          "idempotency_strategy": {
+            "type": "string"
+          },
+          "estimated_volume_per_run": {
+            "type": "string",
+            "description": "Estimated number of records per execution.",
+            "examples": ["~500 records", "1-10k records"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "blocking_issues": {
+      "type": "array",
+      "description": "List of blocking issues that prevented gate approval. Empty for APPROVED status.",
+      "items": {
+        "type": "object",
+        "required": ["block_code", "description", "resolution_required"],
+        "properties": {
+          "block_code": {
+            "type": "string",
+            "examples": ["BK-01", "BK-02", "BK-03"]
+          },
+          "description": {
+            "type": "string",
+            "description": "What is missing or violated."
+          },
+          "resolution_required": {
+            "type": "string",
+            "description": "What must be done to resolve the block."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions that require input before or during implementation.",
+      "items": {
+        "type": "object",
+        "required": ["question", "directed_to", "blocking"],
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "directed_to": {
+            "type": "string",
+            "enum": ["Agente00_TechLead", "Agente02_SoftwareArchitect", "Agente03_SoftwareEngineer", "Agente07_DevSecOps", "client", "external_provider"]
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "If true, implementation of the related integration cannot begin until resolved."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Risk entries identified during integration design. See Data_Risks.md for full detail.",
+      "items": {
+        "type": "object",
+        "required": ["risk_id", "classification", "description", "mitigation", "blocks_gate"],
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "pattern": "^RISK-[0-9]{3,}$"
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "mitigation": {
+            "type": "string"
+          },
+          "blocks_gate": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_next_agent": {
+      "type": "string",
+      "const": "Agente03_SoftwareEngineer",
+      "description": "Always Agente03_SoftwareEngineer — consumes the integration spec to create atomic implementation tasks."
+    },
+    "gate_ready": {
+      "type": "boolean",
+      "description": "True only when gate_decision is APPROVED or APPROVED_WITH_CONDITIONS, uncovered idempotency = 0, missing_legal_basis = 0, and no blocking issues."
+    }
+  },
+  "additionalProperties": false
+}

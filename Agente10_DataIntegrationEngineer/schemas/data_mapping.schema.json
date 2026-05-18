@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-software-factory/schemas/data-mapping",
+  "title": "Data Mapping",
+  "description": "Schema for Data_Mapping.md metadata block. Documents bidirectional field mapping between external system and internal Prisma schema.",
+  "type": "object",
+  "required": [
+    "mapping_id",
+    "integration_id",
+    "external_system",
+    "internal_model",
+    "data_direction",
+    "field_mappings",
+    "field_ownership_table"
+  ],
+  "properties": {
+    "mapping_id": {
+      "type": "string",
+      "pattern": "^MAP-[A-Z0-9]+-[0-9]{3}$",
+      "examples": ["MAP-CRM-001"]
+    },
+    "integration_id": {
+      "type": "string",
+      "pattern": "^INT-[A-Z0-9]+-[0-9]{3}$"
+    },
+    "external_system": {
+      "type": "string"
+    },
+    "internal_model": {
+      "type": "string",
+      "description": "Prisma model name that is the target of this mapping.",
+      "examples": ["Contact", "Order", "Product"]
+    },
+    "data_direction": {
+      "type": "string",
+      "enum": ["inbound", "outbound", "bidirectional"]
+    },
+    "field_mappings": {
+      "type": "array",
+      "description": "Field-by-field mapping entries.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "external_field",
+          "internal_field",
+          "external_type",
+          "internal_type",
+          "transformation_type",
+          "nullable",
+          "pii_classification",
+          "requirement_source"
+        ],
+        "properties": {
+          "external_field": {
+            "type": "string",
+            "description": "Field name as it appears in the external API response.",
+            "examples": ["firstName", "contact_id", "created_at"]
+          },
+          "internal_field": {
+            "type": "string",
+            "description": "Prisma model field name (camelCase).",
+            "examples": ["firstName", "externalId", "createdAt"]
+          },
+          "external_type": {
+            "type": "string",
+            "description": "Data type in the external system.",
+            "examples": ["string", "integer", "ISO8601 datetime", "boolean", "enum: active|inactive"]
+          },
+          "internal_type": {
+            "type": "string",
+            "description": "Prisma field type.",
+            "examples": ["String", "Int", "DateTime", "Boolean", "Status (enum)"]
+          },
+          "transformation_type": {
+            "type": "string",
+            "enum": ["DIRECT", "TYPE_COERCION", "COMPUTED", "LOOKUP", "DROPPED", "DEFAULTED"],
+            "description": "Type of transformation applied."
+          },
+          "transformation_formula": {
+            "type": "string",
+            "description": "Required when transformation_type is COMPUTED, LOOKUP, or DEFAULTED."
+          },
+          "nullable": {
+            "type": "boolean",
+            "description": "Whether the external field can be null/absent."
+          },
+          "required_in_internal": {
+            "type": "boolean",
+            "description": "Whether the internal field is required (non-nullable in Prisma schema)."
+          },
+          "pii_classification": {
+            "type": "string",
+            "enum": ["SENSITIVE", "PERSONAL", "PSEUDONYMIZED", "ANONYMOUS", "NOT_PII"]
+          },
+          "requirement_source": {
+            "type": "string",
+            "description": "Requirement in Architecture.md or Integration_Requirements.md that justifies this field mapping.",
+            "examples": ["INT-REQ-001", "Architecture.md §3.2"]
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes about the mapping."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "field_ownership_table": {
+      "type": "array",
+      "description": "Required for bidirectional mappings. Declares the authoritative system for each field.",
+      "items": {
+        "type": "object",
+        "required": ["field", "owner", "conflict_resolution"],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Internal field name (Prisma camelCase)."
+          },
+          "owner": {
+            "type": "string",
+            "enum": ["EXTERNAL", "INTERNAL", "COMPUTED"],
+            "description": "Authoritative system for this field."
+          },
+          "conflict_resolution": {
+            "type": "string",
+            "enum": ["EXTERNAL_WINS", "INTERNAL_WINS", "LAST_WRITE_WINS", "MERGE", "MANUAL_REVIEW"],
+            "description": "How conflicts are resolved when both systems update this field."
+          },
+          "conflict_detection": {
+            "type": "string",
+            "description": "How conflicts are detected.",
+            "examples": ["updated_at comparison", "version counter", "ETag header"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dropped_fields": {
+      "type": "array",
+      "description": "External fields explicitly excluded from the mapping.",
+      "items": {
+        "type": "object",
+        "required": ["external_field", "reason"],
+        "properties": {
+          "external_field": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

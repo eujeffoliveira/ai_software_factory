@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-quality-validation-skill Output",
+  "type": "object",
+  "required": ["checklist_id", "artifact_file", "critical_fields_count", "identity_field_defined", "quarantine_table_defined", "checklist_passed"],
+  "properties": {
+    "checklist_id": { "type": "string", "pattern": "^DQ-[A-Z0-9]+-[0-9]{3}$" },
+    "artifact_file": { "type": "string" },
+    "critical_fields_count": { "type": "integer", "minimum": 1 },
+    "non_critical_fields_count": { "type": "integer", "minimum": 0 },
+    "identity_field_defined": { "type": "boolean", "description": "True when the identity field is identified with REJECT disposition." },
+    "quarantine_table_defined": { "type": "boolean" },
+    "alert_thresholds_defined": { "type": "boolean" },
+    "checklist_passed": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}
