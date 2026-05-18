@@ -231,7 +231,8 @@ O **Golden Model** define a stack obrigatória de todos os projetos. Qualquer de
 ```
 ai_software_factory/
 │
-├── install.sh                        # ← CLI installer — execute uma vez por máquina
+├── install.ps1                       # ← CLI installer para PowerShell (Windows)
+├── install.sh                        # ← CLI installer para Git Bash / Linux / macOS
 ├── docs/
 │   └── INSTALL_CLI.md                # Manual da Universal Factory CLI
 │
@@ -342,47 +343,72 @@ ai_software_factory/
 
 ## Universal Factory CLI
 
-O `install.sh` instala um wrapper `factory` em `~/.local/bin/factory` e injeta 11 aliases no seu shell. Com isso, qualquer agente pode ser chamado **de qualquer diretório** — sem abrir o projeto da fábrica.
+Os instaladores configuram todos os 11 agentes como **sub-agentes do Claude Code** (`~/.claude/agents/`) e instalam um wrapper `factory` para uso com o Gemini CLI.
 
 ### Instalação
 
+Escolha o script conforme o seu terminal:
+
+**PowerShell (Windows):**
+```powershell
+.\install.ps1
+```
+
+> Se aparecer erro de política de execução: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
+**Git Bash / Linux / macOS:**
 ```bash
-# Na raiz do repositório:
-chmod +x install.sh && ./install.sh
+bash install.sh
 source ~/.bashrc   # ou ~/.zshrc
 ```
 
-O installer é idempotente — pode ser executado novamente a qualquer momento.
+Ambos são idempotentes — podem ser executados novamente sem problema.
 
-### Aliases disponíveis
+### Uso no Claude Code (recomendado)
 
-| Alias | Agente | Papel |
-|-------|--------|-------|
-| `techlead` | Agente00_TechLead | Orquestração, gates, ADRs |
-| `po` | Agente01_ProductOwner | User stories, critérios de aceite |
-| `architect` | Agente02_SoftwareArchitect | Arquitetura, UML, decisões técnicas |
-| `engineer` | Agente03_SoftwareEngineer | Decomposição de tarefas, plano de execução |
-| `devbackend` | Agente04_DevBackend | APIs, banco de dados, lógica de negócio |
-| `devfrontend` | Agente05_DevFrontend | Componentes React, páginas, UI |
-| `qa` | Agente06_QaEngineer | Testes unitários, integração, E2E |
-| `devsecops` | Agente07_DevSecOps | Auditorias de segurança, hardening |
-| `devops` | Agente08_DevOps | CI/CD, infraestrutura, deploy |
-| `uxui` | Agente09_UxUiDesigner | UX research, wireframes, design system |
-| `dataengineer` | Agente10_DataIntegrationEngineer | Pipelines de dados, integrações |
+Após instalar, chame qualquer agente com `@nome` **dentro de qualquer sessão Claude Code aberta**, de qualquer diretório:
 
-### Uso
+```
+@techlead eu quero criar um sistema de agendamento médico
+@po escreva as user stories para o módulo de autenticação
+@architect proponha uma arquitetura para suportar 100k usuários
+@engineer decomponha o épico de pagamentos em tarefas técnicas
+@devbackend implemente a rota POST /api/appointments com validação Zod
+@devfrontend crie o componente CalendarPicker com estados de hover acessíveis
+@qa gere testes Playwright para o fluxo de agendamento completo
+@devsecops audite a implementação de auth para OWASP Top 10
+@devops o deploy falhou na Vercel — analise o log e proponha rollback
+@uxui crie wireframes para o dashboard principal
+@dataengineer projete o pipeline de sincronização com o ERP
+```
 
-```bash
-# Sessão interativa (sem query)
-cd meu-projeto/
-architect
+### Agentes disponíveis
 
-# One-shot com query
-qa 'Escreva testes Playwright para o fluxo de login'
-devsecops 'Audite o middleware de autenticação para OWASP Top 10'
+| `@nome` | Agente | Papel |
+|---------|--------|-------|
+| `@techlead` | Agente00_TechLead | Orquestração, gates, ADRs |
+| `@po` | Agente01_ProductOwner | User stories, critérios de aceite |
+| `@architect` | Agente02_SoftwareArchitect | Arquitetura, UML, decisões técnicas |
+| `@engineer` | Agente03_SoftwareEngineer | Decomposição de tarefas, plano de execução |
+| `@devbackend` | Agente04_DevBackend | APIs, banco de dados, lógica de negócio |
+| `@devfrontend` | Agente05_DevFrontend | Componentes React, páginas, UI |
+| `@qa` | Agente06_QaEngineer | Testes unitários, integração, E2E |
+| `@devsecops` | Agente07_DevSecOps | Auditorias de segurança, hardening |
+| `@devops` | Agente08_DevOps | CI/CD, infraestrutura, deploy |
+| `@uxui` | Agente09_UxUiDesigner | UX research, wireframes, design system |
+| `@dataengineer` | Agente10_DataIntegrationEngineer | Pipelines de dados, integrações |
 
-# Escolher engine (padrão: claude)
-factory Agente02_SoftwareArchitect gemini 'Projete uma API REST para pagamentos'
+### Uso com Gemini CLI
+
+Para usar com o Gemini CLI, use o wrapper `factory` no terminal:
+
+```powershell
+# Sessão interativa
+factory Agente02_SoftwareArchitect gemini
+
+# One-shot
+factory Agente04_DevBackend gemini 'Gere o schema Prisma para billing'
+factory Agente06_QaEngineer gemini 'Escreva testes E2E para o login'
 ```
 
 Documentação completa: [`docs/INSTALL_CLI.md`](docs/INSTALL_CLI.md)
@@ -461,7 +487,12 @@ Ao final do build, gerar em `build/`:
 
 ### Opção 1 — Universal Factory CLI (recomendado)
 
-Execute `install.sh` uma vez e use os aliases de qualquer diretório. Ver seção [Universal Factory CLI](#universal-factory-cli) acima.
+Execute o installer uma vez. Os agentes ficam disponíveis como `@nome` em qualquer sessão Claude Code, de qualquer diretório.
+
+- **PowerShell:** `.\install.ps1`
+- **Git Bash / Linux / macOS:** `bash install.sh` → `source ~/.bashrc`
+
+Ver seção [Universal Factory CLI](#universal-factory-cli) acima para a lista completa de agentes e exemplos de uso.
 
 ### Opção 2 — System Prompt manual (qualquer plataforma de IA)
 
@@ -476,60 +507,18 @@ Os agentes são definidos por **prompts de sistema em texto puro** e funcionam c
 
 > Os prompts existentes foram otimizados para Claude Code, mas a estrutura e as regras são independentes de modelo. Ao adaptar para outro modelo, mantenha as seções de Runtime Context Rule, Golden Model e Skills intactas.
 
-### Chamando agentes por comando
-
-Use o prefixo `/AgentXX_NomeAgente` para invocar um agente diretamente em qualquer sessão que tenha o prompt do Tech Lead ativo. O Tech Lead interpreta o comando, valida o contexto e roteia a tarefa.
-
-**Iniciando um projeto novo:**
-```
-/Agente00_TechLead eu quero criar um sistema de agendamento de consultas médicas
-com cadastro de pacientes, médicos e horários disponíveis
-```
-
-**Solicitando trabalho técnico a um agente especialista:**
-```
-/Agente04_DevBackend avalie a rota POST /api/appointments e identifique
-problemas de concorrência no agendamento simultâneo
-
-/Agente05_DevFrontend altere o estilo do componente <CalendarPicker>
-para seguir o design system — use as cores primárias do Tailwind e
-adicione estados de hover e foco acessíveis
-
-/Agente06_QaEngineer crie testes E2E com Playwright para o fluxo de
-agendamento: seleção de médico → escolha de horário → confirmação
-
-/Agente02_SoftwareArchitect proponha uma arquitetura para suportar
-notificações em tempo real sem WebSockets, usando Server-Sent Events
-```
-
-**Revisão e governança:**
-```
-/Agente00_TechLead qual o status atual do projeto? gere um relatório executivo
-
-/Agente07_DevSecOps audite a implementação de autenticação — verifique
-session handling, CSRF protection e rate limiting nas rotas públicas
-
-/Agente08_DevOps o deploy falhou na Vercel com erro de build — analise
-o log e proponha um plano de rollback
-```
-
-**Regras de invocação:**
-- Qualquer comando `/Agente` sempre passa pelo **Tech Lead** primeiro, que valida o contexto e decide se roteia ou bloqueia
-- O Tech Lead pode recusar o roteamento se o gate anterior não estiver aprovado
-- Comandos diretos a agentes especialistas (sem passar pelo Tech Lead) são válidos apenas para tarefas pontuais fora do pipeline formal
-
 ### Sequência de gates (resumo prático)
 
 ```
 Input: Descrição do projeto
-  └── Tech Lead → Product Owner
-        └── PRD.md → Gate 1 → Tech Lead
-              └── Architecture.md → Gate 2 → Tech Lead
-                    └── Execution Plan → Gate 3 → Tech Lead
-                          └── Dev Backend + Frontend → Gate 4 (QA)
-                                └── QA Report → Gate 5 (Security)
+  └── @techlead → @po
+        └── PRD.md → Gate 1 → @techlead
+              └── Architecture.md → Gate 2 → @techlead
+                    └── Execution Plan → Gate 3 → @techlead
+                          └── @devbackend + @devfrontend → Gate 4 (@qa)
+                                └── QA Report → Gate 5 (@devsecops)
                                       └── Security Audit → Gate 6 (HUMANO aprova)
-                                            └── Deploy → Gate 7 → Encerrado
+                                            └── @devops → Deploy → Gate 7 → Encerrado
 ```
 
 ---

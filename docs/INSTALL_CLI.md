@@ -1,172 +1,178 @@
-# Universal Factory CLI — Installation Guide
+# Universal Factory CLI — Guia de Instalação
 
-## What is the Universal Factory CLI?
+## O que o instalador faz
 
-The Universal Factory CLI is a thin bash wrapper (`~/.local/bin/factory`) that lets you invoke any of the 11 SDLC agents in this repository from **any directory on your machine** — not just from inside the `ai_software_factory` project.
+O instalador configura os 11 agentes do SDLC para uso imediato em qualquer sessão Claude Code, além de instalar um wrapper para o Gemini CLI.
 
-### Advantages
+| O que cria | Onde | Para quê |
+|------------|------|----------|
+| `~/.claude/agents/<nome>.md` (11 arquivos) | Global do Claude Code | Habilita `@techlead`, `@po`, `@architect`, etc. em qualquer sessão |
+| `~/.local/bin/factory.ps1` | Terminal | Wrapper para uso com Gemini CLI |
 
-| Advantage | Detail |
-|-----------|--------|
-| **Decoupling** | Agents live in one place; you call them from any project |
-| **Context isolation** | Each agent session reads only its own `prompt.md` and `knowledge/` — zero cross-contamination |
-| **Multi-engine** | Works with `claude` CLI or `gemini` CLI interchangeably |
-| **Interactive or one-shot** | Drop the query argument for a REPL session; include it for scripted use |
-| **Portability** | Re-run `install.sh` after cloning to a new machine; the wrapper self-updates |
+Ambos os instaladores são **idempotentes** — podem ser executados novamente sem problema após mover o repositório ou clonar em uma nova máquina.
 
 ---
 
-## Prerequisites
+## Pré-requisitos
 
-Before running `install.sh`, make sure at least one of these CLIs is installed and on your PATH:
-
-| CLI | Install |
+| CLI | Instalar |
 |-----|---------|
-| **Claude CLI** (required for `claude` engine) | `npm install -g @anthropic-ai/claude-code` |
-| **Gemini CLI** (required for `gemini` engine) | `npm install -g @google/gemini-cli` |
+| **Claude Code** (para `@agent-name`) | `npm install -g @anthropic-ai/claude-code` |
+| **Gemini CLI** (para `factory ... gemini`) | `npm install -g @google/gemini-cli` |
 
-Verify:
-```bash
+Verifique:
+```powershell
 claude --version
 gemini --version
 ```
 
 ---
 
-## Installation
+## Instalação
 
-From the root of the `ai_software_factory` repository:
+### PowerShell (Windows)
 
-```bash
-chmod +x install.sh
-./install.sh
+A partir da raiz do repositório `ai_software_factory`:
+
+```powershell
+.\install.ps1
 ```
 
-Then activate the aliases in your current shell:
-
-```bash
-# Bash
-source ~/.bashrc
-
-# Zsh
-source ~/.zshrc
+Se aparecer erro de política de execução:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\install.ps1
 ```
 
-The installer is **idempotent** — safe to re-run after pulling updates or cloning to a new machine.
+### Git Bash / Linux / macOS
 
-### What the installer does
-
-1. Discovers `FACTORY_PATH` from `pwd` (where you run `install.sh`)
-2. Creates `~/.local/bin/` if it doesn't exist
-3. Writes `~/.local/bin/factory` with your `FACTORY_PATH` embedded
-4. Detects your shell (`bash` or `zsh`) and injects 11 short aliases
-5. Ensures `~/.local/bin` is on your `$PATH`
+```bash
+bash install.sh
+source ~/.bashrc   # ou ~/.zshrc no macOS
+```
 
 ---
 
-## Agent Aliases
+## Uso no Claude Code
 
-After installation, these shortcuts are available from any directory:
+Após instalar, abra qualquer sessão Claude Code (em qualquer diretório) e chame os agentes com `@nome`:
 
-| Alias | Agent | Role |
-|-------|-------|------|
-| `techlead` | `Agente00_TechLead` | Project oversight, quality gates, ADRs |
-| `po` | `Agente01_ProductOwner` | User stories, acceptance criteria, backlog |
-| `architect` | `Agente02_SoftwareArchitect` | System design, UML, architecture decisions |
-| `engineer` | `Agente03_SoftwareEngineer` | Task decomposition, implementation planning |
-| `devbackend` | `Agente04_DevBackend` | APIs, services, database layers, migrations |
-| `devfrontend` | `Agente05_DevFrontend` | React components, pages, UI logic |
-| `qa` | `Agente06_QaEngineer` | Unit, integration, E2E tests, test plans |
-| `devsecops` | `Agente07_DevSecOps` | Security audits, SAST, hardening |
-| `devops` | `Agente08_DevOps` | CI/CD, infrastructure, deployment, monitoring |
-| `uxui` | `Agente09_UxUiDesigner` | UX research, wireframes, design systems |
-| `dataengineer` | `Agente10_DataIntegrationEngineer` | Data pipelines, integrations, ETL |
+```
+@techlead eu quero criar um sistema de agendamento médico
+@po escreva as user stories para o módulo de autenticação
+@architect proponha uma arquitetura event-driven para este monolito
+```
+
+Os agentes ficam disponíveis globalmente — não é necessário abrir o projeto `ai_software_factory`.
+
+### Agentes disponíveis
+
+| `@nome` | Agente | Papel |
+|---------|--------|-------|
+| `@techlead` | Agente00_TechLead | Tech Lead — orquestração, quality gates, ADRs, oversight |
+| `@po` | Agente01_ProductOwner | Product Owner — user stories, critérios de aceite, backlog |
+| `@architect` | Agente02_SoftwareArchitect | Arquiteto — design de sistemas, UML, decisões de arquitetura |
+| `@engineer` | Agente03_SoftwareEngineer | Engenheiro — decomposição de tarefas, plano de execução |
+| `@devbackend` | Agente04_DevBackend | Dev Backend — APIs, banco de dados, migrations, autenticação |
+| `@devfrontend` | Agente05_DevFrontend | Dev Frontend — React, Next.js, Tailwind, UI |
+| `@qa` | Agente06_QaEngineer | QA — testes unitários (Vitest), E2E (Playwright), cobertura |
+| `@devsecops` | Agente07_DevSecOps | DevSecOps — OWASP, SAST, hardening, secrets |
+| `@devops` | Agente08_DevOps | DevOps — CI/CD, Vercel, monitoramento, runbooks |
+| `@uxui` | Agente09_UxUiDesigner | UX/UI — pesquisa, wireframes, design system, acessibilidade |
+| `@dataengineer` | Agente10_DataIntegrationEngineer | Data Engineer — pipelines, ETL, integrações, governança |
+
+### Exemplos de uso dentro de uma sessão
+
+**Iniciando um projeto:**
+```
+@techlead quero criar um app para gerenciar ROMs de emuladores de SNES, Mega Drive e arcade
+```
+
+**Chamando agentes especializados:**
+```
+@po crie as user stories para o módulo de catalogação de ROMs
+
+@architect projete a arquitetura — sistema de arquivos local, metadados online (IGDB),
+lançamento de emuladores e frontend Next.js
+
+@devbackend implemente a rota GET /api/roms com filtros por sistema, gênero e favorito
+
+@qa gere testes Playwright para o fluxo: busca de ROM → visualização de detalhes → lançar emulador
+
+@devsecops audite a integração com APIs externas — verifique rate limiting e validação de input
+
+@devops configure o pipeline CI/CD para deploy na Vercel com rollback automático
+```
 
 ---
 
-## Usage
+## Uso com Gemini CLI
 
-### Short alias (interactive REPL)
+O `factory` wrapper permite usar os agentes com o Gemini CLI no terminal:
 
-```bash
-cd my-project/
-techlead
+```powershell
+factory <pasta-do-agente> [engine] [query...]
 ```
 
-Opens an interactive Claude session with `Agente00_TechLead`'s system prompt active. The agent has access to its own `knowledge/` folder but not to your current project files unless you tell it to read them.
+| Argumento | Valores | Padrão |
+|-----------|---------|--------|
+| `pasta-do-agente` | Qualquer `AgenteXX_*` | obrigatório |
+| `engine` | `gemini` \| `claude` | `gemini` |
+| `query` | Prompt direto (omitir para interativo) | interativo |
 
-### Short alias (one-shot query)
+**Exemplos:**
 
-The aliases default to the `claude` engine. Pass a query as arguments:
-
-```bash
-architect 'Design a REST API for a payments service'
-qa 'Write Playwright E2E tests for the login flow'
-devsecops 'Audit the authentication middleware for OWASP Top 10'
-```
-
-### `factory` wrapper (full control)
-
-```bash
-factory <agent-folder> [engine] [query...]
-```
-
-| Argument | Values | Default |
-|----------|--------|---------|
-| `agent-folder` | Any `AgenteXX_*` folder name | required |
-| `engine` | `claude` \| `gemini` | `claude` |
-| `query` | Prompt text (omit for interactive) | interactive |
-
-Examples:
-
-```bash
-# Interactive session with Gemini engine
+```powershell
+# Sessão interativa com Gemini
 factory Agente02_SoftwareArchitect gemini
 
-# One-shot with Claude
-factory Agente04_DevBackend claude 'Generate Prisma schema for a SaaS billing model'
+# One-shot com Gemini
+factory Agente04_DevBackend gemini 'Gere o schema Prisma para um SaaS de billing'
+factory Agente06_QaEngineer gemini 'Escreva testes E2E para o fluxo de login'
 
-# Use Gemini for a specific agent
-factory Agente09_UxUiDesigner gemini 'Create a wireframe spec for a dashboard'
+# Com Claude (via terminal, sem abrir sessão)
+factory Agente00_TechLead claude 'Qual o status atual do projeto?'
 ```
 
 ---
 
-## Uninstalling
+## Atualizando após mudanças
 
-To remove the CLI:
+| Situação | O que fazer |
+|----------|-------------|
+| Clonou o repo em nova máquina | Re-execute o installer |
+| Moveu a pasta `ai_software_factory` | Re-execute o installer |
+| Editou um `prompt.md` de agente | Re-execute o installer para propagar a mudança |
+| Adicionou um novo agente | Adicione ao array `$agents` no installer, depois re-execute |
 
+---
+
+## Desinstalando
+
+**PowerShell:**
+```powershell
+Remove-Item "$env:USERPROFILE\.local\bin\factory.ps1"
+Remove-Item "$env:USERPROFILE\.claude\agents\techlead.md"
+Remove-Item "$env:USERPROFILE\.claude\agents\po.md"
+# ... repita para cada agente, ou:
+Remove-Item "$env:USERPROFILE\.claude\agents\" -Recurse
+```
+
+**Git Bash / Linux / macOS:**
 ```bash
 rm ~/.local/bin/factory
+rm ~/.claude/agents/techlead.md ~/.claude/agents/po.md  # etc.
 ```
-
-Then remove the alias block from `~/.bashrc` or `~/.zshrc` — it is delimited by:
-
-```
-# BEGIN factory-aliases (ai_software_factory)
-...
-# END factory-aliases (ai_software_factory)
-```
-
----
-
-## Updating after pulling changes
-
-If you pull new commits that update `prompt.md` files, you do **not** need to re-run `install.sh` — the wrapper reads `prompt.md` at call time, so it always uses the latest version.
-
-Re-run `install.sh` only if:
-- You cloned the repo to a new machine
-- You moved the `ai_software_factory` folder to a different path
-- A new agent folder was added and you want its alias
 
 ---
 
 ## Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| `factory: command not found` | Run `source ~/.bashrc` (or `~/.zshrc`) and verify `~/.local/bin` is in `$PATH` |
-| `Error: agent folder not found` | Re-run `install.sh` — `FACTORY_PATH` may point to an old location |
-| `claude: command not found` | Install Claude CLI: `npm install -g @anthropic-ai/claude-code` |
-| `gemini: command not found` | Install Gemini CLI: `npm install -g @google/gemini-cli` |
-| Aliases injected twice | Remove duplicate block from `~/.bashrc` / `~/.zshrc`; installer guards against this on future runs |
+| Problema | Solução |
+|----------|---------|
+| `@techlead` não aparece na sessão | Re-execute `install.ps1` e reabra a sessão Claude Code |
+| `factory: command not found` | Verifique se `~/.local/bin` está no `$PATH` |
+| `gemini: command not found` | `npm install -g @google/gemini-cli` |
+| `claude: command not found` | `npm install -g @anthropic-ai/claude-code` |
+| Agente responde com comportamento errado | O `prompt.md` foi atualizado? Re-execute o installer |
+| Execution policy error (PowerShell) | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |

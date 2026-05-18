@@ -18,7 +18,7 @@ All 11 agents received a **capability upgrade on 2026-05-18**: executable tools,
 
 - `tools/` — shared factory scripts, MCP knowledge-search server, document-generation utilities
 - `bibliography/playbooks/` — 12 operational playbooks (prompt engineering, security, DevOps, UX, testing, MCPs, workflow automation, etc.)
-- `install.sh` + `docs/INSTALL_CLI.md` — Universal Factory CLI installer
+- `install.ps1` (PowerShell/Windows) + `install.sh` (Git Bash/Linux/macOS) + `docs/INSTALL_CLI.md` — Universal Factory CLI installer
 - Agent-specific `tools/` subdirectories: Agente06 (Playwright E2E templates + audit script), Agente07 (git security hooks + SENTINEL framework), Agente08 (branch-protection + parallel-agent locking hooks), Agente10 (predictive-rigor governance framework)
 
 ---
@@ -80,24 +80,36 @@ Playbooks are **build-time reference** for enriching agent knowledge. They are n
 
 ---
 
-## Universal Factory CLI (`install.sh`)
+## Universal Factory CLI
 
-`install.sh` at the repo root installs a `factory` wrapper at `~/.local/bin/factory` and injects 11 shell aliases. Run it once per machine after cloning:
+Two installers at the repo root — choose based on your shell:
 
-```bash
-chmod +x install.sh && ./install.sh
-source ~/.bashrc   # or ~/.zshrc
+| Shell | Script | Activate |
+|-------|--------|----------|
+| PowerShell (Windows) | `.\install.ps1` | `. $PROFILE` |
+| Git Bash / Linux / macOS | `bash install.sh` | `source ~/.bashrc` |
+
+Both are idempotent — safe to re-run after moving the repo or cloning to a new machine.
+
+`install.ps1` creates agent definition files in `~/.claude/agents/`, making all 11 agents available as `@agent-name` inside any Claude Code session from any directory:
+
+```
+@techlead I need to design a payments API
+@po write user stories for the authentication module
+@architect propose a microservices split for this monolith
+@qa generate Playwright E2E tests for the login flow
 ```
 
-After that, any of the 11 agents can be invoked from any directory:
+For Gemini CLI, use the `factory` wrapper (also installed by `install.ps1`):
 
-```bash
-techlead       # → Agente00_TechLead (claude, interactive)
-architect 'Design a payments API'  # → Agente02_SoftwareArchitect (one-shot)
-factory Agente06_QaEngineer gemini 'Write E2E tests'   # → explicit engine
+```powershell
+factory Agente06_QaEngineer gemini 'Write E2E tests'
+factory Agente02_SoftwareArchitect gemini
 ```
 
-Full documentation: `docs/INSTALL_CLI.md`. The installer is idempotent — safe to re-run after moving the repo.
+Full documentation: `docs/INSTALL_CLI.md`.
+
+When working on this repo, update the `install.ps1` `$agents` array if agent folder names change. The installer reads each agent's `prompt.md` at install time and embeds it in the `~/.claude/agents/<name>.md` file — re-run after any `prompt.md` change to propagate it.
 
 ---
 
@@ -255,4 +267,4 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 - When adding agent-specific executable tools, place them under `AgenteXX_*/tools/<category>/` — never inside `knowledge/` or `skills/`
 - When adding shared utilities (used by multiple agents), place them in `tools/` at the repo root, not inside any agent folder
 - `bibliography/playbooks/` is append-only — do not edit existing playbooks without explicit instruction
-- `install.sh` embeds `FACTORY_PATH` at install time — re-run it whenever the repo is cloned to a new machine or relocated
+- Both `install.ps1` and `install.sh` embed `FACTORY_PATH` at install time — re-run the appropriate one whenever the repo is cloned to a new machine or relocated
