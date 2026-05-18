@@ -1,0 +1,21 @@
+No,Category,Icon Name,Keywords,Library,Import Code,Usage,Best For,Style
+1,Navigation,menu,hamburger menu navigation toggle bars,Lucide,import { Menu } from 'lucide-react',<Menu />,Mobile navigation drawer toggle sidebar,Outline
+2,Navigation,arrow-left,back previous return navigate,Lucide,import { ArrowLeft } from 'lucide-react',<ArrowLeft />,Back button breadcrumb navigation,Outline
+3,Navigation,arrow-right,next forward continue navigate,Lucide,import { ArrowRight } from 'lucide-react',<ArrowRight />,Forward button next step CTA,Outline
+4,Navigation,home,home start dashboard index,Lucide,import { Home } from 'lucide-react',<Home />,Home link nav bar,Outline
+5,Navigation,chevron-down,dropdown expand collapse open,Lucide,import { ChevronDown } from 'lucide-react',<ChevronDown />,Dropdown trigger accordion,Outline
+6,Actions,plus,add create new insert,Lucide,import { Plus } from 'lucide-react',<Plus />,Add button create action,Outline
+7,Actions,edit,edit modify update pencil,Lucide,import { Edit } from 'lucide-react',<Edit />,Edit button inline edit,Outline
+8,Actions,trash,delete remove bin,Lucide,import { Trash2 } from 'lucide-react',<Trash2 />,Delete button destructive,Outline
+9,Actions,download,download save export,Lucide,import { Download } from 'lucide-react',<Download />,Download file export,Outline
+10,Actions,upload,upload import file,Lucide,import { Upload } from 'lucide-react',<Upload />,Upload file import,Outline
+11,Actions,search,search find query,Lucide,import { Search } from 'lucide-react',<Search />,Search input filter,Outline
+12,Actions,filter,filter sort options,Lucide,import { Filter } from 'lucide-react',<Filter />,Filter list sort,Outline
+13,Status,check,success done completed,Lucide,import { Check } from 'lucide-react',<Check />,Success state checkmark,Outline
+14,Status,x,close error cancel dismiss,Lucide,import { X } from 'lucide-react',<X />,Close modal dismiss error,Outline
+15,Status,alert-triangle,warning caution attention,Lucide,import { AlertTriangle } from 'lucide-react',<AlertTriangle />,Warning state caution,Outline
+16,Status,info,information help tooltip,Lucide,import { Info } from 'lucide-react',<Info />,Info tooltip help,Outline
+17,Status,loader,loading spinner processing,Lucide,import { Loader2 } from 'lucide-react',<Loader2 className='animate-spin' />,Loading state spinner,Outline
+18,User,user,user profile account person,Lucide,import { User } from 'lucide-react',<User />,User avatar profile,Outline
+19,User,users,team group people,Lucide,import { Users } from 'lucide-react',<Users />,Team members group,Outline
+20,User,settings,settings preferences gear,Lucide,import { Settings } from 'lucide-react',<Settings />,Settings page preferences,Outline

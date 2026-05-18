@@ -180,3 +180,42 @@ Handoff Received
 - `test-failure-classification-skill` runs whenever any failure is detected
 - `regression-analysis-skill` only runs on resubmissions (cycle > 1)
 - All skills enforce the runtime isolation rule — no `context/` or `lib/` access
+
+---
+
+## Executable Tools
+
+The following runtime tools are in `Agente06_QaEngineer/tools/`.
+
+### E2E Test Templates (`tools/e2e-templates/`)
+
+Ready-to-use Playwright templates for new projects. Copy to the target project's `e2e/` directory and customize.
+
+| File | Purpose |
+|------|---------|
+| `playwright.base.config.ts` | Base Playwright config with 3 projects (setup, authenticated, smoke) |
+| `base-fixture.template.ts` | Extended test fixture with console error capture and network failure detection |
+| `base-page.template.ts` | Abstract base page class with common navigation and assertion methods |
+| `auth-setup.template.ts` | Authentication setup that saves session to `.auth/user.json` |
+| `access-control.template.spec.ts` | Tests that all protected routes redirect unauthenticated users |
+| `smoke.template.spec.ts` | Smoke suite: health check, navigation, page stability, broken images |
+
+**Usage:**
+```bash
+# Copy to target project
+cp -r Agente06_QaEngineer/tools/e2e-templates/ <project>/e2e/
+# Install dependencies
+cd <project> && npm install -D @playwright/test
+# Run smoke tests
+npx playwright test --project=smoke
+```
+
+### Test Quality Audit (`tools/test-quality/`)
+
+| Tool | Command | Purpose |
+|------|---------|---------|
+| `test-quality-audit.sh` | `bash tools/test-quality/test-quality-audit.sh [dir]` | Detects theatrical test anti-patterns (`.catch(false)`, `|| true`, etc.) |
+
+**Verdict levels:** EFETIVO / PARCIALMENTE TEATRAL / MAJORITARIAMENTE TEATRAL
+
+Run before Gate 4 sign-off to verify test suite has genuine coverage.

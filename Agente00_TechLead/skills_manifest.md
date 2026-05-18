@@ -423,3 +423,38 @@ Skills may use:
 If a skill needs theoretical support, it must rely on distilled knowledge generated during build-time and stored in `knowledge/`.
 
 Any skill that encounters a runtime instruction to access raw PDFs, global `context/`, or `lib/` must refuse that access and use local distilled artifacts instead. If needed knowledge is absent, the skill must signal a build-patch requirement to the operator.
+
+---
+
+## Executable Tools
+
+The following runtime tools are available to the Tech Lead at execution time. These are shell scripts and utilities located in the shared `tools/` directory at the repository root.
+
+### Factory Validation Scripts (`tools/factory-scripts/`)
+
+| Tool | Command | Purpose |
+|------|---------|---------|
+| `validate-framework.sh` | `bash tools/factory-scripts/validate-framework.sh` | Validates all 11 agents have required files (prompt.md, agent_config.json, etc.) |
+| `validate-skills.sh` | `bash tools/factory-scripts/validate-skills.sh [--verbose]` | Validates all skills have required 6 files + Knowledge Access Policy section |
+| `credential-preflight.sh` | `bash tools/factory-scripts/credential-preflight.sh [project-root]` | Tests Supabase, OpenAI, Anthropic credentials before test suites |
+| `memory-guard.sh` | `bash tools/factory-scripts/memory-guard.sh` | Checks Claude process count and memory before spawning new agents |
+| `agent-metrics.sh` | `bash tools/factory-scripts/agent-metrics.sh` | Dashboard of agent invocation metrics from SubagentStop logs |
+
+### MCP Knowledge Server (`tools/mcp-knowledge-search/`)
+
+| Tool | Command | Purpose |
+|------|---------|---------|
+| `server.py` | See README | FastMCP server with 5 tools: search_knowledge, search_with_filters, get_full_document, get_context, knowledge_stats |
+| `ingest.py` | `python tools/mcp-knowledge-search/ingest.py` | Ingest documents into the SQLite FTS5 knowledge database |
+
+### Document Generation (`tools/document-generation/`)
+
+| Tool | Command | Purpose |
+|------|---------|---------|
+| `spellcheck_document.py` | `python tools/document-generation/spellcheck_document.py [file]` | Spell-check PPTX, DOCX, TXT, MD, PDF (3 backends) |
+| `validate_office_file.py` | `python tools/document-generation/validate_office_file.py [file]` | Validate Office file structural integrity |
+
+### Usage Policy
+- `validate-framework.sh` and `validate-skills.sh` should be run before any Gate decision that involves agent structure changes
+- `memory-guard.sh` should be consulted before spawning more than 3 subagents in parallel
+- `credential-preflight.sh` must be run before authorizing integration test suites

@@ -128,3 +128,33 @@ All skills in this manifest operate under the following policy:
 - **Allowed**: `Agente01_ProductOwner/knowledge/`, local skill files, schemas, templates, checklists, examples, project inputs from Tech Lead
 - **Blocked**: `context/`, `lib/`, `*.pdf`, raw books, global build documents
 - If a skill requires theoretical knowledge not in `knowledge/`, request a build patch. Do not attempt to read raw sources at runtime.
+
+---
+
+## Executable Tools
+
+The following shared runtime tools are available via the repository root `tools/` directory.
+
+### Factory Validation Scripts (`tools/factory-scripts/`)
+
+| Tool | Command | Purpose |
+|------|---------|---------|
+| `validate-framework.sh` | `bash tools/factory-scripts/validate-framework.sh` | Validates the full factory structure before milestone reviews |
+| `credential-preflight.sh` | `bash tools/factory-scripts/credential-preflight.sh [project-root]` | Validates API credentials before integration cycles |
+| `agent-metrics.sh` | `bash tools/factory-scripts/agent-metrics.sh` | Reports agent activity for sprint retrospectives |
+
+### MCP Knowledge Server (`tools/mcp-knowledge-search/`)
+
+Exposes the full bibliography and agent knowledge base as a searchable MCP tool. Use during backlog refinement to cross-reference requirements against known constraints in agent knowledge.
+
+| Tool | Command |
+|------|---------|
+| `search_knowledge` | MCP tool call — searches across all indexed documents |
+| `knowledge_stats` | MCP tool call — lists available knowledge sources |
+
+### Document Generation (`tools/document-generation/`)
+
+| Tool | Purpose |
+|------|---------|
+| `spellcheck_document.py` | Spell-check deliverable documents (PPTX, DOCX, MD) before client handoff |
+| `validate_office_file.py` | Validate structural integrity of Office deliverables |

@@ -161,3 +161,27 @@ This manifest indexes all skills available to the UX/UI Designer agent. Each ski
 - Zero hardcoded hex values allowed in any artifact
 - Zero org-specific token names allowed (e.g., `raiz-orange`, `brand-teal` are forbidden)
 - Any new token need must be escalated to Tech Lead before the design is finalized
+
+---
+
+## Knowledge Data Assets
+
+The following CSV data files are available in `Agente09_UxUiDesigner/knowledge/data/` for design decision support.
+
+| File | Rows | Description |
+|------|------|-------------|
+| `ui-reasoning.csv` | 10+ | UI patterns by product category with style recommendations and decision rules |
+| `ux-guidelines.csv` | 10+ | UX best practices: Do/Don't + code examples by category |
+| `charts.csv` | 8+ | Chart type selection guide by data type and keywords |
+| `colors.csv` | 10+ | Color palettes (hex values) per product type |
+| `icons.csv` | 20+ | Icon reference: Lucide library, import code, usage context |
+| `landing.csv` | 6 | Landing page patterns with section order and conversion tips |
+| `products.csv` | 10 | Style recommendations per product type |
+| `react-performance.csv` | 30 | React/Next.js performance patterns (complete dataset) |
+| `styles.csv` | 8+ | Visual style guide: glassmorphism, neumorphism, brutalism, flat, etc. |
+| `typography.csv` | 5+ | Font pairings with Google Fonts URLs and Tailwind config |
+| `web-interface.csv` | 10+ | Web interface patterns: accessibility, layout, interaction, UX |
+
+**Runtime access policy:** These files are in `knowledge/data/` and are accessible at runtime via direct file read or the MCP knowledge search tool.
+
+**Usage:** Consult these files when generating design tokens, selecting component styles, or validating UX decisions against established patterns.

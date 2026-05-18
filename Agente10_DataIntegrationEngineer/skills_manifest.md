@@ -159,3 +159,43 @@ For each external system:
   7. data-quality-validation-skill → Data_Quality_Checklist.md
 Compile: Integration_Spec.md (master document)
 ```
+
+---
+
+## Executable Tools
+
+The following runtime tools are in `Agente10_DataIntegrationEngineer/tools/predictive-rigor/`.
+
+### Predictive Rigor Framework
+
+Statistical governance tools for machine learning pipelines. All tools produce JSON reports.
+
+#### Templates (fill before analysis begins)
+
+| Template | When to Use |
+|----------|-------------|
+| `templates/PFC_TEMPLATE.md` | Register hypothesis BEFORE any analysis (commit to git as proof) |
+| `templates/LAIG_CHECKLIST.md` | Manual look-ahead inspection for all features |
+| `templates/BASELINE_PARITY.md` | Spec for the 4-baseline requirement |
+| `templates/ADVERSARIAL_REVIEW_TEMPLATE.md` | External adversarial review before production |
+| `templates/INDEPENDENCE_AUDIT.md` | Verify train/test independence |
+| `templates/RETROSPECTIVE_TEMPLATE.md` | Post-epoch lessons learned |
+
+#### Scripts (automated governance checks)
+
+| Script | Command | Gate Criterion |
+|--------|---------|---------------|
+| `scripts/power_calc.py` | `python power_calc.py --effect-size 0.003 --actual-n N` | Power >= 0.80 |
+| `scripts/laig_scan.py` | `python laig_scan.py --data features.parquet --target-col Y` | No HIGH issues |
+| `scripts/baseline_parity.py` | `python baseline_parity.py --model-probs P --actuals Y` | Brier delta >= 0.003 (all 4) |
+| `scripts/heteroscedasticity_check.py` | `python heteroscedasticity_check.py --residuals R` | p > 0.05 |
+| `scripts/independence_audit.py` | `python independence_audit.py --train T --test E` | No row overlap |
+| `scripts/goalpost_lock.py` | `python goalpost_lock.py --pfc P.json --results R.json` | All PFC criteria met |
+| `scripts/sunk_cost_guard.py` | `python sunk_cost_guard.py --history H.json` | CONTINUE / WARN / STOP |
+| `scripts/pre_commit_governance.sh` | Git pre-commit hook | Runs all checks automatically |
+
+**Install the pre-commit hook:**
+```bash
+cp Agente10_DataIntegrationEngineer/tools/predictive-rigor/scripts/pre_commit_governance.sh .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```

@@ -115,3 +115,37 @@ Step 7: secure-code-remediation-skill (only if BLOCKED or RETURNED)
 **When to trigger:** Step 2 of every Gate 5 evaluation — must complete before privacy-review-skill.
 **Outputs:** `Data_Classification.md` — entity-by-entity classification table with tier rationale.
 **Gate behavior:** RESTRICTED data identified = trigger `BLOCKED_PENDING_HUMAN` if no human sign-off documented.
+
+---
+
+## Executable Tools
+
+The following runtime tools are in `Agente07_DevSecOps/tools/`.
+
+### Git Security Hooks (`tools/git-hooks/`)
+
+Claude Code lifecycle hooks that enforce security policies. Install via `.claude/settings.json`.
+
+| Script | Hook Type | Blocks |
+|--------|-----------|--------|
+| `bash-guards.sh` | PreToolUse(Bash) | Force push, --no-verify, rebase -i, git reset --hard |
+| `config-guard.sh` | PreToolUse(Write) | Writes to .env, package.json, tsconfig, CI workflows |
+| `secret-scan.sh` | PostToolUse(Edit/Write) | Advisory — warns on API keys, passwords, DB strings |
+| `security-gate.sh` | PreToolUse | Entry point delegating to bash-guards.sh |
+
+See `tools/git-hooks/README.md` for installation instructions.
+
+### SENTINEL Security Framework (`tools/sentinel/`)
+
+| File | Purpose |
+|------|---------|
+| `sentinel-certificate.md` | Fill and issue when SSS >= 80 to unblock Gate 5 |
+| `sentinel-state.json` | Current security posture (update after each security review) |
+| `k6-template.js` | Load testing: 5 profiles (smoke/load/stress/spike/endurance); p95 < 2s |
+
+**Deployment gate:** SSS score >= 80 required before Gate 5 approval.
+
+```bash
+# Run smoke load test
+k6 run --env PROFILE=smoke Agente07_DevSecOps/tools/sentinel/k6-template.js
+```

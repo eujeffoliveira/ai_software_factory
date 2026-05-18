@@ -226,3 +226,27 @@ This manifest indexes all 9 skills available to Agente08_DevOps at runtime. Each
 - Endpoint must not require authentication
 - Endpoint must verify database connectivity (not just return static 200)
 - Response must conform to schema: `{"status": "ok", "timestamp": "...", "version": "..."}`
+
+---
+
+## Executable Tools
+
+The following runtime tools are in `Agente08_DevOps/tools/`.
+
+### Git Pipeline Hooks (`tools/git-hooks/`)
+
+Claude Code lifecycle hooks for branch protection and parallel agent coordination.
+
+| Script | Hook Type | Purpose |
+|--------|-----------|---------|
+| `branch-guard.sh` | PreToolUse(Bash) | Blocks commits/pushes directly to main/master/develop |
+| `parallel-agent-guard.sh` | PreToolUse(Bash/Write) | File-based locking to prevent parallel agent conflicts |
+| `parallel-agent-guard-cleanup.sh` | PostToolUse | Releases locks after tool completion |
+
+**Lock locations:** `/tmp/claude-git-locks/` (30s TTL) and `/tmp/claude-write-locks/` (10s TTL)
+
+Install via `.claude/settings.json` — see `tools/git-hooks/README.md`.
+
+**When to use:**
+- `branch-guard.sh`: Always active in projects with protected branches
+- `parallel-agent-guard.sh`: Activate when running 3+ concurrent agent sessions on the same repo

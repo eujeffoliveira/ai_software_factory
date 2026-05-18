@@ -1,0 +1,11 @@
+No,Product Type,Primary (Hex),Secondary (Hex),CTA (Hex),Background (Hex),Text (Hex),Border (Hex),Notes
+1,SaaS (General),#2563EB,#3B82F6,#F97316,#F8FAFC,#1E293B,#E2E8F0,Trust blue + orange CTA contrast
+2,Micro SaaS,#6366F1,#818CF8,#10B981,#F5F3FF,#1E1B4B,#E0E7FF,Indigo primary + emerald CTA
+3,E-commerce,#059669,#10B981,#F97316,#ECFDF5,#064E3B,#A7F3D0,Success green + urgency orange
+4,E-commerce Luxury,#1C1C1E,#2C2C2E,#D4AF37,#F5F5F0,#1C1C1E,#E5E5E5,Dark neutral + gold accent
+5,Healthcare,#0284C7,#38BDF8,#16A34A,#F0F9FF,#0C4A6E,#BAE6FD,Medical blue + health green
+6,Fintech/Crypto,#1A1A2E,#16213E,#7C3AED,#0F0F0F,#E2E8F0,#374151,Dark OLED + purple accent
+7,Education,#7C3AED,#A78BFA,#F59E0B,#FAF5FF,#4C1D95,#DDD6FE,Purple + amber playful
+8,Portfolio/Personal,#111827,#1F2937,#06B6D4,#FAFAFA,#111827,#E5E7EB,Dark contrast + cyan accent
+9,Government,#1E3A5F,#2563EB,#1D4ED8,#F8FAFC,#1E293B,#CBD5E1,Professional navy + accessible blue
+10,Fintech Banking,#1A365D,#2A4A7F,#B7860F,#F7FAFC,#1A202C,#E2E8F0,Navy trust + gold authority

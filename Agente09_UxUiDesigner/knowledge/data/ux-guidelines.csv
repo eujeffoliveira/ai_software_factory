@@ -1,0 +1,11 @@
+No,Category,Issue,Platform,Description,Do,Don't,Code Example Good,Code Example Bad,Severity
+1,Navigation,Smooth Scroll,Web,Anchor links should scroll smoothly to target section,Use scroll-behavior: smooth on html element,Jump directly without transition,html { scroll-behavior: smooth; },<a href='#section'> without CSS,High
+2,Navigation,Sticky Navigation,Web,Fixed nav should not obscure content,Add padding-top to body equal to nav height,Let nav overlap first section content,pt-20 (if nav is h-20),No padding compensation,Medium
+3,Navigation,Active State,All,Current page/section should be visually indicated,Highlight active nav item with color/underline,No visual feedback on current location,text-primary border-b-2,All links same style,Medium
+4,Forms,Input Labels,All,All inputs must have visible labels,Use label element associated with input,Placeholder-only inputs,<label for='email'>Email</label><input id='email'>,<input placeholder='Email'>,High
+5,Forms,Error Messages,All,Show specific actionable error messages inline,Display error below the field it applies to,Generic 'Something went wrong' messages,<p class='text-red-500'>Email is invalid</p>,Alert box with generic message,High
+6,Forms,Loading State,All,Show feedback when form is submitting,Disable submit button and show spinner,No feedback during submission,<button disabled><Spinner/> Saving...</button>,Button stays enabled and unchanged,Medium
+7,Accessibility,Color Contrast,All,Text must meet WCAG contrast requirements,Minimum 4.5:1 for body text (7:1 for AAA),Light grey text on white background,text-gray-700 on white (7.5:1 ratio),text-gray-300 on white (1.6:1 ratio),Critical
+8,Accessibility,Focus Indicators,Web,Keyboard users need visible focus rings,Keep browser focus ring or add custom,Remove outline without replacement,:focus-visible { outline: 2px solid blue; },outline: none without alternative,Critical
+9,Accessibility,Alt Text,All,Images need descriptive alt text,Write meaningful descriptions,Empty or generic 'image' alt text,"<img alt='Bar chart showing 20% growth'>","<img alt='image'>",High
+10,Performance,Loading Priority,Web,Above-fold content should load first,Use loading='eager' on hero images,Lazy-load hero image,<img loading='eager' src='hero.webp'>,<img loading='lazy' src='hero.webp'>,Medium
