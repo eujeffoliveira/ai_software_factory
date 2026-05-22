@@ -96,9 +96,9 @@ def run_checks(db_path: str) -> bool:
     # Check 5 — FTS test query works
     try:
         conn = sqlite3.connect(db_path)
-        # Try a simple FTS query — this fails if the FTS5 virtual table is corrupt
+        # FTS virtual table is fts_docs (not documents) — content table is documents
         cur = conn.execute(
-            "SELECT COUNT(*) FROM documents WHERE documents MATCH 'skill OR agent OR knowledge'"
+            "SELECT COUNT(*) FROM fts_docs WHERE fts_docs MATCH 'skill OR agent OR knowledge'"
         )
         fts_count = cur.fetchone()[0]
         conn.close()

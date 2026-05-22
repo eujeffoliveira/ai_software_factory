@@ -67,17 +67,17 @@ $REQ_HASH_FILE     = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\.requir
 
 # ─── Mapeamento de agentes ────────────────────────────────────────────────────
 $agents = @(
-    @{ Folder = "Agente00_TechLead";                Name = "techlead";     Description = "Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto" },
-    @{ Folder = "Agente01_ProductOwner";            Name = "po";           Description = "Product Owner — user stories, criterios de aceitacao, backlog e definicao de escopo" },
-    @{ Folder = "Agente02_SoftwareArchitect";       Name = "architect";    Description = "Arquiteto de Software — design de sistemas, diagramas UML, decisoes de arquitetura e ADRs" },
-    @{ Folder = "Agente03_SoftwareEngineer";        Name = "engineer";     Description = "Engenheiro de Software — decomposicao de tarefas, planejamento de implementacao e estimativas" },
-    @{ Folder = "Agente04_DevBackend";              Name = "devbackend";   Description = "Dev Backend — APIs REST, servicos, banco de dados, migrations Prisma e autenticacao" },
-    @{ Folder = "Agente05_DevFrontend";             Name = "devfrontend";  Description = "Dev Frontend — componentes React, paginas Next.js, UI com Tailwind e logica de interface" },
-    @{ Folder = "Agente06_QaEngineer";              Name = "qa";           Description = "QA Engineer — planos de teste, testes unitarios Vitest, E2E Playwright e cobertura de codigo" },
-    @{ Folder = "Agente07_DevSecOps";               Name = "devsecops";    Description = "DevSecOps — auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
-    @{ Folder = "Agente08_DevOps";                  Name = "devops";       Description = "DevOps — CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
-    @{ Folder = "Agente09_UxUiDesigner";            Name = "uxui";         Description = "UX/UI Designer — pesquisa de usuario, wireframes, design system e acessibilidade" },
-    @{ Folder = "Agente10_DataIntegrationEngineer"; Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" }
+    @{ Folder = "Agente00_TechLead";                Emoji = "🏗️";  Name = "techlead";     Description = "Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto" },
+    @{ Folder = "Agente01_ProductOwner";            Emoji = "📋";  Name = "po";           Description = "Product Owner — user stories, criterios de aceitacao, backlog e definicao de escopo" },
+    @{ Folder = "Agente02_SoftwareArchitect";       Emoji = "📐";  Name = "architect";    Description = "Arquiteto de Software — design de sistemas, diagramas UML, decisoes de arquitetura e ADRs" },
+    @{ Folder = "Agente03_SoftwareEngineer";        Emoji = "⚙️";  Name = "engineer";     Description = "Engenheiro de Software — decomposicao de tarefas, planejamento de implementacao e estimativas" },
+    @{ Folder = "Agente04_DevBackend";              Emoji = "🔌";  Name = "devbackend";   Description = "Dev Backend — APIs REST, servicos, banco de dados, migrations Prisma e autenticacao" },
+    @{ Folder = "Agente05_DevFrontend";             Emoji = "🎨";  Name = "devfrontend";  Description = "Dev Frontend — componentes React, paginas Next.js, UI com Tailwind e logica de interface" },
+    @{ Folder = "Agente06_QaEngineer";              Emoji = "🧪";  Name = "qa";           Description = "QA Engineer — planos de teste, testes unitarios Vitest, E2E Playwright e cobertura de codigo" },
+    @{ Folder = "Agente07_DevSecOps";               Emoji = "🔒";  Name = "devsecops";    Description = "DevSecOps — auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
+    @{ Folder = "Agente08_DevOps";                  Emoji = "🚀";  Name = "devops";       Description = "DevOps — CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
+    @{ Folder = "Agente09_UxUiDesigner";            Emoji = "✏️";  Name = "uxui";         Description = "UX/UI Designer — pesquisa de usuario, wireframes, design system e acessibilidade" },
+    @{ Folder = "Agente10_DataIntegrationEngineer"; Emoji = "🗄️";  Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" }
 )
 
 $knowledgeFiles = @(
@@ -570,7 +570,7 @@ foreach ($agent in $agents) {
     if (-not (Test-Path $promptFile)) { continue }
 
     $promptContent = (Get-Content $promptFile -Raw -Encoding UTF8).TrimEnd()
-    $agentLabel    = ($agent.Description -split " — ")[0].Trim()
+    $agentLabel    = "$($agent.Emoji) $(($agent.Description -split ' — ')[0].Trim())"
 
     $customInstructions = @"
 FACTORY_ROOT: $FACTORY_PATH
