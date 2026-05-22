@@ -52,7 +52,11 @@ function Write-IfChanged {
 # ─── Caminhos base ────────────────────────────────────────────────────────────
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
-$CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude\settings.json"
+$CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
+$ROO_MCP_PATHS     = @(
+    "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json",
+    "$env:APPDATA\Code\User\globalStorage\RooVeterinaryInc.roo-cline\settings\mcp_settings.json"
+)
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 $DB_PATH           = Join-Path $FACTORY_PATH "knowledge.db"
 $CONFIG_PATH       = Join-Path $FACTORY_PATH "knowledge-config.json"
@@ -385,11 +389,12 @@ if ($hasPython) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  FASE 6 — .mcp.json + settings.json (merge cirurgico, atomico)
+#  FASE 6 — .mcp.json + .claude.json (merge cirurgico, atomico)
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "MCP Configuration"
 
 $mcpEntry = [ordered]@{
+    type    = "stdio"
     command = "python"
     args    = @($SERVER_PATH)
     env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
@@ -401,12 +406,12 @@ $mcpJsonStr = $mcpJson | ConvertTo-Json -Depth 5
 $mcpStatus = Write-IfChanged -Path (Join-Path $FACTORY_PATH ".mcp.json") -Content $mcpJsonStr -Label ".mcp.json"
 $tally.mcp_status = $mcpStatus
 
-# settings.json global — merge cirurgico com escrita atomica
+# .claude.json global — merge cirurgico com escrita atomica
 $claudeDir = Split-Path $CLAUDE_SETTINGS
 if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null }
 
 try {
-    # Ler settings existente
+    # Ler .claude.json existente
     $settings = [ordered]@{}
     $settingsRaw = ""
     if (Test-Path $CLAUDE_SETTINGS) {
@@ -422,20 +427,21 @@ try {
             # JSON invalido — criar backup antes de qualquer alteracao
             $badBackup = "$CLAUDE_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
             Copy-Item $CLAUDE_SETTINGS $badBackup -Force
-            Write-Warn "settings.json estava invalido. Backup criado: $badBackup"
-            Write-Warn "Recriando settings.json com apenas a entrada MCP."
+            Write-Warn ".claude.json estava invalido. Backup criado: $badBackup"
+            Write-Warn "Recriando .claude.json com apenas a entrada MCP."
         }
     }
 
     # Verificar se ja esta correto (evita escrita desnecessaria)
     $existing = if ($parseOk) { $settings["mcpServers"]?["knowledge"] } else { $null }
     $alreadyCurrent = $existing -and
+                      ($existing["type"]    -eq $mcpEntry.type) -and
                       ($existing["command"] -eq $mcpEntry.command) -and
                       ($existing["args"]    -contains $SERVER_PATH) -and
                       ($existing["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
 
     if ($alreadyCurrent) {
-        Write-Skip "settings.json ja configurado corretamente"
+        Write-Skip ".claude.json ja configurado corretamente"
     } else {
         # Backup com timestamp apenas quando ha mudanca real
         if ($parseOk -and (Test-Path $CLAUDE_SETTINGS)) {
@@ -448,8 +454,8 @@ try {
         if (-not $settings.ContainsKey("mcpServers")) { $settings["mcpServers"] = @{} }
         $settings["mcpServers"]["knowledge"] = $mcpEntry
 
-        # Validar JSON resultante antes de escrever
-        $newJson = $settings | ConvertTo-Json -Depth 5
+        # Validar JSON resultante antes de escrever (depth 20 para preservar toda a estrutura)
+        $newJson = $settings | ConvertTo-Json -Depth 20
         $newJson | ConvertFrom-Json | Out-Null  # lanca excecao se invalido
 
         # Escrita atomica: temp → rename
@@ -457,18 +463,56 @@ try {
         [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
         Move-Item $tmpSettings $CLAUDE_SETTINGS -Force
 
-        Write-OK "settings.json atualizado (MCP global registrado)"
+        Write-OK ".claude.json atualizado (MCP global registrado)"
     }
 } catch {
-    Write-Warn "Nao foi possivel atualizar settings.json: $_"
+    Write-Warn "Nao foi possivel atualizar .claude.json: $_"
     # Restaurar backup se disponivel
     $latestBak = Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if ($latestBak) {
         Copy-Item $latestBak.FullName $CLAUDE_SETTINGS -Force
-        Write-Warn "settings.json restaurado: $($latestBak.Name)"
+        Write-Warn ".claude.json restaurado: $($latestBak.Name)"
     }
     Write-Warn "Use link-mcp.ps1 em cada projeto como alternativa."
+}
+
+# Roo Code mcp_settings.json — mesmo merge cirurgico para cada instalacao encontrada
+foreach ($rooMcp in $ROO_MCP_PATHS) {
+    if (-not (Test-Path (Split-Path $rooMcp))) { continue }
+    try {
+        $rooSettings = [ordered]@{ mcpServers = [ordered]@{} }
+        if (Test-Path $rooMcp) {
+            $rooRaw = Get-Content $rooMcp -Raw -Encoding UTF8
+            if ($rooRaw -and $rooRaw.Trim()) {
+                $rooSettings = $rooRaw | ConvertFrom-Json -AsHashtable
+            }
+        }
+
+        $existingRoo = $rooSettings["mcpServers"]?["knowledge"]
+        $rooAlreadyCurrent = $existingRoo -and
+                             ($existingRoo["command"] -eq $mcpEntry.command) -and
+                             ($existingRoo["args"]    -contains $SERVER_PATH) -and
+                             ($existingRoo["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
+
+        if ($rooAlreadyCurrent) {
+            Write-Skip "Roo mcp_settings.json ja configurado: $rooMcp"
+        } else {
+            if (-not $rooSettings.ContainsKey("mcpServers")) { $rooSettings["mcpServers"] = @{} }
+            $rooSettings["mcpServers"]["knowledge"] = $mcpEntry
+
+            $rooJson = $rooSettings | ConvertTo-Json -Depth 10
+            $rooJson | ConvertFrom-Json | Out-Null
+
+            $tmpRoo = "$rooMcp.tmp"
+            [System.IO.File]::WriteAllText($tmpRoo, ($rooJson -replace "`r`n","`n"), $utf8NoBom)
+            Move-Item $tmpRoo $rooMcp -Force
+
+            Write-OK "Roo mcp_settings.json atualizado: $rooMcp"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel atualizar Roo mcp_settings.json ($rooMcp): $_"
+    }
 }
 
 # ═════════════════════════════════════════════════════════════════════════════

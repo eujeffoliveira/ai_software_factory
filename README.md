@@ -73,7 +73,8 @@ O `install.ps1` configura tudo em uma única execução:
 | Instala 11 agentes | `~/.claude/agents/<nome>.md` |
 | Instala dependências MCP | pip (controlado por hash — só quando necessário) |
 | Cria banco de conhecimento | `knowledge.db` na raiz da factory (SQLite FTS5, ~7.000 docs) |
-| Configura MCP global | `~/.claude/settings.json` |
+| Configura MCP global (Claude Code) | `~/.claude.json` (nível raiz, escopo user) |
+| Configura MCP global (Roo Code) | `%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json` |
 | Gera `.mcp.json` | Raiz da factory |
 | Gera suporte Roo Code/Cline | `roo/.roomodes` + `roo/.clinerules` |
 | Gera scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1` |
@@ -98,6 +99,8 @@ Todos os arquivos gerados são comparados antes de escrever — o instalador só
 cd ai_software_factory
 .\install.ps1
 ```
+
+> **Linux/macOS:** o repositório inclui um `install.sh`, mas ele configura **apenas aliases de CLI**. Ele **não** instala agentes em `~/.claude/agents/`, **não** configura MCP/RAG e **não** gera os modos do Roo Code. Para funcionalidade completa, use Windows com `install.ps1`.
 
 Se aparecer erro de política de execução:
 
@@ -235,7 +238,7 @@ Se a factory foi atualizada e os modos mudaram:
 
 ## Vincular MCP em outro projeto
 
-O MCP é configurado globalmente no Claude Code via `~/.claude/settings.json` — ele já está disponível em qualquer sessão sem configuração adicional.
+O MCP é configurado globalmente no Claude Code via `~/.claude.json` (chave `mcpServers` no nível raiz) — ele já está disponível em qualquer sessão sem configuração adicional.
 
 Em alguns casos (Roo Code/Cline, configuração local de projeto, integração com outros clientes MCP), pode ser útil ter um `.mcp.json` local no projeto:
 
@@ -363,7 +366,7 @@ Esperado: 11 arquivos (techlead.md, po.md, architect.md, engineer.md, devbackend
 ### Teste 3 — MCP configurado
 
 ```powershell
-Get-Content "$env:USERPROFILE\.claude\settings.json" | ConvertFrom-Json | ConvertTo-Json -Depth 3
+Get-Content "$env:USERPROFILE\.claude.json" | ConvertFrom-Json | Select-Object -ExpandProperty mcpServers | ConvertTo-Json -Depth 3
 ```
 
 Esperado: chave `mcpServers.knowledge` presente, apontando para `server.py` e `knowledge.db` da factory.
@@ -475,14 +478,19 @@ Se `FACTORY_ROOT` não estiver definida na sessão atual:
 
 ### MCP não aparece ou não funciona
 
-**Causa 1:** `settings.json` não foi atualizado.
+**Causa 1:** `~/.claude.json` ou `mcp_settings.json` do Roo não foram atualizados.
 
-**Diagnóstico:**
+**Diagnóstico (Claude Code):**
 ```powershell
-Get-Content "$env:USERPROFILE\.claude\settings.json"
+Get-Content "$env:USERPROFILE\.claude.json" | ConvertFrom-Json | Select-Object -ExpandProperty mcpServers
 ```
 
-Se não houver `mcpServers.knowledge`:
+**Diagnóstico (Roo Code):**
+```powershell
+Get-Content "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json"
+```
+
+Se não houver `mcpServers.knowledge` em qualquer um dos dois:
 ```powershell
 cd $env:FACTORY_ROOT
 .\install.ps1
@@ -552,10 +560,11 @@ O `install.ps1` pode ser executado quantas vezes quiser, sem efeitos colaterais:
 - Só escreve se o conteúdo realmente mudou
 - Segunda execução sem mudanças: todos os itens reportados como `sem mudancas`
 
-**`settings.json` preservado**
+**`~/.claude.json` preservado**
 - Lê o arquivo existente como hashtable
-- Adiciona/atualiza apenas a chave `mcpServers.knowledge`
-- Preserva todas as outras chaves (`model`, `enabledPlugins`, `theme`, etc.)
+- Adiciona/atualiza apenas a chave `mcpServers.knowledge` no nível raiz
+- Preserva todas as outras chaves (`projects`, `numStartups`, `theme`, etc.)
+- Usa `ConvertTo-Json -Depth 20` para preservar a estrutura aninhada completa
 - Cria backup com timestamp **apenas quando há mudança real**
 - Escrita atômica: grava em arquivo temporário e renomeia (sem risco de corrupção)
 - Valida o JSON resultante antes de confirmar

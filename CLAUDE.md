@@ -63,7 +63,8 @@ The MCP Knowledge Search is a FastMCP server with SQLite FTS5 that indexes all f
 
 **Configured automatically by `install.ps1`:**
 - `knowledge.db` — SQLite FTS5 database (7,000+ indexed documents)
-- `~/.claude/settings.json` — global `mcpServers.knowledge` entry
+- `~/.claude.json` — global `mcpServers.knowledge` entry (nível raiz, escopo user)
+- `%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json` — Roo Code global MCP
 - `.mcp.json` — local factory configuration (use `link-mcp.ps1` in other projects)
 
 **Exposed tools:**
@@ -170,9 +171,9 @@ Run the installer from the repo root in PowerShell:
 .\install.ps1 -ForceDeps
 ```
 
-`install.ps1` is fully idempotent — running it twice reports all items as `sem mudancas`. It uses content comparison with LF normalization and UTF-8 without BOM. `~/.claude/settings.json` receives a surgical merge that adds `mcpServers.knowledge` without touching any other keys; a timestamped backup is created only when a real change is made.
+`install.ps1` is fully idempotent — running it twice reports all items as `sem mudancas`. It uses content comparison with LF normalization and UTF-8 without BOM. `~/.claude.json` receives a surgical merge that adds `mcpServers.knowledge` at the root level without touching any other keys; a timestamped backup is created only when a real change is made.
 
-**What `install.ps1` does (11 phases):**
+**What `install.ps1` does (10 phases):**
 
 1. Sets `FACTORY_ROOT` as a Windows user environment variable
 2. Detects Python and installs MCP dependencies via pip (controlled by SHA256 hash — skipped if unchanged)
@@ -183,9 +184,10 @@ Run the installer from the repo root in PowerShell:
 4. Creates `knowledge-config.json` (gitignored)
 5. Creates/updates `knowledge.db` via `ingest.py` — SQLite FTS5 with 7,000+ indexed documents (reindexes only if any `.md` is newer than the DB)
 6. Creates `.mcp.json` (gitignored) at the factory root
-7. Merges `mcpServers.knowledge` into `~/.claude/settings.json` without touching other keys
-8. Creates `roo/.roomodes` and `roo/.clinerules` (gitignored) for Roo Code / Cline
-9. Generates helper scripts: `factory.ps1`, `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1`
+7. Merges `mcpServers.knowledge` into `~/.claude.json` (root level, user scope) without touching other keys
+8. Merges `mcpServers.knowledge` into Roo Code's `mcp_settings.json` (all installations found in `%APPDATA%`)
+9. Creates `roo/.roomodes` and `roo/.clinerules` (gitignored) for Roo Code / Cline
+10. Generates helper scripts: `factory.ps1`, `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1`
 
 After installation, all 11 agents are available as `@agent-name` inside any Claude Code session from any directory:
 

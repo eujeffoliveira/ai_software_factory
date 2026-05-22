@@ -18,7 +18,11 @@ function Write-Warn($m) { Write-Host "  [WARN] $m" -ForegroundColor Yellow }
 
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
-$CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude\settings.json"
+$CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
+$ROO_MCP_PATHS     = @(
+    "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json",
+    "$env:APPDATA\Code\User\globalStorage\RooVeterinaryInc.roo-cline\settings\mcp_settings.json"
+)
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 
 $agentNames = @(
@@ -61,8 +65,8 @@ foreach ($name in $agentNames) {
 Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
 Write-Host "  $removed agentes removidos de $CLAUDE_AGENTS_DIR" -ForegroundColor Gray
 
-# ─── settings.json — remover mcpServers.knowledge ────────────────────────────
-Write-Header "settings.json — MCP entry"
+# ─── .claude.json — remover mcpServers.knowledge ─────────────────────────────
+Write-Header ".claude.json — MCP entry"
 if (Test-Path $CLAUDE_SETTINGS) {
     try {
         $raw      = Get-Content $CLAUDE_SETTINGS -Raw -Encoding UTF8
@@ -76,19 +80,54 @@ if (Test-Path $CLAUDE_SETTINGS) {
                 $settings.Remove("mcpServers")
             }
 
-            $newJson     = $settings | ConvertTo-Json -Depth 5
+            $newJson     = $settings | ConvertTo-Json -Depth 20
             $tmpSettings = "$CLAUDE_SETTINGS.tmp"
             [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
             Move-Item $tmpSettings $CLAUDE_SETTINGS -Force
-            Write-OK "mcpServers.knowledge removido de settings.json"
+            Write-OK "mcpServers.knowledge removido de .claude.json"
         } else {
-            Write-Skip "mcpServers.knowledge nao encontrado em settings.json"
+            Write-Skip "mcpServers.knowledge nao encontrado em .claude.json"
         }
     } catch {
-        Write-Warn "Nao foi possivel ler/editar settings.json: $_"
+        Write-Warn "Nao foi possivel ler/editar .claude.json: $_"
     }
 } else {
-    Write-Skip "settings.json nao encontrado"
+    Write-Skip ".claude.json nao encontrado"
+}
+
+# ─── Backups do .claude.json criados pelo install.ps1 ────────────────────────
+Write-Header ".claude.json — backups"
+$bakFiles = @(Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue) +
+            @(Get-ChildItem "$CLAUDE_SETTINGS.invalid_*" -ErrorAction SilentlyContinue)
+if ($bakFiles.Count -gt 0) {
+    $bakFiles | Remove-Item -Force
+    Write-OK "$($bakFiles.Count) arquivo(s) de backup removido(s)"
+} else {
+    Write-Skip "Nenhum backup encontrado"
+}
+
+# ─── Roo Code mcp_settings.json — remover mcpServers.knowledge ───────────────
+Write-Header "Roo Code — MCP entry"
+foreach ($rooMcp in $ROO_MCP_PATHS) {
+    if (-not (Test-Path $rooMcp)) { Write-Skip "Nao encontrado: $rooMcp"; continue }
+    try {
+        $rooRaw      = Get-Content $rooMcp -Raw -Encoding UTF8
+        $rooSettings = $rooRaw | ConvertFrom-Json -AsHashtable
+
+        if ($rooSettings.ContainsKey("mcpServers") -and $rooSettings["mcpServers"].ContainsKey("knowledge")) {
+            $rooSettings["mcpServers"].Remove("knowledge")
+
+            $rooJson = $rooSettings | ConvertTo-Json -Depth 10
+            $tmpRoo  = "$rooMcp.tmp"
+            [System.IO.File]::WriteAllText($tmpRoo, ($rooJson -replace "`r`n","`n"), $utf8NoBom)
+            Move-Item $tmpRoo $rooMcp -Force
+            Write-OK "mcpServers.knowledge removido de: $rooMcp"
+        } else {
+            Write-Skip "mcpServers.knowledge nao encontrado em: $rooMcp"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel editar $rooMcp : $_"
+    }
 }
 
 # ─── factory.ps1 ─────────────────────────────────────────────────────────────
@@ -181,7 +220,8 @@ Write-Host ""
 Write-Host "  O que foi removido:" -ForegroundColor Gray
 Write-Host "    - Variavel FACTORY_ROOT"
 Write-Host "    - ~/.claude/agents/ (11 agentes da factory)"
-Write-Host "    - mcpServers.knowledge em ~/.claude/settings.json"
+Write-Host "    - mcpServers.knowledge em ~/.claude.json"
+Write-Host "    - mcpServers.knowledge em Roo Code mcp_settings.json"
 Write-Host "    - ~/.local/bin/factory.ps1"
 Write-Host "    - knowledge.db, knowledge-config.json, .mcp.json, roo/"
 Write-Host "    - .requirements.hash"
