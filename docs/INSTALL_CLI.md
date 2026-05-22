@@ -1,5 +1,18 @@
 # Universal Factory CLI — Guia de Instalação
 
+> **Este documento está desatualizado.** Ele descreve o instalador da versão inicial da factory, anterior ao MCP Knowledge Search, ao `FACTORY_ROOT`, ao `doctor.ps1` e ao `uninstall.ps1`.
+>
+> Use os documentos atuais:
+> - **Instalação:** [`docs/INSTALLATION.md`](INSTALLATION.md)
+> - **Operações:** [`docs/OPERATIONS.md`](OPERATIONS.md)
+> - **Roo Code / Cline:** [`docs/ROO_CODE.md`](ROO_CODE.md)
+> - **Gemini CLI:** [`docs/CLIENT_COMPATIBILITY.md`](CLIENT_COMPATIBILITY.md#gemini-cli)
+> - **Troubleshooting:** [`docs/TROUBLESHOOTING.md`](TROUBLESHOOTING.md)
+>
+> O conteúdo abaixo é preservado apenas como referência histórica.
+
+---
+
 ## O que o instalador faz
 
 O instalador configura os 11 agentes do SDLC para uso imediato em qualquer sessão Claude Code, além de instalar um wrapper para o Gemini CLI.

@@ -1,0 +1,107 @@
+name: Agent Behavior
+description: Report an agent producing incorrect, unexpected, or low-quality output
+labels: ["agent-behavior"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template when an agent produces output that is wrong, ignores its Golden Model, hallucinates facts, bypasses MCP, or otherwise behaves unexpectedly.
+        **Do not include secrets, API keys, tokens, or personal data in any field.**
+
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Agent used
+      options:
+        - "@techlead (Agente00)"
+        - "@po (Agente01)"
+        - "@architect (Agente02)"
+        - "@engineer (Agente03)"
+        - "@devbackend (Agente04)"
+        - "@devfrontend (Agente05)"
+        - "@qa (Agente06)"
+        - "@devsecops (Agente07)"
+        - "@devops (Agente08)"
+        - "@uxui (Agente09)"
+        - "@dataengineer (Agente10)"
+        - "Multiple agents"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Claude Code (CLI)
+        - Claude Code (VS Code extension)
+        - Roo Code
+        - Cline
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: factory_version
+    attributes:
+      label: Factory version
+      description: Run `Get-Content VERSION`.
+      placeholder: "0.1.0"
+
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt sent to the agent
+      description: The exact message or instruction you sent. Remove any personal data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should the agent have done or produced?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What did the agent actually do or produce?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mcp_ok
+    attributes:
+      label: Was the MCP server working?
+      description: Run `.\test-mcp.ps1` before reporting.
+      options:
+        - "Yes — all checks passed"
+        - "No — test-mcp.ps1 reported failures"
+        - "Did not check"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: behavior_type
+    attributes:
+      label: Type of incorrect behavior (select all that apply)
+      options:
+        - label: Agent ignored the Golden Model for the project archetype
+        - label: Agent did not use MCP search when it should have
+        - label: Agent produced a hallucinated file path, function, or fact
+        - label: Agent bypassed a quality gate
+        - label: Agent produced an artifact that violated a known constraint
+        - label: Agent applied the wrong archetype stack
+        - label: Agent ignored a skill or checklist it should have followed
+        - label: Other
+
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Relevant artifacts or response excerpts
+      description: Paste the relevant part of the agent's response. Remove personal data and secrets.
+      render: markdown

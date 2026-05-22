@@ -135,5 +135,13 @@ chmod +x install.sh
 ## Próximos passos
 
 Após a instalação, veja:
-- [OPERATIONS.md](OPERATIONS.md) — uso do dia-a-dia
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — resolução de problemas
+
+| Documento | Conteúdo |
+|-----------|----------|
+| [OPERATIONS.md](OPERATIONS.md) | Uso do dia-a-dia, atualização, diagnóstico |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Problemas comuns e soluções |
+| [AGENTS.md](AGENTS.md) | Referência dos 11 agentes e exemplos de prompt |
+| [MCP_RAG.md](MCP_RAG.md) | Como o MCP Knowledge Search funciona |
+| [ROO_CODE.md](ROO_CODE.md) | Como usar com Roo Code / Cline |
+| [GOLDEN_MODELS.md](GOLDEN_MODELS.md) | Stack técnica por arquétipo |
+| [recipes/](recipes/) | Fluxos prontos para uso por arquétipo |

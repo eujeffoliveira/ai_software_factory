@@ -403,3 +403,67 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 - After editing files in `standards/`, `templates/automation/`, `checklists/automation/`, or `examples/requests/`, run `.\update-knowledge.ps1` to reindex the knowledge base (or `.\install.ps1` if any `prompt.md` also changed)
 - To add new knowledge sources (books, courses, playbooks, articles) to any agent, use `context/prompts/prompt_padrao_destilacao_conhecimento.md` — it is a 27-step distillation workflow executable by any AI with repo access. Run `.\install.ps1` after distillation is complete.
 - Never commit or push changes without explicit authorization from the user
+
+---
+
+## Session progress — Block 3 (Documentação, Governança, Licenciamento)
+
+### Completed across Blocks 1–3
+
+**Block 1 (bugs):**
+- `install.ps1`: added `Emoji` field to `$agents` array; Roo mode name generation uses `"$($agent.Emoji) $(($agent.Description -split ' — ')[0].Trim())"`
+- `tools/mcp-knowledge-search/test_health.py` line 101: fixed FTS5 query from `FROM documents WHERE documents MATCH` → `FROM fts_docs WHERE fts_docs MATCH`
+
+**Block 2 (versioning + ops):**
+- `VERSION` — single line `0.1.0`
+- `CHANGELOG.md` — Keep a Changelog format, `[0.1.0]` entry
+- `RELEASE_NOTES.md` — user-friendly v0.1.0 notes
+- `doctor.ps1` — 14-category diagnostic, calls `test-mcp.ps1` internally, exits 0 (OK/WARN) or 1 (ERROR)
+- `uninstall.ps1` — rewrite: params `-KeepKnowledge`, `-Full`, `-WhatIf`, `-Force`; safety marker check; atomic backup
+- `docs/INSTALLATION.md` — 8 install phases, idempotency, post-install structure
+- `docs/OPERATIONS.md` — agent usage, update commands, diagnostics
+- `docs/TROUBLESHOOTING.md` — problem/fix pairs for install, MCP, agents, Roo Code, uninstall
+- `install.ps1` — `$FACTORY_VERSION` from VERSION file; `$frWasUnset` flag; manifest with `factory_version`, preserved `installed_at`, `knowledge_db_hash`, `scripts` section; `doctor.ps1` hint in RESUMO
+
+**Block 3 (docs/governance) — done so far:**
+- `LICENSE` — Apache 2.0, Copyright 2026 Jefferson Oliveira
+- `LICENSE-DOCS` — CC BY 4.0 reference with scope definition (applies to docs/prompts/templates/knowledge, NOT code)
+- `NOTICE` — dual licensing scope with explicit file lists, generated artifacts note, third-party deps
+- `CONTRIBUTING.md` — prerequisites, setup, commands table, how to add knowledge/agent/skill/bug fix, PR checklist, licensing policy
+
+### Pending — Block 3
+
+Create these files (in order):
+
+1. `CODE_OF_CONDUCT.md` — Contributor Covenant v2.1 based
+2. `SECURITY.md` — responsible disclosure process, secrets policy, MCP log note. **CAUTION: content filtering triggered in previous session when generating this file. Keep content concise, avoid detailed exploitation terminology.**
+3. `SUPPORT.md` — where to open issues, what to attach (doctor.ps1 + test-mcp.ps1 output, OS, Python version, Claude Code version)
+4. `.github/ISSUE_TEMPLATE/bug_report.yml`
+5. `.github/ISSUE_TEMPLATE/mcp_problem.yml` — must include fields for doctor.ps1 and test-mcp.ps1 output
+6. `.github/ISSUE_TEMPLATE/agent_behavior.yml`
+7. `.github/ISSUE_TEMPLATE/documentation.yml`
+8. `.github/ISSUE_TEMPLATE/feature_request.yml`
+9. `.github/PULL_REQUEST_TEMPLATE.md` — type checklist, license checklist, validation checklist
+10. `docs/MCP_RAG.md` — how the FTS5 knowledge base works, ingest pipeline, query patterns
+11. `docs/ROO_CODE.md` — how Roo modes are generated and activated
+12. `docs/AGENTS.md` — all 11 agents: role, skills, when to use
+13. `docs/AGENT_CAPABILITY_MATRIX.md` — matrix table (agent × capability)
+14. `docs/GOLDEN_MODELS.md` — 8 archetypes, Gate A0, how to pick one
+15. `docs/PROJECT_ARCHETYPES.md` — detailed archetype descriptions
+16. `docs/ADDING_KNOWLEDGE.md` — step-by-step: create .md → ingest → verify → test
+17. `docs/CLIENT_COMPATIBILITY.md` — Claude Code, Roo Code/Cline, Gemini CLI
+18. `docs/TESTING.md` — how to test the factory (doctor, test-mcp, manual agent test)
+19. `docs/recipes/criar-web-app.md`
+20. `docs/recipes/criar-automacao-python.md`
+21. `docs/recipes/revisar-projeto-existente.md`
+22. `docs/recipes/gerar-plano-de-testes.md`
+23. `docs/recipes/auditar-seguranca.md`
+24. `docs/recipes/criar-pipeline-dados.md`
+25. `docs/recipes/criar-mcp-server.md`
+26. `docs/recipes/adicionar-novo-conhecimento.md`
+27. `README.md` — reorganize as portal of entry: quick-start prominent, detailed content moved to docs/, add license section (dual-license table), add links to all new docs
+
+### Known issues
+
+- Content filtering (API Error: Output blocked by content filtering policy) triggered when the assistant's response included SECURITY.md content or large batches of security-adjacent text. Workaround: write SECURITY.md in a standalone call with minimal surrounding context.
+- Content filtering also triggered on "sim" response when context included the full CONTRIBUTING.md content. Restart terminal and continue from this CLAUDE.md as reference.
