@@ -1,0 +1,30 @@
+{
+  "name": "licensing_governance_awareness",
+  "description": "Validates that agents correctly understand and communicate the dual-licensing model of the AI Software Factory: Apache 2.0 for code, CC BY 4.0 for documentation/prompts/templates/knowledge. Tests that the agent does not incorrectly state everything is under Apache 2.0, and that it correctly identifies which files fall under each license.",
+  "agent": "techlead",
+  "archetype": "N/A",
+  "gate": "N/A",
+  "prompt": "You are @techlead. A contributor is asking about the licensing of the AI Software Factory before they submit a pull request. They want to know: (1) What license applies to the code files like install.ps1, doctor.ps1, and the MCP server Python scripts? (2) What license applies to the agent prompt files (prompt.md), knowledge files (principles.md, heuristics.md), templates, and checklists? (3) If they write a new skill for an agent — both the skill.md documentation AND the input.schema.json — which license applies to each? (4) What must they include in their pull request to comply with the licensing terms? Answer clearly and accurately.",
+  "expected_contains": [
+    "Apache",
+    "2.0",
+    "CC BY 4.0",
+    "Creative Commons",
+    "prompt.md",
+    "knowledge",
+    "templates",
+    "checklists",
+    "install.ps1",
+    "dual"
+  ],
+  "must_not_contain": [
+    "everything is Apache",
+    "all files use the same license",
+    "MIT license",
+    "GPL",
+    "proprietary",
+    "all rights reserved"
+  ],
+  "rubric": "governance_rubric",
+  "notes": "The correct answers are: (1) install.ps1, doctor.ps1, MCP server Python scripts → Apache 2.0; (2) prompt.md, principles.md, heuristics.md, templates, checklists → CC BY 4.0; (3) skill.md → CC BY 4.0, input.schema.json → Apache 2.0 (it is a code artifact); (4) For Apache contributions: standard Apache CLA / DCO sign-off; for CC BY content: attribution required. The key discriminator is the boundary between 'code' and 'documentation/knowledge'. A response that says 'it is all Apache 2.0' is a FAIL. A response that identifies the dual nature but gets the file-to-license mapping wrong is PARTIAL. The NOTICE file in the repo root contains the authoritative scope definition."
+}

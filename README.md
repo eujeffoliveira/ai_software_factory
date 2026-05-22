@@ -105,6 +105,38 @@ Após a instalação, reabra o terminal e verifique:
 
 ---
 
+## Operação de projetos longos (opcional)
+
+Para projetos multi-sprint, o Tech Lead mantém um **State Ledger** — um arquivo JSON que rastreia fase atual, artefatos aprovados, gates, ADRs, riscos e decisões.
+
+```powershell
+# Inicializar workspace .factory/ no projeto atual (opcional)
+cd C:\meu-projeto
+& "$env:FACTORY_ROOT\init-project.ps1"
+```
+
+Isso cria:
+
+```
+.factory/
+├── State_Ledger.json   ← estado global do projeto (commit este arquivo)
+├── project_profile.md  ← perfil do projeto para os agentes
+├── artifacts/          ← PRD.md, Architecture.md, etc.
+└── decisions/          ← gate decisions, ADRs
+```
+
+Use no início de cada sessão:
+
+```
+@techlead retome o projeto. Estado atual: [attach .factory/State_Ledger.json]
+```
+
+> **Para prompts simples não é necessário nenhum setup.** Use `init-project.ps1` apenas para projetos longos com múltiplos gates e agentes.
+
+Ver: [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md)
+
+---
+
 ## Roo Code / Cline
 
 Por projeto, uma vez após `.\install.ps1`:
@@ -149,7 +181,9 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 | [`docs/ADDING_KNOWLEDGE.md`](docs/ADDING_KNOWLEDGE.md) | Distilação de conhecimento, source_map.json, comandos |
 | [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Roo, Cline, Gemini CLI, uso manual |
 | [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | Problemas comuns e soluções |
-| [`docs/TESTING.md`](docs/TESTING.md) | doctor.ps1, test-mcp.ps1, testes manuais |
+| [`docs/TESTING.md`](docs/TESTING.md) | Factory validators, pytest MCP, doctor.ps1, test-mcp.ps1 |
+| [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md) | State Ledger, .factory/, init-project, gates, riscos, ADRs |
+| [`docs/EVALUATION.md`](docs/EVALUATION.md) | Smoke prompts, eval cases, rubricas, prevenção de regressão |
 | [`CHANGELOG.md`](CHANGELOG.md) | Histórico de versões |
 | [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | Notas da versão atual |
 

@@ -1,10 +1,10 @@
 {
-  "project_name": "{{PROJECT_NAME}}",
-  "project_id": "{{PROJECT_ID}}",
-  "project_archetype": "{{ARCHETYPE}}",
-  "golden_model": "{{GOLDEN_MODEL_PATH}}",
-  "created_at": "{{ISO_DATETIME}}",
-  "updated_at": "{{ISO_DATETIME}}",
+  "project_name": "",
+  "project_id": "",
+  "project_archetype": "",
+  "golden_model": "",
+  "created_at": "",
+  "updated_at": "",
   "current_phase": "requirements",
   "current_agent": "Agente00_TechLead",
   "next_agent": "Agente01_ProductOwner",
@@ -32,5 +32,5 @@
     "last_checked": null,
     "documents_indexed": null
   },
-  "next_action": "Run Gate A0 to classify project archetype, then route to Agente01_ProductOwner with initial briefing"
+  "next_action": ""
 }

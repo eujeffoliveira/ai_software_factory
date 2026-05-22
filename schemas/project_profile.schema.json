@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/project_profile",
+  "title": "Project Profile",
+  "description": "Machine-readable project profile extracted from the project_profile.md template. Used by the Tech Lead to initialize the State Ledger.",
+  "type": "object",
+  "required": [
+    "project_name",
+    "project_id",
+    "objective",
+    "archetype",
+    "golden_model"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable project name"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "URL-safe identifier, e.g. my-project-v1"
+    },
+    "organization": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "objective": {
+      "type": "object",
+      "required": ["problem_statement", "business_outcome"],
+      "properties": {
+        "problem_statement": { "type": "string", "minLength": 10 },
+        "business_outcome": { "type": "string", "minLength": 10 }
+      }
+    },
+    "archetype": {
+      "type": "string",
+      "enum": [
+        "web_app",
+        "automation_script",
+        "data_pipeline",
+        "api_service",
+        "cli_tool",
+        "mcp_server",
+        "integration_worker",
+        "notebook_analysis"
+      ],
+      "description": "Project archetype as classified by Gate A0"
+    },
+    "golden_model": {
+      "type": "string",
+      "description": "Path to the applicable Golden Model, e.g. standards/golden-model-web-app.md"
+    },
+    "stack": {
+      "type": "object",
+      "properties": {
+        "framework": { "type": "string" },
+        "language": { "type": "string" },
+        "database": { "type": "string" },
+        "auth": { "type": "string" },
+        "deploy_target": { "type": "string" },
+        "test_framework": { "type": "string" },
+        "observability": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["system", "type", "criticality"],
+        "properties": {
+          "system": { "type": "string" },
+          "type": { "type": "string", "enum": ["REST API", "GraphQL", "DB", "Event", "Webhook", "File", "Other"] },
+          "criticality": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "technical": { "type": "array", "items": { "type": "string" } },
+        "budget": { "type": "string" },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "date"],
+            "properties": {
+              "name": { "type": "string" },
+              "date": { "type": "string", "format": "date" }
+            }
+          }
+        }
+      }
+    },
+    "sensitive_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["data_type", "classification"],
+        "properties": {
+          "data_type": { "type": "string" },
+          "classification": { "type": "string", "enum": ["Public", "Confidential", "Restricted", "Secret"] },
+          "regulation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "non_functional_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "requirement"],
+        "properties": {
+          "category": { "type": "string", "enum": ["Performance", "Availability", "Scalability", "Security", "Observability", "Compliance", "Other"] },
+          "requirement": { "type": "string" },
+          "acceptance_criterion": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "responsible_parties": {
+      "type": "object",
+      "properties": {
+        "product_owner": { "type": "string" },
+        "tech_lead": { "type": "string" },
+        "architecture_owner": { "type": "string" },
+        "security_reviewer": { "type": "string" },
+        "deploy_approver": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "environments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "enum": ["development", "staging", "production", "qa"] },
+          "url": { "type": "string" },
+          "access": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "initial_risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "severity"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^RISK-[0-9]{3,}" },
+          "description": { "type": "string", "minLength": 10 },
+          "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+          "mitigation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

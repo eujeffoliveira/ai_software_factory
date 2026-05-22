@@ -49,3 +49,19 @@
 {"timestamp": "2026-05-22T21:44:05.703006Z", "event": "get_context", "doc_id": "md:does/not/exist.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
 {"timestamp": "2026-05-22T21:44:05.725735Z", "event": "knowledge_stats", "total_documents": 3, "duration_ms": 2, "status": "ok"}
 {"timestamp": "2026-05-22T21:44:05.750119Z", "event": "knowledge_stats", "total_documents": 0, "duration_ms": 4, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.125443Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 3}
+{"timestamp": "2026-05-22T22:03:54.134438Z", "event": "health_check", "status": "error", "db_exists": false, "reason": "knowledge.db not found"}
+{"timestamp": "2026-05-22T22:03:54.156198Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 0}
+{"timestamp": "2026-05-22T22:03:54.174911Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.195872Z", "event": "search_knowledge", "query": "MCP-first", "category": null, "limit": 20, "results_count": 2, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.216137Z", "event": "search_knowledge", "query": "xyzzy_nonexistent_99", "category": null, "limit": 20, "results_count": 0, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.234060Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.252868Z", "event": "search_with_filters", "query": "Next.js", "filters": "{\"category\": \"markdown\"}", "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.270943Z", "event": "search_with_filters", "query": "query", "status": "error", "reason": "Expecting value: line 1 column 1 (char 0)", "duration_ms": 2}
+{"timestamp": "2026-05-22T22:03:54.289497Z", "event": "search_with_filters", "query": "Tech Lead", "filters": "{}", "limit": 20, "results_count": 1, "duration_ms": 3, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.307568Z", "event": "get_full_document", "doc_id": "md:docs/AGENTS.md", "found": true, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.327408Z", "event": "get_full_document", "doc_id": "md:does/not/exist.md", "found": false, "duration_ms": 2, "status": "not_found"}
+{"timestamp": "2026-05-22T22:03:54.344980Z", "event": "get_context", "doc_id": "md:docs/AGENTS.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.362690Z", "event": "get_context", "doc_id": "md:does/not/exist.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.382391Z", "event": "knowledge_stats", "total_documents": 3, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-05-22T22:03:54.403160Z", "event": "knowledge_stats", "total_documents": 0, "duration_ms": 3, "status": "ok"}
