@@ -71,6 +71,39 @@ The installer is idempotent — re-running it after changes updates only what ch
 | `.\uninstall.ps1 -WhatIf` | Dry-run uninstall |
 | `.\link-mcp.ps1` | Links MCP server to a project's .mcp.json |
 | `.\link-roo.ps1` | Generates Roo Code modes for a project |
+| `python tools/factory-validators/run_all.py` | Run all 10 factory structure validators |
+| `python -m pytest tools/mcp-knowledge-search/tests/ -v` | Run 39 MCP unit tests |
+
+---
+
+## Running Tests
+
+Before submitting a PR, verify that all automated checks pass.
+
+**Factory validators** (no install required, no external deps):
+
+```powershell
+python tools/factory-validators/run_all.py
+```
+
+Checks 10 categories: governance files, licensing, JSON validity, agent structure, skill structure, source maps, golden models, prompt policies, hardcoded paths, and internal markdown links.
+
+**MCP pytest suite** (requires `pip install fastmcp pytest`):
+
+```powershell
+python -m pytest tools/mcp-knowledge-search/tests/ -v
+```
+
+39 tests covering `database.py` and all 6 server tools. Uses in-memory SQLite fixtures — no `knowledge.db` required.
+
+**Installation diagnostics** (requires completed install):
+
+```powershell
+.\doctor.ps1    # 14 environment categories
+.\test-mcp.ps1  # 7 MCP server checks
+```
+
+CI runs factory validators and pytest automatically on every push and PR (see `.github/workflows/validate-factory.yml`).
 
 ---
 
@@ -212,6 +245,8 @@ For corrections to code or scripts (`*.ps1`, `*.py`, `*.json`), the Apache 2.0 l
 
 Run through this checklist before opening a pull request:
 
+- [ ] Rodei `python tools/factory-validators/run_all.py` (0 failures)
+- [ ] Rodei `python -m pytest tools/mcp-knowledge-search/tests/` (39 passed), se editei database.py ou server.py
 - [ ] Rodei `.\doctor.ps1`, se disponível
 - [ ] Rodei `.\test-mcp.ps1`, se disponível
 - [ ] Rodei `.\install.ps1`, quando aplicável (sempre que `prompt.md` ou `knowledge/` mudou)

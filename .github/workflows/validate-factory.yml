@@ -1,0 +1,50 @@
+name: Validate Factory
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-tests:
+    name: MCP Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install MCP dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastmcp pytest
+
+      - name: Run MCP knowledge-search tests
+        run: |
+          python -m pytest tools/mcp-knowledge-search/tests/ -v --tb=short
+
+  factory-validators:
+    name: Factory Structure Validators
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run all factory validators
+        env:
+          FACTORY_ROOT: ${{ github.workspace }}
+        run: |
+          python tools/factory-validators/run_all.py
