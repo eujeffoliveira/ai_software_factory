@@ -34,6 +34,7 @@ Suporta **Claude Code** (agentes globais via `@nome`) e **Roo Code/Cline** (cust
 - [Standards — Matriz de Golden Models](#standards--matriz-de-golden-models)
 - [Estrutura de Pastas](#estrutura-de-pastas)
 - [Como criar um agente](#como-criar-um-agente)
+- [Como adicionar conhecimento aos agentes](#como-adicionar-conhecimento-aos-agentes)
 - [Como instanciar para uma organização](#como-instanciar-para-uma-organização)
 - [Knowledge Distillation — Regra de Isolamento](#knowledge-distillation--regra-de-isolamento)
 - [Estado atual dos agentes](#estado-atual-dos-agentes)
@@ -993,6 +994,55 @@ cd $env:FACTORY_ROOT
 ```
 
 O instalador propaga as alterações de `prompt.md` e de todos os arquivos de knowledge para `~/.claude/agents/<nome>.md`.
+
+---
+
+## Como adicionar conhecimento aos agentes
+
+Quando há novas fontes de conhecimento — livros, artigos, playbooks, cursos, documentação técnica — use o **prompt padrão de destilação** para incorporá-las corretamente à factory.
+
+**Arquivo:** `context/prompts/prompt_padrao_destilacao_conhecimento.md`
+
+O prompt é executável por qualquer IA com acesso ao repositório (Claude Code, Gemini, Roo Code/Cline, ChatGPT). Ele guia a IA por 27 etapas:
+
+| Etapa | O que faz |
+|-------|-----------|
+| 0–2 | Contextualiza o projeto e audita a estrutura atual |
+| 3 | Classifica cada fonte (tipo, domínio, agentes impactados, arquétipos) |
+| 4 | Extrai conhecimento em 12 camadas operacionais (princípios → heurísticas → regras → checklists → templates → schemas → skills → failure modes → exemplos) |
+| 5 | Aplica política de direitos autorais e segurança |
+| 6–7 | Identifica agentes impactados e atualiza `knowledge/` |
+| 8–9 | Atualiza `source_map.json` e `context_view.md` |
+| 10–16 | Atualiza prompts, skills, checklists, templates, schemas, exemplos, failure modes |
+| 17–19 | Atualiza gates de qualidade, documentação global, manifestos e índices |
+| 20 | Garante que novos arquivos entram na indexação MCP/RAG |
+| 21–23 | Gera relatório de destilação em `build/`, aplica regras de conflito e precedência |
+| 24–27 | Valida que `install.ps1` e `update-knowledge.ps1` continuam funcionando |
+
+### Como usar
+
+1. Abra o prompt em `context/prompts/prompt_padrao_destilacao_conhecimento.md`
+2. Copie o conteúdo para uma nova sessão de IA (Claude Code, Roo Code, etc.)
+3. No campo **"1. Fontes novas a processar"**, cole os caminhos ou descrições das fontes
+4. Execute — a IA auditará o repositório e destilará o conhecimento nos artefatos corretos
+5. Após a execução:
+
+```powershell
+cd $env:FACTORY_ROOT
+.\install.ps1
+```
+
+### O que a destilação produz
+
+A IA converte as fontes brutas em artefatos operacionais — nunca copia texto longo nos prompts. Os destilados vão para:
+
+- `AgenteXX/knowledge/` — princípios, heurísticas, decision rules, knowledge cards
+- `AgenteXX/skills/` — novas skills acionáveis
+- `AgenteXX/checklists/` — checklists verificáveis
+- `AgenteXX/templates/` — templates de artefatos
+- `AgenteXX/schemas/` — contratos JSON
+- `AgenteXX/failure_modes.md` — modos de falha novos
+- `build/knowledge_distillation_report_YYYYMMDD.md` — relatório da rodada
 
 ---
 

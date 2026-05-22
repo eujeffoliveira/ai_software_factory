@@ -277,6 +277,7 @@ When building a new agent, produce build reports in `build/`:
 | `context/prompts/prompt_*_generico.md` | Ready-to-use system prompts for each agent |
 | `context/client_profile.md` | Client instantiation profile — filled by whoever forks the repo |
 | `context/prompts/instantiation_prompt.md` | Instantiation prompt — run after cloning to adapt agents to a client |
+| `context/prompts/prompt_padrao_destilacao_conhecimento.md` | Standard knowledge distillation prompt (27-step workflow) — run when adding new sources to any agent |
 | `lib/STATUS_DOWNLOADS.md` | Status index of all reference books per agent |
 | `standards/project-classification.md` | Gate A0: 8 archetypes, decision tree, archetype classification rules |
 | `standards/golden-model-*.md` | Archetype-specific Golden Models (8 files) |
@@ -398,4 +399,5 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 - When adding a new archetype or updating a Golden Model spec, edit the corresponding `standards/golden-model-<archetype>.md` — never embed archetype-specific stack rules inside individual agent files
 - `standards/project-classification.md` is the authoritative source for Gate A0 — update it when adding new archetypes or changing classification criteria
 - After editing files in `standards/`, `templates/automation/`, `checklists/automation/`, or `examples/requests/`, run `.\update-knowledge.ps1` to reindex the knowledge base (or `.\install.ps1` if any `prompt.md` also changed)
+- To add new knowledge sources (books, courses, playbooks, articles) to any agent, use `context/prompts/prompt_padrao_destilacao_conhecimento.md` — it is a 27-step distillation workflow executable by any AI with repo access. Run `.\install.ps1` after distillation is complete.
 - Never commit or push changes without explicit authorization from the user
