@@ -405,6 +405,72 @@ Deve completar sem erros e reportar o número de documentos indexados.
 
 ---
 
+## MCP Reliability
+
+O MCP e iniciado **sob demanda** pelo Claude Code (stdio). O instalador garante configuracao, banco integro e ferramentas documentadas.
+
+### Testar
+
+```powershell
+cd $env:FACTORY_ROOT
+.\test-mcp.ps1
+```
+
+### Verificar no Claude Code
+
+```
+claude → /mcp → servidor "knowledge" deve aparecer como connected
+```
+
+Use `health_check()` dentro de qualquer agente para validar o estado do servidor:
+
+```
+@techlead health_check()
+```
+
+### Ferramentas MCP disponiveis (6 no total)
+
+| Ferramenta | Quando usar |
+|-----------|-------------|
+| `health_check()` | Verificar saude: DB existe, FTS funciona, conta documentos |
+| `knowledge_stats()` | Estatisticas do banco e categorias indexadas |
+| `search_knowledge("termo")` | Busca full-text geral. Suporta `AND`, `OR`, `NOT`, `"frase exata"` |
+| `search_with_filters("termo", filters="{}")` | Busca com filtros de metadata — prefira quando souber a categoria |
+| `get_full_document("doc_id")` | Documento completo pelo ID retornado pelo search |
+| `get_context("doc_id")` | Secoes adjacentes do mesmo arquivo |
+
+### Politica MCP-first
+
+Os agentes consultam o MCP **antes** de responder sobre qualquer artefato interno da factory. Se o MCP falhar, o agente deve:
+
+1. Informar explicitamente que o MCP falhou
+2. Declarar que esta usando fallback via leitura direta de arquivos
+3. Recomendar `.\test-mcp.ps1`
+4. Nunca usar fallback silencioso
+
+### Troubleshooting MCP
+
+| Problema | Solucao |
+|----------|---------|
+| Servidor nao aparece em `/mcp` | `.\install.ps1` |
+| `knowledge.db` nao existe | `.\update-knowledge.ps1` |
+| Python nao encontrado | Instalar Python 3.x e adicionar ao PATH |
+| Dependencias faltando | `.\install.ps1 -ForceDeps` |
+| Agente usa fallback sem avisar | Rodar `.\test-mcp.ps1` |
+| DB corrompido | `Remove-Item knowledge.db -Force && .\update-knowledge.ps1` |
+
+### Log do servidor MCP
+
+O servidor registra todos os eventos em:
+
+```
+tools/mcp-knowledge-search/logs/mcp-knowledge.log
+```
+
+Cada linha e um JSON com `timestamp`, `event`, `duration_ms` e `status`. Use para diagnosticar problemas de performance ou erros de busca.
+
+---
+
 ## Troubleshooting
 
 ### `.\install.ps1` não executa — erro de Execution Policy
