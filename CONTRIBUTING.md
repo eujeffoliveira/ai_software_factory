@@ -71,6 +71,7 @@ The installer is idempotent — re-running it after changes updates only what ch
 | `.\uninstall.ps1 -WhatIf` | Dry-run uninstall |
 | `.\link-mcp.ps1` | Links MCP server to a project's .mcp.json |
 | `.\link-roo.ps1` | Generates Roo Code modes for a project |
+| `& "$env:FACTORY_ROOT\init-project.ps1"` | Initializes `.factory/` workspace in the current project (optional, for multi-sprint projects) |
 | `python tools/factory-validators/run_all.py` | Run all 10 factory structure validators |
 | `python -m pytest tools/mcp-knowledge-search/tests/ -v` | Run 39 MCP unit tests |
 

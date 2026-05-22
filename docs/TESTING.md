@@ -6,9 +6,12 @@
 |-------|-----------|--------|--------------|
 | MCP pytest | pytest | 39 testes: database.py + server.py (6 ferramentas) | `python -m pytest tools/mcp-knowledge-search/tests/ -v` |
 | Factory Validators | Python | 10 validadores: estrutura, JSON, licenças, links | `python tools/factory-validators/run_all.py` |
+| Pester (PowerShell) | Pester v5 | Syntax + comportamento de install/doctor/uninstall/link | `Invoke-Pester tests/powershell/` |
+| Smoke Prompts | Manual | 9 arquivos com prompts pré-escritos + pass/fail signals | Copiar prompt → Claude Code |
+| Eval Harness | PowerShell + humano | 7 casos semi-automatizados + 8 rubricas de pontuação | `.\evals\run-evals.ps1` |
 | Diagnóstico de instalação | PowerShell | 14 categorias do ambiente instalado | `.\doctor.ps1` |
 | MCP health check | PowerShell | 7 verificações do servidor MCP | `.\test-mcp.ps1` |
-| CI automático | GitHub Actions | Todos os itens acima, em push/PR | `.github/workflows/validate-factory.yml` |
+| CI automático | GitHub Actions | MCP pytest + factory validators, em push/PR | `.github/workflows/validate-factory.yml` |
 
 ---
 
@@ -204,11 +207,170 @@ claude
 
 ---
 
+## Pester tests (PowerShell)
+
+Testa a sintaxe e o comportamento estrutural dos scripts PowerShell sem exigir instalação completa.
+
+**Pré-requisito:**
+
+```powershell
+# Instalar Pester v5 (caso não tenha)
+Install-Module -Name Pester -Force -SkipPublisherCheck
+```
+
+**Executar todos:**
+
+```powershell
+Invoke-Pester tests/powershell/ -Output Detailed
+```
+
+**Executar um arquivo específico:**
+
+```powershell
+Invoke-Pester tests/powershell/Install.Tests.ps1 -Output Detailed
+```
+
+**Arquivos disponíveis:**
+
+| Arquivo | Script testado | O que verifica |
+|---------|---------------|----------------|
+| `Install.Tests.ps1` | `install.ps1` | Sintaxe AST, parâmetro `-ForceDeps`, array `$agents` com 11 entradas, arquivo VERSION, marcadores de idempotência |
+| `Doctor.Tests.ps1` | `doctor.ps1` | Sintaxe AST, 4 funções helper, presença das 14 categorias no conteúdo, exit code 0 ou 1 via child process |
+| `Uninstall.Tests.ps1` | `uninstall.ps1` | Sintaxe AST, 4 parâmetros, modo `-WhatIf` não deleta arquivos (usa `$TestDrive`), segurança do marcador AUTO-GENERATED |
+| `LinkMcp.Tests.ps1` | `link-mcp.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem `.mcp.json`, cópia real para `$TestDrive` com backup |
+| `LinkRoo.Tests.ps1` | `link-roo.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem arquivos `roo/`, cópia de `.roomodes` + `.clinerules` com backup |
+
+**Técnicas usadas:**
+
+- `$TestDrive` — diretório temporário por teste, limpo automaticamente pelo Pester
+- Child process via `pwsh -NonInteractive -Command ...` — testa scripts com `exit` sem encerrar o runner
+- Mock de `$env:USERPROFILE` / `$env:FACTORY_ROOT` — testa comportamento de caminhos sem tocar o ambiente real
+- AST parse — valida sintaxe sem executar o script
+
+---
+
+## Smoke Prompts
+
+Prompts pré-escritos com comportamento esperado e sinais de pass/fail. Não são automatizados — requerem uma sessão Claude Code.
+
+**Localização:** `tests/agent-smoke-prompts/`
+
+**Arquivos disponíveis:**
+
+| Arquivo | Agente principal | O que testa |
+|---------|-----------------|------------|
+| `techlead.md` | `@techlead` | Gate A0, enforcement de gate, trigger de ADR, atualização do State Ledger, escalação humana |
+| `architect.md` | `@architect` | Golden Model (web_app), desvio com ADR, estratégia de segurança, arquétipo automation_script |
+| `qa.md` | `@qa` | Geração de plano de testes, threshold 80% de cobertura, alinhamento BDD |
+| `devsecops.md` | `@devsecops` | SQL injection → OWASP A03, Gate 5 incontornável, detecção de secrets, LGPD |
+| `dataengineer.md` | `@dataengineer` | Stack Polars+DuckDB+Pandera, qualidade de dados, bronze/silver/gold |
+| `automation-script-flow.md` | Todos | Fluxo completo Gate A0→3 para automation_script (regressão crítica: não deve retornar stack web_app) |
+| `mcp-first.md` | Todos | MCP search acionado, citação de fonte, sem alucinação, comportamento de fallback |
+| `web-app-flow.md` | Todos | Golden Model web_app, Gate A0→2, invariantes críticos (proxy.ts, prisma migrate) |
+| `governance-licensing.md` | Todos | Licenciamento dual, política de secrets, copyright, Code of Conduct |
+
+**Como executar:**
+
+1. Abrir o arquivo de smoke test:
+   ```powershell
+   code tests/agent-smoke-prompts/techlead.md
+   ```
+2. Copiar o prompt da seção correspondente
+3. Colar em uma sessão Claude Code com o agente indicado
+4. Comparar a resposta com "Expected behavior" e "Pass signals"
+
+**Testes de maior prioridade para regressão:**
+
+1. `automation-script-flow.md` — previne misclassificação automation → web_app
+2. `techlead.md` → Smoke Test 2 (enforcement de gate)
+3. `devsecops.md` → Smoke Test 2 (Gate 5 incontornável)
+4. `mcp-first.md` → Smoke Test 3 (sem alucinação)
+
+---
+
+## Eval Harness (evals/)
+
+Casos semi-automatizados com verificação de `expected_contains`/`must_not_contain` e rubricas de pontuação 0–3 por dimensão.
+
+**Estrutura:**
+
+```
+evals/
+├── cases/          # 7 arquivos JSON com casos de teste
+├── rubrics/        # 8 rubricas de pontuação em Markdown
+├── run-evals.ps1   # Runner interativo (human-in-the-loop)
+└── results/        # Resultados salvos (gitignored)
+```
+
+**Casos disponíveis:**
+
+| Arquivo | Agente | Discriminador principal |
+|---------|--------|------------------------|
+| `web_app_architecture.json` | `@architect` | Stack Next.js 16, 15 termos esperados |
+| `python_automation.json` | `@techlead` | Classificação automation_script, NOT web_app |
+| `data_pipeline.json` | `@techlead` | Polars+DuckDB, NOT pandas+SQLAlchemy |
+| `security_review.json` | `@devsecops` | SQL injection → OWASP A03 → BLOCKED |
+| `mcp_first_behavior.json` | `@techlead` | MCP search acionado antes de responder |
+| `project_archetype_classification.json` | `@techlead` | 3 descrições → arquétipo correto cada |
+| `licensing_governance_awareness.json` | `@techlead` | Apache-2.0 (código) ≠ CC BY 4.0 (docs) |
+
+**Rubricas disponíveis:**
+
+| Rubrica | Agente | Dimensões | Pontuação máxima |
+|---------|--------|-----------|-----------------|
+| `techlead_rubric.md` | `@techlead` | Classificação, gates, State Ledger, ADR, riscos, MCP, escalação, delegação | 24 |
+| `architect_rubric.md` | `@architect` | Golden Model, ADR, segurança, observabilidade, contrato de API, schema | 21 |
+| `qa_rubric.md` | `@qa` | Cobertura, Vitest/Playwright, edge cases, BDD, performance | 15 |
+| `devsecops_rubric.md` | `@devsecops` | OWASP Top 10, threat model, secrets, LGPD, bloqueio Gate 5 | 15 |
+| `dataengineer_rubric.md` | `@dataengineer` | Arquétipo de pipeline, Pandera, idempotência, camadas bronze/silver/gold | 15 |
+| `automation_script_rubric.md` | Qualquer | Stack automation_script, dry-run, idempotência, retry, secrets | 18 |
+| `mcp_first_rubric.md` | Todos | MCP search acionado, citação de fonte, sem alucinação, fallback | 15 |
+| `governance_rubric.md` | Todos | Licenciamento dual, secrets, copyright, governança | 15 |
+
+**Executar:**
+
+```powershell
+# Todos os casos (interativo)
+.\evals\run-evals.ps1
+
+# Caso específico
+.\evals\run-evals.ps1 -CaseName python
+
+# Com rubrica de pontuação
+.\evals\run-evals.ps1 -CaseName security -RubricName devsecops_rubric
+
+# Listar casos sem executar
+.\evals\run-evals.ps1 -NonInteractive
+```
+
+Resultados são salvos em `evals/results/<timestamp>-results.json`.
+
+**Fluxo human-in-the-loop:**
+
+1. O runner exibe o prompt do caso
+2. Você envia o prompt ao agente indicado em Claude Code
+3. Cola a resposta completa no runner
+4. O runner verifica automaticamente `expected_contains` e `must_not_contain`
+5. Você aplica a rubrica para pontuação detalhada (opcional)
+6. O resultado (PASS / PARTIAL / FAIL) é salvo com timestamp
+
+**Critérios:**
+
+| Resultado | Condição |
+|-----------|----------|
+| PASS | Todos os `expected_contains` presentes + nenhum `must_not_contain` |
+| FAIL | Qualquer `must_not_contain` presente, ou omissões críticas |
+| PARTIAL | Maioria dos `expected_contains` presente, sem recomendações erradas |
+
+---
+
 ## CI — GitHub Actions
 
 O workflow `.github/workflows/validate-factory.yml` roda automaticamente em push e PR para `main`:
 
 - **python-tests**: executa os 39 testes pytest em Python 3.11 e 3.12
 - **factory-validators**: executa os 10 validadores de estrutura
+
+Smoke prompts e eval cases **não rodam em CI** — requerem uma sessão Claude Code ao vivo.
 
 Para contribuir com novos testes, veja `CONTRIBUTING.md`.
