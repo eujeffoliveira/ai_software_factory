@@ -2,7 +2,7 @@
 
 ## Where to get help
 
-**Bugs and unexpected behavior** — open a [GitHub Issue](https://github.com/jeffersonoliveira/ai_software_factory/issues/new/choose) and select the appropriate template:
+**Bugs and unexpected behavior** — open a [GitHub Issue](https://github.com/eujeffoliveira/ai_software_factory/issues/new/choose) and select the appropriate template:
 
 | Issue type | Template to use |
 |---|---|
@@ -12,7 +12,7 @@
 | Documentation unclear or wrong | `documentation.yml` |
 | New feature or improvement | `feature_request.yml` |
 
-**Questions and discussion** — use [GitHub Discussions](https://github.com/jeffersonoliveira/ai_software_factory/discussions) for usage questions, ideas, and general conversation.
+**Questions and discussion** — use [GitHub Discussions](https://github.com/eujeffoliveira/ai_software_factory/discussions) for usage questions, ideas, and general conversation.
 
 Issue templates live in [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/) and are loaded automatically by GitHub when you click **New Issue**.
 

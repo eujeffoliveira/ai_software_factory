@@ -9,7 +9,7 @@ Suporta **Claude Code** (`@nome`) e **Roo Code / Cline** (custom modes no VS Cod
 ## Quick Start
 
 ```powershell
-git clone https://github.com/jeffersonoliveira/ai_software_factory
+git clone https://github.com/eujeffoliveira/ai_software_factory
 cd ai_software_factory
 .\install.ps1
 ```

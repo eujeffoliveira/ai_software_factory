@@ -42,7 +42,7 @@ Optional but recommended:
 
 ```powershell
 # 1. Clone the repository
-git clone https://github.com/jeffersonoliveira/ai_software_factory
+git clone https://github.com/eujeffoliveira/ai_software_factory
 cd ai_software_factory
 
 # 2. Install the factory into your Claude Code environment
