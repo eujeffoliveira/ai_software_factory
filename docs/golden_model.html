@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Model v1.2 — Raiz Educação</title>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      background: '#1e293b',
+      primaryColor: '#1e3a5f',
+      primaryBorderColor: '#ef7916',
+      primaryTextColor: '#e2e8f0',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#243047',
+      lineColor: '#7dcdbb',
+      edgeLabelBackground: '#1e293b',
+      clusterBkg: '#0f172a',
+      clusterBorder: '#334155',
+      titleColor: '#e2e8f0',
+      nodeTextColor: '#e2e8f0',
+      mainBkg: '#1e3a5f',
+      nodeBorder: '#ef7916',
+      labelTextColor: '#e2e8f0',
+      signalColor: '#7dcdbb',
+      signalTextColor: '#e2e8f0',
+      actorBkg: '#1e3a5f',
+      actorBorder: '#ef7916',
+      actorTextColor: '#e2e8f0',
+      actorLineColor: '#7dcdbb',
+      noteBkgColor: '#243047',
+      noteTextColor: '#e2e8f0',
+      activationBkgColor: '#ef791633',
+      activationBorderColor: '#ef7916',
+    }
+  });
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange: #ef7916;
+  --orange-dim: #ef791622;
+  --teal: #7dcdbb;
+  --teal-dim: #7dcdbb22;
+  --bg: #0a1120;
+  --surface: #111827;
+  --surface2: #1e293b;
+  --surface3: #243047;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --border2: #334155;
+  --success: #22c55e;
+  --success-dim: #22c55e22;
+  --warning: #f59e0b;
+  --warning-dim: #f59e0b22;
+  --danger: #ef4444;
+  --danger-dim: #ef444422;
+  --info: #3b82f6;
+  --info-dim: #3b82f622;
+  --sidebar-w: 250px;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 200;
+}
+
+.sidebar-logo {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .brand {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.sidebar-logo h1 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--orange);
+  line-height: 1.2;
+}
+.sidebar-logo .version {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--orange-dim);
+  color: var(--orange);
+  border: 1px solid var(--orange);
+  font-weight: 600;
+}
+
+.sidebar-nav { padding: 0.75rem 0; flex: 1; }
+.nav-group { margin-bottom: 0.25rem; }
+.nav-group-label {
+  padding: 0.5rem 1.25rem 0.25rem;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.nav-link:hover { color: var(--text); background: var(--surface2); }
+.nav-link.active {
+  color: var(--orange);
+  background: var(--orange-dim);
+  border-left-color: var(--orange);
+}
+.nav-icon { font-size: 0.9rem; width: 1.2rem; text-align: center; }
+
+/* ── MAIN CONTENT ───────────────────────────── */
+.content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 2.5rem 3rem;
+  max-width: calc(100% - var(--sidebar-w));
+}
+
+section {
+  max-width: 900px;
+  margin: 0 auto 5rem;
+  scroll-margin-top: 1.5rem;
+}
+
+/* ── TYPOGRAPHY ─────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border2);
+}
+.section-icon {
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border2);
+}
+.section-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.section-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem; }
+
+h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--teal);
+  margin: 2rem 0 0.75rem;
+}
+h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 1.25rem 0 0.5rem;
+}
+p { color: var(--text-muted); margin-bottom: 0.75rem; font-size: 0.9rem; }
+p strong { color: var(--text); }
+
+/* ── CARDS ──────────────────────────────────── */
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.card-sm {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.card-sm h4 { margin: 0 0 0.4rem; font-size: 0.85rem; }
+.card-sm p { margin: 0; font-size: 0.78rem; }
+
+.principle-card {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.principle-num {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--orange);
+  min-width: 2rem;
+  line-height: 1;
+  margin-top: 0.1rem;
+}
+.principle-card h4 { margin: 0 0 0.25rem; font-size: 0.9rem; color: var(--text); }
+.principle-card p { margin: 0; font-size: 0.82rem; }
+
+/* ── NAV CARDS (home) ───────────────────────── */
+.nav-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.nav-card {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: block;
+}
+.nav-card:hover {
+  border-color: var(--orange);
+  background: var(--orange-dim);
+  transform: translateY(-2px);
+}
+.nav-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.nav-card .label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+.nav-card .desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+/* ── TABLES ─────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border2); }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+thead th {
+  background: var(--surface3);
+  color: var(--text);
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border2);
+  white-space: nowrap;
+}
+tbody td {
+  padding: 0.6rem 1rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface3); color: var(--text); }
+tbody td:first-child { color: var(--text); font-weight: 500; }
+
+/* ── CODE ───────────────────────────────────── */
+pre {
+  background: #060d1a;
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 0.75rem 0 1.5rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+code {
+  font-family: var(--mono);
+  color: #a8d8b0;
+}
+.code-label {
+  display: inline-block;
+  font-size: 0.65rem;
+  background: var(--surface3);
+  color: var(--text-muted);
+  padding: 0.15rem 0.6rem;
+  border-radius: 0.4rem 0.4rem 0 0;
+  font-family: var(--mono);
+  border: 1px solid var(--border2);
+  border-bottom: none;
+  margin-bottom: -1px;
+}
+.kw { color: #c792ea; }
+.str { color: #f78c6c; }
+.cmt { color: #546e7a; }
+.fn { color: #82aaff; }
+.num { color: #f78c6c; }
+.type { color: #ffcb6b; }
+
+/* ── BADGES ─────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+.badge-teal   { background: var(--teal-dim);   color: var(--teal);   border: 1px solid var(--teal); }
+.badge-green  { background: var(--success-dim); color: var(--success); border: 1px solid var(--success); }
+.badge-yellow { background: var(--warning-dim); color: var(--warning); border: 1px solid var(--warning); }
+.badge-red    { background: var(--danger-dim);  color: var(--danger);  border: 1px solid var(--danger); }
+.badge-blue   { background: var(--info-dim);    color: var(--info);    border: 1px solid var(--info); }
+
+/* ── CALLOUTS ───────────────────────────────── */
+.callout {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+.callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+.callout p { margin: 0; }
+.callout-orange { background: var(--orange-dim); border: 1px solid var(--orange); color: var(--text); }
+.callout-red    { background: var(--danger-dim);  border: 1px solid var(--danger);  color: var(--text); }
+.callout-green  { background: var(--success-dim); border: 1px solid var(--success); color: var(--text); }
+.callout-blue   { background: var(--info-dim);    border: 1px solid var(--info);    color: var(--text); }
+
+/* ── CHECKLIST ──────────────────────────────── */
+.checklist { list-style: none; margin: 0.5rem 0 1.5rem; }
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li::before {
+  content: '☐';
+  color: var(--border2);
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+/* ── STEP LIST ──────────────────────────────── */
+.steps { list-style: none; margin: 0.5rem 0 1.5rem; counter-reset: step; }
+.steps li {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  counter-increment: step;
+  align-items: flex-start;
+}
+.steps li:last-child { border-bottom: none; }
+.steps li::before {
+  content: counter(step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  min-width: 1.6rem;
+  background: var(--orange-dim);
+  color: var(--orange);
+  border: 1px solid var(--orange);
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 0.05rem;
+}
+
+/* ── MERMAID ────────────────────────────────── */
+.mermaid {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin: 1rem 0 1.5rem;
+  overflow-x: auto;
+  text-align: center;
+}
+
+/* ── STACK GRID ─────────────────────────────── */
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+.stack-item {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  transition: all 0.15s;
+}
+.stack-item:hover { border-color: var(--teal); }
+.stack-name { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.stack-version { font-size: 0.7rem; color: var(--orange); font-family: var(--mono); margin: 0.15rem 0; }
+.stack-desc { font-size: 0.7rem; color: var(--text-muted); }
+
+/* ── COLOR SWATCHES ─────────────────────────── */
+.swatches { display: flex; gap: 1rem; margin: 1rem 0 1.5rem; }
+.swatch {
+  flex: 1;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--border2);
+}
+.swatch-color { height: 80px; }
+.swatch-info { padding: 0.75rem; background: var(--surface2); }
+.swatch-name { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+.swatch-hex { font-size: 0.72rem; font-family: var(--mono); color: var(--text-muted); }
+
+/* ── TESTING PYRAMID ────────────────────────── */
+.pyramid {
+  margin: 1rem 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.pyramid-layer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: white;
+  height: 2.5rem;
+  transition: all 0.15s;
+}
+.pyramid-layer:hover { transform: scaleX(1.02); }
+.py-e2e   { width: 200px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.py-int   { width: 320px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.py-unit  { width: 480px; background: linear-gradient(135deg, #22c55e, #15803d); }
+.py-static { width: 560px; background: linear-gradient(135deg, #64748b, #475569); }
+
+/* ── LAYER DIAGRAM ──────────────────────────── */
+.layers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 1rem 0 1.5rem;
+}
+.layer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border2);
+  font-size: 0.82rem;
+}
+.layer-icon { font-size: 1.1rem; width: 1.5rem; text-align: center; flex-shrink: 0; }
+.layer-name { font-weight: 600; color: var(--text); min-width: 160px; }
+.layer-path { font-family: var(--mono); font-size: 0.72rem; color: var(--orange); flex: 1; }
+.layer-desc { color: var(--text-muted); font-size: 0.78rem; flex: 2; }
+.layer-edge   { background: var(--orange-dim); border-color: var(--orange); }
+.layer-server { background: var(--info-dim); border-color: var(--info); }
+.layer-client { background: var(--teal-dim); border-color: var(--teal); }
+.layer-data   { background: var(--surface2); }
+.layer-job    { background: var(--warning-dim); border-color: var(--warning); }
+
+/* ── ENV PIPELINE ───────────────────────────── */
+.env-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 1rem 0 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+.env-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 130px;
+}
+.env-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid;
+  gap: 0.15rem;
+}
+.env-icon { font-size: 1.4rem; }
+.env-label { font-size: 0.68rem; color: var(--text-muted); font-weight: 500; text-align: center; max-width: 120px; }
+.env-arrow {
+  font-size: 1.2rem;
+  color: var(--border2);
+  margin: 0 -0.25rem;
+  margin-bottom: 2rem;
+}
+.env-local   { background: var(--success-dim); border-color: var(--success); color: var(--success); }
+.env-preview { background: var(--info-dim);    border-color: var(--info);    color: var(--info); }
+.env-staging { background: var(--warning-dim); border-color: var(--warning); color: var(--warning); }
+.env-prod    { background: var(--orange-dim);  border-color: var(--orange);  color: var(--orange); }
+
+/* ── ADR FLOW ───────────────────────────────── */
+.adr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+.adr-do, .adr-dont {
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid;
+}
+.adr-do   { background: var(--success-dim); border-color: var(--success); }
+.adr-dont { background: var(--danger-dim);  border-color: var(--danger); }
+.adr-do h4   { color: var(--success); margin: 0 0 0.5rem; font-size: 0.82rem; }
+.adr-dont h4 { color: var(--danger);  margin: 0 0 0.5rem; font-size: 0.82rem; }
+.adr-do ul, .adr-dont ul { list-style: none; }
+.adr-do li, .adr-dont li { font-size: 0.78rem; color: var(--text-muted); padding: 0.2rem 0; }
+.adr-do   li::before { content: '✓ '; color: var(--success); }
+.adr-dont li::before { content: '✗ '; color: var(--danger); }
+
+/* ── QUICK REF ──────────────────────────────── */
+.qr-block {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.qr-block h4 { color: var(--orange); margin: 0 0 0.75rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+.qr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+.qr-row:last-child { border-bottom: none; }
+.qr-key { color: var(--text-muted); }
+.qr-val { font-family: var(--mono); color: var(--teal); font-size: 0.75rem; text-align: right; }
+
+/* ── ANTI-PATTERN TABLE ─────────────────────── */
+.ap-bad { color: var(--danger); font-family: var(--mono); font-size: 0.75rem; }
+.ap-why { color: var(--text-muted); font-size: 0.75rem; }
+.ap-fix { color: var(--success); font-size: 0.78rem; }
+
+/* ── TABS ───────────────────────────────────── */
+.tabs { display: flex; gap: 0.5rem; margin-bottom: -1px; }
+.tab {
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border2);
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+.tab.active { background: var(--surface2); color: var(--orange); border-color: var(--border2); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tab-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 0 0.75rem 0.75rem 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── DIVIDER ────────────────────────────────── */
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+/* ── MOBILE TOGGLE ──────────────────────────── */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 0.9rem; left: 0.9rem;
+  z-index: 300;
+  background: var(--orange);
+  border: none;
+  border-radius: 0.6rem;
+  width: 2.75rem; height: 2.75rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(239,121,22,0.4);
+}
+
+/* Overlay backdrop */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 150;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.sidebar-overlay.open { display: block; }
+
+/* Sidebar close button (inside sidebar, mobile only) */
+.sidebar-close {
+  display: none;
+  position: absolute;
+  top: 1rem; right: 1rem;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 0.4rem;
+  width: 2rem; height: 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+/* ── RESPONSIVE 768px ───────────────────────── */
+@media (max-width: 768px) {
+  .mobile-toggle { display: flex; }
+  .sidebar-close { display: flex; }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: none;
+    position: fixed;
+    width: min(var(--sidebar-w), 85vw);
+    z-index: 200;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 32px rgba(0,0,0,0.6);
+  }
+  .sidebar-logo { padding-right: 3rem; }
+
+  .content {
+    margin-left: 0;
+    padding: 1rem 1rem 3rem;
+    max-width: 100%;
+  }
+
+  /* Sections */
+  section { scroll-margin-top: 1rem; margin-bottom: 3.5rem; }
+  .section-header { gap: 0.75rem; margin-bottom: 1.25rem; }
+  .section-header h2 { font-size: 1.25rem; }
+  .section-icon { width: 2.5rem; height: 2.5rem; font-size: 1.4rem; border-radius: 0.5rem; }
+
+  /* Headings */
+  h3 { font-size: 0.95rem; margin-top: 1.5rem; }
+
+  /* Nav cards: 2 columns */
+  .nav-cards { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+  .nav-card { padding: 0.75rem; }
+  .nav-card .icon { font-size: 1.25rem; }
+  .nav-card .label { font-size: 0.75rem; }
+  .nav-card .desc { font-size: 0.67rem; }
+
+  /* Stack grid: 2 columns */
+  .stack-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Card grid: single column */
+  .card-grid { grid-template-columns: 1fr; }
+
+  /* ADR grid: stacked */
+  .adr-grid { grid-template-columns: 1fr; }
+
+  /* Swatches: 2x2 */
+  .swatches { flex-wrap: wrap; }
+  .swatch { min-width: calc(50% - 0.5rem); flex: none; }
+
+  /* Env pipeline: vertical */
+  .env-pipeline { flex-direction: column; align-items: flex-start; padding-bottom: 0; }
+  .env-box { flex-direction: row; min-width: unset; width: 100%; align-items: center; gap: 1rem; }
+  .env-circle { width: 56px; height: 56px; font-size: 0.58rem; flex-shrink: 0; }
+  .env-icon { font-size: 1.1rem; }
+  .env-arrow { transform: rotate(90deg); margin: 0 0 0 1.75rem; font-size: 1rem; }
+  .env-label { text-align: left; max-width: none; }
+
+  /* Layer rows: wrap details */
+  .layer { flex-wrap: wrap; }
+  .layer-name { min-width: unset; flex: 1; }
+  .layer-path { order: 10; width: 100%; margin-top: 0.2rem; }
+  .layer-desc { order: 11; width: 100%; font-size: 0.74rem; }
+
+  /* Pyramid: scaled down */
+  .py-e2e    { width: 150px; font-size: 0.7rem; }
+  .py-int    { width: 240px; font-size: 0.7rem; }
+  .py-unit   { width: 320px; font-size: 0.7rem; }
+  .py-static { width: 360px; font-size: 0.7rem; }
+
+  /* Tabs: wrap */
+  .tabs { flex-wrap: wrap; gap: 0.4rem; }
+  .tab { font-size: 0.72rem; padding: 0.4rem 0.75rem; }
+
+  /* Mermaid */
+  .mermaid { padding: 1rem 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Tables */
+  .table-wrap { -webkit-overflow-scrolling: touch; }
+  thead th { white-space: nowrap; font-size: 0.76rem; padding: 0.6rem 0.8rem; }
+  tbody td { font-size: 0.76rem; padding: 0.5rem 0.8rem; }
+
+  /* Code */
+  pre { font-size: 0.71rem; padding: 0.9rem; }
+  .code-label { font-size: 0.6rem; }
+
+  /* Principle cards */
+  .principle-card { padding: 0.85rem 1rem; gap: 0.75rem; }
+  .principle-num { font-size: 1rem; }
+
+  /* Steps */
+  .steps li { gap: 0.75rem; font-size: 0.82rem; }
+
+  /* QR blocks */
+  .qr-row { flex-direction: column; gap: 0.15rem; align-items: flex-start; }
+  .qr-val { text-align: left; }
+
+  /* Nav links: bigger touch target */
+  .nav-link { padding: 0.65rem 1.25rem; min-height: 44px; }
+}
+
+/* ── RESPONSIVE 480px ───────────────────────── */
+@media (max-width: 480px) {
+  .content { padding: 0.75rem 0.75rem 3rem; }
+  .section-header h2 { font-size: 1.1rem; }
+
+  .py-e2e    { width: 120px; }
+  .py-int    { width: 200px; }
+  .py-unit   { width: 270px; }
+  .py-static { width: 310px; }
+
+  pre { font-size: 0.66rem; }
+
+  .card { padding: 1rem; }
+  .card-sm { padding: 0.85rem; }
+
+  .adr-do li, .adr-dont li { font-size: 0.75rem; }
+
+  .checklist li { font-size: 0.8rem; }
+  .steps li::before { width: 1.4rem; height: 1.4rem; min-width: 1.4rem; font-size: 0.65rem; }
+
+  .callout { padding: 0.85rem 1rem; font-size: 0.8rem; }
+
+  .sidebar-logo h1 { font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose" aria-label="Fechar menu">✕</button>
+  <div class="sidebar-logo">
+    <div class="brand">Raiz Educação</div>
+    <h1>Golden Model</h1>
+    <span class="version">v1.2.0</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Início</div>
+      <a class="nav-link active" href="#inicio"><span class="nav-icon">🏠</span>Visão Geral</a>
+      <a class="nav-link" href="#onboarding"><span class="nav-icon">🚀</span>Onboarding</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Fundamentos</div>
+      <a class="nav-link" href="#stack"><span class="nav-icon">📦</span>Stack Aprovada</a>
+      <a class="nav-link" href="#arquitetura"><span class="nav-icon">🏗️</span>Arquitetura</a>
+      <a class="nav-link" href="#data-fetching"><span class="nav-icon">🔄</span>Data Fetching</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Implementação</div>
+      <a class="nav-link" href="#banco"><span class="nav-icon">🗄️</span>Banco de Dados</a>
+      <a class="nav-link" href="#seguranca"><span class="nav-icon">🔒</span>Segurança &amp; LGPD</a>
+      <a class="nav-link" href="#testes"><span class="nav-icon">✅</span>Testes &amp; QA</a>
+      <a class="nav-link" href="#frontend"><span class="nav-icon">🎨</span>Frontend</a>
+      <a class="nav-link" href="#jobs"><span class="nav-icon">⚙️</span>Jobs &amp; Crons</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Entrega</div>
+      <a class="nav-link" href="#deploy"><span class="nav-icon">🚢</span>Deploy &amp; Operação</a>
+      <a class="nav-link" href="#adr"><span class="nav-icon">📄</span>Processo ADR</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Referência</div>
+      <a class="nav-link" href="#antipadroes"><span class="nav-icon">🚫</span>Anti-padrões</a>
+      <a class="nav-link" href="#quickref"><span class="nav-icon">⚡</span>Quick Reference</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<!-- ═══════════════════════════════════════════ INÍCIO -->
+<section id="inicio">
+  <div class="section-header">
+    <div class="section-icon">🏠</div>
+    <div>
+      <h2>Golden Model</h2>
+      <p>Padrão técnico de engenharia — Raiz Educação v1.2.0</p>
+    </div>
+  </div>
+
+  <p>Este documento define o que fazemos, como fazemos e por que fazemos assim em todos os projetos de software da Raiz Educação. Ele é normativo — seguir o padrão é o caminho padrão, desviar exige justificativa formal.</p>
+
+  <h3>Como navegar</h3>
+  <div class="nav-cards">
+    <a class="nav-card" href="#onboarding"><div class="icon">🚀</div><div class="label">Onboarding</div><div class="desc">Setup do ambiente do zero</div></a>
+    <a class="nav-card" href="#stack"><div class="icon">📦</div><div class="label">Stack</div><div class="desc">Versões e ferramentas aprovadas</div></a>
+    <a class="nav-card" href="#arquitetura"><div class="icon">🏗️</div><div class="label">Arquitetura</div><div class="desc">Camadas, fluxos e estrutura</div></a>
+    <a class="nav-card" href="#data-fetching"><div class="icon">🔄</div><div class="label">Data Fetching</div><div class="desc">Quando usar o quê</div></a>
+    <a class="nav-card" href="#banco"><div class="icon">🗄️</div><div class="label">Banco de Dados</div><div class="desc">Prisma, migrations, convenções</div></a>
+    <a class="nav-card" href="#seguranca"><div class="icon">🔒</div><div class="label">Segurança</div><div class="desc">Auth, LGPD, secrets</div></a>
+    <a class="nav-card" href="#testes"><div class="icon">✅</div><div class="label">Testes &amp; QA</div><div class="desc">Vitest, Playwright, gates</div></a>
+    <a class="nav-card" href="#frontend"><div class="icon">🎨</div><div class="label">Frontend</div><div class="desc">Design system, acessibilidade</div></a>
+    <a class="nav-card" href="#jobs"><div class="icon">⚙️</div><div class="label">Jobs &amp; Crons</div><div class="desc">Idempotência, guardCron</div></a>
+    <a class="nav-card" href="#deploy"><div class="icon">🚢</div><div class="label">Deploy</div><div class="desc">Vercel, CI/CD, rollback</div></a>
+    <a class="nav-card" href="#adr"><div class="icon">📄</div><div class="label">ADR</div><div class="desc">Quando e como desviar</div></a>
+    <a class="nav-card" href="#quickref"><div class="icon">⚡</div><div class="label">Quick Ref</div><div class="desc">Cheat sheet de bolso</div></a>
+  </div>
+
+  <h3>Princípios</h3>
+  <div class="principle-card"><div class="principle-num">P1</div><div><h4>Simplicidade antes de abstração</h4><p>A solução mais simples que resolve o problema real. Generalize só quando houver repetição real, não antecipação.</p></div></div>
+  <div class="principle-card"><div class="principle-num">P2</div><div><h4>Segurança por padrão</h4><p>A configuração padrão é segura. Qualquer abertura (acesso público, dados em log, auth flexível) precisa ser explícita e justificada.</p></div></div>
+  <div class="principle-card"><div class="principle-num">P3</div><div><h4>Auditabilidade</h4><p>Toda ação humana ou automatizada que afete dados, permissões ou configurações deve ser rastreável via <code>audit_log</code> ou <code>sync_log</code>.</p></div></div>
+  <div class="principle-card"><div class="principle-num">P4</div><div><h4>Falhar cedo e claramente</h4><p>Configurações inválidas e contratos quebrados falham no boot ou CI — nunca silenciosamente em produção.</p></div></div>
+  <div class="principle-card"><div class="principle-num">P5</div><div><h4>Zero segredo no código</h4><p>Nenhuma credencial, token ou chave no código-fonte. Segredos vivem em variáveis de ambiente validadas por <code>lib/env.ts</code>.</p></div></div>
+  <div class="principle-card"><div class="principle-num">P6</div><div><h4>Escalabilidade progressiva</h4><p>Comece simples. Escale quando houver evidência de necessidade. Complexidade prematura cria dívida técnica sem retorno.</p></div></div>
+</section>
+
+<!-- ═══════════════════════════════════════════ ONBOARDING -->
+<section id="onboarding">
+  <div class="section-header">
+    <div class="section-icon">🚀</div>
+    <div><h2>Onboarding</h2><p>Setup completo do ambiente do zero</p></div>
+  </div>
+
+  <h3>Pré-requisitos</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Ferramenta</th><th>Versão mínima</th><th>Verificação</th></tr></thead>
+      <tbody>
+        <tr><td>Node.js</td><td>20 LTS</td><td><code>node -v</code></td></tr>
+        <tr><td>npm</td><td>10+</td><td><code>npm -v</code></td></tr>
+        <tr><td>Git</td><td>qualquer recente</td><td><code>git --version</code></td></tr>
+        <tr><td>VS Code</td><td>qualquer recente</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Passo a passo</h3>
+  <ol class="steps">
+    <li><div><strong>Clone e instale as dependências</strong><br><span style="color:var(--text-muted);font-size:0.78rem;">O <code>postinstall</code> roda <code>prisma generate</code> automaticamente.</span><pre><code>git clone &lt;url-do-repositorio&gt;
+cd &lt;nome-do-projeto&gt;
+npm install</code></pre></div></li>
+    <li><div><strong>Configure variáveis de ambiente</strong><br><span style="color:var(--text-muted);font-size:0.78rem;">Nunca commite <code>.env.local</code> — já está no <code>.gitignore</code>. As variáveis obrigatórias estão documentadas em <code>lib/env.ts</code>.</span><pre><code>cp .env.example .env.local
+# edite .env.local com as credenciais fornecidas pelo Tech Lead</code></pre></div></li>
+    <li><div><strong>Configure o banco de dados</strong><br><span style="color:var(--text-muted);font-size:0.78rem;">Use <code>db push</code> apenas localmente. Staging e produção sempre usam <code>migrate deploy</code>.</span><pre><code>npx prisma migrate deploy   # sincroniza com o banco local
+# ou, em sandbox descartável:
+npx prisma db push          # nunca em staging/produção</code></pre></div></li>
+    <li><div><strong>Rode o projeto</strong><pre><code>npm run dev
+# acesse http://localhost:3000</code></pre></div></li>
+    <li><div><strong>Verifique o baseline</strong><br><span style="color:var(--text-muted);font-size:0.78rem;">Se qualquer um desses falhar antes de você mudar algo, sinalize ao Tech Lead.</span><pre><code>npm run typecheck   # TypeScript sem erros
+npm run lint        # ESLint sem erros
+npm run test        # Vitest — todos passando
+npm run build       # build completo sem erros</code></pre></div></li>
+  </ol>
+
+  <h3>Acesso a recursos externos</h3>
+  <div class="callout callout-blue"><div class="callout-icon">ℹ️</div><p>Solicite ao Tech Lead: acesso ao projeto no Supabase (dev), string de conexão do pooler para <code>.env.local</code>, e acesso ao Vercel para ver variáveis de staging.</p></div>
+</section>
+
+<!-- ═══════════════════════════════════════════ STACK -->
+<section id="stack">
+  <div class="section-header">
+    <div class="section-icon">📦</div>
+    <div><h2>Stack Aprovada</h2><p>Versões aprovadas e política de atualização</p></div>
+  </div>
+
+  <h3>Tecnologias e versões</h3>
+  <div class="stack-grid">
+    <div class="stack-item"><div class="stack-name">Next.js</div><div class="stack-version">16.x</div><div class="stack-desc">App Router obrigatório</div></div>
+    <div class="stack-item"><div class="stack-name">React</div><div class="stack-version">19.x</div><div class="stack-desc">Server + Client Components</div></div>
+    <div class="stack-item"><div class="stack-name">TypeScript</div><div class="stack-version">5.x</div><div class="stack-desc">strict mode obrigatório</div></div>
+    <div class="stack-item"><div class="stack-name">Tailwind CSS</div><div class="stack-version">4.x</div><div class="stack-desc">@theme em globals.css</div></div>
+    <div class="stack-item"><div class="stack-name">Prisma</div><div class="stack-version">7.x</div><div class="stack-desc">com PrismaPg adapter</div></div>
+    <div class="stack-item"><div class="stack-name">PostgreSQL</div><div class="stack-version">16+</div><div class="stack-desc">via Supabase</div></div>
+    <div class="stack-item"><div class="stack-name">NextAuth</div><div class="stack-version">5.x beta</div><div class="stack-desc">Google OAuth</div></div>
+    <div class="stack-item"><div class="stack-name">SWR</div><div class="stack-version">2.x</div><div class="stack-desc">polling/revalidação</div></div>
+    <div class="stack-item"><div class="stack-name">Recharts</div><div class="stack-version">3.x</div><div class="stack-desc">gráficos e dashboards</div></div>
+    <div class="stack-item"><div class="stack-name">Zod</div><div class="stack-version">3.x</div><div class="stack-desc">validação runtime</div></div>
+    <div class="stack-item"><div class="stack-name">Vitest</div><div class="stack-version">2.x</div><div class="stack-desc">unit + integration</div></div>
+    <div class="stack-item"><div class="stack-name">Playwright</div><div class="stack-version">latest</div><div class="stack-desc">testes E2E</div></div>
+    <div class="stack-item"><div class="stack-name">Nodemailer</div><div class="stack-version">7.x</div><div class="stack-desc">e-mail transacional</div></div>
+    <div class="stack-item"><div class="stack-name">next-themes</div><div class="stack-version">0.4.x</div><div class="stack-desc">dark mode</div></div>
+    <div class="stack-item"><div class="stack-name">axios</div><div class="stack-version">1.x</div><div class="stack-desc">cliente HTTP externo</div></div>
+  </div>
+
+  <h3>Política de atualizações</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tipo</th><th>Exemplo</th><th>Processo</th><th>Aprovação</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-green">Patch</span></td><td>7.0.1 → 7.0.2</td><td>Renovate/Dependabot automático</td><td>Sem aprovação manual</td></tr>
+        <tr><td><span class="badge badge-blue">Minor</span></td><td>7.0 → 7.1</td><td>Revisar changelog + testar</td><td>Tech Lead</td></tr>
+        <tr><td><span class="badge badge-orange">Major</span></td><td>7 → 8</td><td>Validação humana explícita</td><td>Tech Lead + atualizar este doc</td></tr>
+        <tr><td><span class="badge badge-yellow">Beta/RC</span></td><td>next-auth 5 beta</td><td>Consciência explícita do time</td><td>Tech Lead + revisão periódica</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Scripts obrigatórios no package.json</h3>
+  <span class="code-label">package.json</span>
+  <pre><code><span class="kw">"scripts"</span>: {
+  <span class="str">"postinstall"</span>:      <span class="str">"prisma generate"</span>,
+  <span class="str">"dev"</span>:             <span class="str">"next dev"</span>,
+  <span class="str">"typecheck"</span>:       <span class="str">"tsc --noEmit"</span>,
+  <span class="str">"build"</span>:           <span class="str">"tsc --noEmit && next build"</span>,
+  <span class="str">"start"</span>:           <span class="str">"next start"</span>,
+  <span class="str">"lint"</span>:            <span class="str">"eslint"</span>,
+  <span class="str">"test"</span>:            <span class="str">"vitest run"</span>,
+  <span class="str">"test:watch"</span>:      <span class="str">"vitest"</span>,
+  <span class="str">"test:coverage"</span>:   <span class="str">"vitest run --coverage"</span>,
+  <span class="str">"migrate:deploy"</span>:  <span class="str">"prisma migrate deploy"</span>
+}</code></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════ ARQUITETURA -->
+<section id="arquitetura">
+  <div class="section-header">
+    <div class="section-icon">🏗️</div>
+    <div><h2>Arquitetura</h2><p>Monorepo fullstack Next.js — camadas, fluxos e estrutura de pastas</p></div>
+  </div>
+
+  <div class="callout callout-orange"><div class="callout-icon">📐</div><p><strong>Golden Path:</strong> monorepo fullstack Next.js. Frontend e backend no mesmo repositório. Separar em repositórios diferentes exige ADR aprovado.</p></div>
+
+  <h3>Diagrama de arquitetura</h3>
+  <pre class="mermaid">graph TB
+    Browser(["🌐 Browser"])
+
+    subgraph next["Next.js 16 — Vercel"]
+      proxy["proxy.ts\nedge guard"]
+      SC["Server Components\napp/**/page.tsx"]
+      CC["Client Components\ncomponents/**"]
+      SA["Server Actions\nactions/**"]
+      RH["Route Handlers\napp/api/**"]
+      CR["Cron Routes\napp/api/cron/**"]
+      DAL["Data Access Layer\nlib/db/**"]
+      Jobs["Jobs\nlib/jobs/**"]
+      INT["Integrações\nlib/integrations/**"]
+    end
+
+    subgraph infra["Infraestrutura"]
+      DB[("PostgreSQL\nSupabase")]
+      Cron(["⏰ Vercel Cron"])
+      ExtAPI(["APIs Externas"])
+    end
+
+    Browser --> proxy
+    proxy --> SC
+    proxy --> CC
+    CC -->|"SWR polling"| RH
+    CC --> SA
+    SC --> SA
+    SC --> DAL
+    SA --> DAL
+    RH --> DAL
+    SA -.->|audit_log| DAL
+    Cron --> CR
+    CR --> Jobs
+    Jobs --> DAL
+    Jobs --> INT
+    Jobs -.->|sync_log| DAL
+    INT --> ExtAPI
+    DAL --> DB</pre>
+
+  <h3>Camadas e responsabilidades</h3>
+  <div class="layers">
+    <div class="layer layer-edge"><div class="layer-icon">🛡️</div><div class="layer-name">Proxy / Edge Guard</div><div class="layer-path">proxy.ts</div><div class="layer-desc">Verificação otimista de sessão, proteção de cron</div></div>
+    <div class="layer layer-server"><div class="layer-icon">🖥️</div><div class="layer-name">Server Components</div><div class="layer-path">app/**/page.tsx</div><div class="layer-desc">Leitura inicial, renderização servidor, auth real</div></div>
+    <div class="layer layer-client"><div class="layer-icon">💻</div><div class="layer-name">Client Components</div><div class="layer-path">components/**/*.tsx</div><div class="layer-desc">UI interativa, estado local — sem acesso ao banco</div></div>
+    <div class="layer layer-server"><div class="layer-icon">⚡</div><div class="layer-name">Server Actions</div><div class="layer-path">actions/**/*.ts</div><div class="layer-desc">Toda mutação autorizada — valida sessão + role</div></div>
+    <div class="layer layer-server"><div class="layer-icon">🔌</div><div class="layer-name">Route Handlers</div><div class="layer-path">app/api/**/route.ts</div><div class="layer-desc">Endpoints REST finos — sem regra de negócio</div></div>
+    <div class="layer layer-job"><div class="layer-icon">⏰</div><div class="layer-name">Cron Routes</div><div class="layer-path">app/api/cron/**</div><div class="layer-desc">Entrada de jobs agendados — sempre com guardCron()</div></div>
+    <div class="layer layer-data"><div class="layer-icon">🗄️</div><div class="layer-name">Data Access Layer</div><div class="layer-path">lib/db/**/*.ts</div><div class="layer-desc">Toda consulta ao banco — sem lógica de negócio</div></div>
+    <div class="layer layer-job"><div class="layer-icon">⚙️</div><div class="layer-name">Jobs</div><div class="layer-path">lib/jobs/**/*.ts</div><div class="layer-desc">Lógica de coleta e processamento — usa DAL</div></div>
+  </div>
+
+  <h3>Fluxos de dados</h3>
+  <div class="tabs" id="flow-tabs">
+    <div class="tab active" onclick="switchTab('flow-tabs','flow-read')">📖 Leitura estável</div>
+    <div class="tab" onclick="switchTab('flow-tabs','flow-mutation')">✏️ Mutação</div>
+    <div class="tab" onclick="switchTab('flow-tabs','flow-cron')">⏰ Cron / Job</div>
+    <div class="tab" onclick="switchTab('flow-tabs','flow-polling')">🔄 Polling</div>
+  </div>
+  <div class="tab-panel">
+    <div id="flow-read" class="tab-content active">
+      <pre class="mermaid">sequenceDiagram
+    actor User
+    User->>proxy.ts: GET /pagina
+    proxy.ts->>Server Component: sessão válida
+    Server Component->>lib/db: query()
+    lib/db->>PostgreSQL: SELECT
+    PostgreSQL-->>lib/db: dados
+    lib/db-->>Server Component: resultado tipado
+    Server Component-->>User: HTML renderizado no servidor</pre>
+    </div>
+    <div id="flow-mutation" class="tab-content">
+      <pre class="mermaid">sequenceDiagram
+    actor User
+    User->>Client Component: clica em botão
+    Client Component->>Server Action: action(input)
+    Server Action->>auth(): verifica sessão
+    auth()-->>Server Action: session
+    Server Action->>Server Action: verifica role/permissão
+    Server Action->>Zod: valida input
+    Server Action->>lib/db: escreve dado
+    Server Action->>audit_log: registra ação sensível
+    Server Action->>revalidatePath(): invalida cache
+    revalidatePath()-->>User: página atualizada</pre>
+    </div>
+    <div id="flow-cron" class="tab-content">
+      <pre class="mermaid">sequenceDiagram
+    Vercel Cron->>Cron Route: GET /api/cron/job
+    Cron Route->>guardCron(): valida CRON_SECRET
+    guardCron()-->>Cron Route: autorizado
+    Cron Route->>lib/jobs: runJob()
+    lib/jobs->>API Externa: coleta dados
+    API Externa-->>lib/jobs: resposta
+    lib/jobs->>lib/db: upsert (idempotente)
+    lib/jobs->>sync_log: registra execução
+    Cron Route-->>Vercel Cron: 200 { ok: true }</pre>
+    </div>
+    <div id="flow-polling" class="tab-content">
+      <pre class="mermaid">sequenceDiagram
+    actor User
+    User->>Client Component: abre dashboard
+    Client Component->>SWR: useSWR('/api/dados', fetcher)
+    loop a cada N segundos
+      SWR->>Route Handler: GET /api/dados
+      Route Handler->>auth(): verifica sessão
+      Route Handler->>lib/db: query()
+      lib/db-->>Route Handler: dados
+      Route Handler-->>SWR: JSON
+      SWR-->>Client Component: dados atualizados
+    end</pre>
+    </div>
+  </div>
+
+  <h3>Estrutura de pastas</h3>
+  <pre><code>app/
+  (protected)/          <span class="cmt"># rotas autenticadas</span>
+  api/
+    cron/               <span class="cmt"># jobs agendados</span>
+    health/             <span class="cmt"># GET /api/health</span>
+    [recurso]/          <span class="cmt"># endpoints REST finos</span>
+  login/
+  pending-approval/
+  layout.tsx
+  globals.css
+
+components/
+  ui/                   <span class="cmt"># componentes base</span>
+  layout/               <span class="cmt"># navbar, sidebar</span>
+  charts/               <span class="cmt"># wrappers Recharts</span>
+  domain/               <span class="cmt"># componentes de domínio</span>
+
+actions/
+  [dominio].ts          <span class="cmt"># Server Actions</span>
+
+lib/
+  prisma.ts             <span class="cmt"># singleton Prisma</span>
+  env.ts                <span class="cmt"># vars de ambiente validadas com Zod</span>
+  admin.ts              <span class="cmt"># helpers de autorização</span>
+  db/
+    audit-log.ts        <span class="cmt"># ações humanas</span>
+    sync-log.ts         <span class="cmt"># jobs automáticos</span>
+    [dominio].ts
+  jobs/
+    cron-guard.ts
+    collect-[dominio].ts
+  integrations/
+    [servico]/
+
+prisma/
+  schema.prisma
+  migrations/
+
+docs/
+  adr/                  <span class="cmt"># ADR-001-titulo.md</span>
+  runbooks/             <span class="cmt"># procedimentos de incidente</span>
+
+tests/
+  unit/
+  integration/
+  e2e/
+
+proxy.ts                <span class="cmt"># edge guard (Next.js 16)</span>
+auth.ts                 <span class="cmt"># NextAuth v5</span></code></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════ DATA FETCHING -->
+<section id="data-fetching">
+  <div class="section-header">
+    <div class="section-icon">🔄</div>
+    <div><h2>Data Fetching</h2><p>Hierarquia de decisão e regras por camada</p></div>
+  </div>
+
+  <h3>Quando usar o quê</h3>
+  <pre class="mermaid">flowchart TD
+    Start(["Preciso de dados"]) --> Q1{"É uma mutação?\ncreate / update / delete"}
+    Q1 -->|Sim| SA["✅ Server Action\nactions/dominio.ts"]
+    Q1 -->|Não| Q2{"Dados são estáveis?\nnão mudam em tempo real"}
+    Q2 -->|Sim| SC["✅ Server Component\napp/**/page.tsx"]
+    Q2 -->|Não| Q3{"Precisa de polling\nou filtro client-driven?"}
+    Q3 -->|Sim| SWR["⚠️ SWR\nvia Route Handler"]
+    Q3 -->|Não| SC2["✅ Server Component\ncom revalidatePath"]
+    style SA fill:#15803d,color:#fff,stroke:#22c55e
+    style SC fill:#1d4ed8,color:#fff,stroke:#3b82f6
+    style SC2 fill:#1d4ed8,color:#fff,stroke:#3b82f6
+    style SWR fill:#92400e,color:#fff,stroke:#f59e0b</pre>
+
+  <h3>Regras por camada</h3>
+  <div class="card">
+    <h4>✅ Server Components — preferido para leitura</h4>
+    <p>Use para carregamento inicial, listagens, relatórios, páginas protegidas. Acessa <code>lib/db</code> diretamente — sem <code>fetch</code>, sem SWR.</p>
+  </div>
+  <div class="card">
+    <h4>✅ Server Actions — preferido para mutação</h4>
+    <p>Toda mutação passa por aqui. Sequência obrigatória:</p>
+    <span class="code-label">actions/dominio.ts</span>
+    <pre><code><span class="str">"use server"</span>;
+<span class="kw">export async function</span> <span class="fn">createItem</span>(rawInput: <span class="type">unknown</span>) {
+  <span class="kw">const</span> session = <span class="kw">await</span> <span class="fn">auth</span>();
+  <span class="kw">if</span> (!session) <span class="kw">throw new</span> <span class="type">Error</span>(<span class="str">"Unauthorized"</span>);
+  <span class="kw">if</span> (!<span class="fn">isAdmin</span>(session.user.role)) <span class="kw">throw new</span> <span class="type">Error</span>(<span class="str">"Forbidden"</span>);
+  <span class="kw">const</span> input = schema.<span class="fn">parse</span>(rawInput); <span class="cmt">// valida com Zod</span>
+  <span class="kw">await</span> <span class="fn">createItemInDb</span>(input);         <span class="cmt">// chama lib/db</span>
+  <span class="kw">await</span> <span class="fn">logAudit</span>({ action: <span class="str">"create_item"</span>, ... });
+  <span class="fn">revalidatePath</span>(<span class="str">"/items"</span>);
+}</code></pre>
+  </div>
+  <div class="card">
+    <h4>⚠️ SWR — apenas quando necessário</h4>
+    <p>Use <strong>somente</strong> quando há necessidade real de polling ou filtros client-driven. Sempre com <code>revalidateOnFocus: false</code>.</p>
+    <pre><code><span class="kw">const</span> fetcher = (url: <span class="type">string</span>) => <span class="fn">fetch</span>(url).<span class="fn">then</span>(r => {
+  <span class="kw">if</span> (!r.ok) <span class="kw">throw new</span> <span class="type">Error</span>(<span class="str">`HTTP ${r.status}`</span>);
+  <span class="kw">return</span> r.<span class="fn">json</span>();
+});
+<span class="kw">const</span> { data } = <span class="fn">useSWR</span>(<span class="str">'/api/dados'</span>, fetcher, {
+  revalidateOnFocus: <span class="kw">false</span>,
+  refreshInterval: <span class="num">30000</span>,
+});</code></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ BANCO -->
+<section id="banco">
+  <div class="section-header">
+    <div class="section-icon">🗄️</div>
+    <div><h2>Banco de Dados</h2><p>PostgreSQL, Prisma 7, migrations e convenções</p></div>
+  </div>
+
+  <h3>Política de migrations por ambiente</h3>
+  <div class="env-pipeline">
+    <div class="env-box">
+      <div class="env-circle env-local"><div class="env-icon">🖥️</div>Local</div>
+      <div class="env-label"><code>db push</code> ✅</div>
+    </div>
+    <div class="env-arrow">→</div>
+    <div class="env-box">
+      <div class="env-circle env-preview"><div class="env-icon">🌿</div>Preview</div>
+      <div class="env-label"><code>migrate deploy</code> ✅</div>
+    </div>
+    <div class="env-arrow">→</div>
+    <div class="env-box">
+      <div class="env-circle env-staging"><div class="env-icon">🧪</div>Staging</div>
+      <div class="env-label"><code>migrate deploy</code> obrigatório</div>
+    </div>
+    <div class="env-arrow">→</div>
+    <div class="env-box">
+      <div class="env-circle env-prod"><div class="env-icon">🚀</div>Produção</div>
+      <div class="env-label"><code>migrate deploy</code> via CI/CD</div>
+    </div>
+  </div>
+  <div class="callout callout-red"><div class="callout-icon">🚫</div><p><strong>Nunca:</strong> <code>prisma db push</code> em staging/produção &nbsp;|&nbsp; <code>prisma migrate dev</code> em banco com dados reais &nbsp;|&nbsp; migrations manuais no Supabase Dashboard (sem ADR)</p></div>
+
+  <h3>Convenções de nomenclatura</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Contexto</th><th>Convenção</th><th>Exemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Modelo Prisma</td><td>PascalCase</td><td><code>UserProfile</code></td></tr>
+        <tr><td>Campo Prisma</td><td>camelCase</td><td><code>createdAt</code></td></tr>
+        <tr><td>Tabela no banco</td><td>snake_case plural</td><td><code>user_profiles</code></td></tr>
+        <tr><td>Coluna no banco</td><td>snake_case</td><td><code>created_at</code></td></tr>
+        <tr><td>Mapeamento</td><td>@map / @@map</td><td><code>@@map("user_profiles")</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Mudanças destrutivas — 3 fases obrigatórias</h3>
+  <pre class="mermaid">flowchart LR
+    F1["Fase 1\nCompatibilidade\nCódigo suporta\nestado antigo e novo"] --> F2["Fase 2\nMigration\nExecuta\na mudança"] --> F3["Fase 3\nLimpeza\nRemove código\nde compatibilidade"]
+    style F1 fill:#1d4ed8,color:#fff,stroke:#3b82f6
+    style F2 fill:#92400e,color:#fff,stroke:#f59e0b
+    style F3 fill:#15803d,color:#fff,stroke:#22c55e</pre>
+  <p>Aplicar a: <code>DROP COLUMN</code>, <code>RENAME COLUMN</code>, <code>DROP TABLE</code>, mudança de tipo incompatível.</p>
+
+  <h3>Uso de $transaction()</h3>
+  <div class="adr-grid">
+    <div class="adr-do"><h4>✅ Use</h4><ul><li>Operações atômicas curtas</li><li>2 a 4 statements</li><li>Baixa cardinalidade</li><li>Sem chamadas externas</li></ul></div>
+    <div class="adr-dont"><h4>🚫 Não use</h4><ul><li>Loops grandes</li><li>Chamadas a APIs externas</li><li>Jobs longos</li><li>Sincronização massiva</li></ul></div>
+  </div>
+
+  <h3>Logs obrigatórios</h3>
+  <div class="card-grid">
+    <div class="card-sm">
+      <h4 style="color:var(--teal)">sync_log</h4>
+      <p>Para toda execução de job automático: <code>job</code>, <code>executed_at</code>, <code>duration_ms</code>, <code>status</code>, <code>counts</code>, <code>error_msg</code></p>
+    </div>
+    <div class="card-sm">
+      <h4 style="color:var(--orange)">audit_log</h4>
+      <p>Para toda ação humana sensível: aprovar/rejeitar usuário, alterar role, exportar dados, alterar configuração crítica, acessar dados financeiros</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SEGURANÇA -->
+<section id="seguranca">
+  <div class="section-header">
+    <div class="section-icon">🔒</div>
+    <div><h2>Segurança &amp; LGPD</h2><p>Autenticação, autorização e proteção de dados</p></div>
+  </div>
+
+  <h3>Camadas de segurança</h3>
+  <pre class="mermaid">flowchart TD
+    R(["Request"]) --> P["proxy.ts\nedge guard"]
+    P --> L["Layout protegido\nauth() verifica sessão"]
+    L --> SA["Server Action / API Route\nauth() + verifica role + verifica permissão"]
+    SA --> DB["lib/db\nquery autorizada"]
+    SA --> AL["audit_log\nse ação sensível"]
+    style P fill:#7c2d12,color:#fff,stroke:#ef7916
+    style L fill:#1e3a5f,color:#fff,stroke:#3b82f6
+    style SA fill:#14532d,color:#fff,stroke:#22c55e
+    style DB fill:#1e293b,color:#e2e8f0,stroke:#334155
+    style AL fill:#713f12,color:#fff,stroke:#f59e0b</pre>
+
+  <div class="callout callout-orange"><div class="callout-icon">⚠️</div><p><strong>Nunca confie apenas na UI.</strong> Toda operação privilegiada verifica autenticação e autorização no servidor, independente do que o cliente envie.</p></div>
+
+  <h3>Autenticação — Golden Path</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Componente</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Provider</td><td>NextAuth v5 + Google OAuth</td></tr>
+        <tr><td>Restrição</td><td>domínio corporativo (<code>@raizeducacao.com.br</code>)</td></tr>
+        <tr><td>Status do usuário</td><td><code>pending</code> | <code>approved</code> | <code>rejected</code></td></tr>
+        <tr><td>Role</td><td>no banco — não no token JWT</td></tr>
+        <tr><td>Sessões inválidas</td><td>invalidadas quando usuário é rejeitado</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Classificação de dados (LGPD)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Categoria</th><th>Exemplos</th><th>Cuidados obrigatórios</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-red">Pessoal</span></td><td>nome, e-mail, CPF</td><td>Não logar em claro, mascarar</td></tr>
+        <tr><td><span class="badge badge-red">Sensível</span></td><td>saúde, religião, biometria</td><td>Proteção máxima, ADR, acesso auditado</td></tr>
+        <tr><td><span class="badge badge-yellow">Escolar</span></td><td>notas, frequência, laudos</td><td>Acesso restrito, audit_log</td></tr>
+        <tr><td><span class="badge badge-blue">Operacional</span></td><td>logs técnicos, métricas</td><td>Pseudonimização quando possível</td></tr>
+        <tr><td><span class="badge badge-green">Financeiro</span></td><td>pagamentos, contratos</td><td>audit_log obrigatório</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Threat modeling — 5 perguntas obrigatórias</h3>
+  <ol class="steps">
+    <li>Quem pode chamar este endpoint ou action?</li>
+    <li>O que acontece se um usuário anônimo chamar?</li>
+    <li>O que acontece se um usuário autenticado sem permissão chamar?</li>
+    <li>Quais dados sensíveis passam por aqui?</li>
+    <li>Existe risco de SQLi, XSS, SSRF, CSRF ou Broken Auth?</li>
+  </ol>
+
+  <h3>O que nunca fazer</h3>
+  <ul class="checklist">
+    <li>Logar CPF, e-mail completo ou nome completo em texto claro</li>
+    <li>Armazenar tokens ou cookies em logs</li>
+    <li>Expor stack trace ao cliente</li>
+    <li>Hardcodar qualquer secret no código-fonte</li>
+    <li>Usar <code>process.env.X</code> fora de <code>lib/env.ts</code></li>
+    <li>Confiar em dados vindos do cliente sem validação Zod</li>
+    <li>Omitir verificação de role em operações administrativas</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════ TESTES -->
+<section id="testes">
+  <div class="section-header">
+    <div class="section-icon">✅</div>
+    <div><h2>Testes &amp; QA</h2><p>Estratégia, ferramentas e quando QA bloqueia</p></div>
+  </div>
+
+  <h3>Pirâmide de testes</h3>
+  <div class="pyramid">
+    <div class="pyramid-layer py-e2e">E2E — Playwright</div>
+    <div class="pyramid-layer py-int">Integração — Vitest + banco</div>
+    <div class="pyramid-layer py-unit">Unitário — Vitest</div>
+    <div class="pyramid-layer py-static">Estático — TypeScript + ESLint</div>
+  </div>
+
+  <h3>Camadas de teste</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Camada</th><th>Ferramenta</th><th>Local</th></tr></thead>
+      <tbody>
+        <tr><td>Unitário</td><td>Vitest</td><td><code>tests/unit/</code></td></tr>
+        <tr><td>Integração</td><td>Vitest + banco de teste</td><td><code>tests/integration/</code></td></tr>
+        <tr><td>E2E</td><td>Playwright</td><td><code>tests/e2e/</code></td></tr>
+        <tr><td>Typecheck</td><td><code>tsc --noEmit</code></td><td>CI</td></tr>
+        <tr><td>Lint</td><td>ESLint</td><td>CI</td></tr>
+        <tr><td>Build</td><td><code>next build</code></td><td>CI</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-blue"><div class="callout-icon">ℹ️</div><p>Typecheck e lint <strong>não substituem</strong> testes. São complementares — typecheck previne erros de tipo, lint previne padrões ruins, testes verificam comportamento.</p></div>
+
+  <h3>Prioridade de cobertura</h3>
+  <ol class="steps">
+    <li>Server Actions críticas (regra de negócio)</li>
+    <li>Autenticação e autorização</li>
+    <li><code>guardCron()</code></li>
+    <li><code>lib/env.ts</code> — variáveis obrigatórias</li>
+    <li>Schemas Zod</li>
+    <li>Helpers e formatadores</li>
+    <li>DAL crítico</li>
+    <li>Fluxos E2E críticos (login, fluxo principal)</li>
+  </ol>
+
+  <h3>Quando QA bloqueia</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Status</th><th>Quando emitir</th><th>Consequência</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-green">PASS</span></td><td>Todos os critérios satisfeitos</td><td>Avança para próxima fase</td></tr>
+        <tr><td><span class="badge badge-yellow">FAIL_FIX_REQUIRED</span></td><td>Falhas não-críticas, corrigíveis</td><td>Retorna ao desenvolvedor</td></tr>
+        <tr><td><span class="badge badge-red">FAIL_BLOCKING</span></td><td>Critério de aceite falha, regressão crítica, typecheck/lint falha, UI sem estados essenciais</td><td>Bloqueia a esteira — não avança</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FRONTEND -->
+<section id="frontend">
+  <div class="section-header">
+    <div class="section-icon">🎨</div>
+    <div><h2>Frontend &amp; Design System</h2><p>Tokens, componentes, acessibilidade e regras</p></div>
+  </div>
+
+  <h3>Identidade visual</h3>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#ef7916;"></div>
+      <div class="swatch-info"><div class="swatch-name">Raiz Orange</div><div class="swatch-hex">#ef7916</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#7dcdbb;"></div>
+      <div class="swatch-info"><div class="swatch-name">Raiz Teal</div><div class="swatch-hex">#7dcdbb</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0f172a;"></div>
+      <div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#0f172a</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1e293b;border-top:1px solid #334155"></div>
+      <div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-hex">#1e293b</div></div>
+    </div>
+  </div>
+  <div class="callout callout-orange"><div class="callout-icon">🎨</div><p>Configure tokens em <code>globals.css</code> com <code>@theme</code>. <strong>Não use</strong> <code>tailwind.config.ts</code> para configuração de tema no Tailwind v4.</p></div>
+
+  <h3>Estados obrigatórios em toda tela com dados</h3>
+  <pre class="mermaid">stateDiagram-v2
+    [*] --> Loading : componente monta
+    Loading --> Content : dados carregados
+    Loading --> Empty : sem dados
+    Loading --> Error : falha na requisição
+    Content --> Loading : revalidação
+    Error --> Loading : retry</pre>
+
+  <h3>Regras críticas</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Regra</th><th>Correto</th><th>Errado</th></tr></thead>
+      <tbody>
+        <tr><td>Imagens</td><td><code>&lt;Image&gt;</code> do Next.js</td><td><code>&lt;img&gt;</code> nativo</td></tr>
+        <tr><td>Dark mode</td><td><code>next-themes</code> + <code>defaultTheme="dark"</code></td><td>CSS manual sem ThemeProvider</td></tr>
+        <tr><td>Tailwind v4</td><td><code>@theme</code> em <code>globals.css</code></td><td><code>tailwind.config.ts</code> para tema</td></tr>
+        <tr><td>Next.js 16</td><td><code>proxy.ts</code></td><td><code>middleware.ts</code></td></tr>
+        <tr><td>Recharts tooltip</td><td><code>content={fn}</code></td><td><code>content={&lt;Component /&gt;}</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Acessibilidade mínima obrigatória</h3>
+  <ul class="checklist">
+    <li>HTML semântico: <code>&lt;main&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;button&gt;</code> — nunca <code>&lt;div onclick&gt;</code></li>
+    <li>Labels em todos os inputs</li>
+    <li>Foco visível — nunca remova <code>outline</code></li>
+    <li>Contraste adequado (WCAG AA)</li>
+    <li>Texto alternativo em imagens informativas</li>
+    <li>Navegação por teclado nos fluxos principais</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════ JOBS -->
+<section id="jobs">
+  <div class="section-header">
+    <div class="section-icon">⚙️</div>
+    <div><h2>Jobs &amp; Crons</h2><p>Idempotência, guardCron e processamento assíncrono</p></div>
+  </div>
+
+  <h3>Anatomia de uma cron route</h3>
+  <span class="code-label">app/api/cron/meu-job/route.ts</span>
+  <pre><code><span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">'next/server'</span>;
+<span class="kw">import</span> { guardCron } <span class="kw">from</span> <span class="str">'@/lib/jobs/cron-guard'</span>;
+<span class="kw">import</span> { logSync } <span class="kw">from</span> <span class="str">'@/lib/db/sync-log'</span>;
+
+<span class="kw">export async function</span> <span class="fn">GET</span>(req: <span class="type">Request</span>) {
+  <span class="kw">const</span> guard = <span class="fn">guardCron</span>(req);  <span class="cmt">// ← SEMPRE primeiro</span>
+  <span class="kw">if</span> (guard) <span class="kw">return</span> guard;
+
+  <span class="kw">const</span> startedAt = Date.<span class="fn">now</span>();
+  <span class="kw">try</span> {
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">runMeuJob</span>();
+    <span class="kw">await</span> <span class="fn">logSync</span>({ job: <span class="str">'meu-job'</span>, durationMs: Date.<span class="fn">now</span>() - startedAt,
+      status: <span class="str">'success'</span>, counts: result.counts });
+    <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ ok: <span class="kw">true</span>, ...result });
+  } <span class="kw">catch</span> (err) {
+    <span class="kw">await</span> <span class="fn">logSync</span>({ job: <span class="str">'meu-job'</span>, durationMs: Date.<span class="fn">now</span>() - startedAt,
+      status: <span class="str">'error'</span>, errorMsg: <span class="type">String</span>(err) });
+    <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ ok: <span class="kw">false</span> }, { status: <span class="num">500</span> });
+  }
+}</code></pre>
+
+  <h3>Idempotência — estratégias</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Estratégia</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><code>upsert</code> / <code>ON CONFLICT DO UPDATE</code></td><td>Inserts de dados externos — mais comum</td></tr>
+        <tr><td>Chave natural como constraint</td><td>Evitar duplicatas por definição</td></tr>
+        <tr><td><code>job_runs</code> com status</td><td>Controle de execução única por período</td></tr>
+        <tr><td>Checkpoints com <code>job_locks</code></td><td>Jobs longos com particionamento</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Paralelismo</h3>
+  <div class="adr-grid">
+    <div class="adr-do"><h4>✅ Use</h4><ul><li><code>pMap</code> com limite de concorrência para APIs externas</li><li><code>Promise.all</code> para operações independentes</li></ul></div>
+    <div class="adr-dont"><h4>🚫 Não use</h4><ul><li><code>for...of await</code> em loop paralelizável (sequencial desnecessário)</li><li>Concorrência ilimitada com APIs instáveis</li></ul></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ DEPLOY -->
+<section id="deploy">
+  <div class="section-header">
+    <div class="section-icon">🚢</div>
+    <div><h2>Deploy &amp; Operação</h2><p>Vercel, CI/CD, rollback e monitoramento</p></div>
+  </div>
+
+  <h3>Pipeline de CI obrigatório</h3>
+  <pre class="mermaid">flowchart LR
+    A["npm ci"] --> B["typecheck\ntsc --noEmit"]
+    B --> C["lint\neslint"]
+    C --> D["test\nvitest run"]
+    D --> E["build\nnext build"]
+    E --> F["migrate deploy\nstaging/prod"]
+    F --> G["✅ Deploy\nVercel"]
+    style G fill:#15803d,color:#fff,stroke:#22c55e</pre>
+
+  <h3>Classificação de migrations</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tipo</th><th>Política</th><th>Aprovação</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-green">Reversível</span></td><td>Rollback automatizado ou manual possível</td><td>Tech Lead</td></tr>
+        <tr><td><span class="badge badge-blue">Compatível</span></td><td>Deploy em fases (backward compatible)</td><td>Tech Lead</td></tr>
+        <tr><td><span class="badge badge-yellow">Irreversível</span></td><td>Aprovação humana explícita antes do deploy</td><td>Humano responsável</td></tr>
+        <tr><td><span class="badge badge-red">Destrutiva</span></td><td>Plano formal + backup verificado + janela de manutenção</td><td>Humano responsável</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Healthcheck obrigatório</h3>
+  <span class="code-label">app/api/health/route.ts</span>
+  <pre><code><span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">'next/server'</span>;
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="str">'@/lib/prisma'</span>;
+
+<span class="kw">export async function</span> <span class="fn">GET</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">await</span> prisma.<span class="fn">$queryRaw</span>`SELECT 1`;
+    <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ status: <span class="str">'ok'</span>, db: <span class="str">'ok'</span>,
+      ts: <span class="kw">new</span> <span class="type">Date</span>().<span class="fn">toISOString</span>() });
+  } <span class="kw">catch</span> {
+    <span class="kw">return</span> NextResponse.<span class="fn">json</span>({ status: <span class="str">'error'</span>, db: <span class="str">'unreachable'</span> },
+      { status: <span class="num">503</span> });
+  }
+}</code></pre>
+
+  <h3>Checklist pós-deploy</h3>
+  <ul class="checklist">
+    <li><code>GET /api/health</code> retorna 200</li>
+    <li>Login funciona com conta corporativa</li>
+    <li>Fluxo crítico principal funciona end-to-end</li>
+    <li>Última execução de cron registrada no <code>sync_log</code></li>
+    <li>Nenhum erro novo nos logs / APM</li>
+    <li>APM monitorado por 15 minutos em deploy crítico</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════ ADR -->
+<section id="adr">
+  <div class="section-header">
+    <div class="section-icon">📄</div>
+    <div><h2>Processo de Exceção — ADR</h2><p>Quando e como desviar do Golden Path formalmente</p></div>
+  </div>
+
+  <h3>Quando criar um ADR</h3>
+  <pre class="mermaid">flowchart TD
+    Q1{"Desvio de stack,\narquitetura ou deploy?"} -->|Sim| ADR["📄 Escreva um ADR"]
+    Q1 -->|Não| Q2{"Decisão irreversível\nou cara de reverter?"}
+    Q2 -->|Sim| ADR
+    Q2 -->|Não| Q3{"Afeta segurança,\nbanco ou auth?"}
+    Q3 -->|Sim| ADR
+    Q3 -->|Não| Q4{"Nova dependência\ncrítica?"}
+    Q4 -->|Sim| ADR
+    Q4 -->|Não| GO["✅ Pode implementar\nsem ADR"]
+    style ADR fill:#92400e,color:#fff,stroke:#f59e0b
+    style GO fill:#15803d,color:#fff,stroke:#22c55e</pre>
+
+  <h3>Quem aprova e em quanto tempo</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tipo de decisão</th><th>Aprovação mínima</th><th>Prazo</th></tr></thead>
+      <tbody>
+        <tr><td>Desvio de biblioteca ou ferramenta</td><td>Tech Lead</td><td>48 horas</td></tr>
+        <tr><td>Mudança arquitetural (novo serviço, fila)</td><td>Tech Lead + Arquiteto</td><td>1 semana</td></tr>
+        <tr><td>Mudança de banco ou migration destrutiva</td><td>Tech Lead + Arquiteto + Humano responsável</td><td>1 semana</td></tr>
+        <tr><td>Exceção de segurança ou LGPD</td><td>Tech Lead + DevSecOps + Humano responsável</td><td>48 horas</td></tr>
+        <tr><td><strong>Deploy com ADR pendente</strong></td><td colspan="2"><span class="badge badge-red">Bloqueado — ADR deve ser aprovado primeiro</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Template de ADR</h3>
+  <span class="code-label">docs/adr/ADR-001-titulo.md</span>
+  <pre><code><span class="kw"># ADR-NNN — Título curto e descritivo</span>
+
+<span class="kw">## Status</span>
+Proposto | Aprovado | Rejeitado | Substituído por ADR-XXX
+
+<span class="kw">## Data</span>
+YYYY-MM-DD
+
+<span class="kw">## Contexto</span>
+Qual problema, restrição ou oportunidade motivou esta decisão?
+Por que o Golden Path não é suficiente aqui?
+
+<span class="kw">## Decisão</span>
+O que decidimos fazer.
+
+<span class="kw">## Alternativas consideradas</span>
+| Alternativa | Prós | Contras |
+|---|---|---|
+| Golden Path | familiar, suportado | insuficiente porque X |
+| Opção A | vantagem | desvantagem |
+
+<span class="kw">## Consequências</span>
+Impactos técnicos, operacionais, de custo e manutenção.
+
+<span class="kw">## Critérios de revisão</span>
+Quando esta decisão deve ser reavaliada?</code></pre>
+
+  <h3>Exemplos que exigem ADR</h3>
+  <div class="adr-grid">
+    <div class="adr-dont" style="background:var(--surface2);border-color:var(--orange)">
+      <h4 style="color:var(--orange)">📋 Lista completa</h4>
+      <ul>
+        <li style="color:var(--text-muted)">Backend separado do frontend</li>
+        <li style="color:var(--text-muted)">Worker dedicado ou fila assíncrona</li>
+        <li style="color:var(--text-muted)">Banco diferente de PostgreSQL</li>
+        <li style="color:var(--text-muted)">ORM diferente de Prisma</li>
+        <li style="color:var(--text-muted)">Deploy fora da Vercel</li>
+        <li style="color:var(--text-muted)">Gráficos diferente de Recharts</li>
+        <li style="color:var(--text-muted)">Auth diferente de Google OAuth</li>
+        <li style="color:var(--text-muted)">Serviço Python/FastAPI</li>
+        <li style="color:var(--text-muted)">Pipeline de dados separado</li>
+        <li style="color:var(--text-muted)">Migration destrutiva</li>
+        <li style="color:var(--text-muted)">RLS universal</li>
+      </ul>
+    </div>
+    <div class="adr-do">
+      <h4>✅ Não precisa de ADR</h4>
+      <ul>
+        <li>Novo componente React</li>
+        <li>Nova Server Action</li>
+        <li>Nova tabela no banco</li>
+        <li>Nova coluna em tabela existente</li>
+        <li>Novo job/cron seguindo padrão</li>
+        <li>Refactor interno sem mudança de API</li>
+        <li>Atualização patch de dependência</li>
+        <li>Novo endpoint REST fino</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ ANTI-PADRÕES -->
+<section id="antipadroes">
+  <div class="section-header">
+    <div class="section-icon">🚫</div>
+    <div><h2>Anti-padrões Proibidos</h2><p>O que nunca fazer e por quê</p></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Anti-padrão</th><th>Por que é proibido</th><th>Alternativa</th></tr></thead>
+      <tbody>
+        <tr><td><code class="ap-bad">npm audit fix --force</code></td><td class="ap-why">Atualiza major sem revisão, quebrando APIs</td><td class="ap-fix">Revisão manual por PR controlado</td></tr>
+        <tr><td><code class="ap-bad">prisma db push</code> em staging/prod</td><td class="ap-why">Bypassa histórico de migrations</td><td class="ap-fix"><code>prisma migrate deploy</code></td></tr>
+        <tr><td><code class="ap-bad">prisma migrate dev</code> em banco real</td><td class="ap-why">Pode executar migrations destrutivas</td><td class="ap-fix">Banco de desenvolvimento isolado</td></tr>
+        <tr><td><code class="ap-bad">SQL raw concatenado</code></td><td class="ap-why">SQL injection</td><td class="ap-fix">Template literal Prisma <code>$queryRaw</code></td></tr>
+        <tr><td><code class="ap-bad">Lógica de negócio em route.ts</code></td><td class="ap-why">Não testável isoladamente, acopla camadas</td><td class="ap-fix">Mover para <code>lib/</code> ou service</td></tr>
+        <tr><td><code class="ap-bad">process.env.X</code> espalhado</td><td class="ap-why">Sem validação, falha silenciosa em runtime</td><td class="ap-fix">Centralizar em <code>lib/env.ts</code> com Zod</td></tr>
+        <tr><td><code class="ap-bad">Secret hardcoded</code></td><td class="ap-why">Vazamento via git history</td><td class="ap-fix">Variável de ambiente</td></tr>
+        <tr><td><code class="ap-bad">Stack trace ao cliente</code></td><td class="ap-why">Vaza informações de implementação</td><td class="ap-fix">Erro genérico no cliente, log completo no servidor</td></tr>
+        <tr><td><code class="ap-bad">Import de lib não listada</code></td><td class="ap-why">Falha em produção, supply chain desconhecida</td><td class="ap-fix">Aprovação do Tech Lead primeiro</td></tr>
+        <tr><td><code class="ap-bad">for...of await</code> paralelizável</td><td class="ap-why">Performance degradada desnecessariamente</td><td class="ap-fix"><code>pMap</code> com limite de concorrência</td></tr>
+        <tr><td><code class="ap-bad">&lt;img&gt;</code> nativo em Next.js</td><td class="ap-why">Sem otimização, sem lazy loading</td><td class="ap-fix"><code>&lt;Image&gt;</code> do Next.js</td></tr>
+        <tr><td><code class="ap-bad">SWR sem necessidade real</code></td><td class="ap-why">Complexidade client desnecessária</td><td class="ap-fix">Server Component</td></tr>
+        <tr><td><code class="ap-bad">middleware.ts</code> em Next.js 16</td><td class="ap-why">Legado, não compatível</td><td class="ap-fix"><code>proxy.ts</code></td></tr>
+        <tr><td><code class="ap-bad">tailwind.config.ts</code> para tema v4</td><td class="ap-why">Configuração de tema mudou no v4</td><td class="ap-fix"><code>@theme</code> em <code>globals.css</code></td></tr>
+        <tr><td><code class="ap-bad">Frontend/backend separados sem ADR</code></td><td class="ap-why">Overhead de deploy e contrato</td><td class="ap-fix">Monorepo Next.js</td></tr>
+        <tr><td><code class="ap-bad">Job sem idempotência</code></td><td class="ap-why">Duplicação de dados em reexecução</td><td class="ap-fix">Upsert / chave natural / checkpoint</td></tr>
+        <tr><td><code class="ap-bad">API externa em $transaction()</code></td><td class="ap-why">Bloqueia conexão do banco por tempo indeterminado</td><td class="ap-fix">Chamar antes ou depois da transação</td></tr>
+        <tr><td><code class="ap-bad">Merge sem teste para regra nova</code></td><td class="ap-why">Regressão silenciosa</td><td class="ap-fix">Vitest obrigatório para regra nova</td></tr>
+        <tr><td><code class="ap-bad">Logs com PII em texto claro</code></td><td class="ap-why">Violação de LGPD</td><td class="ap-fix">Mascarar ou omitir</td></tr>
+        <tr><td><code class="ap-bad">Deploy sem rollback plan</code></td><td class="ap-why">Impossível reverter com segurança</td><td class="ap-fix">Plano de rollback antes do deploy</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ QUICK REF -->
+<section id="quickref">
+  <div class="section-header">
+    <div class="section-icon">⚡</div>
+    <div><h2>Quick Reference</h2><p>Cheat sheet — tudo que você precisa em uma página</p></div>
+  </div>
+
+  <div class="qr-block">
+    <h4>📦 Stack</h4>
+    <div class="qr-row"><span class="qr-key">Framework</span><span class="qr-val">Next.js 16 (App Router)</span></div>
+    <div class="qr-row"><span class="qr-key">Frontend</span><span class="qr-val">React 19 + TS 5 + Tailwind 4</span></div>
+    <div class="qr-row"><span class="qr-key">Auth</span><span class="qr-val">NextAuth v5 + Google OAuth</span></div>
+    <div class="qr-row"><span class="qr-key">Banco</span><span class="qr-val">PostgreSQL / Supabase + Prisma 7</span></div>
+    <div class="qr-row"><span class="qr-key">Deploy</span><span class="qr-val">Vercel + Vercel Cron</span></div>
+    <div class="qr-row"><span class="qr-key">Validação</span><span class="qr-val">Zod em todas as fronteiras</span></div>
+    <div class="qr-row"><span class="qr-key">Testes</span><span class="qr-val">Vitest (unit/int) + Playwright (E2E)</span></div>
+    <div class="qr-row"><span class="qr-key">Gráficos</span><span class="qr-val">Recharts v3</span></div>
+    <div class="qr-row"><span class="qr-key">Env vars</span><span class="qr-val">sempre via lib/env.ts</span></div>
+    <div class="qr-row"><span class="qr-key">Edge guard</span><span class="qr-val">proxy.ts (nunca middleware.ts)</span></div>
+  </div>
+
+  <div class="qr-block">
+    <h4>🔄 Data Fetching</h4>
+    <div class="qr-row"><span class="qr-key">Leitura estável</span><span class="qr-val"><span class="badge badge-green">Server Component</span></span></div>
+    <div class="qr-row"><span class="qr-key">Mutação</span><span class="qr-val"><span class="badge badge-green">Server Action</span></span></div>
+    <div class="qr-row"><span class="qr-key">Polling / filtro live</span><span class="qr-val"><span class="badge badge-yellow">SWR — com critério</span></span></div>
+    <div class="qr-row"><span class="qr-key">SWR obrigatório</span><span class="qr-val">revalidateOnFocus: false</span></div>
+  </div>
+
+  <div class="qr-block">
+    <h4>🗄️ Migrations</h4>
+    <div class="qr-row"><span class="qr-key">Local / sandbox</span><span class="qr-val">prisma db push ✅</span></div>
+    <div class="qr-row"><span class="qr-key">Staging / produção</span><span class="qr-val">prisma migrate deploy ✅</span></div>
+    <div class="qr-row"><span class="qr-key">db push em staging</span><span class="qr-val"><span class="badge badge-red">PROIBIDO</span></span></div>
+    <div class="qr-row"><span class="qr-key">migrate dev em banco real</span><span class="qr-val"><span class="badge badge-red">PROIBIDO</span></span></div>
+  </div>
+
+  <div class="qr-block">
+    <h4>📄 ADR — quando criar</h4>
+    <div class="qr-row"><span class="qr-key">Desvio de stack ou deploy</span><span class="qr-val">ADR obrigatório</span></div>
+    <div class="qr-row"><span class="qr-key">Decisão irreversível</span><span class="qr-val">ADR obrigatório</span></div>
+    <div class="qr-row"><span class="qr-key">Mudança de banco ou auth</span><span class="qr-val">ADR obrigatório</span></div>
+    <div class="qr-row"><span class="qr-key">Nova dependência crítica</span><span class="qr-val">ADR obrigatório</span></div>
+    <div class="qr-row"><span class="qr-key">Aprovação Tech Lead</span><span class="qr-val">48h (lib) / 1 semana (arquitetura)</span></div>
+    <div class="qr-row"><span class="qr-key">Local do arquivo</span><span class="qr-val">docs/adr/ADR-NNN-titulo.md</span></div>
+  </div>
+
+  <div class="qr-block">
+    <h4>🔒 Segurança — checklist mental</h4>
+    <div class="qr-row"><span class="qr-key">Nenhum secret no código</span><span class="qr-val">usar lib/env.ts</span></div>
+    <div class="qr-row"><span class="qr-key">Autorização server-side</span><span class="qr-val">auth() + role em toda operação privilegiada</span></div>
+    <div class="qr-row"><span class="qr-key">Input sempre validado</span><span class="qr-val">Zod.parse()</span></div>
+    <div class="qr-row"><span class="qr-key">Sem PII nos logs</span><span class="qr-val">mascarar CPF, e-mail, nome</span></div>
+    <div class="qr-row"><span class="qr-key">Ação sensível</span><span class="qr-val">audit_log obrigatório</span></div>
+    <div class="qr-row"><span class="qr-key">Cron route</span><span class="qr-val">guardCron() obrigatório como primeiro passo</span></div>
+  </div>
+
+  <div class="qr-block">
+    <h4>✅ Antes de abrir PR</h4>
+    <div class="qr-row"><span class="qr-key">npm run typecheck</span><span class="qr-val">zero erros</span></div>
+    <div class="qr-row"><span class="qr-key">npm run lint</span><span class="qr-val">zero erros</span></div>
+    <div class="qr-row"><span class="qr-key">npm run test</span><span class="qr-val">todos passando</span></div>
+    <div class="qr-row"><span class="qr-key">npm run build</span><span class="qr-val">build limpo</span></div>
+    <div class="qr-row"><span class="qr-key">Regra nova</span><span class="qr-val">tem teste</span></div>
+    <div class="qr-row"><span class="qr-key">Desvio do padrão</span><span class="qr-val">ADR aprovado</span></div>
+  </div>
+
+  <hr>
+  <p style="text-align:center;color:var(--text-muted);font-size:0.78rem;">Raiz Educação — Golden Model v1.2.0 &nbsp;|&nbsp; Dúvidas: fale com o Tech Lead do projeto</p>
+</section>
+
+</main>
+
+<script>
+// ── Tab switching ──────────────────────────────
+function switchTab(groupId, activeId) {
+  const group = document.getElementById(groupId);
+  const tabs = group.querySelectorAll('.tab');
+  const contents = group.nextElementSibling.querySelectorAll('.tab-content');
+  tabs.forEach(t => {
+    const contentId = t.getAttribute('onclick').match(/'([^']+)'\)/)?.[1];
+    t.classList.toggle('active', contentId === activeId);
+  });
+  contents.forEach(c => c.classList.toggle('active', c.id === activeId));
+}
+
+// ── Sidebar open/close ─────────────────────────
+const sidebar       = document.getElementById('sidebar');
+const overlay       = document.getElementById('sidebarOverlay');
+const menuToggle    = document.getElementById('menuToggle');
+const sidebarClose  = document.getElementById('sidebarClose');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+menuToggle.addEventListener('click', openSidebar);
+sidebarClose.addEventListener('click', closeSidebar);
+overlay.addEventListener('click', closeSidebar);
+
+// ── Active nav via IntersectionObserver ───────
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('.nav-link');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) {
+        active.classList.add('active');
+        // Auto-scroll the active link into view inside sidebar
+        active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  });
+}, { threshold: 0.25, rootMargin: '-10% 0px -55% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// ── Close sidebar on nav link click (mobile) ──
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 768) closeSidebar();
+  });
+});
+
+// ── Swipe-to-close sidebar (mobile touch) ─────
+let touchStartX = 0;
+sidebar.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+sidebar.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -60) closeSidebar(); // swipe left to close
+}, { passive: true });
+</script>
+</body>
+</html>

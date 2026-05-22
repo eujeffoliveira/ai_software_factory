@@ -4,3 +4,9 @@ context/reference_architecture_raiz.md
 
 # Bibliografia completa
 lib
+
+# Gerados pelo install.ps1 (caminhos absolutos, especificos por maquina)
+knowledge.db
+knowledge-config.json
+.mcp.json
+roo/

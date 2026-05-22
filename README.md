@@ -15,9 +15,11 @@ Uma fábrica de software orientada a agentes de IA especializados, onde cada eta
 - [Golden Model — Stack Técnica Obrigatória](#golden-model--stack-técnica-obrigatória)
 - [Estrutura de Pastas](#estrutura-de-pastas)
 - [Universal Factory CLI](#universal-factory-cli)
+- [Como os agentes funcionam na prática](#como-os-agentes-funcionam-na-prática)
+- [MCP Knowledge Search](#mcp-knowledge-search)
+- [Roo Code / Cline (VS Code)](#roo-code--cline-vs-code)
 - [Como instanciar para uma organização](#como-instanciar-para-uma-organização)
 - [Como criar um agente](#como-criar-um-agente)
-- [Como instalar e usar um agente](#como-instalar-e-usar-um-agente)
 - [Knowledge Distillation — Regra de Isolamento](#knowledge-distillation--regra-de-isolamento)
 - [Fontes de Conhecimento](#fontes-de-conhecimento)
 - [Estado atual dos agentes](#estado-atual-dos-agentes)
@@ -231,15 +233,30 @@ O **Golden Model** define a stack obrigatória de todos os projetos. Qualquer de
 ```
 ai_software_factory/
 │
-├── install.ps1                       # ← CLI installer para PowerShell (Windows)
-├── install.sh                        # ← CLI installer para Git Bash / Linux / macOS
+├── install.ps1                       # Installer principal (PowerShell / Windows)
+├── install.sh                        # Installer alternativo (Git Bash / Linux / macOS)
+├── update-knowledge.ps1              # Reindexar knowledge.db após editar arquivos (gerado pelo installer)
+├── link-mcp.ps1                      # Vincular MCP ao projeto atual (gerado pelo installer)
+├── link-roo.ps1                      # Vincular agentes Roo ao projeto atual (gerado pelo installer)
+│
+├── knowledge.db                      # [gitignored] SQLite FTS5 — todos os .md indexados
+├── knowledge-config.json             # [gitignored] Configuração do indexador
+├── .mcp.json                         # [gitignored] Configuração MCP (factory root)
+├── roo/                              # [gitignored] Arquivos para Roo Code / Cline
+│   ├── .roomodes                     # 11 custom modes (JSON)
+│   └── .clinerules                   # Regras e lista de agentes
+│
 ├── docs/
-│   └── INSTALL_CLI.md                # Manual da Universal Factory CLI
+│   └── INSTALL_CLI.md                # Manual completo da Universal Factory CLI
 │
 ├── tools/                            # Ferramentas compartilhadas — acessíveis em runtime
 │   ├── factory-scripts/              # validate-framework.sh, validate-skills.sh,
 │   │                                 # credential-preflight.sh, memory-guard.sh, agent-metrics.sh
 │   ├── mcp-knowledge-search/         # Servidor MCP de busca full-text (FastMCP + SQLite FTS5)
+│   │   ├── server.py                 # Servidor MCP principal
+│   │   ├── ingest.py                 # Indexador de documentos
+│   │   ├── database.py               # Acesso ao SQLite FTS5
+│   │   └── requirements.txt          # mcp>=1.0.0
 │   └── document-generation/          # spellcheck_document.py, validate_office_file.py
 │
 ├── bibliography/
@@ -259,82 +276,61 @@ ai_software_factory/
 │       ├── prompt_claude_code_agente01_productowner_generico.md
 │       └── ... (um arquivo por agente)
 │
-├── lib/                              # Bibliografia — BUILD-TIME apenas
-│   ├── TechLead/                     # The Mythical Man-Month · Accelerate · The Clean Coder
-│   ├── ProductOwner/                 # Software Requirements · Writing Effective Use Cases · User Stories Applied
-│   │                                 # Agile Software Requirements · Mastering the Requirements Process
-│   ├── SoftwareArchitect/            # Clean Architecture · DDIA · Domain-Driven Design
-│   │                                 # Fundamentals of Software Architecture · Building Microservices · PEAA
-│   ├── SoftwareEngineer/             # The Pragmatic Programmer · Code Complete · Design Patterns (GoF)
-│   │                                 # Enterprise Integration Patterns · System Design Interview
-│   ├── DevBackend/                   # Clean Code · Introduction to Algorithms · Microservices Patterns
-│   │                                 # Architecture Patterns with Python · Grokking Algorithms · Programming Pearls
-│   ├── DevFrontend/                  # Eloquent JavaScript · Designing Interfaces
-│   │                                 # High Performance Browser Networking · CSS Secrets
-│   ├── QaEngineer/                   # TDD by Example · Unit Testing (Khorikov)
-│   │                                 # Growing Object-Oriented Software · Working Effectively with Legacy Code · Refactoring
-│   ├── DevSecOps/                    # Threat Modeling · The Web Application Hacker's Handbook · Practical Cloud Security
-│   ├── DevOps/                       # Continuous Delivery · Site Reliability Engineering (Google)
-│   │                                 # The Phoenix Project · The DevOps Handbook · Infrastructure as Code
-│   ├── UxUiDesigner/                 # Laws of UX · Don't Make Me Think · Lean UX
-│   └── DataIntegrationEngineer/      # Fundamentals of Data Engineering · Building Event-Driven Microservices
-│                                     # Data Mesh · Designing Event-Driven Systems
+├── lib/                              # Bibliografia — BUILD-TIME apenas [gitignored]
+│   ├── TechLead/
+│   ├── ProductOwner/
+│   ├── SoftwareArchitect/
+│   ├── SoftwareEngineer/
+│   ├── DevBackend/
+│   ├── DevFrontend/
+│   ├── QaEngineer/
+│   ├── DevSecOps/
+│   ├── DevOps/
+│   ├── UxUiDesigner/
+│   └── DataIntegrationEngineer/
 │
 ├── build/                            # Relatórios de build e validação
-│   ├── instantiation_plan.md         # Gerado pelo prompt de instanciação (o que será alterado)
-│   ├── instantiation_report.md       # Gerado pelo prompt de instanciação (o que foi alterado)
-│   ├── Agente00_TechLead_build_report.md
-│   ├── Agente00_TechLead_generated_files_index.md
-│   ├── Agente00_TechLead_runtime_readiness_checklist.md
-│   ├── Agente00_TechLead_knowledge_distillation_patch_report.md
-│   └── ...
+│   ├── instantiation_plan.md
+│   ├── instantiation_report.md
+│   └── Agente*_build_report.md  (e demais relatórios por agente)
 │
-├── Agente00_TechLead/                # Agente totalmente construído ✅
-│   ├── prompt.md                     # Prompt principal do agente
-│   ├── agent_config.json             # Configuração de runtime
-│   ├── context_view.md               # Visão compilada do contexto
-│   ├── rag_manifest.json             # Política de RAG e fontes bloqueadas
-│   ├── skills_manifest.md            # Índice das 9 skills
-│   ├── quality_gate.md               # Critérios dos Gates 1–7
-│   ├── handoff_schema.json           # Schema de validação de handoffs
-│   ├── failure_modes.md              # Modos de falha e mitigações
-│   ├── knowledge/                    # Conhecimento destilado (runtime ✅)
-│   │   ├── principles.md             # 10 princípios operacionais
-│   │   ├── heuristics.md             # 12 heurísticas de decisão
-│   │   ├── decision_rules.md         # 31 regras if-then
-│   │   ├── knowledge_cards.md        # 10 cartões conceituais
-│   │   └── source_map.json           # Mapeamento fonte → artefato
-│   ├── checklists/                   # 8 checklists operacionais
-│   ├── schemas/                      # 7 JSON Schemas de contratos
-│   ├── templates/                    # 9 templates de artefatos
-│   ├── examples/                     # 8 exemplos bons/ruins
-│   └── skills/                       # 9 skills com 6 arquivos cada
-│       ├── state-ledger-management-skill/
-│       ├── agent-routing-skill/
-│       ├── artifact-contract-validation-skill/
-│       ├── tollgate-decision-skill/
-│       ├── council-mediation-skill/
-│       ├── adr-governance-skill/
-│       ├── human-escalation-skill/
-│       ├── risk-register-management-skill/
-│       └── progress-reporting-skill/
+├── Agente00_TechLead/                # ✅ Agente totalmente construído
+│   ├── prompt.md
+│   ├── agent_config.json
+│   ├── context_view.md
+│   ├── rag_manifest.json
+│   ├── skills_manifest.md
+│   ├── quality_gate.md
+│   ├── handoff_schema.json
+│   ├── failure_modes.md
+│   ├── knowledge/
+│   │   ├── principles.md
+│   │   ├── heuristics.md
+│   │   ├── decision_rules.md
+│   │   ├── knowledge_cards.md
+│   │   └── source_map.json
+│   ├── checklists/
+│   ├── schemas/
+│   ├── templates/
+│   ├── examples/
+│   └── skills/                       # 9 skills (6 arquivos cada)
 │
-├── Agente01_ProductOwner/            # Agente totalmente construído ✅ (10 skills)
-├── Agente02_SoftwareArchitect/       # Agente totalmente construído ✅ (112 arquivos, 10 skills)
-├── Agente03_SoftwareEngineer/        # Agente totalmente construído ✅ (81 arquivos, 7 skills)
-├── Agente04_DevBackend/              # Agente totalmente construído ✅ (111 arquivos, 11 skills)
-├── Agente05_DevFrontend/             # Agente totalmente construído ✅ (99 arquivos, 10 skills)
-├── Agente06_QaEngineer/              # Agente totalmente construído ✅ (9 skills)
+├── Agente01_ProductOwner/            # ✅ (10 skills)
+├── Agente02_SoftwareArchitect/       # ✅ (112 arquivos, 10 skills)
+├── Agente03_SoftwareEngineer/        # ✅ (81 arquivos, 7 skills)
+├── Agente04_DevBackend/              # ✅ (111 arquivos, 11 skills)
+├── Agente05_DevFrontend/             # ✅ (99 arquivos, 10 skills)
+├── Agente06_QaEngineer/              # ✅ (9 skills)
 │   └── tools/e2e-templates/          # Playwright E2E templates + audit script
-├── Agente07_DevSecOps/               # Agente totalmente construído ✅ (10 skills)
+├── Agente07_DevSecOps/               # ✅ (10 skills)
 │   └── tools/
 │       ├── git-hooks/                # Bash guards, config-guard, secret-scan, security-gate
 │       └── sentinel/                 # Framework SENTINEL: k6, certificate, state scoring
-├── Agente08_DevOps/                  # Agente totalmente construído ✅ (9 skills)
+├── Agente08_DevOps/                  # ✅ (9 skills)
 │   └── tools/git-hooks/              # Branch protection + parallel-agent locking hooks
-├── Agente09_UxUiDesigner/            # Agente totalmente construído ✅ (5 skills)
+├── Agente09_UxUiDesigner/            # ✅ (5 skills)
 │   └── knowledge/data/               # 11 CSVs de referência UX/UI
-└── Agente10_DataIntegrationEngineer/ # Agente totalmente construído ✅ (7 skills)
+└── Agente10_DataIntegrationEngineer/ # ✅ (7 skills)
     └── tools/predictive-rigor/       # Governance framework: PFC, LAIG, baseline parity,
                                       # sunk-cost guard, goalpost lock (6 templates + 8 scripts)
 ```
@@ -343,33 +339,84 @@ ai_software_factory/
 
 ## Universal Factory CLI
 
-Os instaladores configuram todos os 11 agentes como **sub-agentes do Claude Code** (`~/.claude/agents/`) e instalam um wrapper `factory` para uso com o Gemini CLI.
+O `install.ps1` é o instalador principal da factory. Ele configura todos os 11 agentes nos três ecossistemas de uso (Claude Code, Roo Code/Cline e Gemini CLI) e inicializa o banco de conhecimento MCP.
+
+### Pré-requisitos
+
+- **PowerShell** (Windows) — já disponível no Windows 10/11
+- **Python 3.x** no PATH — necessário para o MCP Knowledge Search (o indexador e o servidor)
+- **Claude Code** instalado — para usar os agentes como sub-agentes com `@nome`
 
 ### Instalação
 
-Escolha o script conforme o seu terminal:
-
-**PowerShell (Windows):**
 ```powershell
 .\install.ps1
 ```
 
-> Se aparecer erro `is not recognized` ou `running scripts is disabled`, execute primeiro (linha inteira):
-> ```powershell
-> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-> ```
-
-**Git Bash / Linux / macOS:**
-```bash
-bash install.sh
-source ~/.bashrc   # ou ~/.zshrc
+Se aparecer erro de política de execução:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-Ambos são idempotentes — podem ser executados novamente sem problema.
+Flags disponíveis:
+
+| Flag | Efeito |
+|------|--------|
+| *(sem flags)* | Instalação padrão — idempotente |
+| `-ForceDeps` | Força reinstalação das dependências Python mesmo que o hash não tenha mudado |
+
+### O que o install.ps1 faz (11 fases)
+
+| Fase | O que acontece |
+|------|---------------|
+| **1. FACTORY_ROOT** | Define a variável de ambiente de usuário Windows `FACTORY_ROOT` apontando para o diretório da factory |
+| **2. Python** | Detecta Python no PATH (tenta `python`, `python3` e `py`) |
+| **3. Dependências MCP** | Executa `pip install -r requirements.txt`; controlado por hash SHA256 do arquivo em `.requirements.hash` — só reinstala se o hash mudou ou o pacote `mcp` não está instalado |
+| **4. Agentes Claude Code** | Para cada um dos 11 agentes, cria `~/.claude/agents/<nome>.md` com frontmatter YAML, conteúdo de `prompt.md`, 8 arquivos de knowledge embutidos (principles, heuristics, decision_rules, knowledge_cards, skills_manifest, quality_gate, context_view, failure_modes) e bloco de instruções MCP ao final |
+| **5. Knowledge Base** | Cria `knowledge-config.json` na raiz da factory; indexa todos os `.md` do repositório em `knowledge.db` (SQLite FTS5) via `ingest.py`; reindexação só ocorre se algum `.md` for mais recente que o DB |
+| **6. MCP Configuration** | Cria `.mcp.json` na raiz da factory; realiza merge cirúrgico em `~/.claude/settings.json` adicionando a entrada `mcpServers.knowledge` sem tocar outras chaves do arquivo (`model`, `enabledPlugins`, `theme`, etc.) |
+| **7. Roo Code / Cline** | Gera `roo/.roomodes` com todos os 11 agentes como custom modes (JSON) e `roo/.clinerules` com regras e lista de agentes |
+| **8. Scripts auxiliares** | Gera os 4 scripts auxiliares em seus destinos definitivos (ver tabela abaixo) |
+
+### Scripts auxiliares gerados
+
+| Script | Destino | Uso |
+|--------|---------|-----|
+| `factory.ps1` | `~/.local/bin/factory.ps1` | Wrapper CLI para usar agentes com Gemini ou Claude via terminal |
+| `update-knowledge.ps1` | raiz da factory | Reindexar `knowledge.db` após editar arquivos |
+| `link-mcp.ps1` | raiz da factory | Copiar `.mcp.json` para outro projeto (ativa MCP naquele projeto) |
+| `link-roo.ps1` | raiz da factory | Copiar `.roomodes` e `.clinerules` para outro projeto |
+
+### Idempotência
+
+O `install.ps1` é **totalmente idempotente**:
+
+- Compara conteúdo antes de escrever (normalização LF, UTF-8 sem BOM) — segunda execução mostra todos os itens como `sem mudancas`
+- pip: só instala se hash do `requirements.txt` mudou ou o pacote `mcp` não está instalado
+- `knowledge.db`: só reindexa se houver algum `.md` mais recente que o DB
+- `settings.json`: backup com timestamp apenas quando há mudança real; escrita atômica via arquivo temporário
+
+### O que é criado / verificar se funcionou
+
+Após a instalação, verifique:
+
+```powershell
+# Agentes disponíveis no Claude Code
+ls "$env:USERPROFILE\.claude\agents\" | Select-Object Name
+
+# MCP configurado globalmente
+Get-Content "$env:USERPROFILE\.claude\settings.json" | Select-String "knowledge"
+
+# Banco de conhecimento
+ls "$env:FACTORY_ROOT\knowledge.db"
+
+# FACTORY_ROOT definida
+$env:FACTORY_ROOT
+```
 
 ### Uso no Claude Code (recomendado)
 
-Após instalar, chame qualquer agente com `@nome` **dentro de qualquer sessão Claude Code aberta**, de qualquer diretório:
+Após instalar, chame qualquer agente com `@nome` dentro de qualquer sessão Claude Code aberta, de qualquer diretório:
 
 ```
 @techlead eu quero criar um sistema de agendamento médico
@@ -403,8 +450,6 @@ Após instalar, chame qualquer agente com `@nome` **dentro de qualquer sessão C
 
 ### Uso com Gemini CLI
 
-Para usar com o Gemini CLI, use o wrapper `factory` no terminal:
-
 ```powershell
 # Sessão interativa
 factory Agente02_SoftwareArchitect gemini
@@ -414,7 +459,223 @@ factory Agente04_DevBackend gemini 'Gere o schema Prisma para billing'
 factory Agente06_QaEngineer gemini 'Escreva testes E2E para o login'
 ```
 
+### Manutenção
+
+```powershell
+# Após git pull ou ao editar knowledge/, skills/, schemas/, templates/, examples/, bibliography/
+.\update-knowledge.ps1
+
+# Para ativar o MCP em outro projeto (copiar .mcp.json)
+$env:FACTORY_ROOT\link-mcp.ps1
+
+# Para ativar os agentes Roo em outro projeto (copiar .roomodes e .clinerules)
+$env:FACTORY_ROOT\link-roo.ps1
+```
+
 Documentação completa: [`docs/INSTALL_CLI.md`](docs/INSTALL_CLI.md)
+
+---
+
+## Como os agentes funcionam na prática
+
+Cada agente no Claude Code é um arquivo `~/.claude/agents/<nome>.md` gerado pelo `install.ps1`. Esse arquivo contém dois layers de conhecimento que funcionam em conjunto.
+
+### Layer 1 — Conhecimento embutido (resposta rápida)
+
+O arquivo do agente inclui diretamente:
+
+1. **`prompt.md`** — identidade, regras de comportamento, Golden Model, skills disponíveis
+2. **8 arquivos de knowledge** embutidos com separadores de seção:
+   - `knowledge/principles.md` — princípios operacionais do agente
+   - `knowledge/heuristics.md` — heurísticas de decisão
+   - `knowledge/decision_rules.md` — regras if-then
+   - `knowledge/knowledge_cards.md` — cartões conceituais reutilizáveis
+   - `skills_manifest.md` — índice de todas as skills e quando usar cada uma
+   - `quality_gate.md` — critérios dos gates que o agente valida
+   - `context_view.md` — visão compilada do contexto
+   - `failure_modes.md` — modos de falha conhecidos e mitigações
+
+Esse conteúdo é carregado diretamente no contexto da sessão e permite ao agente responder com precisão sem precisar consultar arquivos externos.
+
+### Layer 2 — MCP Knowledge Search (busca profunda)
+
+Para conteúdo que não cabe no contexto da sessão — schemas detalhados, templates completos, exemplos, checklists de skills específicas, playbooks — o agente usa o **servidor MCP** para busca full-text sob demanda.
+
+O bloco de instruções MCP ao final de cada arquivo de agente instrui explicitamente:
+
+> **Consulte o MCP antes de afirmar que um skill, schema, template ou checklist não existe.**
+
+Isso garante que o agente não invente respostas quando a informação existe no banco de conhecimento.
+
+### Por que dois layers?
+
+| | Layer 1 (embutido) | Layer 2 (MCP) |
+|---|---|---|
+| **Latência** | Zero — já está no contexto | Requer chamada ao servidor |
+| **Escopo** | Conhecimento essencial e frequente | Conteúdo detalhado e específico |
+| **Custo** | Tokens sempre consumidos | Só consome quando necessário |
+| **Cobertura** | 8 arquivos por agente | Todos os `.md` do repositório (7.000+) |
+
+---
+
+## MCP Knowledge Search
+
+O MCP Knowledge Search é um servidor FastMCP que indexa todos os arquivos `.md` da factory em um banco SQLite com Full-Text Search (FTS5) e os expõe como ferramentas para agentes Claude Code.
+
+### O que está indexado
+
+- `Agente*/knowledge/` — principles, heuristics, decision_rules, knowledge_cards
+- `Agente*/skills/` — documentação e checklists de cada skill
+- `Agente*/schemas/` — contratos JSON de input/output
+- `Agente*/templates/` — templates de artefatos
+- `Agente*/examples/` — exemplos de bons/maus outputs
+- `Agente*/checklists/` — checklists operacionais
+- `bibliography/playbooks/` — 12 playbooks de engenharia
+
+**Total indexado: aproximadamente 7.000 documentos.**
+
+### Ferramentas disponíveis
+
+| Ferramenta | Quando usar |
+|-----------|-------------|
+| `search_knowledge("termo")` | Busca full-text em skills, schemas, templates, checklists, playbooks. Suporta operadores FTS5: `AND`, `OR`, `NOT`, `"frase exata"` |
+| `get_full_document("doc_id")` | Obtém o documento completo pelo ID retornado pelo search |
+| `get_context("doc_id")` | Obtém seções adjacentes do mesmo arquivo (contexto ao redor) |
+| `knowledge_stats()` | Exibe estatísticas do banco e categorias indexadas |
+
+### Configuração
+
+O installer registra o MCP globalmente em `~/.claude/settings.json`, tornando-o disponível em qualquer sessão Claude Code, de qualquer diretório:
+
+```json
+{
+  "mcpServers": {
+    "knowledge": {
+      "command": "python",
+      "args": ["<FACTORY_ROOT>/tools/mcp-knowledge-search/server.py"],
+      "env": { "KNOWLEDGE_DB": "<FACTORY_ROOT>/knowledge.db" }
+    }
+  }
+}
+```
+
+### Usar o MCP em projetos externos
+
+Para ativar o MCP em um projeto fora da factory (por exemplo, um projeto cliente):
+
+```powershell
+# No diretório do projeto externo
+$env:FACTORY_ROOT\link-mcp.ps1
+```
+
+Isso copia `.mcp.json` da factory para o diretório atual. Na próxima sessão Claude Code naquele projeto, o MCP estará disponível.
+
+### Manter o banco atualizado
+
+Sempre que você editar arquivos de knowledge, skills, templates ou playbooks, reindexe o banco:
+
+```powershell
+# Na raiz da factory
+.\update-knowledge.ps1
+```
+
+O script é atômico: indexa em arquivo temporário e só substitui o banco existente se a indexação for bem-sucedida.
+
+---
+
+## Roo Code / Cline (VS Code)
+
+O **Roo Code** (anteriormente Roo-Cline) é uma extensão do VS Code que suporta **custom modes** — perfis de agente com prompt e permissões configuráveis. O installer gera automaticamente os 11 agentes da factory como custom modes.
+
+### Configurar em um projeto
+
+```powershell
+# No diretório do projeto (com VS Code aberto)
+$env:FACTORY_ROOT\link-roo.ps1
+```
+
+Isso copia `.roomodes` e `.clinerules` da pasta `roo/` da factory para a raiz do projeto.
+
+### Modos disponíveis
+
+Após rodar `link-roo.ps1`, os seguintes modos ficam disponíveis no Roo Code:
+
+| Modo | Agente |
+|------|--------|
+| `techlead` | Tech Lead |
+| `po` | Product Owner |
+| `architect` | Software Architect |
+| `engineer` | Software Engineer |
+| `devbackend` | Dev Backend |
+| `devfrontend` | Dev Frontend |
+| `qa` | QA Engineer |
+| `devsecops` | DevSecOps |
+| `devops` | DevOps |
+| `uxui` | UX/UI Designer |
+| `dataengineer` | Data/Integration Engineer |
+
+Cada modo carrega o `prompt.md` do agente correspondente como `roleDefinition` e inclui instruções para acessar `FACTORY_ROOT` diretamente ou via MCP quando disponível.
+
+### Grupos de permissão
+
+Todos os modos são configurados com os grupos `read`, `edit`, `browser`, `command` e `mcp` — o conjunto completo de permissões do Roo Code.
+
+---
+
+## Como instanciar para uma organização
+
+Este repositório é **white-label**: não contém referências a organizações, clientes ou domínios específicos. Para usar a fábrica em uma organização real, siga o fluxo abaixo.
+
+### Fluxo completo
+
+```
+1. Fork  →  2. Clone  →  3. Preencher client_profile.md  →  4. Rodar instantiation_prompt.md  →  5. Commit
+```
+
+**1. Fork**
+
+Faça fork deste repositório no GitHub. O fork é o repositório da organização — o upstream (este repo) continua genérico e pode receber atualizações.
+
+**2. Clone**
+
+```bash
+git clone https://github.com/<sua-org>/ai_software_factory.git
+cd ai_software_factory
+```
+
+**3. Preencher `context/client_profile.md`**
+
+Este é o único arquivo que você precisa editar. Ele define:
+
+- Identidade da organização (nome, tipo, idioma)
+- Design system (cores, dark mode, component library)
+- Desvios do Golden Path (auth provider, database host, deploy platform, etc.)
+- Integrações externas (ERP, CRM, LMS, etc.)
+- Contexto regulatório (LGPD, outros frameworks)
+- Quais dos 11 agentes ativar
+
+**4. Executar `context/prompts/instantiation_prompt.md`**
+
+Abra o Claude Code na raiz do repositório e cole/execute o conteúdo de `instantiation_prompt.md`. O prompt irá:
+
+- Ler e validar o `client_profile.md`
+- Atualizar `agent_config.json`, `context_view.md` e `prompt.md` de cada agente ativo
+- Injetar tokens de design, integrações e regras regulatórias nos `knowledge/` relevantes
+- Gerar `build/instantiation_plan.md` e `build/instantiation_report.md`
+
+**5. Commit**
+
+O fork agora contém a versão instanciada da fábrica. Todos os agentes ativos estão adaptados ao contexto da organização.
+
+Após o commit, execute `.\install.ps1` novamente para propagar as alterações dos `prompt.md` para `~/.claude/agents/`.
+
+### Atualizações futuras
+
+O prompt de instanciação é **idempotente** — pode ser executado novamente sempre que o `client_profile.md` for atualizado (nova integração, mudança de stack, novo framework regulatório). Ele sobrescreve apenas os campos mapeados ao perfil; estrutura, gates, schemas e checklists nunca são modificados.
+
+### Sobre os arquivos `_generico`
+
+Todos os arquivos com sufixo `_generico` são white-label e devem permanecer sem referências a organizações específicas no repositório upstream. Eles são as fontes de build — o prompt de instanciação os lê mas não os modifica.
 
 ---
 
@@ -484,45 +745,7 @@ Ao final do build, gerar em `build/`:
 - `knowledge/` com o conhecimento destilado
 - Inputs de projeto fornecidos diretamente pelo humano ou pelo Tech Lead
 
----
-
-## Como instalar e usar um agente
-
-### Opção 1 — Universal Factory CLI (recomendado)
-
-Execute o installer uma vez. Os agentes ficam disponíveis como `@nome` em qualquer sessão Claude Code, de qualquer diretório.
-
-- **PowerShell:** `.\install.ps1`
-- **Git Bash / Linux / macOS:** `bash install.sh` → `source ~/.bashrc`
-
-Ver seção [Universal Factory CLI](#universal-factory-cli) acima para a lista completa de agentes e exemplos de uso.
-
-### Opção 2 — System Prompt manual (qualquer plataforma de IA)
-
-Os agentes são definidos por **prompts de sistema em texto puro** e funcionam com qualquer modelo de linguagem que suporte system prompts — Claude, GPT-4, Gemini, Mistral, ou modelos locais via Ollama.
-
-1. Localize o prompt do agente desejado em:
-   ```
-   context/prompts/prompt_<modelo>_agente<XX>_<papel>_generico.md
-   ```
-2. Cole o conteúdo como **System Prompt** (instrução de sistema) da sua sessão
-3. Forneça ao agente apenas os artefatos do seu diretório local (`AgenteXX_*/`)
-
-> Os prompts existentes foram otimizados para Claude Code, mas a estrutura e as regras são independentes de modelo. Ao adaptar para outro modelo, mantenha as seções de Runtime Context Rule, Golden Model e Skills intactas.
-
-### Sequência de gates (resumo prático)
-
-```
-Input: Descrição do projeto
-  └── @techlead → @po
-        └── PRD.md → Gate 1 → @techlead
-              └── Architecture.md → Gate 2 → @techlead
-                    └── Execution Plan → Gate 3 → @techlead
-                          └── @devbackend + @devfrontend → Gate 4 (@qa)
-                                └── QA Report → Gate 5 (@devsecops)
-                                      └── Security Audit → Gate 6 (HUMANO aprova)
-                                            └── @devops → Deploy → Gate 7 → Encerrado
-```
+Após criar ou atualizar um agente, re-execute `.\install.ps1` para propagar as alterações de `prompt.md` e dos arquivos de knowledge para `~/.claude/agents/<nome>.md`.
 
 ---
 
@@ -554,6 +777,8 @@ AgenteXX_NomeAgente/
 └── examples/
 ```
 
+O MCP Knowledge Search estende esse acesso com busca full-text, mas também só indexa os artefatos locais dos agentes — nunca os arquivos de `context/` ou `lib/`.
+
 ### Por que isso importa
 
 - **Performance**: o agente não precisa ler centenas de páginas de livros em cada sessão
@@ -581,7 +806,7 @@ AgenteXX_NomeAgente/
 | **UX/UI Designer** | Laws of UX (Yablonski), Don't Make Me Think (Krug), Lean UX (Gothelf & Seiden) | — |
 | **Data/Integration Engineer** | Fundamentals of Data Engineering (Reis & Housley), Building Event-Driven Microservices (Bellemare), Data Mesh (Dehghani), Designing Event-Driven Systems (Stopford) | — |
 
-> **Materiais complementares** = apostilas de pós-graduação em Engenharia de Software copiadas para `lib/` em 2026-05-17. Já destiladas nos `knowledge/` dos agentes construídos; serão usadas no build dos demais.
+> **Materiais complementares** = apostilas de pós-graduação em Engenharia de Software copiadas para `lib/` em 2026-05-17. Já destiladas nos `knowledge/` dos agentes Agente00–Agente03; serão usadas no build dos demais quando aplicável.
 
 ### Playbooks operacionais (`bibliography/playbooks/`)
 
@@ -611,7 +836,7 @@ AgenteXX_NomeAgente/
 | `context/reference_architecture_generico.md` | Golden Model: stack técnica, padrões obrigatórios, antipadrões |
 | `context/manual_arquitetura_componentes_generico.md` | Estrutura de artefatos, contratos de handoff, definição de gates |
 
-### Prompts prontos para instalação
+### Prompts prontos para instalação manual
 
 ```
 context/prompts/
@@ -646,59 +871,4 @@ context/prompts/
 | **09 UxUiDesigner** | ✅ | ✅ | ✅ | ✅ 5/5 | **Pronto para uso** |
 | **10 DataIntegrationEngineer** | ✅ | ✅ | ✅ | ✅ 7/7 | **Pronto para uso** |
 
-> **Todos os 11 agentes têm build completo.** Agente00 a Agente10 possuem artefatos locais, skills e knowledge distillation prontos para uso. Os prompts genéricos estão em `context/prompts/`.
-
----
-
-## Como instanciar para uma organização
-
-Este repositório é **white-label**: não contém referências a organizações, clientes ou domínios específicos. Para usar a fábrica em uma organização real, siga o fluxo abaixo.
-
-### Fluxo completo
-
-```
-1. Fork  →  2. Clone  →  3. Preencher client_profile.md  →  4. Rodar instantiation_prompt.md  →  5. Commit
-```
-
-**1. Fork**
-
-Faça fork deste repositório no GitHub. O fork é o repositório da organização — o upstream (este repo) continua genérico e pode receber atualizações.
-
-**2. Clone**
-
-```bash
-git clone https://github.com/<sua-org>/ai_software_factory.git
-cd ai_software_factory
-```
-
-**3. Preencher `context/client_profile.md`**
-
-Este é o único arquivo que você precisa editar. Ele define:
-
-- Identidade da organização (nome, tipo, idioma)
-- Design system (cores, dark mode, component library)
-- Desvios do Golden Path (auth provider, database host, deploy platform, etc.)
-- Integrações externas (ERP, CRM, LMS, etc.)
-- Contexto regulatório (LGPD, outros frameworks)
-- Quais dos 11 agentes ativar
-
-**4. Executar `context/prompts/instantiation_prompt.md`**
-
-Abra o Claude Code na raiz do repositório e cole/execute o conteúdo de `instantiation_prompt.md`. O prompt irá:
-
-- Ler e validar o `client_profile.md`
-- Atualizar `agent_config.json`, `context_view.md` e `prompt.md` de cada agente ativo
-- Injetar tokens de design, integrações e regras regulatórias nos `knowledge/` relevantes
-- Gerar `build/instantiation_plan.md` e `build/instantiation_report.md`
-
-**5. Commit**
-
-O fork agora contém a versão instanciada da fábrica. Todos os agentes ativos estão adaptados ao contexto da organização.
-
-### Atualizações futuras
-
-O prompt de instanciação é **idempotente** — pode ser executado novamente sempre que o `client_profile.md` for atualizado (nova integração, mudança de stack, novo framework regulatório). Ele sobrescreve apenas os campos mapeados ao perfil; estrutura, gates, schemas e checklists nunca são modificados.
-
-### Sobre os arquivos `_generico`
-
-Todos os arquivos com sufixo `_generico` são white-label e devem permanecer sem referências a organizações específicas no repositório upstream. Eles são as fontes de build — o prompt de instanciação os lê mas não os modifica.
+> **Todos os 11 agentes têm build completo.** Agente00–Agente10 possuem artefatos locais, skills e knowledge distillation prontos para uso. Os prompts genéricos estão em `context/prompts/`.

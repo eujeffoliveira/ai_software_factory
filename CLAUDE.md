@@ -55,6 +55,53 @@ Rules:
 
 ---
 
+## MCP Knowledge Search (`tools/mcp-knowledge-search/`)
+
+The MCP Knowledge Search is a FastMCP server with SQLite FTS5 that indexes all factory content and exposes semantic search tools to agents at runtime.
+
+**Configured automatically by `install.ps1`:**
+- `knowledge.db` — SQLite FTS5 database (7,000+ indexed documents)
+- `~/.claude/settings.json` — global `mcpServers.knowledge` entry
+- `.mcp.json` — local factory configuration (use `link-mcp.ps1` in other projects)
+
+**Exposed tools:**
+
+| Tool | Usage |
+|------|-------|
+| `search_knowledge("term")` | Full-text search across all factory artifacts |
+| `get_full_document("doc_id")` | Retrieve a complete document by ID |
+| `get_context("doc_id")` | Retrieve adjacent sections from the same file |
+| `knowledge_stats()` | Database statistics and indexed categories |
+
+**What is indexed:** `skills/`, `schemas/`, `templates/`, `examples/`, `checklists/`, `knowledge/`, `bibliography/playbooks/`
+
+**To update after editing content:** `.\update-knowledge.ps1`
+**To activate in another project:** `$env:FACTORY_ROOT\link-mcp.ps1`
+
+Rules:
+- The MCP serves deep content (skills, schemas, templates, examples) on demand.
+- Knowledge embedded in agent files (`~/.claude/agents/`) serves fast responses without a network call.
+- The two work in layers: embedded knowledge for quick answers → MCP search for depth.
+
+---
+
+## Roo Code / Cline (`roo/`)
+
+`install.ps1` generates `roo/.roomodes` and `roo/.clinerules` with all 11 agents as **custom modes** for Roo Code / Cline in VS Code.
+
+To activate in a project:
+
+```powershell
+# Run from the target project folder
+$env:FACTORY_ROOT\link-roo.ps1
+```
+
+This copies `.roomodes` and `.clinerules` to the current project (with automatic backup). Open VS Code and select the desired mode in Roo Code.
+
+The `roo/` files are gitignored — generated and updated by `install.ps1`.
+
+---
+
 ## Bibliography (`bibliography/`)
 
 The `bibliography/` directory holds operational playbooks distilled from engineering best practices. These are **shared reference material**, not agent-specific knowledge.
@@ -82,16 +129,34 @@ Playbooks are **build-time reference** for enriching agent knowledge. They are n
 
 ## Universal Factory CLI
 
-Two installers at the repo root — choose based on your shell:
+**Prerequisites:** Python 3.x must be available on PATH (required for MCP Knowledge Search).
 
-| Shell | Script | Activate |
-|-------|--------|----------|
-| PowerShell (Windows) | `.\install.ps1` | `. $PROFILE` |
-| Git Bash / Linux / macOS | `bash install.sh` | `source ~/.bashrc` |
+Run the installer from the repo root in PowerShell:
 
-Both are idempotent — safe to re-run after moving the repo or cloning to a new machine.
+```powershell
+.\install.ps1
+# Force pip dependency reinstall even if already up-to-date:
+.\install.ps1 -ForceDeps
+```
 
-`install.ps1` creates agent definition files in `~/.claude/agents/`, making all 11 agents available as `@agent-name` inside any Claude Code session from any directory:
+`install.ps1` is fully idempotent — running it twice reports all items as `sem mudancas`. It uses content comparison with LF normalization and UTF-8 without BOM. `~/.claude/settings.json` receives a surgical merge that adds `mcpServers.knowledge` without touching any other keys; a timestamped backup is created only when a real change is made.
+
+**What `install.ps1` does (11 phases):**
+
+1. Sets `FACTORY_ROOT` as a Windows user environment variable
+2. Detects Python and installs MCP dependencies via pip (controlled by SHA256 hash — skipped if unchanged)
+3. Creates `~/.claude/agents/<name>.md` for each of the 11 agents with **hybrid content**:
+   - `prompt.md` of the agent
+   - 8 embedded knowledge files: `knowledge/principles.md`, `knowledge/heuristics.md`, `knowledge/decision_rules.md`, `knowledge/knowledge_cards.md`, `skills_manifest.md`, `quality_gate.md`, `context_view.md`, `failure_modes.md`
+   - MCP instructions block at the end
+4. Creates `knowledge-config.json` (gitignored)
+5. Creates/updates `knowledge.db` via `ingest.py` — SQLite FTS5 with 7,000+ indexed documents (reindexes only if any `.md` is newer than the DB)
+6. Creates `.mcp.json` (gitignored) at the factory root
+7. Merges `mcpServers.knowledge` into `~/.claude/settings.json` without touching other keys
+8. Creates `roo/.roomodes` and `roo/.clinerules` (gitignored) for Roo Code / Cline
+9. Generates helper scripts: `factory.ps1`, `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1`
+
+After installation, all 11 agents are available as `@agent-name` inside any Claude Code session from any directory:
 
 ```
 @techlead I need to design a payments API
@@ -100,16 +165,26 @@ Both are idempotent — safe to re-run after moving the repo or cloning to a new
 @qa generate Playwright E2E tests for the login flow
 ```
 
-For Gemini CLI, use the `factory` wrapper (also installed by `install.ps1`):
+For Gemini CLI, use the `factory` wrapper:
 
 ```powershell
 factory Agente06_QaEngineer gemini 'Write E2E tests'
 factory Agente02_SoftwareArchitect gemini
 ```
 
+**Helper scripts (generated by `install.ps1`, gitignored):**
+
+| Script | Purpose |
+|--------|---------|
+| `update-knowledge.ps1` | Reindex `knowledge.db` after editing `knowledge/`, `skills/`, etc. without regenerating agent files |
+| `link-mcp.ps1` | From another project: `$env:FACTORY_ROOT\link-mcp.ps1` — activates MCP Knowledge Search in that project |
+| `link-roo.ps1` | From another project: `$env:FACTORY_ROOT\link-roo.ps1` — copies `.roomodes`/`.clinerules` to that project |
+
+**When to re-run `install.ps1`:** after `git pull`, after editing any agent's `prompt.md`, after editing any `knowledge/` file, or after cloning to a new machine.
+
 Full documentation: `docs/INSTALL_CLI.md`.
 
-When working on this repo, update the `install.ps1` `$agents` array if agent folder names change. The installer reads each agent's `prompt.md` at install time and embeds it in the `~/.claude/agents/<name>.md` file — re-run after any `prompt.md` change to propagate it.
+When working on this repo, update the `install.ps1` `$agents` array if agent folder names change.
 
 ---
 
@@ -267,4 +342,6 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 - When adding agent-specific executable tools, place them under `AgenteXX_*/tools/<category>/` — never inside `knowledge/` or `skills/`
 - When adding shared utilities (used by multiple agents), place them in `tools/` at the repo root, not inside any agent folder
 - `bibliography/playbooks/` is append-only — do not edit existing playbooks without explicit instruction
-- Both `install.ps1` and `install.sh` embed `FACTORY_PATH` at install time — re-run the appropriate one whenever the repo is cloned to a new machine or relocated
+- Re-run `.\install.ps1` whenever: (a) any agent's `prompt.md` changes, (b) any `knowledge/` file changes, (c) the repo is cloned to a new machine or relocated. The installer propagates the full hybrid content (prompt + 8 knowledge files + MCP block) to `~/.claude/agents/`. Running it twice is safe — second run reports all items unchanged.
+- `update-knowledge.ps1` reindexes `knowledge.db` without regenerating the agent files — use it for knowledge-only edits after `install.ps1` has run at least once.
+- `link-mcp.ps1` and `link-roo.ps1` are generated by the installer and live at the factory root — they are gitignored and machine-specific.
