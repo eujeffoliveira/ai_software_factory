@@ -525,7 +525,7 @@ $agentListLines
 ## Acesso ao conhecimento
 
 O banco de conhecimento completo esta disponivel via MCP knowledge search.
-Para vincular o MCP a este projeto: `$env:FACTORY_ROOT\link-mcp.ps1
+Para vincular o MCP a este projeto: & "`$env:FACTORY_ROOT\link-mcp.ps1"
 
 # END ai_software_factory managed block
 "@
@@ -638,7 +638,7 @@ if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_uncha
 # link-mcp.ps1
 $linkMcp = @"
 # link-mcp.ps1 — Vincular MCP da factory ao projeto atual
-# Uso: `$env:FACTORY_ROOT\link-mcp.ps1
+# Uso: & "`$env:FACTORY_ROOT\link-mcp.ps1"
 
 `$ErrorActionPreference = "Stop"
 `$FACTORY_PATH = if (`$env:FACTORY_ROOT) { `$env:FACTORY_ROOT } else { Write-Error "FACTORY_ROOT nao definido."; exit 1 }
@@ -659,7 +659,7 @@ if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_uncha
 # link-roo.ps1
 $linkRoo = @"
 # link-roo.ps1 — Vincular agentes Roo Code/Cline ao projeto atual
-# Uso: `$env:FACTORY_ROOT\link-roo.ps1
+# Uso: & "`$env:FACTORY_ROOT\link-roo.ps1"
 
 `$ErrorActionPreference = "Stop"
 `$FACTORY_PATH = if (`$env:FACTORY_ROOT) { `$env:FACTORY_ROOT } else { Write-Error "FACTORY_ROOT nao definido."; exit 1 }
@@ -718,7 +718,7 @@ if ($hasPython) {
     Write-Host "    .\update-knowledge.ps1"
     Write-Host ""
     Write-Host "  Vincular MCP ou Roo a outro projeto:" -ForegroundColor Cyan
-    Write-Host "    `$env:FACTORY_ROOT\link-mcp.ps1"
-    Write-Host "    `$env:FACTORY_ROOT\link-roo.ps1"
+    Write-Host "    & `"`$env:FACTORY_ROOT\link-mcp.ps1`""
+    Write-Host "    & `"`$env:FACTORY_ROOT\link-roo.ps1`""
     Write-Host ""
 }

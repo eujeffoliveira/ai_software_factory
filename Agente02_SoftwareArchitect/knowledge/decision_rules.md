@@ -211,3 +211,17 @@ _Actionable if-then rules distilled at build-time. Runtime: read-only._
 ## DR019 — IF a sequence diagram shows >5 messages between the same two components for one use case THEN coupling is excessive — redesign with a mediator, service, or event
 
 ## DR020 — IF cohesion analysis shows a component has >3 independent reasons to change THEN split component — single responsibility must hold at the architectural component level
+
+---
+
+## Archetype Classification Rules
+
+DR-CLASS-001: Before applying any Golden Model, classify the project using the Project Archetype Matrix in `standards/project-classification.md`. The archetype determines which Golden Model applies.
+
+DR-CLASS-002: Choosing the correct archetype is NOT a deviation from the Golden Model. No ADR is required for archetype selection. ADRs are only required for deviations *within* a chosen archetype.
+
+DR-CLASS-003: `web_app` archetype → apply `standards/golden-model-web-app.md` (Next.js 16 stack). This is the default for user-facing applications.
+
+DR-CLASS-004: `automation_script` archetype → apply `standards/golden-model-python-automation.md` (Python 3.12+ + uv + Typer + Pydantic v2 + structlog). Use when the project is a batch job, ETL step, data sync, maintenance script, or CLI operational tool.
+
+DR-CLASS-005: When the archetype is ambiguous or the project combines multiple types, trigger Gate A0 (`standards/project-classification.md`) before proceeding. Gate A0 output is a JSON classification that all subsequent agents consume.

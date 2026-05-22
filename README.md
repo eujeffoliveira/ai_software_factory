@@ -20,6 +20,7 @@ Suporta **Claude Code** (agentes globais via `@nome`) e **Roo Code/Cline** (cust
 - [Validação pós-instalação](#validação-pós-instalação)
 - [Troubleshooting](#troubleshooting)
 - [Idempotência e segurança](#idempotência-e-segurança)
+- [Automação e outros arquétipos](#automação-e-outros-arquétipos)
 
 **Referência conceitual**
 - [O que é a AI Software Factory](#o-que-é-a-ai-software-factory)
@@ -29,6 +30,8 @@ Suporta **Claude Code** (agentes globais via `@nome`) e **Roo Code/Cline** (cust
 - [Gates de Qualidade](#gates-de-qualidade)
 - [Artefatos e Contratos](#artefatos-e-contratos)
 - [Golden Model — Stack Técnica Obrigatória](#golden-model--stack-técnica-obrigatória)
+- [Gate A0 — Classificação de Arquétipo](#gate-a0--classificação-de-arquétipo)
+- [Standards — Matriz de Golden Models](#standards--matriz-de-golden-models)
 - [Estrutura de Pastas](#estrutura-de-pastas)
 - [Como criar um agente](#como-criar-um-agente)
 - [Como instanciar para uma organização](#como-instanciar-para-uma-organização)
@@ -185,7 +188,7 @@ O **Roo Code** (extensão do VS Code) suporta custom modes — perfis de agente 
 
 ```powershell
 # No diretório do projeto, com VS Code aberto
-$env:FACTORY_ROOT\link-roo.ps1
+& "$env:FACTORY_ROOT\link-roo.ps1"
 ```
 
 Isso copia `.roomodes` e `.clinerules` da factory para a raiz do projeto atual (com backup automático de versões anteriores). A factory **não é copiada** — apenas os arquivos de configuração que apontam para ela.
@@ -224,7 +227,7 @@ Se a factory foi atualizada e os modos mudaram:
 .\install.ps1
 
 # No projeto
-$env:FACTORY_ROOT\link-roo.ps1
+& "$env:FACTORY_ROOT\link-roo.ps1"
 ```
 
 ---
@@ -237,7 +240,7 @@ Em alguns casos (Roo Code/Cline, configuração local de projeto, integração c
 
 ```powershell
 # No diretório do projeto
-$env:FACTORY_ROOT\link-mcp.ps1
+& "$env:FACTORY_ROOT\link-mcp.ps1"
 ```
 
 Isso copia `.mcp.json` da factory para o diretório atual. A factory **não é copiada** — apenas o arquivo de configuração que aponta para o servidor MCP central.
@@ -459,7 +462,7 @@ cd $env:FACTORY_ROOT
 **Solução:**
 ```powershell
 cd C:\meu-projeto
-$env:FACTORY_ROOT\link-roo.ps1
+& "$env:FACTORY_ROOT\link-roo.ps1"
 ```
 
 Se `FACTORY_ROOT` não estiver definida na sessão atual:
@@ -570,6 +573,46 @@ O `install.ps1` pode ser executado quantas vezes quiser, sem efeitos colaterais:
 **Roo e scripts auxiliares**
 - `roo/.roomodes`, `roo/.clinerules`, `link-mcp.ps1`, `link-roo.ps1`, `update-knowledge.ps1` e `factory.ps1` usam a mesma comparação de conteúdo
 - Só são reescritos quando o conteúdo gerado diferir do que está em disco
+
+---
+
+## Automação e outros arquétipos
+
+A factory suporta 8 arquétipos de projeto. Para projetos que não são aplicações web, use `@techlead` para acionar o Gate A0 e obter o Golden Model correto:
+
+```
+@techlead Classifique o arquétipo deste projeto: script Python que sincroniza dados de uma API externa para um banco PostgreSQL, roda via cron diariamente.
+```
+
+O Tech Lead responde com um JSON de classificação e indica o Golden Model, agentes relevantes e artefatos obrigatórios.
+
+### Arquétipo `automation_script` — exemplo de uso
+
+```
+@techlead Gate A0 para: script de sincronização de dados do ERP para banco local, roda diariamente.
+@engineer Crie o plano de execução seguindo o Golden Model Python Automation em standards/golden-model-python-automation.md
+@devbackend Implemente o script usando Python 3.12+, uv, Typer, Pydantic v2, structlog e tenacity
+@qa Valide idempotência, dry-run, logging estruturado e testes pytest
+@devsecops Revise secrets management e ausência de credenciais hardcoded
+```
+
+### Templates e checklists disponíveis
+
+Para o arquétipo `automation_script`, os seguintes artefatos estão disponíveis via MCP/RAG:
+
+| Artefato | Localização | Gate |
+|----------|-------------|------|
+| `Automation_Brief.md` | `templates/automation/` | A1 |
+| `Automation_Design.md` | `templates/automation/` | A2 |
+| `Idempotency_Plan.md` | `templates/automation/` | A2 |
+| `Config_And_Secrets.md` | `templates/automation/` | A2 |
+| `Runbook.md` | `templates/automation/` | A5 |
+| Checklist de idempotência | `checklists/automation/` | A3 |
+| Checklist de secrets | `checklists/automation/` | A3 |
+| Checklist de logging | `checklists/automation/` | A3 |
+| Checklist de testes | `checklists/automation/` | A4 |
+
+Busque qualquer template via MCP: `search_knowledge("automation brief template")`.
 
 ---
 
@@ -697,6 +740,7 @@ O **State Ledger** (`State_Ledger.json`) é a fonte única de verdade: registra 
 
 | Gate | Nome | Artefato Validado | Quem pode bloquear |
 |------|------|------------------|--------------------|
+| A0 | Classificação de Arquétipo | JSON de classificação (`standards/project-classification.md`) | Tech Lead |
 | 1 | PRD Review | PRD.md | Tech Lead |
 | 2 | Architecture Review | Architecture.md | Tech Lead |
 | 3 | Execution Plan Review | Execution_Plan.json | Tech Lead |
@@ -704,6 +748,15 @@ O **State Ledger** (`State_Ledger.json`) é a fonte única de verdade: registra 
 | 5 | Security Gate | Security_Audit.md | DevSecOps (Tech Lead NÃO pode sobrepor) |
 | 6 | Deployment Gate | Deployment_Plan.md + rollback plan | Humano (obrigatório) |
 | 7 | Post-Deploy Gate | Relatório de saúde pós-deploy | Tech Lead + SLO monitoring |
+
+**Gate A0 — Classificação de Arquétipo:**
+
+Roda antes de todos os gates numerados quando o tipo de projeto não é imediatamente óbvio. Output: JSON com `project_type`, `golden_model`, `required_agents`, `required_artifacts`, `not_applicable`. Status codes específicos: `A0_APPROVED` | `A0_AMBIGUOUS` | `A0_BLOCKED`.
+
+Acione com:
+```
+@techlead Classifique o arquétipo deste projeto: [descrição]
+```
 
 **21 Status Codes de Gate:**
 
@@ -741,7 +794,30 @@ O Tech Lead valida o Handoff Package antes de encaminhar ao próximo agente. Han
 
 ## Golden Model — Stack Técnica Obrigatória
 
-O **Golden Model** define a stack obrigatória de todos os projetos. Qualquer desvio requer ADR aprovada.
+### Matriz de Golden Models por tipo de projeto
+
+A factory não impõe uma stack única — ela classifica o projeto em um dos 8 arquétipos e aplica o Golden Model correspondente. **Escolher o arquétipo correto não é um desvio e não requer ADR.** ADRs são exigidos apenas para desvios *dentro* do arquétipo escolhido.
+
+| Arquétipo | Golden Model | Stack principal |
+|-----------|-------------|-----------------|
+| `web_app` | `standards/golden-model-web-app.md` | Next.js 16 + React 19 + TypeScript + Tailwind + NextAuth + Supabase + Prisma + Vercel |
+| `automation_script` | `standards/golden-model-python-automation.md` | Python 3.12+ + uv + Typer + Pydantic v2 + structlog + pytest |
+| `data_pipeline` | `standards/golden-model-data-pipeline.md` | Python + Polars + DuckDB + Pandera |
+| `api_service` | `standards/golden-model-api-service.md` | FastAPI (Python) ou Next.js Route Handlers |
+| `cli_tool` | `standards/golden-model-cli-tool.md` | Python + Typer + pyproject.toml |
+| `mcp_server` | `standards/golden-model-mcp-server.md` | Python + FastMCP + Pydantic schemas |
+| `integration_worker` | `standards/golden-model-integration-worker.md` | Python + Redis/queues + tenacity + dead-letter |
+| `notebook_analysis` | `standards/golden-model-notebook-analysis.md` | Jupyter + Polars/Pandas (nunca produção direta) |
+
+O **Gate A0** (`standards/project-classification.md`) classifica o projeto antes de qualquer decisão técnica. Use `@techlead` para acionar o Gate A0:
+
+```
+@techlead Classifique o arquétipo deste projeto: [descrição do projeto]
+```
+
+### Stack `web_app` — o padrão para aplicações com interface de usuário
+
+O **Golden Model web_app** define a stack obrigatória para aplicações web. Qualquer desvio *dentro deste arquétipo* requer ADR aprovada. Gate 2 é bloqueado até a ADR ser aprovada.
 
 | Camada | Tecnologia |
 |--------|-----------|
@@ -803,6 +879,26 @@ ai_software_factory/
 │
 ├── bibliography/
 │   └── playbooks/                    # 12 playbooks operacionais indexados no knowledge.db
+│
+├── standards/                        # Matriz de Golden Models por arquétipo
+│   ├── project-classification.md     # Gate A0: 8 arquétipos, árvore de decisão, regras de ADR
+│   ├── golden-model-web-app.md       # Stack web_app (Next.js 16)
+│   ├── golden-model-python-automation.md  # Stack automation_script (Python 3.12+)
+│   ├── golden-model-data-pipeline.md # Stack data_pipeline (Polars + DuckDB)
+│   ├── golden-model-api-service.md   # Stack api_service (FastAPI ou Route Handlers)
+│   ├── golden-model-cli-tool.md      # Stack cli_tool (Typer + pyproject.toml)
+│   ├── golden-model-mcp-server.md    # Stack mcp_server (FastMCP)
+│   ├── golden-model-integration-worker.md  # Stack integration_worker (Redis + tenacity)
+│   └── golden-model-notebook-analysis.md   # Stack notebook_analysis (Jupyter + Polars)
+│
+├── templates/
+│   └── automation/                   # 10 templates para o arquétipo automation_script
+│
+├── checklists/
+│   └── automation/                   # 8 checklists (idempotência, dry-run, secrets, logs...)
+│
+├── examples/
+│   └── requests/                     # 6 sequências de prompt multi-agente por arquétipo
 │
 ├── context/                          # Contexto global — BUILD-TIME apenas
 │   ├── base_teorica.md               # Prompts e bases de conhecimento de todos os agentes

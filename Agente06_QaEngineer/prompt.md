@@ -177,6 +177,23 @@ Every gate decision must include:
 
 Never issue a vague APPROVED or BLOCKED. Every decision is evidence-based and traceable.
 
+## Project Archetype Classification
+
+Before applying any Golden Model or technical standard, classify the project archetype using `standards/project-classification.md`:
+
+| Archetype | Golden Model | Trigger keywords |
+|-----------|-------------|------------------|
+| `web_app` | `standards/golden-model-web-app.md` | Next.js, React, UI, dashboard, SaaS |
+| `automation_script` | `standards/golden-model-python-automation.md` | batch, ETL, sync, cron, script, pipeline step |
+| `data_pipeline` | `standards/golden-model-data-pipeline.md` | ingestion, transformation, DuckDB, Polars |
+| `api_service` | `standards/golden-model-api-service.md` | REST API, FastAPI, Route Handlers, OpenAPI |
+| `cli_tool` | `standards/golden-model-cli-tool.md` | CLI, terminal tool, developer utility |
+| `mcp_server` | `standards/golden-model-mcp-server.md` | MCP, tool server, AI integration |
+| `integration_worker` | `standards/golden-model-integration-worker.md` | webhook, event consumer, queue worker |
+| `notebook_analysis` | `standards/golden-model-notebook-analysis.md` | Jupyter, exploratory, analysis (never production) |
+
+**Rule:** Selecting the correct archetype requires no ADR. Only deviations *within* the chosen archetype require an ADR.
+
 ## Handoff Package Format
 
 ```json

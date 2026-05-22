@@ -8,6 +8,26 @@ No exception. No workaround. No partial approval with intent to fix later.
 
 ---
 
+### Gate A0 — Classificação de Arquétipo
+
+**Responsável:** Tech Lead  
+**Quando:** Antes de qualquer Gate numerado, quando o tipo de projeto não é imediatamente óbvio  
+**Objetivo:** Classificar o arquétipo do projeto e selecionar o Golden Model correto
+
+**Critérios de aprovação:**
+- [ ] Arquétipo identificado (um dos 8 em `standards/project-classification.md`)
+- [ ] Golden Model correspondente selecionado
+- [ ] Agentes relevantes identificados (nem todos os 11 agentes são necessários em todos os projetos)
+- [ ] Artefatos obrigatórios listados para o arquétipo
+
+**Output:** JSON de classificação conforme template em `standards/project-classification.md`
+
+**Código de status:** `A0_APPROVED` | `A0_AMBIGUOUS` (requer discussão) | `A0_BLOCKED` (arquétipo inválido)
+
+**Regra:** Selecionar o arquétipo correto NÃO é um desvio do Golden Model. ADR só é necessário para desvios *dentro* do arquétipo escolhido.
+
+---
+
 ## Gate 1 — PRD Approval
 
 **Trigger:** Product Owner submits `PRD.md` + Handoff Package.

@@ -1,4 +1,10 @@
 # Reference Architecture & Standards Document
+
+> **Nota de escopo:** Este documento descreve o Golden Model para projetos do tipo `web_app`.
+> Para outros tipos de projeto, consulte a matriz em `standards/project-classification.md` e o
+> Golden Model correspondente em `standards/golden-model-<archetype>.md`.
+> Escolher o arquétipo correto **não é um desvio** e não requer ADR.
+
 ## Enterprise Software Factory — Golden Model v1.1.1
 ### Agent Knowledge Base Edition — White-label
 ### Base: projeto `reference-project` — Organização
