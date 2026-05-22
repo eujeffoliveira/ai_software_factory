@@ -8,6 +8,13 @@ Suporta **Claude Code** (agentes globais via `@nome`) e **Roo Code/Cline** (cust
 
 ## Índice
 
+**Documentação operacional**
+- [docs/INSTALLATION.md](docs/INSTALLATION.md) — Guia de instalação detalhado
+- [docs/OPERATIONS.md](docs/OPERATIONS.md) — Uso do dia-a-dia
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — Resolução de problemas
+- [CHANGELOG.md](CHANGELOG.md) — Histórico de versões
+- [RELEASE_NOTES.md](RELEASE_NOTES.md) — Notas da versão atual
+
 **Instalação e uso**
 - [Quick Start](#quick-start)
 - [O que o instalador faz](#o-que-o-instalador-faz)

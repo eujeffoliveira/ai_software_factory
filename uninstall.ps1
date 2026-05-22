@@ -1,12 +1,24 @@
-# uninstall.ps1 — Remove tudo que foi instalado pelo install.ps1
-# Uso: .\uninstall.ps1
-# Execute a partir da raiz do repositorio ai_software_factory
+# uninstall.ps1 — Remove componentes instalados pelo install.ps1
+# Uso:
+#   .\uninstall.ps1                     # remove agentes e configs, preserva knowledge.db e logs
+#   .\uninstall.ps1 -KeepKnowledge      # idem (explicito)
+#   .\uninstall.ps1 -Full               # remove tudo, incluindo knowledge.db, logs, FACTORY_ROOT
+#   .\uninstall.ps1 -WhatIf             # preview sem remover nada
+#   .\uninstall.ps1 -Full -Force        # Full sem pedir confirmacao
+
+param(
+    [switch]$KeepKnowledge,   # preserva knowledge.db e logs (padrao do modo normal)
+    [switch]$Full,            # remove tudo incluindo knowledge.db, logs e FACTORY_ROOT
+    [switch]$WhatIf,          # mostra o que seria feito sem executar
+    [switch]$Force            # pula confirmacoes interativas
+)
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference    = "SilentlyContinue"
 
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
+# ─── Output helpers ──────────────────────────────────────────────────────────
 function Write-Header($t) {
     Write-Host ""
     Write-Host "  $t" -ForegroundColor Cyan
@@ -15,7 +27,26 @@ function Write-Header($t) {
 function Write-OK($m)   { Write-Host "  [OK]   $m" -ForegroundColor Green }
 function Write-Skip($m) { Write-Host "  [SKIP] $m" -ForegroundColor DarkGray }
 function Write-Warn($m) { Write-Host "  [WARN] $m" -ForegroundColor Yellow }
+function Write-What($m) { Write-Host "  [WHAT] $m" -ForegroundColor DarkCyan }
 
+# Executa acao de remocao — respeita -WhatIf
+function Remove-IfExists {
+    param(
+        [string]$Path,
+        [string]$Label,
+        [switch]$Recurse
+    )
+    if (-not (Test-Path $Path)) { Write-Skip "Nao encontrado: $Label"; return }
+    if ($WhatIf) {
+        Write-What "Removeria: $Label"
+    } else {
+        if ($Recurse) { Remove-Item $Path -Recurse -Force }
+        else          { Remove-Item $Path -Force }
+        Write-OK "Removido: $Label"
+    }
+}
+
+# ─── Caminhos ────────────────────────────────────────────────────────────────
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
 $CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
@@ -25,89 +56,131 @@ $ROO_MCP_PATHS     = @(
 )
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 
-$agentNames = @(
-    "techlead", "po", "architect", "engineer", "devbackend",
-    "devfrontend", "qa", "devsecops", "devops", "uxui", "dataengineer"
-)
+$agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer")
+
+# ─── Banner ──────────────────────────────────────────────────────────────────
+$modeLabel = if ($WhatIf) { "WhatIf" } elseif ($Full) { "Full" } else { "Normal" }
 
 Write-Host ""
 Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Red
 Write-Host "  ║      AI Software Factory — Uninstaller           ║" -ForegroundColor Red
 Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Red
 Write-Host ""
-Write-Host "  Factory: $FACTORY_PATH" -ForegroundColor Gray
+Write-Host "  Factory : $FACTORY_PATH" -ForegroundColor Gray
+Write-Host "  Modo    : $modeLabel" -ForegroundColor Gray
+if ($WhatIf) {
+    Write-Host "  [WHAT-IF] Nenhuma alteracao sera feita." -ForegroundColor DarkCyan
+}
 Write-Host ""
 
-# ─── FACTORY_ROOT ────────────────────────────────────────────────────────────
-Write-Header "FACTORY_ROOT"
-$currentVal = [System.Environment]::GetEnvironmentVariable("FACTORY_ROOT", "User")
-if ($currentVal) {
-    [System.Environment]::SetEnvironmentVariable("FACTORY_ROOT", $null, "User")
-    Remove-Item Env:\FACTORY_ROOT -ErrorAction SilentlyContinue
-    Write-OK "Variavel de ambiente FACTORY_ROOT removida (era: $currentVal)"
-} else {
-    Write-Skip "FACTORY_ROOT nao estava definida"
+# ─── Confirmacao para -Full ──────────────────────────────────────────────────
+if ($Full -and -not $WhatIf -and -not $Force) {
+    Write-Host "  ATENCAO: -Full ira remover knowledge.db, logs, dependencias Python" -ForegroundColor Yellow
+    Write-Host "           e a variavel FACTORY_ROOT. Esta acao nao pode ser desfeita." -ForegroundColor Yellow
+    Write-Host ""
+    $confirm = Read-Host "  Confirmar desinstalacao completa? (y/N)"
+    if ($confirm -notmatch "^[yY]$") {
+        Write-Host "  Cancelado." -ForegroundColor Gray
+        exit 0
+    }
+    Write-Host ""
 }
 
-# ─── Agentes Claude Code ──────────────────────────────────────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+#  1 — Claude Code: agentes (apenas os gerados pela factory)
+# ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Claude Code — Agentes"
-$removed = 0
+
+$removed   = 0
+$skipped   = 0
+$external  = 0
+
 foreach ($name in $agentNames) {
     $file = Join-Path $CLAUDE_AGENTS_DIR "$name.md"
-    if (Test-Path $file) {
-        Remove-Item $file -Force
-        Write-OK "Removido: $name.md"
-        $removed++
-    } else {
+    if (-not (Test-Path $file)) {
         Write-Skip "Nao encontrado: $name.md"
+        $skipped++
+        continue
     }
+    # Verificar marcador de seguranca — so remove arquivos gerados pela factory
+    $isFactoryAgent = Select-String -Path $file -Pattern "AUTO-GENERATED BY ai_software_factory" -Quiet -ErrorAction SilentlyContinue
+    if (-not $isFactoryAgent) {
+        Write-Warn "$name.md existe mas nao tem marcador AUTO-GENERATED — ignorando (pode ser externo)"
+        $external++
+        continue
+    }
+    Remove-IfExists -Path $file -Label "$name.md"
+    $removed++
 }
-Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
-Write-Host "  $removed agentes removidos de $CLAUDE_AGENTS_DIR" -ForegroundColor Gray
 
-# ─── .claude.json — remover mcpServers.knowledge ─────────────────────────────
+# Manifesto (so em -Full)
+$manifestPath = Join-Path $CLAUDE_AGENTS_DIR ".ai_software_factory_manifest.json"
+if ($Full) {
+    Remove-IfExists -Path $manifestPath -Label ".ai_software_factory_manifest.json"
+} else {
+    Write-Skip "Manifesto preservado (use -Full para remover)"
+}
+
+Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+Write-Host "  $removed removidos, $skipped nao encontrados, $external externos ignorados" -ForegroundColor Gray
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  2 — ~/.claude.json: remover mcpServers.knowledge
+# ═════════════════════════════════════════════════════════════════════════════
 Write-Header ".claude.json — MCP entry"
+
 if (Test-Path $CLAUDE_SETTINGS) {
     try {
         $raw      = Get-Content $CLAUDE_SETTINGS -Raw -Encoding UTF8
         $settings = $raw | ConvertFrom-Json -AsHashtable
 
         if ($settings.ContainsKey("mcpServers") -and $settings["mcpServers"].ContainsKey("knowledge")) {
-            $settings["mcpServers"].Remove("knowledge")
+            if ($WhatIf) {
+                Write-What "Removeria mcpServers.knowledge de ~/.claude.json"
+            } else {
+                $tsBackup = "$CLAUDE_SETTINGS.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                Copy-Item $CLAUDE_SETTINGS $tsBackup -Force
+                Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
 
-            # Se mcpServers ficou vazio, remove a chave inteira
-            if ($settings["mcpServers"].Count -eq 0) {
-                $settings.Remove("mcpServers")
+                $settings["mcpServers"].Remove("knowledge")
+                if ($settings["mcpServers"].Count -eq 0) { $settings.Remove("mcpServers") }
+
+                $newJson  = $settings | ConvertTo-Json -Depth 20
+                $tmpFile  = "$CLAUDE_SETTINGS.tmp"
+                [System.IO.File]::WriteAllText($tmpFile, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+                Move-Item $tmpFile $CLAUDE_SETTINGS -Force
+                Write-OK "mcpServers.knowledge removido de ~/.claude.json"
             }
-
-            $newJson     = $settings | ConvertTo-Json -Depth 20
-            $tmpSettings = "$CLAUDE_SETTINGS.tmp"
-            [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
-            Move-Item $tmpSettings $CLAUDE_SETTINGS -Force
-            Write-OK "mcpServers.knowledge removido de .claude.json"
         } else {
-            Write-Skip "mcpServers.knowledge nao encontrado em .claude.json"
+            Write-Skip "mcpServers.knowledge nao encontrado em ~/.claude.json"
         }
     } catch {
-        Write-Warn "Nao foi possivel ler/editar .claude.json: $_"
+        Write-Warn "Nao foi possivel editar ~/.claude.json: $_"
     }
 } else {
-    Write-Skip ".claude.json nao encontrado"
+    Write-Skip "~/.claude.json nao encontrado"
 }
 
-# ─── Backups do .claude.json criados pelo install.ps1 ────────────────────────
-Write-Header ".claude.json — backups"
-$bakFiles = @(Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue) +
-            @(Get-ChildItem "$CLAUDE_SETTINGS.invalid_*" -ErrorAction SilentlyContinue)
-if ($bakFiles.Count -gt 0) {
-    $bakFiles | Remove-Item -Force
-    Write-OK "$($bakFiles.Count) arquivo(s) de backup removido(s)"
-} else {
-    Write-Skip "Nenhum backup encontrado"
+# ─── Backups do .claude.json (modo -Full) ─────────────────────────────────
+if ($Full) {
+    $bakFiles = @(
+        Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue
+        Get-ChildItem "$CLAUDE_SETTINGS.invalid_*" -ErrorAction SilentlyContinue
+    )
+    if ($bakFiles.Count -gt 0) {
+        foreach ($bak in $bakFiles) {
+            Remove-IfExists -Path $bak.FullName -Label $bak.Name
+        }
+    } else {
+        Write-Skip "Nenhum backup de .claude.json encontrado"
+    }
 }
 
-# ─── Roo Code mcp_settings.json — remover mcpServers.knowledge ───────────────
+# ═════════════════════════════════════════════════════════════════════════════
+#  3 — Roo Code: remover mcpServers.knowledge
+# ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Roo Code — MCP entry"
+
 foreach ($rooMcp in $ROO_MCP_PATHS) {
     if (-not (Test-Path $rooMcp)) { Write-Skip "Nao encontrado: $rooMcp"; continue }
     try {
@@ -115,119 +188,170 @@ foreach ($rooMcp in $ROO_MCP_PATHS) {
         $rooSettings = $rooRaw | ConvertFrom-Json -AsHashtable
 
         if ($rooSettings.ContainsKey("mcpServers") -and $rooSettings["mcpServers"].ContainsKey("knowledge")) {
-            $rooSettings["mcpServers"].Remove("knowledge")
-
-            $rooJson = $rooSettings | ConvertTo-Json -Depth 10
-            $tmpRoo  = "$rooMcp.tmp"
-            [System.IO.File]::WriteAllText($tmpRoo, ($rooJson -replace "`r`n","`n"), $utf8NoBom)
-            Move-Item $tmpRoo $rooMcp -Force
-            Write-OK "mcpServers.knowledge removido de: $rooMcp"
+            if ($WhatIf) {
+                Write-What "Removeria mcpServers.knowledge de: $rooMcp"
+            } else {
+                $rooSettings["mcpServers"].Remove("knowledge")
+                $rooJson = $rooSettings | ConvertTo-Json -Depth 10
+                $tmpRoo  = "$rooMcp.tmp"
+                [System.IO.File]::WriteAllText($tmpRoo, ($rooJson -replace "`r`n","`n"), $utf8NoBom)
+                Move-Item $tmpRoo $rooMcp -Force
+                Write-OK "mcpServers.knowledge removido de: $(Split-Path $rooMcp -Parent | Split-Path -Parent | Split-Path -Leaf)\..."
+            }
         } else {
-            Write-Skip "mcpServers.knowledge nao encontrado em: $rooMcp"
+            Write-Skip "mcpServers.knowledge nao encontrado em: $(Split-Path $rooMcp -Leaf)"
         }
     } catch {
         Write-Warn "Nao foi possivel editar $rooMcp : $_"
     }
 }
 
-# ─── factory.ps1 ─────────────────────────────────────────────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+#  4 — factory.ps1 (script auxiliar gerado)
+# ═════════════════════════════════════════════════════════════════════════════
 Write-Header "factory.ps1"
-$factoryScript = Join-Path $BIN_DIR "factory.ps1"
-if (Test-Path $factoryScript) {
-    Remove-Item $factoryScript -Force
-    Write-OK "Removido: $factoryScript"
-} else {
-    Write-Skip "Nao encontrado: $factoryScript"
-}
 
-# ─── Arquivos gerados dentro do repositorio (gitignored) ──────────────────────
+Remove-IfExists -Path (Join-Path $BIN_DIR "factory.ps1") -Label "~/.local/bin/factory.ps1"
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  5 — Arquivos gerados no repositorio
+# ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Arquivos gerados no repositorio"
 
-$filesToRemove = @(
-    "knowledge.db",
-    "knowledge.db.bak",
+# Sempre removidos (gerados, nao contem dados do usuario)
+$alwaysRemove = @(
     "knowledge-config.json",
     ".mcp.json",
     "tools\mcp-knowledge-search\.requirements.hash"
 )
-
-foreach ($rel in $filesToRemove) {
-    $full = Join-Path $FACTORY_PATH $rel
-    if (Test-Path $full) {
-        Remove-Item $full -Force
-        Write-OK "Removido: $rel"
-    } else {
-        Write-Skip "Nao encontrado: $rel"
-    }
+foreach ($rel in $alwaysRemove) {
+    Remove-IfExists -Path (Join-Path $FACTORY_PATH $rel) -Label $rel
 }
 
-$rooDir = Join-Path $FACTORY_PATH "roo"
-if (Test-Path $rooDir) {
-    Remove-Item $rooDir -Recurse -Force
-    Write-OK "Removido: roo/"
+# roo/ — gerado pelo install.ps1
+Remove-IfExists -Path (Join-Path $FACTORY_PATH "roo") -Label "roo/" -Recurse
+
+# knowledge.db — so em -Full (modo padrao preserva)
+if ($Full) {
+    Remove-IfExists -Path (Join-Path $FACTORY_PATH "knowledge.db")     -Label "knowledge.db"
+    Remove-IfExists -Path (Join-Path $FACTORY_PATH "knowledge.db.bak") -Label "knowledge.db.bak"
+
+    $logsDir = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\logs"
+    Remove-IfExists -Path $logsDir -Label "tools/mcp-knowledge-search/logs/" -Recurse
 } else {
-    Write-Skip "Nao encontrado: roo/"
+    Write-Skip "knowledge.db preservado (use -Full para remover)"
+    Write-Skip "Logs preservados (use -Full para remover)"
 }
 
-# ─── Restaurar arquivos rastreados pelo git ───────────────────────────────────
-Write-Header "Restaurar arquivos via git"
-$trackedFiles = @("update-knowledge.ps1", "link-mcp.ps1", "link-roo.ps1")
-foreach ($f in $trackedFiles) {
-    $full = Join-Path $FACTORY_PATH $f
-    if (Test-Path $full) {
+# ═════════════════════════════════════════════════════════════════════════════
+#  6 — Scripts gerados (restaurar via git se possivel)
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "Scripts gerados — restaurar via git"
+
+$generatedScripts = @("update-knowledge.ps1", "link-mcp.ps1", "link-roo.ps1")
+foreach ($f in $generatedScripts) {
+    $scriptPath = Join-Path $FACTORY_PATH $f
+    if (-not (Test-Path $scriptPath)) { Write-Skip "Nao encontrado: $f"; continue }
+    if ($WhatIf) {
+        Write-What "Restauraria via git: $f"
+    } else {
         try {
             git -C $FACTORY_PATH checkout -- $f 2>&1 | Out-Null
-            Write-OK "Restaurado: $f (git checkout)"
+            if ($LASTEXITCODE -eq 0) {
+                Write-OK "Restaurado via git: $f"
+            } else {
+                Write-Warn "git checkout falhou para $f (nao e repositorio git ou arquivo nao rastreado)"
+            }
         } catch {
-            Write-Warn "Nao foi possivel restaurar $f via git: $_"
+            Write-Warn "git nao disponivel — $f mantido como esta"
+        }
+    }
+}
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  7 — FACTORY_ROOT (apenas -Full)
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "FACTORY_ROOT"
+
+if ($Full) {
+    $currentVal = [System.Environment]::GetEnvironmentVariable("FACTORY_ROOT", "User")
+    if ($currentVal) {
+        if ($WhatIf) {
+            Write-What "Removeria variavel FACTORY_ROOT (era: $currentVal)"
+        } else {
+            [System.Environment]::SetEnvironmentVariable("FACTORY_ROOT", $null, "User")
+            Remove-Item Env:\FACTORY_ROOT -ErrorAction SilentlyContinue
+            Write-OK "Variavel FACTORY_ROOT removida"
         }
     } else {
-        Write-Skip "Nao encontrado no disco: $f"
+        Write-Skip "FACTORY_ROOT nao estava definida"
     }
-}
-
-# ─── Dependencias Python ──────────────────────────────────────────────────────
-Write-Header "Dependencias Python"
-$REQUIREMENTS_PATH = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\requirements.txt"
-$pythonCmd = $null
-foreach ($cmd in @("python", "python3", "py")) {
-    try {
-        $ver = & $cmd --version 2>&1
-        if ($LASTEXITCODE -eq 0) { $pythonCmd = $cmd; break }
-    } catch {}
-}
-
-if ($pythonCmd -and (Test-Path $REQUIREMENTS_PATH)) {
-    Write-Host "  Desinstalando pacotes de $REQUIREMENTS_PATH..." -ForegroundColor DarkGray
-    & $pythonCmd -m pip uninstall -r $REQUIREMENTS_PATH -y -q 2>&1 | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }
-    if ($LASTEXITCODE -eq 0) {
-        Write-OK "Pacotes desinstalados"
-    } else {
-        Write-Warn "Alguns pacotes podem nao ter sido removidos"
-    }
-} elseif (-not $pythonCmd) {
-    Write-Skip "Python nao encontrado — nada a desinstalar"
 } else {
-    Write-Skip "requirements.txt nao encontrado"
+    Write-Skip "FACTORY_ROOT preservada (use -Full para remover)"
 }
 
-# ─── Resumo ───────────────────────────────────────────────────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+#  8 — Dependencias Python (apenas -Full)
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "Dependencias Python"
+
+if ($Full) {
+    $REQUIREMENTS_PATH = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\requirements.txt"
+    $pythonCmd = $null
+    foreach ($cmd in @("python", "python3", "py")) {
+        try {
+            $ver = & $cmd --version 2>&1
+            if ($LASTEXITCODE -eq 0) { $pythonCmd = $cmd; break }
+        } catch {}
+    }
+
+    if ($pythonCmd -and (Test-Path $REQUIREMENTS_PATH)) {
+        if ($WhatIf) {
+            Write-What "Desinstalaria pacotes de requirements.txt via pip"
+        } else {
+            Write-Host "  Desinstalando pacotes..." -ForegroundColor DarkGray
+            & $pythonCmd -m pip uninstall -r $REQUIREMENTS_PATH -y -q 2>&1 | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }
+            if ($LASTEXITCODE -eq 0) {
+                Write-OK "Pacotes Python desinstalados"
+            } else {
+                Write-Warn "Alguns pacotes podem nao ter sido removidos"
+            }
+        }
+    } elseif (-not $pythonCmd) {
+        Write-Skip "Python nao encontrado"
+    } else {
+        Write-Skip "requirements.txt nao encontrado"
+    }
+} else {
+    Write-Skip "Dependencias Python preservadas (use -Full para remover)"
+}
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  RESUMO
+# ═════════════════════════════════════════════════════════════════════════════
 Write-Host ""
-Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "  ║             Desinstalacao concluida              ║" -ForegroundColor Green
-Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Green
-Write-Host ""
-Write-Host "  O que foi removido:" -ForegroundColor Gray
-Write-Host "    - Variavel FACTORY_ROOT"
-Write-Host "    - ~/.claude/agents/ (11 agentes da factory)"
-Write-Host "    - mcpServers.knowledge em ~/.claude.json"
-Write-Host "    - mcpServers.knowledge em Roo Code mcp_settings.json"
-Write-Host "    - ~/.local/bin/factory.ps1"
-Write-Host "    - knowledge.db, knowledge-config.json, .mcp.json, roo/"
-Write-Host "    - .requirements.hash"
-Write-Host "    - Pacotes Python do requirements.txt"
-Write-Host "    - update-knowledge.ps1, link-mcp.ps1, link-roo.ps1 restaurados via git"
-Write-Host ""
-Write-Host "  Para reinstalar, siga as instrucoes do README.md:" -ForegroundColor Cyan
-Write-Host "    .\install.ps1"
+if ($WhatIf) {
+    Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor DarkCyan
+    Write-Host "  ║        WhatIf — nenhuma alteracao feita          ║" -ForegroundColor DarkCyan
+    Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor DarkCyan
+    Write-Host ""
+    Write-Host "  Para executar: remova -WhatIf do comando" -ForegroundColor Gray
+} else {
+    Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Green
+    Write-Host "  ║             Desinstalacao concluida              ║" -ForegroundColor Green
+    Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "  Modo: $modeLabel" -ForegroundColor Gray
+    Write-Host ""
+
+    if (-not $Full) {
+        Write-Host "  Preservados:" -ForegroundColor Gray
+        Write-Host "    knowledge.db, logs, FACTORY_ROOT, dependencias Python"
+        Write-Host "    Use -Full para remover tudo"
+        Write-Host ""
+    }
+
+    Write-Host "  Para reinstalar:" -ForegroundColor Cyan
+    Write-Host "    cd '$FACTORY_PATH' && .\install.ps1"
+}
 Write-Host ""

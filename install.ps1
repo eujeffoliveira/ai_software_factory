@@ -64,6 +64,9 @@ $SERVER_PATH       = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\server.
 $INGEST_PATH       = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\ingest.py"
 $REQUIREMENTS_PATH = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\requirements.txt"
 $REQ_HASH_FILE     = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\.requirements.hash"
+$FACTORY_VERSION   = if (Test-Path (Join-Path $FACTORY_PATH "VERSION")) {
+    (Get-Content (Join-Path $FACTORY_PATH "VERSION") -Raw).Trim()
+} else { "0.0.0" }
 
 # ─── Mapeamento de agentes ────────────────────────────────────────────────────
 $agents = @(
@@ -114,11 +117,13 @@ Write-Host "  ║      AI Software Factory — Global Installer      ║" -Foreg
 Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Blue
 Write-Host ""
 Write-Host "  Factory: $FACTORY_PATH" -ForegroundColor Gray
+Write-Host "  Version: $FACTORY_VERSION" -ForegroundColor DarkGray
 Write-Host ""
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 1 — FACTORY_ROOT
 # ═════════════════════════════════════════════════════════════════════════════
+$frWasUnset = -not [System.Environment]::GetEnvironmentVariable("FACTORY_ROOT", "User")
 Write-Header "FACTORY_ROOT"
 [System.Environment]::SetEnvironmentVariable("FACTORY_ROOT", $FACTORY_PATH, [System.EnvironmentVariableTarget]::User)
 $env:FACTORY_ROOT = $FACTORY_PATH
@@ -254,11 +259,30 @@ Para acessar arquivos diretamente: leia a partir de FACTORY_ROOT.
 
 $factoryAgentNames = $agents | ForEach-Object { "$($_.Name).md" }
 
+# Preservar installed_at do manifesto existente para idempotencia
+$manifestPath       = Join-Path $CLAUDE_AGENTS_DIR ".ai_software_factory_manifest.json"
+$existingInstalledAt = if (Test-Path $manifestPath) {
+    try { (Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
 # Manifesto de instalacao — rastreamento do que foi criado/atualizado
 $manifest = [ordered]@{
-    factory_root = $FACTORY_PATH
-    installed_at = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
-    agents       = [ordered]@{}
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingInstalledAt) { $existingInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    knowledge_db_hash = $null
+    mcp_server        = "knowledge"
+    agents            = [ordered]@{}
+    scripts           = [ordered]@{
+        install          = Join-Path $FACTORY_PATH "install.ps1"
+        uninstall        = Join-Path $FACTORY_PATH "uninstall.ps1"
+        update_knowledge = Join-Path $FACTORY_PATH "update-knowledge.ps1"
+        test_mcp         = Join-Path $FACTORY_PATH "test-mcp.ps1"
+        doctor           = Join-Path $FACTORY_PATH "doctor.ps1"
+        link_mcp         = Join-Path $FACTORY_PATH "link-mcp.ps1"
+        link_roo         = Join-Path $FACTORY_PATH "link-roo.ps1"
+    }
 }
 
 foreach ($agent in $agents) {
@@ -316,17 +340,20 @@ Sources: $($agent.Folder)/prompt.md + $($agent.Folder)/knowledge/* + install.ps1
         "updated"   { $tally.agents_updated++ }
         "unchanged" { $tally.agents_unchanged++ }
     }
-    $manifest.agents[$agent.Name] = [ordered]@{ status = $status; source = $agent.Folder }
+    $sourceHash    = (Get-FileHash $promptFile -Algorithm SHA256).Hash.Substring(0, 16)
+    $installedHash = if (Test-Path $outputFile) { (Get-FileHash $outputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $manifest.agents[$agent.Name] = [ordered]@{
+        status         = $status
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $outputFile
+        installed_hash = $installedHash
+    }
 }
 
 Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
 Write-Host ("  Agentes: {0} criados, {1} atualizados, {2} sem mudancas" -f `
     $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged) -ForegroundColor Gray
-
-# Gravar manifesto de instalacao
-$manifestPath = Join-Path $CLAUDE_AGENTS_DIR ".ai_software_factory_manifest.json"
-$manifestJson = $manifest | ConvertTo-Json -Depth 5
-Write-IfChanged -Path $manifestPath -Content $manifestJson -Label ".ai_software_factory_manifest.json" | Out-Null
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 5 — knowledge-config.json + ingest (backup/restore on failure)
@@ -427,6 +454,11 @@ if ($hasPython) {
     Write-Skip "Python nao disponivel — pulando indexacao"
     $tally.knowledge_status = "skipped"
 }
+
+# Atualizar hash do DB no manifesto (calculado apos o ingest)
+$manifest.knowledge_db_hash = if (Test-Path $DB_PATH) {
+    (Get-FileHash $DB_PATH -Algorithm SHA256).Hash.Substring(0, 16)
+} else { $null }
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 6 — .mcp.json + .claude.json (merge cirurgico, atomico)
@@ -820,6 +852,10 @@ if (Test-Path $testMcpPath) {
     Write-Skip "Health check pulado (test-mcp.ps1 nao disponivel nesta fase)"
 }
 
+# ─── Gravar manifesto completo (apos todas as fases) ─────────────────────────
+$manifestJson = $manifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $manifestPath -Content $manifestJson -Label ".ai_software_factory_manifest.json" | Out-Null
+
 # ═════════════════════════════════════════════════════════════════════════════
 #  RESUMO
 # ═════════════════════════════════════════════════════════════════════════════
@@ -858,5 +894,13 @@ if ($hasPython) {
     Write-Host "  Vincular MCP ou Roo a outro projeto:" -ForegroundColor Cyan
     Write-Host "    & `"`$env:FACTORY_ROOT\link-mcp.ps1`""
     Write-Host "    & `"`$env:FACTORY_ROOT\link-roo.ps1`""
+    Write-Host ""
+}
+Write-Host "  Diagnostico completo:" -ForegroundColor Cyan
+Write-Host "    .\doctor.ps1"
+Write-Host ""
+if ($frWasUnset) {
+    Write-Host "  NOTA: FACTORY_ROOT foi definido pela primeira vez." -ForegroundColor Yellow
+    Write-Host "        Abra um novo terminal para que a variavel esteja disponivel." -ForegroundColor Yellow
     Write-Host ""
 }
