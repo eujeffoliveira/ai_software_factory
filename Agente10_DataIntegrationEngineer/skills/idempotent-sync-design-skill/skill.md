@@ -31,7 +31,7 @@ Invoke for every sync operation before it is specified in `Sync_Strategy.md`. Th
 
 - Default mechanism: upsert with external ID (covers most sync operations)
 - Idempotency key table required when: operation has irreversible side effects (payment, email, SMS)
-- Cursor state is supplementary (doesn't replace upsert — both used together for batch sync)
+- Cursor state is supplementary to upsert — both are used together for batch sync. Cursor alone is not sufficient for idempotency; upsert alone is sufficient for small syncs (< 1,000 records per run). Use cursor + upsert together when `estimated_volume` ≥ 1,000 records per run.
 - Event deduplication required for webhook handlers
 - The idempotency key must be derived from external data — never from internal generated IDs
 - Test scenarios must include: "run twice with same input → same result"
@@ -45,7 +45,7 @@ Invoke for every sync operation before it is specified in `Sync_Strategy.md`. Th
 3. **Select mechanism:**
    - **Record sync (no side effects):** Use upsert with external ID as `where` clause.
    - **Action trigger (with irreversible side effects):** Use idempotency key table + upsert.
-   - **Batch with cursor:** Use cursor state for pagination + upsert for each record.
+   - **Batch with cursor** (estimated_volume ≥ 1,000 records/run): Use cursor state for pagination + upsert for each record. Upsert is still required for each record — cursor only controls which page to start from, not record-level idempotency.
    - **Webhook event:** Use event ID deduplication + upsert for entity update.
 
 4. **Define idempotency key:** Specify the field name, its source, and the computation method (direct copy, hash of multiple fields).

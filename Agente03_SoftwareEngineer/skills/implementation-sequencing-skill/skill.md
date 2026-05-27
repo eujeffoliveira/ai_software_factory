@@ -66,10 +66,16 @@ Schema: `output.schema.json`
 
 ---
 
-## Parallelism Rules
+## Parallelism Rules (apply AFTER phase boundary rules)
 
-- Two tasks in the same phase can run in parallel if neither is in the other's `depends_on[]` (directly or transitively)
+Phase boundaries are **hard sequential constraints** and take precedence over all parallelism rules:
+- **All Phase 1 tasks must be marked complete before any Phase 2 task may start** (regardless of dependency relationships)
+- Phase 2 → Phase 3 and Phase 3 → Phase 4 follow the same hard boundary rule
+
+Within a phase, parallelism applies:
+- Two tasks in the same phase can run in parallel if neither is in the other's transitive `depends_on[]` set
 - Parallelism annotations in the sequence must match the `parallel_tracks[]` from dependency-graph-skill
+- A Phase 2 task **never** starts in parallel with a Phase 1 task, even if they have no direct dependency
 
 ---
 

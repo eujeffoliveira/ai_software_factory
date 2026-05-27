@@ -33,7 +33,7 @@ Every Gate 5 evaluation — mandatory. No exceptions for dev-only or test files.
 2. For each match: verify it is an actual secret (not a placeholder like `"<YOUR_KEY>"`)
 3. Check `process.env` usage in all files outside `lib/env.ts`
 4. Verify `.gitignore` includes `.env*` patterns
-5. Check for secrets in code comments
+5. Check for secrets in code comments — scan both single-line (`//`) and multi-line (`/* */`) comments, including JSDoc blocks (`/** */`) and inline docstring examples; any hardcoded credential value in a comment or documentation example is CRITICAL even if unreachable at runtime
 6. Report CLEAN or produce findings with SEC-NNN IDs
 
 ## Knowledge Access Policy

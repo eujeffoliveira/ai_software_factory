@@ -26,10 +26,9 @@ Adds `syncLog()` entries for automated job executions. Every cron job execution 
 ## Procedure
 
 1. Declare `const startedAt = Date.now()` BEFORE the `try` block
-2. Declare `status`, `counts`, `errorMsg` variables
-3. Set `status = "error"` in `catch` block
+2. Declare `status`, `counts`, `errorMsg` variables (initialize `status = "success"`, `errorMsg = undefined`)
+3. Set `status = "error"` and `errorMsg = error.message` in `catch` block
 4. Place `syncLog(...)` in `finally` block
-5. Ensure `errorMsg` is `undefined` when `status` is `"success"`
 
 ## Quality Gate
 

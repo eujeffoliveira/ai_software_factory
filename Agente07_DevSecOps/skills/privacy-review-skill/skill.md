@@ -27,7 +27,7 @@ Assess privacy compliance for features handling CONFIDENTIAL or RESTRICTED data.
 ## Constraints
 
 - RESTRICTED data → `BLOCKED_PENDING_HUMAN` immediately — do not assess compliance unilaterally
-- COMPLIANT status requires evidence for each assessment area — not general assertions
+- COMPLIANT status requires evidence for each assessment area — not general assertions. Minimum evidence per area: **Legal basis** — cite the specific PRD or ToS section and article (e.g., "PRD §4.2, LGPD Art. 7 §I consent"); **Data minimization** — list which fields were considered unnecessary and confirm they are absent; **Consent** — confirm consent UI or API endpoint exists in implementation files; **Deletion** — cite the Prisma `onDelete:` directive or explicit delete query; **Third-party sharing** — list every third-party integration that receives CONFIDENTIAL data and its legal basis.
 - Legal basis must be documented with specific reference (PRD section, ToS section)
 - Deletion support must be verified in Prisma schema — not assumed
 

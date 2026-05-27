@@ -23,22 +23,40 @@ Determine which agent should receive control next, compose a valid briefing pack
 - `routing_rationale` — why this agent was selected
 - `state_ledger_update` — fields to update: `next_agent`, `next_action`, `current_agent`
 
+## Approved Agent Roster
+
+Valid agent IDs for routing. Any ID not in this list is invalid and must be rejected.
+
+| Agent ID | Role |
+|---|---|
+| Agente00_TechLead | Tech Lead — orchestration and gate decisions |
+| Agente01_ProductOwner | Product Owner — PRD and requirements |
+| Agente02_SoftwareArchitect | Software Architect — architecture and ADRs |
+| Agente03_SoftwareEngineer | Software Engineer — execution plan and task decomposition |
+| Agente04_DevBackend | Dev Backend — server-side implementation |
+| Agente05_DevFrontend | Dev Frontend — client-side implementation |
+| Agente06_QaEngineer | QA Engineer — test generation and gate 4 review |
+| Agente07_DevSecOps | DevSecOps — security audit and gate 5 review |
+| Agente08_DevOps | DevOps — deployment, smoke tests, and post-deploy validation |
+| Agente09_UxUiDesigner | UX/UI Designer — wireframes and design review |
+| Agente10_DataIntegrationEngineer | Data Integration Engineer — ETL and sync |
+
 ## Routing Table
 
 | Gate | Status | Phase After | Next Agent |
 |------|--------|-------------|------------|
 | 1 | APPROVED | architecture | Agente02_SoftwareArchitect |
 | 1 | RETURNED | requirements | Agente01_ProductOwner |
-| 2 | APPROVED | planning | Agente03_TechLead (execution plan) |
+| 2 | APPROVED | planning | Agente03_SoftwareEngineer |
 | 2 | RETURNED | architecture | Agente02_SoftwareArchitect |
-| 3 | APPROVED | implementation | Agente04_SoftwareDeveloper |
-| 3 | RETURNED | planning | Agente03_TechLead |
-| 4 | APPROVED | security | Agente06_SecurityReviewer |
-| 4 | RETURNED | implementation | Agente04_SoftwareDeveloper |
-| 5 | APPROVED | deployment | Agente07_DevOps |
-| 5 | RETURNED | implementation | Agente04_SoftwareDeveloper |
-| 6 | APPROVED | post-deploy | Agente08_PostDeployValidator |
-| 6 | RETURNED | deployment | Agente07_DevOps |
+| 3 | APPROVED | implementation | Agente04_DevBackend |
+| 3 | RETURNED | planning | Agente03_SoftwareEngineer |
+| 4 | APPROVED | security | Agente07_DevSecOps |
+| 4 | RETURNED | implementation | Agente04_DevBackend |
+| 5 | APPROVED | deployment | Agente08_DevOps |
+| 5 | RETURNED | implementation | Agente04_DevBackend |
+| 6 | APPROVED | post-deploy | Agente08_DevOps |
+| 6 | RETURNED | deployment | Agente08_DevOps |
 | 7 | APPROVED | closed | — |
 
 ## Procedure
@@ -56,7 +74,7 @@ Determine which agent should receive control next, compose a valid briefing pack
 Every routing output MUST name a specific valid agent ID. Empty or null `next_agent` is a hard failure.
 
 ## Failure Modes
-- Unknown gate/status combination → escalate to human operator
+- Unknown gate/status combination (gate_number not in 1–7, or status not in APPROVED / APPROVED_WITH_CONDITIONS / RETURNED_FOR_REVISION) → halt routing and invoke `human-escalation-skill` with `escalation_reason = "invalid_routing_inputs"` and `context = {gate_number, gate_status}`
 - Target agent not in approved roster → reject override, use routing table default
 - Gate APPROVED_WITH_CONDITIONS but conditions list empty → halt, request conditions from gate decision source
 

@@ -67,12 +67,12 @@ An approved ADR must contain:
 ## Procedure
 
 1. Receive deviation report (from tollgate or direct observation)
-2. Classify deviation: technology / architecture pattern / irreversible
+2. Classify deviation: technology / architecture pattern / irreversible. If the deviation violates multiple categories, apply the highest severity rule: **irreversible > technology > architecture pattern**.
 3. Assign ADR ID (`ADR-{sequential_number}`)
 4. If Council verdict exists: incorporate into ADR context
 5. Set `gate_block_required = true`
-6. Set `human_approval_required` based on category
-7. Write ADR request using `templates/ADR_Request.md`
+6. Set `human_approval_required` based on category (true for irreversible; false for technology and architecture pattern deviations)
+7. Write ADR request using `templates/ADR_Request.md`. The request object must include: `id` (ADR-NNN), `context` (why the decision is needed), `decision` (exact deviation from Golden Model), `consequences` (positive and negative), `alternatives` (minimum 2 options considered), `approval` (required only for irreversible decisions — leave blank until approved).
 8. Return ADR request + resolution path
 
 ## ADR Resolution

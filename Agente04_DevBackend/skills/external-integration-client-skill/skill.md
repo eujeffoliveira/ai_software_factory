@@ -31,9 +31,10 @@ Implements a typed client for a third-party external API. All credentials come f
 2. Define typed error classes (`[Service]ApiError`, `[Service]RateLimitError`)
 3. Export named const client object with method per endpoint
 4. Use `env.[SERVICE]_API_KEY` from `lib/env.ts` — never process.env
-5. Add `AbortSignal.timeout(TIMEOUT_MS)` to every fetch call
-6. Validate response with `Schema.parse(await response.json())`
-7. Never call inside `prisma.$transaction`
+5. Add `AbortSignal.timeout(TIMEOUT_MS)` to every fetch call. `TIMEOUT_MS` must be declared as a module-level constant (default: `10_000`); override via env var if the API contract specifies a different SLA
+6. Check the response content type before parsing: if `Content-Type` is `application/json` (or variant), call `response.json()`; if the response body is empty (status 204 or `Content-Length: 0`), return `null` or a typed empty result; for any other content type, throw `[Service]ApiError` with the raw status and a `"unexpected_content_type"` code
+7. Validate the parsed JSON body with `Schema.parse(body)` — only after step 6 confirms JSON
+8. Never call inside `prisma.$transaction`
 
 ## Quality Gate
 

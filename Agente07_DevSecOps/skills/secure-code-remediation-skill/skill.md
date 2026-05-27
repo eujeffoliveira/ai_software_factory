@@ -30,7 +30,7 @@ Any BLOCKED or RETURNED gate decision — mandatory companion to the gate block.
 
 1. For each CRITICAL and HIGH finding: extract exact file path, line, and code snippet
 2. Write the "wrong pattern" from the actual code
-3. Write the "correct pattern" using Golden Path conventions
+3. Write the "correct pattern" using Golden Path conventions — source patterns exclusively from `Agente07_DevSecOps/context_view.md` Section 4 (Golden Path security patterns); do not invent patterns from training data
 4. List any additional steps (secret rotation, schema change, etc.)
 5. Check if any vulnerability class appears in 3+ locations (DR015) — add systemic section
 6. Produce `Remediation_Guide.md` following `templates/Remediation_Guide.md`

@@ -28,7 +28,8 @@ Output conforms to `schemas/accessibility_review.schema.json`:
 
 ## Blocking Threshold
 
-**CRITICAL or HIGH issues open → `gate_4_status: "BLOCKED_ACCESSIBILITY_FAILURE"`**
+- No CRITICAL or HIGH issues → `gate_4_status: "PASS"`
+- One or more CRITICAL or HIGH issues open → `gate_4_status: "BLOCKED_ACCESSIBILITY_FAILURE"`
 
 ## Common Issues Checked
 

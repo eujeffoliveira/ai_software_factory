@@ -26,12 +26,14 @@ Validates that every endpoint defined in `API_Contract.json` has tests covering:
 
 1. **Enumerate endpoints** — list every endpoint in `API_Contract.json` (method + path)
 2. **For each endpoint**: search test files for tests that call this endpoint
-3. **Check success status code**: test asserts correct HTTP status (200/201/204)
-4. **Check auth behavior**: for protected endpoints, test asserts 401 when no session
-5. **Check response shape**: test applies Zod schema from contract to the actual response
-6. **Check error format**: error responses are `{ error: "string" }` — no stack traces
-7. **Record results** per endpoint: PASSED, FAILED, MISSING for each check
-8. **Produce report** using `schemas/api_contract_validation.schema.json`
+3. **Check request shape** (for POST/PUT/PATCH endpoints): test sends a request body that matches the contract's request schema; test also sends an invalid body and asserts 400/422 error
+4. **Check required headers**: verify tests include any headers the contract marks as required (e.g., `Content-Type: application/json`, authorization headers)
+5. **Check success status code**: test asserts correct HTTP status (200/201/204)
+6. **Check auth behavior**: for protected endpoints, test asserts 401 when no session
+7. **Check response shape**: test applies Zod schema from contract to the actual response. Validation result must include: `schema_name`, `valid: boolean`, and `mismatches: string[]` listing each field that failed — pass/fail alone is insufficient
+8. **Check error format**: error responses are `{ error: "string" }` — no stack traces
+9. **Record results** per endpoint: PASSED, FAILED, MISSING for each check
+10. **Produce report** using `schemas/api_contract_validation.schema.json`
 
 ## Constraints
 

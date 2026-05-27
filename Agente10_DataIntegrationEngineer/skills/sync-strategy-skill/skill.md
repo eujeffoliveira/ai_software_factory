@@ -51,7 +51,7 @@ Invoke when an integration requires automated, recurring data transfer between s
 
 6. **Design conflict resolution:** For bidirectional syncs — incorporate field ownership from `data-mapping-skill` output.
 
-7. **Specify sync_log:** Define `syncLog()` call with all required fields. Explicitly state `finally` block placement.
+7. **Specify sync_log:** Define `syncLog()` call in the `finally` block with all required fields: `jobName` (string — must match the `vercel.json` cron key), `startedAt` (number — `Date.now()` captured BEFORE the `try` block), `durationMs` (number — `Date.now() - startedAt` computed in `finally`), `status` (string — `"success"` | `"error"` | `"partial"`; initialized as `"success"`, set to `"error"` in catch), `counts` (object — `{ processed: number, created: number, updated: number, skipped: number, failed: number }`), `errorMsg` (string | undefined — set from `error.message` in catch; `undefined` when status is `"success"`).
 
 8. **Design error handling:** Per-record error handling (isolate failures, continue), external API error handling (retry, circuit breaker), and dead letter disposition.
 

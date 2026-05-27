@@ -20,7 +20,7 @@ Issue a formal gate decision (with status code, rationale, and required actions)
 - `current_ledger` — State Ledger
 
 ## Outputs
-- `gate_decision` — complete Gate_Decision object following `templates/Gate_Decision.md`
+- `gate_decision` — complete Gate_Decision object following `templates/Gate_Decision.md`. Required fields: `gate_number` (int 1–7), `status_code` (one of the 21 valid codes), `issued_at` (ISO 8601), `issued_by` (agent ID), `rationale` (text, must cite specific evidence), `validation_summary` (reference to the validation_table artifact), `required_actions` (array of objects with `description`, `owner`, `deadline`; empty array only if status is APPROVED), `next_agent_briefing` (string, present if status is APPROVED or APPROVED_WITH_CONDITIONS)
 - `status_code` — one of the 21 valid status codes
 - `required_actions` — specific list of actions before proceeding
 - `state_ledger_update` — gate_history entry to append
@@ -53,12 +53,14 @@ Issue a formal gate decision (with status code, rationale, and required actions)
 
 ## Procedure
 
-1. Map `validation_result` to candidate status code
-   - PASS → APPROVED
-   - PASS_WITH_CONDITIONS → APPROVED_WITH_CONDITIONS
-   - FAIL (with fixable issues) → RETURNED_FOR_REVISION
-   - FAIL (with ADR needed) → BLOCKED_PENDING_ADR
-   - Gate 6 without human approval → BLOCKED_PENDING_HUMAN
+1. Map `validation_result` to candidate status code — apply rules in this order (first match wins):
+   - Gate 6 and `human_approval_obtained` is false or absent → **BLOCKED_PENDING_HUMAN** (regardless of validation_result)
+   - `adr_required = true` and an approved ADR is referenced in `council_verdict` or `current_ledger.adrs` → **APPROVED_WITH_ADR**
+   - `adr_required = true` and no approved ADR exists → **BLOCKED_PENDING_ADR**
+   - PASS → **APPROVED**
+   - PASS_WITH_CONDITIONS → **APPROVED_WITH_CONDITIONS**
+   - FAIL (with fixable issues, no ADR needed) → **RETURNED_FOR_REVISION**
+   - Note: `human_approval_obtained` is required input only for Gate 6; for Gates 1–5 and 7 this field is optional and ignored.
 
 2. If Council verdict available: incorporate into rationale
 

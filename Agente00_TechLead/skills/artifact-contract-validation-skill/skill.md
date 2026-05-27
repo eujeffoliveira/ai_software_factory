@@ -16,7 +16,7 @@ Validate that a handoff package and its artifacts satisfy all requirements for t
 
 ## Outputs
 - `validation_result` — PASS / FAIL / PASS_WITH_CONDITIONS
-- `validation_table` — per-criterion check results
+- `validation_table` — per-criterion check results, formatted as a markdown table with columns: **Criterion**, **Status** (PASS / FAIL / N/A), **Evidence** (specific file, line, or artifact reference), **Owner**. One row per criterion from the gate-specific checklist. "Looks complete" is never valid evidence.
 - `issues_found` — list of specific violations (empty if PASS)
 - `conditions` — list of conditions if PASS_WITH_CONDITIONS
 - `adr_required` — boolean, true if a Golden Path deviation was detected
@@ -35,8 +35,8 @@ Validate that a handoff package and its artifacts satisfy all requirements for t
 - API_Contract.json present
 - DB_Schema (Prisma schema or SQL) present
 - ADR_Register.md present (even if empty)
-- All components reference Golden Model stack
-- No middleware.ts usage in Next.js context (proxy.ts required)
+- All components reference Golden Model stack: no banned alternatives (e.g., MongoDB, Django, Express, Mongoose) appear in code, configuration, or ADRs. Every import and dependency must match the approved stack.
+- No `middleware.ts` usage (applies only to Next.js projects; mark N/A with evidence if the project does not use Next.js). If Next.js is confirmed in the stack, `proxy.ts` is required instead.
 - RLS mentioned for all tables
 
 ### Gate 3 — Execution Plan Approval

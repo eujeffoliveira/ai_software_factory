@@ -24,15 +24,24 @@ Classifies every test failure and defect by severity (CRITICAL / HIGH / MEDIUM /
 - Bug reports (BUG-NNN) for all CRITICAL and HIGH findings
 - Gate decision trigger: BLOCKED_CRITICAL_RISK if any CRITICAL, or BLOCKED_QA_FAILURE if any HIGH
 
+## Bug Severity Summary
+
+| Severity | Criteria | Gate impact |
+|----------|----------|-------------|
+| CRITICAL | Auth bypass, data loss, SQL injection, secret exposed, PII leak | `BLOCKED_CRITICAL_RISK` + immediate Tech Lead escalation |
+| HIGH | Core feature broken, user cannot complete primary flow, accessibility violation in primary flow | `BLOCKED_QA_FAILURE` |
+| MEDIUM | Degraded UX, edge-case failure, workaround available | `RETURNED_FOR_REVISION` |
+| LOW | Cosmetic only (typo, minor visual misalignment, non-blocking) | Noted in report, no gate block |
+
 ## Procedure
 
-1. For each test failure or defect, apply the classification decision tree from `checklists/failure_severity_checklist.md`
+1. For each test failure or defect, apply the classification decision tree from `checklists/failure_severity_checklist.md`; when in doubt, apply the table above directly
 2. CRITICAL check first — auth bypass, data loss, SQL injection, secrets exposed
 3. HIGH check — feature broken, user blocked, accessibility violation in primary flow
 4. MEDIUM check — degraded UX, workaround available
 5. LOW — cosmetic only
 6. Produce BUG-NNN for every CRITICAL and HIGH finding
-7. For CRITICAL bugs: trigger immediate escalation to Tech Lead
+7. For CRITICAL bugs: trigger immediate escalation to Tech Lead — do not wait for the full evaluation cycle to complete
 
 ## Constraints
 

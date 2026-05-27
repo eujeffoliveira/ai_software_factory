@@ -29,12 +29,12 @@ Plan and document the Vercel production deployment configuration. Validates `ver
 
 ## Process
 
-1. **Read `vercel.json`** — extract cron schedule entries, identify cron paths
+1. **Read `vercel.json`** — extract cron schedule entries, identify cron paths. If `vercel.json` is absent: generate a default configuration from the cron route handlers found (step 2) and flag the generated file in `Deployment_Plan.md` as "vercel.json was missing — generated defaults require human review before deploy"
 2. **Locate cron route handlers** — find all `app/api/cron/*/route.ts` files
-3. **Verify `guardCron()`** — confirm it is the FIRST function call in each handler
+3. **Verify `guardCron()`** — confirm it is the FIRST function call in each handler. If missing: record as Gate 6 blocking finding with format `BLOCK: guardCron() missing in <file_path> — handler accepts unauthenticated requests`; do not continue verification for that route until fixed
 4. **Verify `syncLog()` in `finally`** — confirm each cron handler logs in `finally` block
 5. **Verify Vercel project configuration** — confirm project exists, staging deployment active
-6. **Check deployment platform** — if non-Vercel deployment requested without ADR → return `ADR_REQUIRED`
+6. **Check deployment platform** — if non-Vercel deployment requested: verify an ADR exists in the project's ADR registry (typically `docs/adrs/` or referenced in the Handoff Package from Agente02) that explicitly approves the alternative platform. If no such ADR exists → return `ADR_REQUIRED` status without further processing
 7. **Produce deployment steps** — ordered steps from staging verification through production deploy
 8. **Document cron inventory** — list all cron routes, schedules, `guardCron()` status
 

@@ -15,8 +15,8 @@ Validate that all environment variables required by `lib/env.ts` are present in 
 | Input | Required | Description |
 |-------|----------|-------------|
 | `lib/env.ts` content | Required | Zod schema file |
-| Staging env var list | Required | Variable names present in Vercel Preview |
-| Production env var list | Required | Variable names present in Vercel Production |
+| Staging env var list | Required | JSON array of variable names present in Vercel Preview (e.g., `["DATABASE_URL", "NEXTAUTH_SECRET"]`) — values are NOT included, only names |
+| Production env var list | Required | JSON array of variable names present in Vercel Production — same format as staging list |
 
 ## Outputs
 

@@ -57,7 +57,7 @@ Invoke this skill whenever an integration requires understanding which external 
 
 9. **Build Data Lineage section:** For every internal field, document the source: DIRECT, COMPUTED, LOOKUP, DEFAULTED, or SYSTEM_GENERATED.
 
-10. **Produce Zod Schema Requirements:** Define minimum required fields and the schema structure. Always use `.passthrough()`.
+10. **Produce Zod Schema Requirements:** Define minimum required fields and the schema structure. Always use `.passthrough()`. Format: one `z.object({...}).passthrough()` block per external entity, where each field entry is `fieldName: z.type().optional()` or `fieldName: z.type()` (required). Include `z.string()`, `z.number()`, `z.boolean()`, `z.null()`, `z.enum([...])` as appropriate. Example entry: `externalId: z.string(), email: z.string().email().optional(), status: z.enum(["active", "inactive", "pending"]).optional()`. Nullable fields use `.nullable()` not `.optional()` when the API guarantees their presence with possible null value.
 
 11. **Flag PII fields:** If any PERSONAL or SENSITIVE fields found, note that `data-privacy-risk-skill` must be invoked.
 

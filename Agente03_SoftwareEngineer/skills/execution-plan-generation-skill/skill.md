@@ -48,7 +48,7 @@ Schema: `output.schema.json`
 
 ## Procedure
 
-1. **Read and validate all inputs.** Verify architecture_version, prd_version, components list, api_endpoints, db_tables, and adrs are all present and non-empty.
+1. **Read and validate all inputs.** Verify that `architecture_version`, `prd_version`, `components`, `api_endpoints`, and `db_tables` are all present and non-empty. The `adrs` list may be an empty array if the project is fully compliant with the Golden Path and no deviations were required — an empty `adrs` list is valid, not a missing input.
 
 2. **Enumerate components.** From Architecture.md, list: all API routes, Server Actions, DB tables, Server Components, Client Components, cron jobs, configuration requirements.
 

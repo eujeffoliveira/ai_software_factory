@@ -32,6 +32,15 @@ Validate that the GitHub Actions CI/CD pipeline is passing on the target commit 
 4. Next.js production build: `npx next build`
 5. Playwright E2E tests: `npx playwright test` (on main branch)
 
+## Procedure
+
+1. Verify `ci_run_status` is for `target_commit_sha` — reject if SHA mismatch
+2. Parse `ci_workflow_file` to confirm all 5 required steps exist as job steps (by command or step name)
+3. For each required step: check `ci_run_status` for its conclusion (`success`, `failure`, `skipped`, `cancelled`)
+4. A step with conclusion `skipped` or `cancelled` counts as MISSING, not passing
+5. Record per-step: step name, conclusion, and evidence (job name + step index in the workflow file)
+6. Set Gate 6 impact: `PASS` only if all 5 steps present AND all conclusions = `success`; otherwise `BLOCKED_CI_FAILURE` with the specific failing/missing steps listed
+
 ## Constraints
 
 - All 5 steps must be present AND passing for PASS result

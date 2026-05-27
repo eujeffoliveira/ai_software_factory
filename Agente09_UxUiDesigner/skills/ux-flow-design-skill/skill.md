@@ -57,19 +57,21 @@ Schema: `output.schema.json`
 
 4. **Map the happy path.** Walk through the flow step by step from entry to successful completion. For each step: actor, action, screen (URL), state (loading/populated/empty), outcome. Annotate auth-required steps, loading states, and decision points.
 
-5. **Map error paths.** Systematically ask: "What if the user is not authenticated?", "What if the primary data load fails?", "What if a form submission fails?", "What if the user lacks permission?" Each answer becomes an error path. Minimum 2 error paths per flow.
+5. **Map error paths.** Systematically ask: "What if the user is not authenticated?", "What if the primary data load fails?", "What if a form submission fails?", "What if the user lacks permission?" Each answer with a distinct trigger condition becomes a separate error path. Path counting: `unauthenticated` and `unauthorized (lacks permission)` are two distinct paths even though both end at an error screen. Multiple form field validation errors are one path ("form validation failed"). Minimum 2 distinct error paths per flow.
 
 6. **Map edge cases.** Ask: "What if the data set is empty?", "What if the dataset is very large?", "What if the user has read-only access?", "What if a required dependency (e.g., no projects for a task) is missing?"
 
 7. **Mark decision points.** For each step in the happy path where the flow branches, add a `[DECISION: condition → Path A | Path B]` annotation.
 
-8. **Verify API data.** For each step that references API data, confirm the endpoint and data fields exist in `API_Contract.json` (DR015). Flag any missing data.
+8. **Verify API data.** For each step that references API data, confirm the endpoint and data fields exist in `API_Contract.json` (DR015). If a flow step requires an endpoint that does not exist in the contract: add it to the escalation list as `ESC-NNN: missing API endpoint — <method> <path> required for flow step <N>` and notify Tech Lead; do NOT design the flow step as if the endpoint exists.
 
 9. **Build the traceability table.** For each PRD acceptance criterion, identify which flow step covers it. Report any uncovered criteria.
 
 10. **Escalate ambiguities.** For any PRD criterion that cannot be designed without making a product decision, stop and create an escalation (ESC-NNN) for Tech Lead. Do not design around the ambiguity.
 
-11. **Run `checklists/ux_flow_checklist.md`.** Confirm all items pass before delivering.
+11. **Verify escalations before delivery.** If any escalations (ESC-NNN) are open, the UX Flow is NOT complete. Confirm each escalation has either been resolved (product decision received) or explicitly acknowledged as a blocker by Tech Lead. Do not deliver the flow with unacknowledged escalations.
+
+12. **Run `checklists/ux_flow_checklist.md`.** Confirm all items pass before delivering.
 
 ---
 

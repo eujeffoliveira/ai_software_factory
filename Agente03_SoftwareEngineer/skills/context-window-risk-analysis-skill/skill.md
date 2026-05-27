@@ -74,7 +74,7 @@ Each task is scored based on the following risk factors. Sum the factors to get 
 | Risk | Recommended Mitigation |
 |------|------------------------|
 | XL task | Split into 2+ tasks (required — DR001) |
-| L task without context_summary | Add context_summary (max 200 words) |
+| L task without context_summary | Add `context_summary` field to the task object. Required format: 150–200 words of plain text summarizing: (1) which existing files must be read before starting, (2) key types and interfaces the implementation must conform to, (3) external dependencies or side effects the task produces. |
 | No pre-specified signatures | Add function_signatures to task object |
 | Long depends_on chain | Consider extracting intermediate output as artifact |
 | Missing file_path | Add exact file path immediately — DR004 |

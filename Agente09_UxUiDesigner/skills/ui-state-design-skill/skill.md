@@ -49,7 +49,7 @@ Schema: `output.schema.json`
 
 1. **Enumerate async components.** From Wireframes.md component inventory, identify every component that fetches data (Server Component with fetch, Client Component with SWR, any component receiving props from an API). Mark these — they all need all 4 states.
 
-2. **Derive TypeScript props interface.** For each component, open `API_Contract.json` and find the corresponding endpoint response schema. Map every field to a TypeScript type. Use `string | null` for nullable fields. Verify every field exists in the contract (DR015).
+2. **Derive TypeScript props interface.** For each component, open `API_Contract.json` and find the corresponding endpoint response schema. Map every field to a TypeScript type. Use `string | null` for nullable fields. Verify every field exists in the contract (DR015). If a contract field has an unsupported type (e.g., a generic `object` with no schema, a raw binary blob, or a union type with no described variants): document the field as `unknown` in the interface and add a note in `implementation_notes` flagging it for the Dev agent to clarify before implementation; do NOT invent a type.
 
 3. **Design the loading state.** The loading skeleton must mirror the populated state layout. Count the content items (cards, rows, widgets) and create skeleton blocks of matching dimensions. Specify `animate-pulse`, `bg-muted`, `role="status"`, `aria-label="Loading [content type]..."`. Do not use a generic spinner.
 
@@ -65,7 +65,7 @@ Schema: `output.schema.json`
 
 9. **Write the Accessibility section.** Specify: numbered focus order, keyboard interactions (Enter, Esc, Arrow keys), screen reader announcements (`aria-live` regions, count updates), ARIA roles, image alt text policy.
 
-10. **Document charts if applicable.** For any chart component, fill the full Recharts specification from `context_view.md §9`: component type, data interface, axis configuration, tooltip content, legend, color tokens, empty state.
+10. **Document charts if applicable.** For any chart component, fill the full Recharts specification from `context_view.md §9`: component type, data interface, axis configuration, tooltip content, legend, color tokens, empty state. Chart specifications go in a dedicated `## Chart: [ComponentName]` subsection inside `UI_Spec.md` (not in a separate file) — one subsection per chart, directly following the component's Interactive Elements table.
 
 11. **Run `checklists/ui_spec_checklist.md`.** Confirm all items pass before delivering.
 

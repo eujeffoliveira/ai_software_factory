@@ -58,11 +58,11 @@ Schema: `output.schema.json`
 
 5. **Use ASCII box drawing syntax.** Follow `context_view.md §4` exactly. Use `┌─┐ / └─┘ / ├─┤ / │` for containers, `[Component Name]` for named elements, `(repeat × N)` for repeated items.
 
-6. **Name every component.** Component names in the wireframe must match Architecture.md component names or be new component proposals with explicit justification.
+6. **Name every component.** Component names in the wireframe must match Architecture.md component names or be new component proposals with explicit justification. Sufficient justification examples: "novel UX pattern not covered by any existing component" (e.g., a multi-step wizard for an onboarding flow), "must encapsulate feature-specific state not appropriate in a shared component". Insufficient: "more convenient", "similar but slightly different" — in those cases reuse the existing component with variant props instead.
 
 7. **Write the component inventory.** Below each wireframe, list every named component. This becomes the input for `ui-state-design-skill`.
 
-8. **Annotate states.** Below each wireframe, add a States section with four rows: Loading (skeleton description), Error, Empty, Populated. The populated state is what the wireframe shows. Full state specs go in Screen_States.md via `ui-state-design-skill`.
+8. **Annotate states.** Below each wireframe, add a States section with four rows: Loading (skeleton description), Error, Empty, Populated. The populated state is what the wireframe shows. Full state specs go in Screen_States.md via `ui-state-design-skill`. Skeleton description format: prose text describing which content areas are replaced by skeleton blocks, using the pattern `"[area name]: [number] skeleton blocks of [approximate size]"` (e.g., `"stats row: 4 skeleton blocks of card size"`, `"table body: 5 skeleton rows"`). ASCII art is optional but prose description is mandatory.
 
 9. **Add mobile-specific behavior notes.** Document anything that differs on mobile: hamburger behavior, bottom sheet modal, swipe gestures, load-more vs pagination.
 

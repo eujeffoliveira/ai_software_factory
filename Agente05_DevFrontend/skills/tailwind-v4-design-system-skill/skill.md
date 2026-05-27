@@ -15,7 +15,7 @@ Applies design tokens and Tailwind CSS v4 classes to components. Removes hardcod
 | Field | Required | Description |
 |-------|----------|-------------|
 | `component_files` | Yes | Array of TSX file paths to review/update |
-| `design_token_map` | Yes | From `context_view.md` § 12 |
+| `design_token_map` | No | Override token map; defaults to `context_view.md § 12` (read internally — caller need not supply this) |
 
 ## Outputs
 

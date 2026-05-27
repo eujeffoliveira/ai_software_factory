@@ -43,7 +43,7 @@ Invoke whenever any field in `Data_Mapping.md` is classified as PERSONAL or SENS
 
 1. **Compile PII inventory:** Extract all PERSONAL and SENSITIVE fields from `Data_Mapping.md`. Organize by classification level.
 
-2. **Assess legal basis for each flow:** For each personal data flow (inbound and outbound), determine the LGPD legal basis. Document the basis. For LEGITIMATE_INTEREST, document the proportionality test.
+2. **Assess legal basis for each flow:** For each personal data flow (inbound and outbound), determine the LGPD legal basis. Document the basis. For LEGITIMATE_INTEREST, document the proportionality test with all four required elements: (a) **Controller interest** — the specific, concrete benefit the controller receives from the processing; (b) **Data subject impact** — how and how much the processing affects the data subject (intrusive? unexpected? harmful?); (c) **Necessity** — whether the same controller interest could be achieved with less personal data or without processing at all; (d) **Less-invasive alternatives** — list at least one alternative that was considered and why it is insufficient. If any element cannot be documented, LEGITIMATE_INTEREST is not established — use a different basis or exclude the field.
 
 3. **Flag SENSITIVE PII:** For any SENSITIVE fields (health, biometrics, ethnicity, religion, sexual orientation, criminal record), verify that CONSENT or LEGAL_OBLIGATION is the basis. No other basis.
 

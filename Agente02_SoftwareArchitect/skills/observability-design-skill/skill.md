@@ -49,7 +49,7 @@ Define the complete observability strategy for the system: structured JSON loggi
 
 4. **Define `sync_log` events** — for every cron job and background process:
    - Event name: `snake_case` job identifier (e.g., `nightly_score_sync`, `application_status_poll`)
-   - Required fields: `jobId`, `scheduledAt`, `startedAt`, `completedAt`, `duration_ms`, `records_processed`, `errors`
+   - Required fields: `jobId`, `scheduledAt`, `startedAt`, `completedAt`, `duration_ms`, `records_processed` (use `0` for jobs that do not process records, e.g., health checks, notification jobs), `status` (`"success"` | `"failure"` | `"partial"`), `errors` (`null` on success, full error context on failure)
    - Error logging: on job failure, log full error context including stack trace (not just "job failed")
    - SLA fields: log expected vs. actual duration for jobs with NFR latency requirements
 
@@ -64,7 +64,7 @@ Define the complete observability strategy for the system: structured JSON loggi
    - Authentication: none (public endpoint)
    - Response: `200 OK` when healthy, `503 Service Unavailable` when degraded
    - Payload: `{ "status": "ok"|"degraded", "timestamp": "ISO 8601", "checks": { "db": "ok"|"error", "externalService": "ok"|"error" } }`
-   - Latency target: must respond in < 500ms (it checks DB connectivity, not perform queries)
+   - Latency target: must respond in < 500ms. Implementation: execute a minimal query (e.g., `SELECT 1`) to verify DB connectivity without running aggregations or full-table scans. The health check confirms connectivity, not data correctness.
 
 7. **Define alerting thresholds** — for each component in Architecture.md:
    - Error rate threshold: % of 5xx responses that triggers alert (default: > 1% over 5 minutes)

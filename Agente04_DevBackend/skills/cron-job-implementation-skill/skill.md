@@ -29,10 +29,12 @@ Implements a complete Vercel Cron job: a thin route handler with `guardCron()` a
 
 ## Procedure
 
-1. **Create route file** — `guardCron(req)` as ABSOLUTE FIRST call
-2. **Add** `export const dynamic = "force-dynamic"`
-3. **Capture start time** before `try` block
-4. **Create try/catch/finally** — job in try, error handling in catch, `syncLog()` in finally
+The exact statement order inside the route handler function body is:
+
+1. **`guardCron(req)` call — ABSOLUTE FIRST statement** (authentication; rejects unauthenticated callers immediately before any processing)
+2. **`const startedAt = Date.now()`** — capture start time AFTER auth passes, BEFORE `try` block
+3. **Add** `export const dynamic = "force-dynamic"` — at module level (outside function body)
+4. **Create try/catch/finally** — job in `try`, error handling in `catch`, `syncLog()` in `finally`
 5. **Create job function** in `lib/jobs/[job-name].ts`
 6. **Implement idempotency** — upsert or existence check in job function
 7. **Return** `Response.json({ ok: status !== "error" })`

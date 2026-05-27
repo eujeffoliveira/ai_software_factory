@@ -24,7 +24,7 @@ Every Gate 5 evaluation — mandatory.
 
 - Every audit_log call must be reviewed field-by-field — not just checked for presence
 - `actorEmail` MUST come from `session.user.email` — not from request or input
-- `metadata` field must never contain raw user input values
+- `metadata` field: allowed value types are `string`, `number`, and `boolean` only — no nested objects, no arrays, no `null` values; keys must be snake_case identifiers; values must not be raw user input (e.g., do not log `comment: rawInput.comment`) — use entity IDs and operation codes instead; example allowed: `{ entity_id: "uuid", action_count: 3, is_batch: false }`
 
 ## Steps
 

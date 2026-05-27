@@ -32,7 +32,7 @@ Transform an approved PRD into a coherent `Architecture.md` document that descri
 
 3. **Select architecture style** — invoke DR002: for standard SaaS with no high-concurrency NFRs, select fullstack-monorepo. For workloads requiring dedicated compute, propose a service via ADR.
 
-4. **List system components** — for each PRD use case, identify: which server component, which server action, which route handler, which DAL function, which job is needed.
+4. **List system components** — for each PRD use case, identify the components that apply: server component, server action, route handler, DAL function, and/or job. Not every use case requires all five — omit a component type only when the use case genuinely does not need it, and note the reason.
 
 5. **Document data flows** — draw explicit paths for: stable reads, mutations, cron jobs, polling (if applicable), integrations.
 

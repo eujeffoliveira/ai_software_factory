@@ -27,7 +27,7 @@ Identify and formally document business rules from stakeholder statements and in
 
 1. **Read the interview log.** For each stakeholder answer, ask: "Does this answer state a constraint, a policy, or a mandate about how the business operates?" If yes, it is a candidate business rule.
 
-2. **Formulate the rule.** A business rule has the form: "[Entity/Actor] [must/must not/can/cannot] [action/state] [under condition]". It should be unambiguous and non-technical.
+2. **Formulate the rule.** A business rule has the form: "[Entity/Actor] [must/must not/can/cannot] [action/state] [under condition]". It should be unambiguous and non-technical. For rules with multiple conditions, list each condition in the `[under condition]` clause separated by AND/OR. Example: "Administrators [must] [audit all state changes] [under condition: the change affects user data OR the change is to a security setting]." Avoid nesting more than two conditions in a single rule — split compound rules into two BR-NNN entries if needed.
 
 3. **Verify the source.** Identify the stakeholder role and session where this rule was stated. If the rule cannot be traced to a specific statement, do not create a confirmed rule — create an OQ-NNN instead: "Proposed rule: [X]. Was this explicitly confirmed? If yes, provide source."
 
@@ -42,7 +42,7 @@ Identify and formally document business rules from stakeholder statements and in
 
 7. **Assign BR-NNN ID** and add to `Business_Rules.md`. Set status to Confirmed or To Confirm.
 
-8. **Link to acceptance criteria.** For each confirmed rule, verify that at least one negative scenario in `Acceptance_Criteria.md` tests the rule's enforcement.
+8. **Link to acceptance criteria.** For each confirmed rule, verify that at least one negative scenario in `Acceptance_Criteria.md` tests the rule's enforcement. If no acceptance criterion exists for the rule: (a) create a new negative scenario AC-NNN and add it to `Acceptance_Criteria.md`, OR (b) if acceptance criteria are not yet finalized, move the rule to "To Confirm" status and add an OQ-NNN: "AC needed to test enforcement of BR-NNN."
 
 ## Knowledge Access Policy
 

@@ -63,8 +63,10 @@ IF uses_state OR uses_effects → CLIENT_COMPONENT (DR001 or DR002)
 ELSE IF uses_event_handlers → CLIENT_COMPONENT (DR003)
 ELSE IF uses_browser_apis → CLIENT_COMPONENT (DR004)
 ELSE IF uses_recharts → CLIENT_COMPONENT (DR005)
-ELSE → SERVER_COMPONENT
+ELSE → SERVER_COMPONENT (DR006 — read-only data, no triggers)
 ```
+
+`client_trigger` is `null` for any Server Component decision (DR006 is a confirmation rule, not a trigger, and never appears in `client_trigger`).
 
 ## Knowledge Access Policy
 

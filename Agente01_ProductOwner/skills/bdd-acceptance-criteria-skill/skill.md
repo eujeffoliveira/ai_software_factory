@@ -18,7 +18,7 @@ Create testable, Gherkin-formatted acceptance criteria for each user story, cove
 
 ## Constraints
 - Every criterion must use Given/When/Then format — no prose descriptions
-- Every Then clause must be deterministic and observable — no subjective language
+- Every Then clause must be deterministic and **observable**: the outcome must be verifiable without access to internal system state. Observable means: visible in the UI, present in the API response, or a side-effect queryable via a public interface (e.g., database state confirmed via API, log entry confirmed via monitoring dashboard). Internal state changes (e.g., "the record was saved to the DB") are not observable unless confirmed through an external check.
 - Forbidden terms in Then clauses: "fast", "easy", "correctly", "properly", "intuitively", "seamlessly", "user-friendly"
 - Performance thresholds must be expressed as measurable metrics (e.g., "≤ 2 seconds", "within 60 seconds")
 - Error messages in negative scenarios must be specific (exact text or format specified)
@@ -43,7 +43,7 @@ Create testable, Gherkin-formatted acceptance criteria for each user story, cove
 
 7. **Cross-reference with NFRs.** If a performance NFR applies to this story, include the metric in the relevant Then clause (e.g., "And the page loads in ≤ 2 seconds").
 
-8. **Run `checklists/bdd_acceptance_checklist.md`.** Verify format, coverage, testability, and content quality for all criteria.
+8. **Run `checklists/bdd_acceptance_checklist.md`.** Verify format, coverage, testability, and content quality for all criteria. If any checklist item fails, return to the relevant step and fix the criterion before proceeding. Do not declare the output complete until all checklist items pass.
 
 9. **Assign AC-NNN-NN IDs** and write the coverage summary table.
 

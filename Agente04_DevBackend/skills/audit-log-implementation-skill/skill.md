@@ -29,7 +29,7 @@ Adds `auditLog()` entries for sensitive human actions. Every Server Action that 
 
 1. Identify the `action_verb` in PAST_TENSE_VERB format
 2. Identify `entityType` (Prisma model name)
-3. Place `await auditLog(...)` AFTER the `dal.operation()` call
+3. Place `await auditLog(...)` AFTER the `dal.operation()` call. Wrap `auditLog()` in its own try/catch: if it throws, log the error internally (using `structured-logging-skill`) and **do NOT propagate** — the DB operation is already committed and the user action succeeded. Never roll back a committed mutation because the audit log failed.
 4. Source `actorId` and `actorEmail` from `session` — never from `input`
 5. Include relevant `metadata` without PII (except what's audited by policy)
 

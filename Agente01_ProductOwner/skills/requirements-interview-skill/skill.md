@@ -20,7 +20,7 @@ Transform a raw project briefing and initial description into a structured set o
 ## Constraints
 - Questions must be routed through Agente00_TechLead — the Product Owner does not contact stakeholders directly.
 - Technology questions ("which database?", "which framework?") must not be asked — those are the Architect's domain.
-- Do not ask questions whose answers are already provided in the briefing — re-read the briefing before generating questions.
+- Do not ask questions whose answers are already provided in the briefing — re-read the briefing before generating questions. A question is redundant only if the briefing provides sufficient detail to write acceptance criteria: specific thresholds, named user personas, explicit business rules, or defined constraints. A briefing that merely names a feature without describing its behavior does not answer the question.
 - The interview log must use the `templates/Requirements_Interview_Log.md` format.
 - All unanswered questions become OQ-NNN entries, not assumptions.
 
@@ -43,7 +43,7 @@ Transform a raw project briefing and initial description into a structured set o
    - State its category
    - Be written from a business perspective (no technology choices)
 
-5. **Submit questions to Tech Lead** for routing to the appropriate stakeholder.
+5. **Submit questions to Tech Lead** for routing to the appropriate stakeholder. Expected response times: BLOCKING questions within 2 business days, HIGH within 5 business days. If no response is received by the deadline, escalate via `human-escalation-skill` with `escalation_reason = "requirements_gap_unresolved"` and include which artifacts are blocked.
 
 6. **Record answers.** For each answer received: record verbatim or accurately summarized, note follow-up needed, and identify the artifact action (create BR-NNN, create OQ-NNN, document as assumption).
 

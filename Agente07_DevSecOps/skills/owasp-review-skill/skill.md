@@ -31,12 +31,13 @@ Every Gate 5 evaluation — mandatory. All 10 categories must be reviewed regard
 
 ## Steps
 
-1. For each OWASP category, apply the specific checks defined in `checklists/owasp_top_10_checklist.md`
-2. Review each relevant file against the category's checks
-3. Record evidence for PASS — what was verified
-4. Record findings for FAIL — specific file:line, description, decision rule
-5. Aggregate results into the 10-row coverage table
-6. Pass findings to `security-audit-report-skill` for aggregation
+1. **Verify prerequisites**: confirm that results from `secret-scanning-skill`, `authz-review-skill`, `dependency-security-review-skill`, and `logging-privacy-review-skill` are all present. If any prerequisite output is missing, issue `BLOCKED_PENDING_PREREQ` and halt — do not proceed with incomplete inputs.
+2. For each OWASP category, apply the specific checks defined in `checklists/owasp_top_10_checklist.md`
+3. Review each relevant file against the category's checks
+4. Record evidence for PASS — what was verified
+5. Record findings for FAIL — specific file:line, description, decision rule
+6. Aggregate results into the 10-row coverage table
+7. Pass findings to `security-audit-report-skill` for aggregation
 
 ## Knowledge Access Policy
 

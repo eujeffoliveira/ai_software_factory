@@ -26,7 +26,7 @@ Adds structured JSON logging to backend operations. Logs are always structured o
 ## Procedure
 
 1. Identify the location string: `"[functionName] description"`
-2. Identify context fields: userId, entityId, operation-specific data
+2. Identify context fields. **Required fields in every log entry: `userId` and `entityId`** (use `null` only if genuinely unavailable, e.g., unauthenticated public endpoint — log `userId: null` explicitly, never omit). Add operation-specific fields as additional context.
 3. Write: `console.error("[functionName] failed:", { error, ...contextFields })`
 4. Ensure no sensitive data in context (no passwords, tokens, full credit card numbers)
 

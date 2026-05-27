@@ -32,7 +32,7 @@ Validate a draft architecture against the Golden Model to identify all deviation
 5. **Pattern check** — For each component in Architecture.md, verify against anti-patterns list (context_view.md §12).
 6. **Additional services check** — Any service beyond the monorepo? If yes: flag for ADR.
 7. **Migration check** — Is `prisma migrate deploy` the stated migration tool for staging/prod? If not: flag for ADR.
-8. **Compile report** — For each deviation: state what deviates, which Golden Path item is affected, ADR required.
+8. **Compile report** — For each deviation: state what deviates, which Golden Path item is affected, and whether an ADR is required based on `agent_config.json#adr_required_for`. A deviation triggers an ADR if and only if the violated item appears in the `adr_required_for` list. Do not add or remove ADR requirements based on judgment — use the list as the authority.
 9. **Set golden_path_status** — FULLY_COMPLIANT, COMPLIANT_WITH_ADRS, or NON_COMPLIANT_PENDING_ADRS.
 
 ## Quality Gate

@@ -42,13 +42,16 @@ Do NOT use this skill for:
 3. **Define Zod schema at module level** — `const [ActionName]Schema = z.object({ ... })` with constraints from API contract
 4. **Infer TypeScript type** — `type [ActionName]Input = z.infer<typeof [ActionName]Schema>`
 5. **Export async function** — typed `rawInput: unknown`, typed return `Promise<ReturnType>`
-6. **Auth check first** — `const session = await auth(); if (!session?.user?.id) throw new Error("Unauthorized")`
-7. **Parse input** — `const input = [ActionName]Schema.parse(rawInput)` — throws on invalid
-8. **Authorization check (if needed)** — fetch resource, verify `resource.userId === session.user.id`, throw "Forbidden" if not
-9. **Business logic via DAL** — call DAL function — NEVER call `prisma` directly
-10. **Call `auditLog()`** — AFTER success, actorId/actorEmail from session
+
+   Structure: steps 6–7 are **OUTSIDE** try/catch (auth and parse errors must propagate directly). Steps 8–10 are **INSIDE** try/catch (business logic errors are caught and re-thrown as generic messages).
+
+6. **Auth check first (OUTSIDE try/catch)** — `const session = await auth(); if (!session?.user?.id) throw new Error("Unauthorized")`
+7. **Parse input (OUTSIDE try/catch)** — `const input = [ActionName]Schema.parse(rawInput)` — throws ZodError on invalid; callers receive structured validation errors
+8. **Authorization check (INSIDE try/catch, if needed)** — fetch resource, verify `resource.userId === session.user.id`, throw "Forbidden" if not
+9. **Business logic via DAL (INSIDE try/catch)** — call DAL function — NEVER call `prisma` directly
+10. **Call `auditLog()` (INSIDE try/catch)** — AFTER success, actorId/actorEmail from session
 11. **Return result** with TypeScript return type
-12. **try/catch** wrapping steps 8-10 — log internally, throw generic message to caller
+12. **catch block** — log internal error details, throw generic message to caller (never expose raw error.message)
 
 ## Quality Gate
 
@@ -71,9 +74,11 @@ Gate 4 checks for this skill output:
 
 ## RAG Collections Permitted
 
-- `backend_engineering` (core patterns, Golden Path rules)
-- `nodejs_patterns` (Clean Code principles applied to TypeScript)
-- `clean_code` (SRP, function design, naming)
+These collection names refer to pre-distilled content available in `Agente04_DevBackend/knowledge/` — they are not runtime reads of external sources. The Knowledge Access Policy applies.
+
+- `backend_engineering` → distilled into `knowledge/principles.md` and `knowledge/knowledge_cards.md`
+- `nodejs_patterns` → distilled into `knowledge/knowledge_cards.md`
+- `clean_code` → distilled into `knowledge/heuristics.md`
 
 ## Architecture Compliance
 

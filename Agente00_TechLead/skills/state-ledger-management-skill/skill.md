@@ -17,7 +17,14 @@ Create, update, validate, summarize, and detect inconsistencies in the project S
 - Update payload (gate decision, risk, ADR, question, decision, approval)
 
 ## Outputs
-- Updated `State_Ledger.json`
+- Updated `State_Ledger.json` — conforms to `schemas/State_Ledger.json`. Required fields and types:
+  - `project_name` (string), `project_id` (string, UUID)
+  - `created_at`, `updated_at` (ISO 8601 datetime)
+  - `current_phase` (enum: `requirements` | `architecture` | `planning` | `implementation` | `security` | `deployment` | `post-deploy` | `closed`)
+  - `current_agent` (string, valid agent ID from approved roster)
+  - `next_agent` (string, valid agent ID or empty string if phase is `closed`)
+  - `approved_artifacts` (object with boolean fields: `prd`, `architecture`, `execution_plan`, `qa`, `security`, `deployment`, `post_deploy`)
+  - `gate_history` (array of gate decision records), `risks` (array), `adrs` (array), `open_questions` (array), `decisions` (array), `human_approvals_required` (array)
 - Validation report (if VALIDATE operation)
 - Summary text (if SUMMARIZE operation)
 - Inconsistency report (if DETECT_INCONSISTENCY operation)
@@ -57,7 +64,7 @@ Create, update, validate, summarize, and detect inconsistencies in the project S
 6. State next action
 
 ### DETECT_INCONSISTENCY
-- Phase is "deploy" but `prd: false` → INCONSISTENCY
+- Phase is "deploy" but `approved_artifacts.prd` has **never been set to true** in `gate_history` (i.e., no Gate 1 with status APPROVED or APPROVED_WITH_CONDITIONS exists) → INCONSISTENCY. A prior Gate 1 APPROVED satisfies the prd requirement even if `approved_artifacts.prd` was later toggled.
 - `next_agent` is empty → INCONSISTENCY
 - CRITICAL risk with no escalation or mitigation → INCONSISTENCY
 - Gate history missing for completed phases → INCONSISTENCY

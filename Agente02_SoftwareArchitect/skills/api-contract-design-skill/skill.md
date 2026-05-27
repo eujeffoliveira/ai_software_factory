@@ -31,7 +31,10 @@ Produce a complete OpenAPI 3.1 specification (`API_Contract.json`) that defines 
 
 3. **Define security scheme** — the project uses NextAuth v5 + Google OAuth. Apply `BearerAuth` (JWT session token) as the primary security scheme for all protected endpoints. Define it once in `components/securitySchemes`.
 
-4. **Mark authentication requirements** — every endpoint that reads or mutates user data must have `security: [{ BearerAuth: [] }]`. Public endpoints (e.g., `/api/health`) must be explicitly marked with `security: []` (empty, meaning intentionally public).
+4. **Mark authentication requirements** — every endpoint must declare a security field explicitly; never omit it. Use these rules:
+   - Endpoints that read or mutate user data → `security: [{ BearerAuth: [] }]`
+   - Endpoints intentionally accessible without authentication (e.g., `/api/health`, public webhooks) → `security: []`
+   - All other endpoints (system endpoints, internal callbacks, non-user data) → default to `security: [{ BearerAuth: [] }]` unless there is an explicit documented reason to make them public. Undocumented public endpoints are a security risk.
 
 5. **Write fully-typed request schemas** — for every endpoint with a request body:
    - Use `$ref` to reusable schema components where the same shape appears twice

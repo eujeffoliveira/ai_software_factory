@@ -37,7 +37,8 @@ Step 2 of every Gate 5 evaluation — mandatory. Must complete before privacy-re
 4. Identify regulatory obligations (LGPD, GDPR, HIPAA)
 5. Determine the highest tier across all entities
 6. If RESTRICTED: immediately issue `BLOCKED_PENDING_HUMAN` and escalate — stop other assessments
-7. Produce `Data_Classification.md`
+7. **Coverage verification**: cross-reference the classified fields list against all fields read or written in the implementation files (Server Actions, DAL, Route Handlers). Any field present in the implementation but absent from the classification is a coverage gap — classify it before continuing.
+8. Produce `Data_Classification.md`
 
 ## Knowledge Access Policy
 

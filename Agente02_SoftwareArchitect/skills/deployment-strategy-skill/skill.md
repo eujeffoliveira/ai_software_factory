@@ -48,7 +48,7 @@ Define the complete deployment strategy for the system: environments, migration 
    - **Mandatory: all cron route handlers must call `guardCron(request)` before executing**
    
    The `guardCron()` function validates:
-   - The `Authorization: Bearer {CRON_SECRET}` header matches the `CRON_SECRET` env var
+   - Vercel Cron sets the `authorization` header to `Bearer {CRON_SECRET}`. `guardCron()` must: (1) read `request.headers.get("authorization")`, (2) strip the `"Bearer "` prefix, (3) compare the resulting token to `process.env.CRON_SECRET` using a constant-time comparison. The comparison is against the raw secret value, not the full `"Bearer ..."` string.
    - If the check fails: return `401 Unauthorized` immediately, log `sync_log` event with `error: "unauthorized_cron_attempt"`
    
    Template:

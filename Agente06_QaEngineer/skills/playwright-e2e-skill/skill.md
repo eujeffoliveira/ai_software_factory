@@ -29,10 +29,11 @@ Validates existing Playwright E2E tests for correctness and generates new E2E te
 ## Procedure
 
 1. Parse the Given/When/Then flow into test setup (Given), user actions (When), and assertions (Then)
-2. Write happy path test using accessible selectors only
-3. Write error state test (submit without required fields, verify `role="alert"` visible)
-4. Write keyboard navigation test (Tab through elements, verify focus visibility, test Enter submission)
-5. If reviewing existing tests: scan for `.locator(".")`, `.locator("/")`, `$("[class")` — any CSS/XPath usage → flag as violation
+2. Identify whether the flow spans a single page or multiple pages/routes. For cross-page flows: use `await page.waitForURL("**/expected-path")` after each navigation action before proceeding to the next step assertions
+3. Write happy path test using accessible selectors only
+4. Write error state test (submit without required fields, verify `getByRole("alert")` visible)
+5. Write keyboard navigation test (Tab through elements, verify focus visibility, test Enter submission)
+6. If reviewing existing tests: scan for `.locator(".")`, `.locator("/")`, `$("[class")` — any CSS/XPath usage → flag as violation; verify every interactive element has an accessible name by checking that `getByRole("<role>", { name: "<name>" })` resolves without `exact: false` workarounds
 
 ## Constraints
 

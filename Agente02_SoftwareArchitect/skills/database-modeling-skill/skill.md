@@ -57,6 +57,7 @@ Design the relational database schema using Prisma 7 conventions, produce a `Pri
    - `@@index` for foreign keys used in frequent joins
    - `@@index` for columns used in WHERE clauses in hot paths (identified from PRD acceptance criteria)
    - `@@index` for soft-delete pattern: `(userId, deletedAt)` if applicable
+   - **Exception — PII_SENSITIVE fields:** do **not** index `PII_SENSITIVE` fields (SSN, passport, health data) even if they appear in hot-path queries. Indexing PII_SENSITIVE fields exposes them in query plans and metadata. For queries that must filter by a `PII_SENSITIVE` value, use a shadow column (e.g., a HMAC hash of the value) for the index and document the trade-off in `Security_Strategy.md`.
 
 7. **Soft deletes** — if the PRD requires data retention or audit trail, use `deletedAt DateTime?` + `@@index([deletedAt])`. Never use physical deletes for user-visible data unless explicitly specified.
 

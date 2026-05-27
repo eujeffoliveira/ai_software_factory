@@ -26,7 +26,7 @@ Register, classify, track, and escalate unresolved questions that arise during r
 
 ## Criticality Classification Rules
 
-- **BLOCKING:** Cannot finalize a mandatory PRD section (e.g., cannot define business rule, cannot complete acceptance criteria for a MUST story). Must be resolved before Gate 1.
+- **BLOCKING:** Cannot finalize a mandatory PRD section. Mandatory sections are: Summary, Business Problem, Objectives, Target Users, User Stories, Acceptance Criteria, Functional Requirements, NFRs, Data Requirements. All other sections are supporting and not blocking. Must be resolved before Gate 1.
 - **HIGH:** Significantly impacts scope definition, NFRs, or multiple user stories. Should be resolved before Gate 1 if possible; if not, document the assumption taken.
 - **MEDIUM:** Affects a specific story's detail or a non-critical section. Can proceed with a documented assumption if resolution is not available before Gate 1.
 - **LOW:** Clarification that would be nice to have but does not affect any artifact decision. Document assumption and proceed.
@@ -41,7 +41,7 @@ Register, classify, track, and escalate unresolved questions that arise during r
 
 4. **Identify the owner.** Who can provide the authoritative answer? A stakeholder role — not the Product Owner.
 
-5. **Assign a deadline** for BLOCKING and HIGH questions. No deadline for MEDIUM and LOW is acceptable if the risk is documented.
+5. **Assign a deadline** for BLOCKING and HIGH questions. No deadline for MEDIUM and LOW is acceptable if the risk is documented. If a BLOCKING question deadline passes before Gate 1, escalate immediately to Tech Lead to decide one of: (a) extend the deadline with a new date, (b) proceed with a documented assumption and downgrade the question to HIGH, or (c) delay Gate 1 submission. A gate cannot be submitted as APPROVED while BLOCKING questions remain open.
 
 6. **Check for duplicates** against existing open questions. If a question duplicates an existing OQ-NNN, add it as a note to the existing entry rather than creating a new one.
 

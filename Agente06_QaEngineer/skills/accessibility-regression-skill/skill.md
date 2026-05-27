@@ -9,11 +9,15 @@ Validates WCAG 2.1 AA accessibility compliance for all primary user flows. Check
 - In every Gate 4 evaluation cycle — after E2E test review
 - For every primary user flow (login, main CRUD operation, navigation)
 
+## Primary Flow Definition
+
+A **primary user flow** is one of: login/logout, the main CREATE operation for the feature's core entity, the main READ/list operation, the main UPDATE operation, or navigation between the feature's main sections. If the task spec does not enumerate flows, apply this definition. All other flows (export, bulk operations, settings) are secondary.
+
 ## Inputs
 
 | Input | Source | Required |
 |-------|--------|---------|
-| `primary_flows` | List of primary user flows to test | Yes |
+| `primary_flows` | List of primary user flows to test; if not provided, derive from Primary Flow Definition above | Yes |
 | `playwright_test_files` | Submitted Playwright tests | Yes |
 | `feature_paths` | URL paths for each primary flow | Yes |
 
@@ -28,7 +32,7 @@ Validates WCAG 2.1 AA accessibility compliance for all primary user flows. Check
 2. Verify Tab sequence tests: `page.keyboard.press("Tab")` + `expect(page.locator(":focus")).toBeVisible()`
 3. Verify ARIA label tests: interactive elements have `aria-label` or accessible name
 4. Verify form label tests: `getByLabel(...)` works for all form inputs
-5. Verify error announcement: errors use `getByRole("alert")` not CSS class selectors
+5. Verify error announcement: errors use `getByRole("alert")` not CSS class selectors. For dynamic errors (errors that appear after an action without page reload), verify that the error container has `aria-live="polite"` or `role="alert"` — check via: `expect(await page.locator('[role="alert"]').count()).toBeGreaterThan(0)` after the error-triggering action
 6. Classify any violations: primary flow = HIGH severity, secondary flow = MEDIUM
 7. Report results in the accessibility section of QA_Report.md
 

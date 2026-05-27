@@ -16,7 +16,7 @@ Execute and document the 4 mandatory smoke tests against the production URL imme
 |-------|----------|-------------|
 | `production_url` | Required | Production application URL |
 | `test_environment` | Required | "staging" (Gate 6) or "production" (Gate 7) |
-| Auth test credentials | For Test 3 | Test account for authenticated smoke test |
+| Auth test credentials | For Test 3 | Test account for authenticated smoke test — must be a dedicated smoke-test account registered in the auth provider with confirmed email and MFA disabled; never use a real user's credentials |
 
 ## Outputs
 
@@ -36,8 +36,8 @@ Smoke test results table for `Post_Deploy_Report.md`:
 ## Constraints
 
 - All 4 tests must pass for Gate 7 APPROVED (DR006)
-- One retry allowed per test for flakiness
-- Two consecutive failures = rollback trigger
+- One retry allowed per test for transient flakiness
+- Rollback trigger: Test 3 (primary feature) fails after retry, OR any 2 tests fail simultaneously regardless of adjacency — both conditions trigger rollback; a single failing test that is NOT Test 3 and NOT concurrent with another failure is escalated to human review, not immediate rollback
 - Tests must run against production URL (not staging) for Gate 7
 
 ## Knowledge Access Policy

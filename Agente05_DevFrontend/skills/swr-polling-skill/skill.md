@@ -36,6 +36,17 @@ Implements a real-time polling Client Component using `useSWR`. Handles loading,
 - **Loading and error states are MANDATORY** in SWR components (FM-02, FM-03)
 - Polling interval < 5000ms requires explicit documented justification
 
+## Execution Steps
+
+1. Verify `endpoint` exists in `API_Contract.json` — abort if not found
+2. Verify `polling_interval_ms` ≥ 5000; if lower, require documented justification in a `// JUSTIFICATION:` comment in the component; reject values ≤ 0 (would disable polling)
+3. Derive TypeScript type from `response_type` definition in the contract
+4. Copy `SWR_Component_Template.tsx`; set `url`, `refreshInterval`, and response type
+5. Implement loading state (skeleton or `pulse` animation)
+6. Implement inline error state (non-blocking, do NOT use `error.tsx` for SWR errors)
+7. Add `revalidateOnFocus: false` unless the task spec explicitly requires focus revalidation
+8. Confirm `"use client"` directive is the first line (SWR is a Client Component)
+
 ## Knowledge Access Policy
 
 This skill reads ONLY from:

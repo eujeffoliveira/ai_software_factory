@@ -14,12 +14,18 @@ Identify and document NFRs across all 10 mandatory categories with measurable me
 - `compliance_context` — known regulatory requirements (privacy laws, accessibility standards, industry regulations)
 
 ## Outputs
-- `Non_Functional_Requirements.md` — all 10 categories with measurable metrics using `templates/Non_Functional_Requirements.md` format
+- `Non_Functional_Requirements.md` — all 10 categories with measurable metrics using `templates/Non_Functional_Requirements.md` format. Each individual NFR entry must include:
+  - `id` — in the form `NFR-[CATEGORY]-[NNN]` (e.g., `NFR-PERFORMANCE-001`)
+  - `name` — short descriptive label
+  - `metric` — the measurable statement (what is being measured)
+  - `threshold` — the specific value, percentile, or range (e.g., "P95 ≤ 2s at 500 concurrent users")
+  - `justification` — how this threshold was derived from inputs (scale expectations, compliance, business criticality)
+  - `owner` — the role responsible for meeting this NFR
 
 ## Constraints
 - Every NFR must have a measurable metric — no vague statements accepted
-- All 10 categories are mandatory: performance, security, privacy, availability, observability, auditability, accessibility, maintainability, scalability, data retention
-- If a category has no applicable NFR (rare), document "N/A — [specific reason why this category does not apply]"
+- All 10 categories are mandatory and **must appear as sections** in the output document: performance, security, privacy, availability, observability, auditability, accessibility, maintainability, scalability, data retention. A document with fewer than 10 sections fails Gate 1.
+- If a category has no applicable NFR (rare), document `N/A — [specific reason why this category does not apply]` as the section content. The section must still exist — marking N/A counts as a present section, not a missing one.
 - Performance metrics must specify a percentile (P50, P95, P99) — not just "average"
 - Privacy NFRs must identify specific PII fields by name — not "personal data" generically
 - NFRs must not contain technology decisions (no database names, no framework names)

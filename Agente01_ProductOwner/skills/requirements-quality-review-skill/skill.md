@@ -13,7 +13,7 @@ Review the complete PRD package against all quality dimensions and declare Gate 
 - Supporting artifacts: `User_Story_Map.md`, `Acceptance_Criteria.md`, `Non_Functional_Requirements.md`, `Business_Rules.md`, `Open_Questions.md`, `Product_Risks.md`, `Scope_Boundary.md`
 
 ## Outputs
-- `quality_review_report` — structured report with PASS/FAIL per checklist section, specific issues found, and items requiring correction before Gate 1
+- `quality_review_report` — structured report including: (1) **overall status** (`READY` / `NOT_READY`), (2) **section-by-section results** (PASS/FAIL per checklist section with evidence), (3) **failure list grouped by severity** (BLOCKING → MAJOR → MINOR), (4) **recommended action** for each failure (specific correction, not generic advice). The report must not declare READY if any BLOCKING or MAJOR failure is present.
 
 ## Constraints
 - Every checklist item must be evaluated individually — no blanket approvals ("it looks complete" is never valid)
@@ -36,7 +36,7 @@ Review the complete PRD package against all quality dimensions and declare Gate 
    - MAJOR: will cause Gate 1 rejection if not fixed (NFR without metric, acceptance criteria without Gherkin)
    - MINOR: quality gap that should be fixed but may pass at Tech Lead discretion
 
-5. **Detect technology contamination.** Scan all PRD sections for database names, framework names, library references, infrastructure decisions. Each finding is a MAJOR failure.
+5. **Detect technology contamination.** Scan for database names, framework names, library references, and infrastructure decisions. Technology contamination is a **MAJOR failure** if found in: Objectives, Acceptance Criteria, Functional Requirements, Business Rules, or NFRs (except the Scalability category, where infrastructure sizing may appear). Technology mentions in Data Requirements or Assumptions sections are **acceptable** if accompanied by a business justification — do not flag those as failures.
 
 6. **Produce the report.** Include: overall status (READY / NOT_READY), section-by-section results, list of items requiring correction, and a recommended action for each failure.
 

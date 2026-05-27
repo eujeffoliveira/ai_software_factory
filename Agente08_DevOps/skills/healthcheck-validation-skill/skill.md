@@ -20,12 +20,12 @@ Define, verify, and monitor the `GET /api/healthcheck` endpoint. Confirm the end
 
 ## Outputs
 
-- Pre-deploy: Healthcheck endpoint validation result (PASS/FAIL with specific issues)
+- Pre-deploy: Healthcheck endpoint validation result — `PASS` (all checks within spec) or `FAIL: <specific issue>` (e.g., `FAIL: response time 2300ms > 2000ms limit`, `FAIL: missing database connectivity check`, `FAIL: schema field 'version' absent`). PASS requires ALL of: HTTP 200, response time < 2000ms, response body matches schema, DB connectivity verified.
 - Post-deploy: `Healthcheck_Report.md` with all 10 monitoring results (every 30s × 5min)
 
 ## Rollback Trigger
 
-3 consecutive failures within the 5-minute monitoring window trigger rollback (DR006). Immediately invoke `rollback_checklist.md`.
+3 consecutive failures (i.e., 3 failed checks back-to-back with no passing check in between) trigger rollback (DR006). Gaps in the monitoring schedule (skipped checks) do not reset the consecutive count — treat a skipped check as a failed check. Immediately invoke `rollback_checklist.md`.
 
 ## Constraints
 

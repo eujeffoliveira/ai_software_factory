@@ -41,6 +41,7 @@ Create or validate STRIDE threat models for features involving authentication, a
 4. **Document open threats**: List any threats without an implemented mitigation; assign disposition (ACCEPTED, ESCALATED, DEFERRED, or MITIGATING_CONTROL_PLANNED)
 5. **Produce Threat_Model.md**: Follow the `templates/Threat_Model.md` structure exactly
 6. **Feed results to security-audit-report-skill**: Any MISSING mitigations for HIGH/CRITICAL impact threats become Gate 5 findings
+7. **If threat modeling was skipped** (trigger criteria not met): produce a `SKIPPED_THREAT_MODEL` entry in `Security_Audit.md` with: the specific skip condition matched (from the "Skip when" list above), the data tiers present, and a confirmation that no auth, mutation, or external integration is involved. Do not silently omit threat modeling results.
 
 ## Knowledge Access Policy
 

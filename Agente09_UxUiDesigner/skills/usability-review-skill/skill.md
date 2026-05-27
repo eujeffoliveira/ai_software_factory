@@ -49,13 +49,13 @@ Schema: `output.schema.json`
 
 ## Procedure
 
-1. **Review UX Flow for cognitive load issues.** Count primary navigation items, primary actions per screen, form fields per group. Apply Hick's Law: if more than 3 primary actions visible simultaneously, flag. Apply Miller's Law: if more than 7 navigation items, flag.
+1. **Review UX Flow for cognitive load issues.** Count primary navigation items, primary actions per screen, form fields per group. Apply Hick's Law: if more than 3 primary actions visible simultaneously, flag. **Primary action** = any CTA button, top-level navigation item, or affordance that initiates a state change (e.g., Submit, Delete, Create, Sign Out); secondary actions (inline help, tooltips, breadcrumbs) do not count. Apply Miller's Law: if more than 7 navigation items, flag.
 
 2. **Review wireframes for hierarchy and familiarity.** Apply the 5-second rule (H1) to each wireframe: is the page purpose and primary action immediately apparent? Check navigation patterns against conventions (P5): is hamburger used on mobile? Are standard icon meanings preserved?
 
 3. **Review wireframes for mobile usability.** Confirm all primary actions are reachable without horizontal scroll (DR010). Confirm touch targets appear adequate (P2). Confirm modals are shown as bottom sheets on mobile.
 
-4. **Review UX Flow for complete error coverage.** Confirm minimum 2 error paths per flow. Confirm both branches of every decision point are documented. Confirm empty state edge cases are present.
+4. **Review UX Flow for complete error coverage.** Confirm minimum 2 distinct error paths per flow. An error path is distinct when it has a different trigger condition (e.g., "network unavailable" vs "validation failed" are two distinct paths; individual form field validation errors collectively count as one path — "form validation failed"). A flow where the only errors are form validation errors satisfies the minimum with 1 path; add a second path (e.g., server error, permission denied) if technically possible given the feature scope. Confirm both branches of every decision point are documented. Confirm empty state edge cases are present.
 
 5. **Review UI_Spec for form quality.** Apply the form checklist (Card 011): visible labels, inline validation, specific error messages, character counters, required field markers, submit loading state.
 
@@ -71,7 +71,7 @@ Schema: `output.schema.json`
 
 11. **Determine resolution for each issue.** Fix: resolve before submission. Defer: add to backlog note. Escalate: requires Tech Lead involvement (scope or token issue).
 
-12. **Update design artifacts** to fix critical and high issues before proceeding.
+12. **Update design artifacts** to fix critical and high issues before proceeding. This skill performs the modifications directly to `UI_Spec.md`, `Wireframes.md`, or `UX_Flow.md` as needed — it does not hand back a list for another agent to action. Medium and low issues are documented in the findings report with deferred status; the receiving agent (Agente05_DevFrontend) must acknowledge them in their implementation notes.
 
 13. **Complete `checklists/usability_checklist.md`.** Sign off each section.
 

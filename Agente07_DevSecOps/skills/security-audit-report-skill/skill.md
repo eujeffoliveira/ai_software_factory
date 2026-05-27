@@ -23,7 +23,7 @@ Always — the last step in every Gate 5 evaluation, after all other skills have
 ## Constraints
 
 - Gate status code must be from the authorized list in `quality_gate.md`
-- Status code priority: BLOCKED_SECRET_EXPOSED = BLOCKED_AUTH_BYPASS > BLOCKED_CRITICAL_RISK > BLOCKED_PRIVACY_VIOLATION > BLOCKED_PENDING_HUMAN > RETURNED_FOR_REVISION
+- Status code priority (strict descending, first match wins): BLOCKED_SECRET_EXPOSED > BLOCKED_AUTH_BYPASS > BLOCKED_CRITICAL_RISK > BLOCKED_PRIVACY_VIOLATION > BLOCKED_PENDING_HUMAN > RETURNED_FOR_REVISION. If both BLOCKED_SECRET_EXPOSED and BLOCKED_AUTH_BYPASS apply simultaneously, use BLOCKED_SECRET_EXPOSED (secrets take precedence as they require external rotation).
 - APPROVED requires ALL exit criteria met (see `quality_gate.md`)
 - Never issue APPROVED with unresolved CRITICAL or HIGH findings
 

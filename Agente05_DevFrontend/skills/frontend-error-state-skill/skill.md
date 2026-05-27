@@ -34,6 +34,26 @@ Implements `error.tsx` files for page routes and error boundary components for n
 - **`reset()` MUST be provided** as a recovery mechanism
 - **`role="alert"` MUST be on the container** for screen readers
 
+## Recovery Strategy Implementations
+
+| Strategy | Implementation |
+|----------|---------------|
+| `reset` | Render a button with `onClick={reset}` — calls Next.js `reset()` prop to retry the failed render |
+| `navigate_back` | Render a button using `useRouter().back()` — takes user to previous page; add `"use client"` import for `useRouter` |
+| `contact_support` | Render a link to a support URL (sourced from env or task spec); do NOT hard-code the email address in JSX |
+
+If `recovery_strategy` is not provided, default to `reset`.
+
+## Execution Steps
+
+1. Determine `recovery_strategy` (default: `reset` if not provided)
+2. Copy `Error_State_Template.tsx` to `{route_path}/error.tsx`
+3. Confirm `"use client"` is the first line
+4. Set `role="alert"` on the root container
+5. Use `error_message` if provided; otherwise use the generic default: `"Something went wrong. Please try again."`
+6. Log `error.digest` (not `error.message`) internally with `console.error` for debugging
+7. Implement the recovery button/link per the Recovery Strategy Implementations table above
+
 ## Knowledge Access Policy
 
 This skill reads ONLY from:

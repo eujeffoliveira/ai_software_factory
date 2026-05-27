@@ -30,7 +30,7 @@ Verifies that every bug reported in a previous QA cycle has been fixed and that 
 1. **List bugs from previous cycle** — extract all BUG-NNN from previous QA Report
 2. **For each bug**: search the submitted test files for a regression test (look for bug ID in comments or test names)
 3. **Verify fix**: check that the code change addresses the root cause described in the bug report
-4. **Verify regression test**: confirm the test would FAIL if the fix were reverted (mental model: does the test check exactly the condition that was broken?)
+4. **Verify regression test quality**: a regression test is valid only if ALL of the following are true: (a) it targets the exact input or state that triggered the bug, (b) it asserts the previously-broken output, and (c) it would fail if the fix were reverted (i.e., it does not rely on a different code path). If any criterion fails, classify as FIXED_NO_REGRESSION_TEST.
 5. **Check for new bugs**: review changes introduced in the resubmission for unrelated regressions
 6. **Produce Regression Report** using `templates/Regression_Report.md`
 

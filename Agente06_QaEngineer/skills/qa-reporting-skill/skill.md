@@ -37,8 +37,8 @@ Assembles all QA evaluation results into the final `QA_Report.md` with all 8 man
 6. **Populate Section 5** (Accessibility Regression) — from accessibility-regression-skill
 7. **Populate Section 6** (Bug List) — from test-failure-classification-skill
 8. **Populate Section 7** (Regression Analysis) — from regression-analysis-skill (if cycle > 1), else omit
-9. **Complete Section 8** (Sign-off Checklist) — verify all checklist items
-10. **Produce Handoff Package JSON** — conforming to handoff_schema.json
+9. **Complete Section 8** (Sign-off Checklist) — verify all checklist items. If any checklist item fails, the gate decision MUST be BLOCKED or RETURNED — partial sign-off is not acceptable; a fully failed checklist item cannot be bypassed even if other results are clean.
+10. **Produce Handoff Package JSON** — conforming to `handoff_schema.json`. Required fields: `gate`, `status_code`, `issued_at`, `issued_by`, `qa_report_ref`, `next_agent`, `open_bugs` (array of BUG-NNN), `open_actions` (array of required actions for the receiving agent).
 
 ## Constraints
 

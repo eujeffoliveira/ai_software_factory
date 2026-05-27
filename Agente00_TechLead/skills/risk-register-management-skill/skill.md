@@ -81,15 +81,15 @@ Add, update, close, and summarize risks in the project risk register, ensuring a
 4. Count by status: OPEN, MITIGATED, ESCALATED, ACCEPTED, CLOSED
 
 ## Escalation Rules
-- CRITICAL + no mitigation + no escalation → immediately trigger human-escalation-skill
-- HIGH + no mitigation after 2 phases → flag for Tech Lead review
-- CRITICAL + ACCEPTED status → requires documented human approval
+- CRITICAL + no mitigation field populated + no existing escalation in progress → during the ADD or UPDATE operation, set `escalation_required = true` and immediately invoke `human-escalation-skill` with `escalation_reason = "critical_risk_no_mitigation"` and `context = {risk_id, description, category}`. Do not complete the ADD/UPDATE without triggering the escalation.
+- HIGH + no mitigation after 2 phases → flag for Tech Lead review; include in next SUMMARIZE output under "Overdue Mitigations"
+- CRITICAL + ACCEPTED status → requires documented `human_approval_reference` field (escalation request ID or decision record ID); reject ACCEPTED status if reference is absent
 
 ## Quality Gate
 All CRITICAL risks must have one of: mitigation documented, escalation in progress, or human-accepted status. An open CRITICAL risk with no action is a gate blocker for any gate.
 
 ## Failure Modes
-- Risk added without severity → default to HIGH, flag as unclassified
+- Risk added without severity → set `severity = UNKNOWN`, `status = OPEN`, flag as `needs_triage = true`; do **not** apply escalation rules until severity is explicitly assigned. Include in next SUMMARIZE output under "Pending Triage".
 - CRITICAL risk accepted without human approval document → reject ACCEPTED status
 - Duplicate risk description → flag and ask for clarification
 

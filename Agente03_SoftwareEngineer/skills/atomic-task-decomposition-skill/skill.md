@@ -57,7 +57,7 @@ Schema: `output.schema.json`
    - L: 150–300 LOC → flag for review
    - XL: > 300 LOC → must split further
 
-4. **Split any unit > 200 LOC.** If a single file still exceeds 200 LOC equivalent, look for natural split points: input validation function → separate task, DAL layer → separate task from action.
+4. **Split any unit > 150 LOC** (the M/L boundary from the sizing table above). If a single file exceeds 150 LOC equivalent, look for natural split points: input validation function → separate task, DAL layer → separate task from action. Align with the sizing table: M (≤ 150 LOC) is the maximum size for a single task. Do not wait until 200 LOC — flag at 150.
 
 5. **Verify each piece is independently testable.** Can this task be unit-tested in isolation? If not, it likely needs to be split further or a shared dependency task identified.
 

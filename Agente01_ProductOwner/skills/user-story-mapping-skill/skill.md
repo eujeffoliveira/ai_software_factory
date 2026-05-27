@@ -17,7 +17,7 @@ Decompose confirmed features and personas into a structured user story map, orga
 
 ## Constraints
 - Stories must follow canonical format: "As a [user], I want [action], so that [benefit]"
-- "So that [benefit]" must be a real business benefit, not a restatement of the action
+- "So that [benefit]" must be a real business benefit, not a restatement of the action. A business benefit answers "why does the user care?": faster task completion (time savings), reduced errors (quality), compliance (legal risk reduction), less friction (adoption). Technical restatements are not benefits (e.g., "so that the system stores the record" or "so that the API receives the data"). If the benefit describes an internal system state rather than a user outcome, rewrite it.
 - Stories must be small enough to fit in one sprint — epics must be decomposed
 - No story may be a technical task (no developer persona, no infrastructure stories)
 - Each story must be validated against `checklists/invest_checklist.md` before being added to the map
@@ -34,7 +34,7 @@ Decompose confirmed features and personas into a structured user story map, orga
 
 4. **Write the user story for each task.** Format: "As a [persona], I want [task], so that [business benefit]."
 
-5. **Validate each story against INVEST.** Run `checklists/invest_checklist.md` for each story. Any story failing INVEST is either rewritten or decomposed.
+5. **Validate each story against INVEST.** Run `checklists/invest_checklist.md` for each story. Apply these rules by failing criterion: if it fails **Independent** → decompose into smaller stories with explicit dependency notes; if it fails **Negotiable** → rewrite to remove implementation prescriptions; if it fails **Small** → decompose into two or more stories; if it fails **Valuable** or **Estimable** → rewrite the story for clarity; if it fails **Testable** → add at least one acceptance criterion before rewriting.
 
 6. **Assign priorities.** MUST stories constitute the MVP. SHOULD and COULD stories are candidates for later releases. Document the MVP boundary explicitly.
 

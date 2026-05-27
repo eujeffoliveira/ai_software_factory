@@ -33,13 +33,13 @@ Explicitly define what is in-scope and out-of-scope for this product version, wi
 
 4. **Write the in-scope list.** Each in-scope feature: name, description of what capability it covers, and the related user stories (US-NNN).
 
-5. **Write the out-of-scope list.** Each out-of-scope item: name, reason for exclusion (from the approved set: "deferred to Phase N", "insufficient business case for v1", "regulatory complexity requires dedicated planning", "external dependency not controllable", "confirmed not required by stakeholders"), and whether it is a future scope candidate.
+5. **Write the out-of-scope list.** Each out-of-scope item: name, reason for exclusion (from the approved set: "deferred to Phase N", "insufficient business case for v1", "regulatory complexity requires dedicated planning", "external dependency not controllable", "confirmed not required by stakeholders"), and whether it is a future scope candidate. If a reason does not fit any of these categories, document the specific constraint driving the exclusion and flag it for Tech Lead review before finalizing the scope document.
 
 6. **Write boundary clarifications.** Identify 2–3 features that are commonly requested or likely to be assumed in-scope but are actually excluded. Write explicit Q&A entries for them.
 
 7. **Document future scope notes.** Out-of-scope items that are likely to be requested in future phases should have a forward note, so the Architect can design the system to accommodate them without requiring architectural rework.
 
-8. **Write the scope change protocol.** Document how scope changes are handled: who requests, who evaluates, what constitutes a Gate 1 re-review trigger.
+8. **Write the scope change protocol.** The protocol must specify: (a) who is authorized to request scope changes (list stakeholder roles, not individuals), (b) evaluation criteria: impact on total effort, impact on stated objectives, impact on active risks, (c) Gate 1 re-review triggers: total effort increase ≥ 20%, any impact on a confirmed objective, or introduction of a risk with impact ≥ HIGH. Any change meeting a trigger condition must go back to Gate 1 before proceeding.
 
 ## Knowledge Access Policy
 

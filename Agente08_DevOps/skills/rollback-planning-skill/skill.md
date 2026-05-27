@@ -24,9 +24,9 @@ Produce a complete, tested `Rollback_Plan.md` with rollback trigger conditions, 
 ## Constraints
 
 - Missing `Rollback_Plan.md` → Gate 6 `BLOCKED_NO_ROLLBACK_PLAN` (DR001)
-- Rollback procedure must be verified in staging before production deployment
+- Rollback procedure must be verified in staging before production deployment. Verification steps: (1) identify the previous staging deployment ID, (2) execute the Vercel rollback in staging (promote the previous deployment), (3) run `healthcheck-validation-skill` in pre_deploy mode on the reverted staging URL, (4) confirm healthcheck PASS within 2 minutes. Document the verification result (pass/fail + timestamp) in `Rollback_Plan.md`.
 - Database rollback = forward-fix migration only — no backward migration
-- Estimated rollback time must be stated explicitly
+- Estimated rollback time must be stated explicitly. Acceptable targets: < 5 minutes (no migrations), 5–15 minutes (with forward-fix migration), > 15 minutes requires human sign-off justification
 
 ## Knowledge Access Policy
 

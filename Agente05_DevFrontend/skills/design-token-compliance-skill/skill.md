@@ -23,16 +23,17 @@ Reviews one or more components for design token compliance. Finds hardcoded hex 
 - List of violations: file, line, type, severity
 - Corrected code snippets
 - `design_token_compliant` boolean
-- Gate 4 status
+- `gate_4_status`: `"PASS"` (no CRITICAL or HIGH violations) or `"BLOCKED_TOKEN_VIOLATION"` (one or more CRITICAL or HIGH violations present); MEDIUM violations produce `"RETURNED_FOR_REVISION"` only
 
 ## Violation Severity
 
 | Type | Severity | Gate Impact |
 |------|----------|------------|
-| Inline `style={{}}` | CRITICAL | Blocks Gate 4 |
-| Hardcoded hex color | CRITICAL | Blocks Gate 4 |
-| Tailwind palette color | HIGH | Blocks Gate 4 |
-| Missing responsive class | MEDIUM | RETURNED_FOR_REVISION |
+| Inline `style={{}}` | CRITICAL | `BLOCKED_TOKEN_VIOLATION` |
+| Hardcoded hex color | CRITICAL | `BLOCKED_TOKEN_VIOLATION` |
+| Tailwind palette color | HIGH | `BLOCKED_TOKEN_VIOLATION` |
+| Missing responsive class | MEDIUM | `RETURNED_FOR_REVISION` |
+| `h-[Npx]` on Recharts parent container | EXEMPT | Not a violation — document the exemption in the report |
 
 ## Knowledge Access Policy
 

@@ -50,7 +50,7 @@ Invoke as the FIRST skill for any new external API integration. This skill's out
 
 5. **Assess reliability:** Document SLA, latency, webhook delivery guarantee.
 
-6. **Design client interface:** List public methods with HTTP method, endpoint, parameters, return type. Apply DR020 — escalate if new infrastructure is required.
+6. **Design client interface:** List public methods with HTTP method, endpoint, parameters, return type. Apply DR020 — escalate if new infrastructure is required. **New infrastructure** means anything beyond creating `lib/integrations/[service].client.ts`: examples include a new Prisma model or database table, a message queue (Redis, RabbitMQ), a new Vercel environment variable namespace for a different deployment, or a third-party managed service account. Does NOT include: adding a new method to an existing client file, adding env vars for the new API key, or defining new Zod schemas.
 
 7. **Define Zod schemas:** For each response shape, define minimum required fields and use `.passthrough()`. Apply H4 (one schema per shape, not per endpoint).
 

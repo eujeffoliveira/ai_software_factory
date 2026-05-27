@@ -54,7 +54,11 @@ Invoke when an integration requires one-time or periodic bulk data migration: in
 
 6. **Define progress tracking:** ETL jobs processing millions of records need progress checkpointing. Define how progress is tracked (cursor per entity, count of processed records).
 
-7. **Define rollback plan:** Document how to undo the migration: soft delete flag, backup table, or truncate + re-run strategy.
+7. **Define rollback plan:** Select and document the rollback strategy using these criteria:
+   - **Soft delete flag** (`is_deleted: true` or `deleted_at` timestamp): use when migrated records have foreign key references from other tables — hard deletion would violate referential integrity.
+   - **Backup table** (snapshot before ETL begins): use when data volume < 100 GB and the ETL transforms existing records in place; preserve a pre-migration snapshot for point-in-time restore.
+   - **Truncate + re-run**: use ONLY when (a) the target table was empty before the ETL, (b) no other tables have foreign keys pointing to it, and (c) there is no production traffic that could read partially-migrated data.
+   - If none of these are safe, escalate to human sign-off with a description of the constraint before proceeding.
 
 8. **Estimate performance:** Total records / batch size × API call duration = estimated duration. Verify within Vercel function timeout limits (10 min max for Pro plan).
 

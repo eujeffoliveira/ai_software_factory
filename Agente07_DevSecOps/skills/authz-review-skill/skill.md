@@ -33,7 +33,7 @@ Every Gate 5 evaluation — mandatory. All protected routes must be verified.
 2. For each: verify auth() is first operation, session guard returns/throws, input schema excludes identity fields
 3. For each Prisma query on user-owned data: verify `userId: session.user.id` in where clause
 4. Search for userId/actorId assignments — verify all source from session
-5. Verify guardCron() is first call in all cron routes
+5. Verify guardCron() is first call in all cron routes. Pass criteria: `guardCron(req)` appears as the first executable statement before any try/catch, startedAt, or business logic. Fail criteria: any of — missing entirely, present but not first, present but wrapped in a condition that could bypass it
 6. Produce per-route table and findings
 
 ## Knowledge Access Policy

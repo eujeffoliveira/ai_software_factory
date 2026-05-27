@@ -24,7 +24,7 @@ Identify product-level risks from the PRD, open questions, and scope boundary, c
 
 ## Risk Category Definitions
 
-- **Scope:** Risk that the defined scope is too large, too small, or poorly bounded (scope creep, scope under-delivery)
+- **Scope:** Risk that the defined scope is too large or too small (these are distinct risks requiring different mitigations — register them separately). Scope risks must be specific: "Risk that scope is too large because [feature X] is not clearly out-of-scope, leading to [consequence]" OR "Risk that scope is too small because [stakeholder Y's need] is not covered, leading to [consequence]".
 - **Business:** Risk that the product fails to achieve its business objective (low adoption, wrong problem solved, business model change)
 - **User:** Risk related to the target users not using or adopting the system as expected (UX friction, training needs, resistance)
 - **Data:** Risk related to data quality, migration, volume, or PII handling
@@ -53,7 +53,7 @@ Identify product-level risks from the PRD, open questions, and scope boundary, c
    - MEDIUM: Possible but no strong evidence
    - LOW: Unlikely given current context
 
-5. **For each HIGH-impact risk:** define a concrete mitigation strategy. Mitigation must be actionable (e.g., "conduct usability test with 5 target users before development" not "do research").
+5. **For each HIGH-impact risk:** define a concrete mitigation strategy. Mitigation must be actionable (e.g., "conduct usability test with 5 target users before development" not "do research"). If a HIGH-impact risk cannot be mitigated within current constraints, do one of: (a) propose escalation to human operator for explicit risk acceptance before Gate 1, or (b) recommend descoping the feature driving the risk and adding it to `Scope_Boundary.md` as out-of-scope. Do not leave a HIGH-impact risk with no mitigation and no escalation path.
 
 6. **For each HIGH×HIGH risk:** escalate in the handoff as a flag for the Architect.
 

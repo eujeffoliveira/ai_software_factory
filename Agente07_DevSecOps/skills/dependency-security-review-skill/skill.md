@@ -18,7 +18,7 @@ Every Gate 5 evaluation — mandatory.
 
 - Dependency vulnerability report with CVSS scores and severity classification
 - Findings (SEC-NNN) for CVSS ≥ 7.0 packages
-- `dependency_scan_status` for Security_Audit.md
+- `dependency_scan_status` for Security_Audit.md — allowed values: `CLEAN` (no findings ≥ 4.0), `VULNERABLE_MEDIUM` (findings 4.0–6.9 only), `VULNERABLE_HIGH` (any finding 7.0–8.9, no 9.0+), `VULNERABLE_CRITICAL` (any finding ≥ 9.0), `REVIEW_REQUIRED` (unmaintained package with no CVE but elevated risk)
 
 ## Constraints
 

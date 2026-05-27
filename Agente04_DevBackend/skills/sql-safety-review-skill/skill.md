@@ -24,16 +24,18 @@ Reviews backend code files for SQL injection vulnerabilities, unsafe data access
   - `findings`: array of { file, line, issue, fix }
   - `sql_injection_safe`: boolean
   - `uses_only_parameterized`: boolean
+  - `gate_4_status`: `"PASS"` (no HIGH/CRITICAL findings) or `"BLOCKED"` (one or more HIGH/CRITICAL findings present)
 
 ## Procedure
 
-1. Scan each file for string concatenation in queries
-2. Scan for template literal interpolation with `$queryRaw` (without `Prisma.sql`)
-3. Scan for `$queryRawUnsafe` — always a critical issue
-4. Scan for unvalidated user input reaching DB operations
-5. Scan for N+1 patterns (DAL call inside a loop)
-6. Assign risk level: CRITICAL (injection possible), HIGH (unsafe raw SQL), MEDIUM (N+1), LOW (style)
-7. Produce findings with specific file/line/issue/fix
+1. Validate each path in `files_to_review`: if a file does not exist or is outside the project source tree, add a finding `{ file, line: null, issue: "file_not_found — cannot be scanned", fix: "verify path and re-run" }` with `risk_level: CRITICAL` and continue to the next file. Do not abort the entire review.
+2. Scan each file for string concatenation in queries
+3. Scan for template literal interpolation with `$queryRaw` (without `Prisma.sql`)
+4. Scan for `$queryRawUnsafe` — always a critical issue
+5. Scan for unvalidated user input reaching DB operations
+6. Scan for N+1 patterns (DAL call inside a loop)
+7. Assign risk level: CRITICAL (injection possible), HIGH (unsafe raw SQL), MEDIUM (N+1), LOW (style)
+8. Produce findings with specific file/line/issue/fix; set `gate_4_status = "BLOCKED"` if any finding is HIGH or CRITICAL, otherwise `"PASS"`
 
 ## Quality Gate
 

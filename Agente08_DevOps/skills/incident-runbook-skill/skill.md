@@ -29,11 +29,21 @@ Produce incident runbooks for critical failure scenarios before go-live. Each ru
 
 5+ runbook documents following `templates/Runbook_Template.md`
 
+## Procedure
+
+For each required runbook:
+1. Identify observable symptoms (what a human sees in logs, alerts, or the UI — not internal state)
+2. Write triage steps — ordered actions to diagnose the root cause (e.g., "Check Vercel function logs for status 500 in last 5 minutes")
+3. Write resolution steps — ordered actions to restore service (reference specific Vercel dashboard paths, CLI commands, or rollback steps as applicable)
+4. Define the escalation path: Level 1 = Agente08_DevOps automated checks → Level 2 = human DevOps on-call → Level 3 = human Tech Lead
+5. State postmortem trigger: postmortem is required if MTTR > 1 hour from first alert, any data loss occurred, or the same runbook is triggered twice within 30 days
+6. Estimate MTTR from symptom detection to service restoration based on resolution steps duration
+
 ## Constraints
 
 - Runbooks must be practical — symptoms observable, steps actionable
 - Escalation path must name specific agent roles
-- Postmortem trigger conditions must be explicit (MTTR > 1hr, data loss, recurrence)
+- Postmortem trigger conditions must be explicit (MTTR > 1hr, data loss, recurrence within 30 days)
 - MTTR estimate must be provided per runbook
 
 ## Knowledge Access Policy

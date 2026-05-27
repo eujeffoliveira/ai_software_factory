@@ -45,7 +45,8 @@ Generates Vitest test files for Server Actions, Route Handlers, and service func
 - MUST NOT call real DB, real auth, or real external services
 - MUST test behavior (return values, side effects) not implementation internals
 - Minimum 4 test cases — never fewer
-- Test names must describe the behavior being verified
+- Test names must describe the behavior being verified using the pattern `"[condition] → [expected outcome]"` (e.g., `"auth returns null → returns Unauthorized error without calling DAL"`, `"valid input, DAL throws → returns generic error without DB details"`)
+- Mock boundary always includes: `@/lib/auth`, all DAL imports, `@/lib/audit`, any external client module; never mock the function under test itself
 
 ## Architecture Compliance
 

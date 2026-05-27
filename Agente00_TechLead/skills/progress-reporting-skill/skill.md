@@ -26,9 +26,9 @@ Generate structured progress reports from the State Ledger, summarizing project 
 
 | Status | Meaning |
 |--------|---------|
-| GREEN | On track, no unresolved blockers, all CRITICAL risks mitigated |
-| YELLOW | Minor delays or risks, no gate blockers, active mitigation in progress |
-| RED | Gate blocked, CRITICAL unmitigated risk, human escalation pending |
+| GREEN | On track, no unresolved blockers, all CRITICAL risks mitigated, no gate blocked |
+| YELLOW | Minor delays or risks; no gate blocked; no CRITICAL unmitigated risk; human approval may be pending |
+| RED | Gate blocked **OR** CRITICAL risk with no mitigation (regardless of whether human approval is pending) |
 
 ## Report Types
 
@@ -58,12 +58,12 @@ Generate structured progress reports from the State Ledger, summarizing project 
 
 1. Determine report type and audience
 2. Load State Ledger — do not assume, read all fields
-3. Compute `health_status`:
-   - Any open CRITICAL risk with no mitigation → RED
-   - Any gate BLOCKED → RED
-   - Any HIGH risk with no mitigation → YELLOW
-   - Any pending human approval → YELLOW (unless gate is blocked → RED)
-   - Otherwise → GREEN
+3. Compute `health_status` — apply rules in this exact order (first match wins):
+   - Any gate BLOCKED → **RED**
+   - Any open CRITICAL risk with no mitigation → **RED**
+   - Any HIGH risk with no mitigation → **YELLOW**
+   - Any pending human approval (and no gate is BLOCKED and no CRITICAL risk is unmitigated) → **YELLOW**
+   - Otherwise → **GREEN**
 4. Compute `key_metrics`:
    - Gates approved count / 7
    - Active risks by severity count
@@ -78,6 +78,7 @@ Progress reports must reflect the State Ledger exactly — no optimism bias, no 
 
 ## Failure Modes
 - State Ledger missing → cannot generate report, return error
+- State Ledger inconsistency detected (e.g., gate marked APPROVED but no corresponding entry in `approved_artifacts`, or `current_phase` incompatible with gate history) → return error `LEDGER_INCONSISTENCY` and request ledger repair via `state-ledger-management-skill` before proceeding
 - `health_status` GREEN with open CRITICAL risk → inconsistency, re-evaluate
 - EXECUTIVE report with unexplained technical jargon → re-format for audience
 

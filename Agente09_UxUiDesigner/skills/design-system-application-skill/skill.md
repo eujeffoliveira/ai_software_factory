@@ -71,7 +71,7 @@ Schema: `output.schema.json`
 
 7. **Identify token gaps.** If a visual property genuinely needs a semantic value not in the authorized set (e.g., "information state" that is distinct from "success" and "warning"), document it as a token gap.
 
-8. **Document token gaps as escalations.** For each gap, create an entry in the Handoff Package `implementation_notes.design_token_gaps` array with `token_name`, `usage`, and `escalation_status: "pending"`. Escalate to Tech Lead.
+8. **Document token gaps as escalations.** For each gap, create an entry in the Handoff Package `implementation_notes.design_token_gaps` array with `token_name`, `usage`, and `escalation_status`. Allowed values for `escalation_status`: `"pending"` (created, not yet reviewed), `"approved"` (Tech Lead approved new token), `"rejected"` (Tech Lead rejected — use nearest existing token), `"implemented"` (token added to design system). Start all new gaps as `"pending"`. Escalate to Tech Lead.
 
 9. **Verify component reuse.** Check each component specified against the design system component list (DR003). If a component listed in `new_components_proposed` can be satisfied by an existing component, remove the new proposal and use the existing one.
 

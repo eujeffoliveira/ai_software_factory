@@ -42,6 +42,17 @@ Implements responsive layouts using Tailwind CSS v4 breakpoints. Ensures mobile-
 | Container | `container mx-auto px-4 sm:px-6 lg:px-8` |
 | Hide mobile | `hidden sm:block` |
 
+## Execution Steps
+
+1. Parse `layout_spec` from `responsive_layout.schema.json`
+2. Identify the layout type: grid, flex, sidebar+content, or nav. Match to the Common Patterns table if possible
+3. If the layout type does not match any Common Pattern, derive the closest approximation and document the deviation in a `// LAYOUT:` comment in the component
+4. Start with mobile (no prefix): define `flex-col` or `grid-cols-1` as the base
+5. Add `sm:`, `md:`, `lg:` overrides to expand/reorganize at larger viewports
+6. Apply `container mx-auto px-4 sm:px-6 lg:px-8` to the outermost wrapper
+7. For any table component in `component_list`, verify `overflow-x-auto` wraps it
+8. Verify no fixed pixel widths without a responsive override
+
 ## Knowledge Access Policy
 
 This skill reads ONLY from:

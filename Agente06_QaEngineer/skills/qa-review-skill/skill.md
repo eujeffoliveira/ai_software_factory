@@ -21,6 +21,7 @@ Orchestrates the full Gate 4 evaluation cycle — from validating the Definition
 | `playwright_test_files` | All submitted Playwright test files | Yes |
 | `coverage_report` | Coverage tool output (`vitest --coverage`) | Yes |
 | `implementation_reports` | Backend and Frontend implementation reports | Yes |
+| `previous_qa_report` | `QA_Report.md` from prior evaluation cycle (Gate 4 cycle N-1) | Conditional — required when evaluation cycle > 1 |
 
 ## Outputs
 
@@ -45,7 +46,7 @@ Orchestrates the full Gate 4 evaluation cycle — from validating the Definition
 
 7. **Run test-failure-classification-skill** — classify all failures by severity. Any CRITICAL finding triggers immediate BLOCKED_CRITICAL_RISK.
 
-8. **Run regression-analysis-skill** (if evaluation cycle > 1) — verify all bugs from previous cycle are fixed with regression tests.
+8. **Run regression-analysis-skill** (if evaluation cycle > 1) — pass `previous_qa_report` as the source of bugs to verify. If `previous_qa_report` is absent and cycle > 1, flag this as a procedure error and request it before continuing.
 
 9. **Run qa-reporting-skill** — assemble all results into `QA_Report.md` and issue the gate decision.
 

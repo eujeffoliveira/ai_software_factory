@@ -63,7 +63,7 @@ Schema: `output.schema.json`
 5. **Identify parallel tracks.**
    - For each node, compute its set of transitive dependencies
    - Two nodes are in the same parallel track if neither is in the other's transitive dependency set
-   - Group into parallel track arrays
+   - Group into parallel track arrays. A parallel track may contain 1 or more tasks — a single-task track is valid (it means that task has no parallelizable peers at that point in the graph). Do not omit single-task tracks from the output.
 
 6. **Identify critical path.**
    - Assign complexity weights: S=1, M=2, L=3

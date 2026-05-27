@@ -7,14 +7,15 @@ Identify when a decision exceeds autonomous agent authority, compose a structure
 - Production deployment approval (Gate 6)
 - Any destructive migration (table drop, column removal, data deletion)
 - CRITICAL security risk acceptance
-- Scope change that increases total effort by more than 20%
+- Scope change that increases total effort by **≥ 20%** (scope changes < 20% are Recommended, not Mandatory)
 - Change to authentication provider or authorization model
 - Budget or contract decisions
-- Any irreversible action not covered by an approved ADR
+- Any irreversible action **after its ADR was rejected** (escalation occurs after ADR rejection, not as an alternative to the ADR process)
 - Disagreement between agents that Council cannot resolve
 - Retroactive ADR needed (deviation already in production)
 
 ## When to Use (Recommended)
+- Scope change that increases total effort by > 0% but < 20%, if it affects CRITICAL dependencies
 - Competing HIGH severity risks with no clear mitigation
 - External dependency failure (third-party API, vendor)
 - Legal or compliance questions
@@ -51,7 +52,7 @@ Identify when a decision exceeds autonomous agent authority, compose a structure
    - Description of what this option means in practice
    - Pros (at least 2)
    - Cons (at least 1)
-   - Risk level (LOW / MEDIUM / HIGH / CRITICAL)
+   - Risk level (LOW / MEDIUM / HIGH / CRITICAL) — the risk level reflects the decision option itself, not the underlying problem. Example: "Defer for 1 week" may be MEDIUM risk; "Accept unmitigated" is CRITICAL; "Revert to Golden Model" may be LOW.
 4. State Tech Lead's recommendation — which option and why
 5. Quantify impact of delay: which gate is blocked, what is the cost of waiting
 6. Format using `templates/Human_Escalation_Request.md`

@@ -61,9 +61,9 @@ Assemble a complete, valid `PRD.md` from all previously collected elicitation ar
 
 15. **Write Section 14 (Open Questions).** Pull from `Open_Questions.md`. Verify no BLOCKING questions remain unresolved.
 
-16. **Write Section 15 (Handoff Status).** Set Gate 1 readiness status. If any BLOCKING questions exist, set to "Pending OQ Resolution."
+16. **Write Section 15 (Handoff Status).** Set Gate 1 readiness status. If any BLOCKING questions remain unresolved, set to `"Pending OQ Resolution"` — do **not** submit the handoff package to Gate 1. Instead, flag the open questions in the State Ledger and escalate to Tech Lead for stakeholder re-engagement. Only submit when status is `"Ready for Gate 1 Review"` or `"Ready with Conditions"`.
 
-17. **Run `checklists/prd_quality_checklist.md`.** Verify all 30+ items pass. Fix any failures before declaring the PRD complete.
+17. **Run `checklists/prd_quality_checklist.md`.** Verify all 30+ items pass. For each failure: (a) fix it in the PRD or the relevant supporting artifact, then re-verify, or (b) if the failure cannot be resolved without external input, document the exception with justification and escalate to Tech Lead before Gate 1 submission. Do not declare the PRD complete until all items either pass or have an escalated exception.
 
 ## Knowledge Access Policy
 

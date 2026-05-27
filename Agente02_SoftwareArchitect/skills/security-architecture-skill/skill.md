@@ -48,10 +48,11 @@ Produce a formal threat model and define security controls, data classification,
    - List what resources the role can read, create, update, delete
    - Identify resource-level authorization: ownership checks (e.g., "only the job's owning company can edit it")
    - State the enforcement point: server-side check in Server Action or DAL function — never client-side only
+   - **Default rule when PRD is silent:** for each resource in the data model with no explicit access rules, apply ownership default: authenticated users may only read, update, or delete their own records. Document any deviation from this default as an explicit exception with justification.
 
 4. **Threat modeling — 5 mandatory questions per endpoint** — for every endpoint in `API_Contract.json`:
    - Q1: Who can call this endpoint? (authentication: none/user/admin)
-   - Q2: What can they do with the response? (data exfiltration risk)
+   - Q2: What can they do with the response or response metadata? (data exfiltration via payload, inference attacks via response timing, status code enumeration — e.g., different response times for "user not found" vs. "wrong password" leak whether an account exists)
    - Q3: What happens if input is malformed or adversarial? (injection, DoS)
    - Q4: What is the blast radius if this endpoint is compromised? (impact)
    - Q5: What audit trail exists if this endpoint is abused? (auditability)

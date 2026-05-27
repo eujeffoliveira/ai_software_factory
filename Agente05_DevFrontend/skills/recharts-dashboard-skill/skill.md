@@ -38,6 +38,18 @@ Implements Recharts chart components. Ensures `ResponsiveContainer` wraps every 
 - **Chart MUST be Client Component** — Recharts requires browser APIs (DR005)
 - **Accessible data table** in `sr-only` for complex charts (H15)
 
+## Execution Steps
+
+1. Confirm `chart_type` is one of the five supported types; if not, return an error — do not guess
+2. Derive TypeScript interface for chart data from `data_type_definition` in `API_Contract.json`
+3. Copy `Recharts_Component_Template.tsx`; add `"use client"` directive (DR005 — Recharts requires browser APIs)
+4. Set parent container height: `h-[{height_px}px]` (default `h-[300px]`); note this exception is exempt from design-token-compliance checks
+5. Wrap chart in `<ResponsiveContainer width="100%" height="100%">`
+6. Map data series to chart components; use `stroke="var(--primary-color)"` (or other token CSS variables) for all colors — no hardcoded hex
+7. Add empty state branch: if `data.length === 0`, render `<EmptyState>` instead of the chart
+8. Add accessible wrapper: `role="img"` + `aria-label` with the `title` value
+9. Add `<table className="sr-only">` with the same data as the chart for screen readers
+
 ## Knowledge Access Policy
 
 This skill reads ONLY from:

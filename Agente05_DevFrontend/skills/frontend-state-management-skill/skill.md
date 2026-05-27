@@ -35,6 +35,14 @@ Decides the correct state management strategy for a component or feature. Determ
 | Time-based polling (every N sec) | No | SWR with `refreshInterval` |
 | Transient UI (modal open, tab) | Yes | `useState` in Client Component |
 
+## Execution Steps
+
+1. Parse `state_requirement` and `component_context`
+2. Apply the Decision Matrix: find the row that matches when data changes and whether the user triggers it
+3. If multiple rows match (e.g., data changes both on user action and on a timer), choose the higher-priority strategy: SWR polling > Server Action > local UI state
+4. Confirm the choice doesn't conflict with the component being a Server Component — if it does, escalate to `server-component-selection-skill`
+5. Return: `strategy`, `rationale` (1–2 sentences referencing the matched matrix row), `implementation_guidance` (template or hook name to use)
+
 ## Knowledge Access Policy
 
 This skill reads ONLY from:
