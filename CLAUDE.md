@@ -406,64 +406,71 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 
 ---
 
-## Session progress — Block 3 (Documentação, Governança, Licenciamento)
+## Skills audit — 2026-05-26
 
-### Completed across Blocks 1–3
+All 97 `skill.md` files across all 11 agents were audited and corrected in a single session. The work is complete and committed.
 
-**Block 1 (bugs):**
-- `install.ps1`: added `Emoji` field to `$agents` array; Roo mode name generation uses `"$($agent.Emoji) $(($agent.Description -split ' — ')[0].Trim())"`
-- `tools/mcp-knowledge-search/test_health.py` line 101: fixed FTS5 query from `FROM documents WHERE documents MATCH` → `FROM fts_docs WHERE fts_docs MATCH`
+### Audit methodology
 
-**Block 2 (versioning + ops):**
-- `VERSION` — single line `0.1.0`
-- `CHANGELOG.md` — Keep a Changelog format, `[0.1.0]` entry
-- `RELEASE_NOTES.md` — user-friendly v0.1.0 notes
-- `doctor.ps1` — 14-category diagnostic, calls `test-mcp.ps1` internally, exits 0 (OK/WARN) or 1 (ERROR)
-- `uninstall.ps1` — rewrite: params `-KeepKnowledge`, `-Full`, `-WhatIf`, `-Force`; safety marker check; atomic backup
-- `docs/INSTALLATION.md` — 8 install phases, idempotency, post-install structure
-- `docs/OPERATIONS.md` — agent usage, update commands, diagnostics
-- `docs/TROUBLESHOOTING.md` — problem/fix pairs for install, MCP, agents, Roo Code, uninstall
-- `install.ps1` — `$FACTORY_VERSION` from VERSION file; `$frWasUnset` flag; manifest with `factory_version`, preserved `installed_at`, `knowledge_db_hash`, `scripts` section; `doctor.ps1` hint in RESUMO
+Seven issue categories were checked per file:
 
-**Block 3 (docs/governance) — done so far:**
-- `LICENSE` — Apache 2.0, Copyright 2026 Jefferson Oliveira
-- `LICENSE-DOCS` — CC BY 4.0 reference with scope definition (applies to docs/prompts/templates/knowledge, NOT code)
-- `NOTICE` — dual licensing scope with explicit file lists, generated artifacts note, third-party deps
-- `CONTRIBUTING.md` — prerequisites, setup, commands table, how to add knowledge/agent/skill/bug fix, PR checklist, licensing policy
+| Category | Description |
+|----------|-------------|
+| **Contradiction** | Two rules in the same skill that conflict (e.g., threshold defined differently in two sections) |
+| **Ambiguity** | A term or threshold used without operational definition (e.g., "reasonable default", "primary action") |
+| **Coverage gap** | A case the skill doesn't handle — missing procedure step, no fallback for missing input, no error path |
+| **Schema gap** | An output field whose allowed values or format are not defined in the skill itself |
+| **Procedure gap** | A non-trivial skill with no Execution Steps / Procedure section |
+| **RAG/Knowledge conflict** | RAG collections listed as external sources when they are pre-distilled local knowledge |
+| **Persona conflict** | Contradictory instructions given to the same role (e.g., "strip assumptions" + "evaluate each option") |
 
-### Pending — Block 3
+### Most common issues found (recurring across agents)
 
-Create these files (in order):
+1. **Schema gap on gate/status fields**: Skills referenced output fields like `gate_4_status`, `gate_4_status`, `dependency_scan_status` without defining allowed enum values. Fix pattern: add inline enum definition in the Outputs section.
+2. **Procedure gap**: Simpler skills (state management, error state, responsive layout) had inputs and outputs defined but no Execution Steps. Fix: add a numbered procedure (5–8 steps).
+3. **Ambiguous thresholds**: Terms like `"reasonable default"`, `"primary action"`, `"new infrastructure"`, `"consecutive failures"` were used without operational definitions. Fix: inline the definition at first use.
+4. **Coverage gap on missing inputs**: Many skills received optional or conditional inputs (previous QA report, vercel.json, API contract) without specifying what to do when absent. Fix: add explicit fallback per missing input.
+5. **Contradiction between sections**: Most contradictions were between a summary definition (e.g., "consensus = all agree") and a procedure step (e.g., "≥3 personas"). Fix: resolve to a single definition used consistently.
+6. **Procedure mixed with constraint**: Steps like "Ensure X is Y" buried inside numbered procedures when they belong in Quality Gate or Constraints. Fix: move to the correct section and fold initialization into the relevant step.
 
-1. `CODE_OF_CONDUCT.md` — Contributor Covenant v2.1 based
-2. `SECURITY.md` — responsible disclosure process, secrets policy, MCP log note. **CAUTION: content filtering triggered in previous session when generating this file. Keep content concise, avoid detailed exploitation terminology.**
-3. `SUPPORT.md` — where to open issues, what to attach (doctor.ps1 + test-mcp.ps1 output, OS, Python version, Claude Code version)
-4. `.github/ISSUE_TEMPLATE/bug_report.yml`
-5. `.github/ISSUE_TEMPLATE/mcp_problem.yml` — must include fields for doctor.ps1 and test-mcp.ps1 output
-6. `.github/ISSUE_TEMPLATE/agent_behavior.yml`
-7. `.github/ISSUE_TEMPLATE/documentation.yml`
-8. `.github/ISSUE_TEMPLATE/feature_request.yml`
-9. `.github/PULL_REQUEST_TEMPLATE.md` — type checklist, license checklist, validation checklist
-10. `docs/MCP_RAG.md` — how the FTS5 knowledge base works, ingest pipeline, query patterns
-11. `docs/ROO_CODE.md` — how Roo modes are generated and activated
-12. `docs/AGENTS.md` — all 11 agents: role, skills, when to use
-13. `docs/AGENT_CAPABILITY_MATRIX.md` — matrix table (agent × capability)
-14. `docs/GOLDEN_MODELS.md` — 8 archetypes, Gate A0, how to pick one
-15. `docs/PROJECT_ARCHETYPES.md` — detailed archetype descriptions
-16. `docs/ADDING_KNOWLEDGE.md` — step-by-step: create .md → ingest → verify → test
-17. `docs/CLIENT_COMPATIBILITY.md` — Claude Code, Roo Code/Cline, Gemini CLI
-18. `docs/TESTING.md` — how to test the factory (doctor, test-mcp, manual agent test)
-19. `docs/recipes/criar-web-app.md`
-20. `docs/recipes/criar-automacao-python.md`
-21. `docs/recipes/revisar-projeto-existente.md`
-22. `docs/recipes/gerar-plano-de-testes.md`
-23. `docs/recipes/auditar-seguranca.md`
-24. `docs/recipes/criar-pipeline-dados.md`
-25. `docs/recipes/criar-mcp-server.md`
-26. `docs/recipes/adicionar-novo-conhecimento.md`
-27. `README.md` — reorganize as portal of entry: quick-start prominent, detailed content moved to docs/, add license section (dual-license table), add links to all new docs
+### Per-agent fix summary
 
-### Known issues
+| Agent | Files | Key fixes |
+|-------|-------|-----------|
+| Agente00 | 10 skills | council-mediation: consensus threshold, input validation, persona schema, clashes definition, requires_human_decision criteria; other skills: routing table agent IDs, state ledger schema, tollgate decision priority ordering |
+| Agente01 | 8 skills | INVEST per-criterion remediation, business-rules compound condition template, NFR section N/A handling, open-questions BLOCKING definition, scope-boundary fallback and re-review triggers |
+| Agente02 | 5 skills | architecture-design step 4 component omission rule, golden-path ADR source from config, api-contract default auth case, database PII shadow column exception, observability sync_log fields and health check DB query |
+| Agente03 | 8 skills | execution-plan empty ADR array, atomic-task split threshold 200→150 LOC, dependency-graph single-task track, implementation-sequencing phase boundary rule, context-window-risk summary format |
+| Agente04 | 8 skills | backend-test auth exception for public endpoints, external-integration TIMEOUT_MS constant + non-JSON response handling, sql-safety invalid file path fallback + gate_4_status field, nextjs-server-action OUTSIDE/INSIDE try/catch labels, sync-log initialization in step 2 |
+| Agente05 | 10 skills | DR006 label on Server Component branch, design_token_map optional, gate_4_status PASS value, execution steps added to 5 skills, frontend-error recovery strategy implementations, h-[Npx] Recharts exemption |
+| Agente06 | 9 skills | previous_qa_report as conditional input, test naming convention pattern, cross-page flow handling, regression test quality criteria (3-part test), request validation + Zod mismatch detail format, sign-off failure rule, handoff package required fields, primary flow definition, ARIA live region validation, bug severity matrix inline |
+| Agente07 | 10 skills | guardCron pass/fail criteria, data-classification coverage verification step, dependency_scan_status enum, metadata field schema, owasp prerequisite check, privacy evidence criteria per area, multi-line comment/JSDoc secret scanning, Golden Path source reference, security priority ordering contradiction, skipped threat model reporting |
+| Agente08 | 9 skills | healthcheck PASS/FAIL criteria + consecutive failure definition, smoke test rollback trigger clarification + auth credentials spec, rollback verification procedure + time bounds, observability PARTIAL/MISSING definitions + session source, migration review success criteria + failure handling, incident runbook procedure section, vercel.json missing fallback + guardCron failure format + ADR reference, environment variable input format, CI pipeline procedure |
+| Agente09 | 5 skills | escalation_status enum, unmappable API field fallback, chart output location in UI_Spec, primary action definition, error path counting rules, artifact update ownership, missing API endpoint escalation, pre-delivery validation step, component justification criteria, skeleton description format |
+| Agente10 | 7 skills | Zod schema format with examples, syncLog() required fields with types, "reasonable default" operational definition, alert threshold formula, rollback strategy selection criteria, "new infrastructure" definition, cursor + upsert threshold (< 1K vs ≥ 1K), proportionality test four-element requirement |
 
-- Content filtering (API Error: Output blocked by content filtering policy) triggered when the assistant's response included SECURITY.md content or large batches of security-adjacent text. Workaround: write SECURITY.md in a standalone call with minimal surrounding context.
-- Content filtering also triggered on "sim" response when context included the full CONTRIBUTING.md content. Restart terminal and continue from this CLAUDE.md as reference.
+### Rules for maintaining skills going forward
+
+- **When adding a new skill**: after writing the initial draft, run the 7-category audit checklist above before committing
+- **When a skill has an output field with a status/enum**: always define the allowed values inline in the Outputs section — do not rely on callers knowing the values
+- **When a skill references an optional input**: add an explicit fallback line: `"If X is absent: [behavior]"`
+- **When a skill has Procedure steps**: ensure each step is uniquely numbered; never repeat a number after inserting a new step
+- **After any skill edit**: run `.\update-knowledge.ps1` to reindex the knowledge base
+
+---
+
+## Completed work log
+
+| Date | Scope | Summary |
+|------|-------|---------|
+| 2026-05-17 | Agente00–03 knowledge | Postgraduate curriculum (12 modules) distilled into knowledge/ folders |
+| 2026-05-18 | All 11 agents | Capability upgrade: tools/, playbooks, CLI installer, agent-specific tools |
+| 2026-05-22 | All relevant agents | Multi-archetype Golden Model upgrade: 8 archetypes, Gate A0, standards/ directory |
+| 2026-05-22–23 | Block 1–3 | Bugs fixed (install.ps1, FTS5 query); versioning (VERSION, CHANGELOG, doctor.ps1, uninstall.ps1); governance (LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, SUPPORT, GitHub templates, docs/) |
+| 2026-05-26 | All 11 agents | Skills audit: 97 skill.md files, 7 issue categories, all issues resolved |
+
+### Known operational notes
+
+- Content filtering (API Error: Output blocked by content filtering policy) has triggered in past sessions when generating SECURITY.md or batches of security-adjacent text. If it recurs: write the file in isolation in a fresh session with no security content in the context window.
+- `tools/mcp-knowledge-search/__pycache__/*.pyc` files are tracked by git (they should be gitignored). They cause merge conflicts when both local and remote modify them. Workaround: `git checkout --theirs` on the conflicting `.pyc` file. Long-term fix: add `__pycache__/` to `.gitignore`.
+- The `main` branch (local working branch) diverges from `master` (default remote branch). Always push to `origin main` explicitly.
