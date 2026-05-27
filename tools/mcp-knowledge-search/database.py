@@ -77,6 +77,17 @@ def insert_documents(conn: sqlite3.Connection, docs: list[dict]) -> int:
     return count
 
 
+def _fts5_escape(query: str) -> str:
+    """Wrap a user query as an FTS5 phrase to avoid operator interpretation.
+
+    Hyphens (-), dots (.), and other punctuation are FTS5 operators or
+    token separators. Wrapping in double quotes makes FTS5 treat the string
+    as a phrase, preventing OperationalError on terms like 'MCP-first' or
+    'Next.js'. Inner double quotes are escaped by doubling them.
+    """
+    return '"' + query.replace('"', '""') + '"'
+
+
 def search(
     conn: sqlite3.Connection,
     query: str,
@@ -84,7 +95,7 @@ def search(
     source: Optional[str] = None,
     limit: int = 20
 ) -> list[dict]:
-    params: list = [query]
+    params: list = [_fts5_escape(query)]
     clauses = []
 
     if category:
@@ -121,7 +132,7 @@ def search_filtered(
 
     filters: {"campo": "valor", "campo__gte": "2025-01-01", "campo__lte": "2025-12-31"}
     """
-    params: list = [query]
+    params: list = [_fts5_escape(query)]
     clauses = []
 
     if filters:

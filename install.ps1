@@ -52,7 +52,11 @@ function Write-IfChanged {
 # ─── Caminhos base ────────────────────────────────────────────────────────────
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
-$CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude\settings.json"
+$CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
+$ROO_MCP_PATHS     = @(
+    "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json",
+    "$env:APPDATA\Code\User\globalStorage\RooVeterinaryInc.roo-cline\settings\mcp_settings.json"
+)
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 $DB_PATH           = Join-Path $FACTORY_PATH "knowledge.db"
 $CONFIG_PATH       = Join-Path $FACTORY_PATH "knowledge-config.json"
@@ -60,20 +64,23 @@ $SERVER_PATH       = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\server.
 $INGEST_PATH       = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\ingest.py"
 $REQUIREMENTS_PATH = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\requirements.txt"
 $REQ_HASH_FILE     = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\.requirements.hash"
+$FACTORY_VERSION   = if (Test-Path (Join-Path $FACTORY_PATH "VERSION")) {
+    (Get-Content (Join-Path $FACTORY_PATH "VERSION") -Raw).Trim()
+} else { "0.0.0" }
 
 # ─── Mapeamento de agentes ────────────────────────────────────────────────────
 $agents = @(
-    @{ Folder = "Agente00_TechLead";                Name = "techlead";     Description = "Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto" },
-    @{ Folder = "Agente01_ProductOwner";            Name = "po";           Description = "Product Owner — user stories, criterios de aceitacao, backlog e definicao de escopo" },
-    @{ Folder = "Agente02_SoftwareArchitect";       Name = "architect";    Description = "Arquiteto de Software — design de sistemas, diagramas UML, decisoes de arquitetura e ADRs" },
-    @{ Folder = "Agente03_SoftwareEngineer";        Name = "engineer";     Description = "Engenheiro de Software — decomposicao de tarefas, planejamento de implementacao e estimativas" },
-    @{ Folder = "Agente04_DevBackend";              Name = "devbackend";   Description = "Dev Backend — APIs REST, servicos, banco de dados, migrations Prisma e autenticacao" },
-    @{ Folder = "Agente05_DevFrontend";             Name = "devfrontend";  Description = "Dev Frontend — componentes React, paginas Next.js, UI com Tailwind e logica de interface" },
-    @{ Folder = "Agente06_QaEngineer";              Name = "qa";           Description = "QA Engineer — planos de teste, testes unitarios Vitest, E2E Playwright e cobertura de codigo" },
-    @{ Folder = "Agente07_DevSecOps";               Name = "devsecops";    Description = "DevSecOps — auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
-    @{ Folder = "Agente08_DevOps";                  Name = "devops";       Description = "DevOps — CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
-    @{ Folder = "Agente09_UxUiDesigner";            Name = "uxui";         Description = "UX/UI Designer — pesquisa de usuario, wireframes, design system e acessibilidade" },
-    @{ Folder = "Agente10_DataIntegrationEngineer"; Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" }
+    @{ Folder = "Agente00_TechLead";                Emoji = "🏗️";  Name = "techlead";     Description = "Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto" },
+    @{ Folder = "Agente01_ProductOwner";            Emoji = "📋";  Name = "po";           Description = "Product Owner — user stories, criterios de aceitacao, backlog e definicao de escopo" },
+    @{ Folder = "Agente02_SoftwareArchitect";       Emoji = "📐";  Name = "architect";    Description = "Arquiteto de Software — design de sistemas, diagramas UML, decisoes de arquitetura e ADRs" },
+    @{ Folder = "Agente03_SoftwareEngineer";        Emoji = "⚙️";  Name = "engineer";     Description = "Engenheiro de Software — decomposicao de tarefas, planejamento de implementacao e estimativas" },
+    @{ Folder = "Agente04_DevBackend";              Emoji = "🔌";  Name = "devbackend";   Description = "Dev Backend — APIs REST, servicos, banco de dados, migrations Prisma e autenticacao" },
+    @{ Folder = "Agente05_DevFrontend";             Emoji = "🎨";  Name = "devfrontend";  Description = "Dev Frontend — componentes React, paginas Next.js, UI com Tailwind e logica de interface" },
+    @{ Folder = "Agente06_QaEngineer";              Emoji = "🧪";  Name = "qa";           Description = "QA Engineer — planos de teste, testes unitarios Vitest, E2E Playwright e cobertura de codigo" },
+    @{ Folder = "Agente07_DevSecOps";               Emoji = "🔒";  Name = "devsecops";    Description = "DevSecOps — auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
+    @{ Folder = "Agente08_DevOps";                  Emoji = "🚀";  Name = "devops";       Description = "DevOps — CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
+    @{ Folder = "Agente09_UxUiDesigner";            Emoji = "✏️";  Name = "uxui";         Description = "UX/UI Designer — pesquisa de usuario, wireframes, design system e acessibilidade" },
+    @{ Folder = "Agente10_DataIntegrationEngineer"; Emoji = "🗄️";  Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" }
 )
 
 $knowledgeFiles = @(
@@ -110,11 +117,13 @@ Write-Host "  ║      AI Software Factory — Global Installer      ║" -Foreg
 Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Blue
 Write-Host ""
 Write-Host "  Factory: $FACTORY_PATH" -ForegroundColor Gray
+Write-Host "  Version: $FACTORY_VERSION" -ForegroundColor DarkGray
 Write-Host ""
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 1 — FACTORY_ROOT
 # ═════════════════════════════════════════════════════════════════════════════
+$frWasUnset = -not [System.Environment]::GetEnvironmentVariable("FACTORY_ROOT", "User")
 Write-Header "FACTORY_ROOT"
 [System.Environment]::SetEnvironmentVariable("FACTORY_ROOT", $FACTORY_PATH, [System.EnvironmentVariableTarget]::User)
 $env:FACTORY_ROOT = $FACTORY_PATH
@@ -204,16 +213,31 @@ $mcpBlock = @"
 Este agente tem acesso ao banco de conhecimento completo da AI Software Factory
 via servidor MCP "knowledge" (SQLite FTS5 full-text search).
 
-**Consulte o MCP antes de afirmar que um skill, schema, template ou checklist nao existe.**
+**MCP-first policy:**
+Consulte o MCP antes de responder sobre qualquer knowledge interna da factory (skills, schemas, templates, examples, checklists, playbooks, Golden Models, gates, failure modes, knowledge cards, heuristicas, principios).
+
+Nao invente artefatos. Busque primeiro.
+
+Antes de afirmar que uma skill/schema/template/checklist nao existe, consulte o MCP.
+
+**Se o MCP falhar:**
+1. Informe explicitamente que o MCP falhou.
+2. Declare que esta usando fallback via leitura direta de arquivos.
+3. Recomende: ``& "`$env:FACTORY_ROOT\test-mcp.ps1"``
+4. Prossiga com fallback declarado se seguro — nunca use fallback silencioso.
 
 ### Ferramentas disponiveis
 
-| Ferramenta | Quando usar |
-|-----------|-------------|
-| ``search_knowledge("termo")`` | Buscar em skills, schemas, templates, checklists, playbooks |
-| ``get_full_document("doc_id")`` | Obter documento completo por ID retornado pelo search |
-| ``get_context("doc_id")`` | Obter secoes adjacentes do mesmo arquivo |
-| ``knowledge_stats()`` | Ver estatisticas do banco e categorias indexadas |
+| Ferramenta | Quando usar | Parametros principais |
+|-----------|-------------|----------------------|
+| ``health_check()`` | Verificar saude do MCP: DB existe, FTS funciona, conta docs | nenhum |
+| ``knowledge_stats()`` | Ver estatisticas do banco e categorias indexadas | nenhum |
+| ``search_knowledge("termo")`` | Busca full-text geral em todos os artefatos | ``query``, ``category`` (opcional), ``limit`` (default 20) |
+| ``search_with_filters("termo", filters="{}")`` | Busca com filtros de metadata (categoria, tipo, agente) | ``query``, ``filters`` (JSON string), ``limit`` |
+| ``get_full_document("doc_id")`` | Obter documento completo por ID retornado pelo search | ``doc_id`` |
+| ``get_context("doc_id")`` | Obter secoes adjacentes do mesmo arquivo | ``doc_id``, ``window`` (default 5) |
+
+**Prefira ``search_with_filters`` quando souber a categoria ou tipo do artefato.**
 
 ### O que esta indexado
 
@@ -235,6 +259,32 @@ Para acessar arquivos diretamente: leia a partir de FACTORY_ROOT.
 
 $factoryAgentNames = $agents | ForEach-Object { "$($_.Name).md" }
 
+# Preservar installed_at do manifesto existente para idempotencia
+$manifestPath       = Join-Path $CLAUDE_AGENTS_DIR ".ai_software_factory_manifest.json"
+$existingInstalledAt = if (Test-Path $manifestPath) {
+    try { (Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
+# Manifesto de instalacao — rastreamento do que foi criado/atualizado
+$manifest = [ordered]@{
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingInstalledAt) { $existingInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    knowledge_db_hash = $null
+    mcp_server        = "knowledge"
+    agents            = [ordered]@{}
+    scripts           = [ordered]@{
+        install          = Join-Path $FACTORY_PATH "install.ps1"
+        uninstall        = Join-Path $FACTORY_PATH "uninstall.ps1"
+        update_knowledge = Join-Path $FACTORY_PATH "update-knowledge.ps1"
+        test_mcp         = Join-Path $FACTORY_PATH "test-mcp.ps1"
+        doctor           = Join-Path $FACTORY_PATH "doctor.ps1"
+        link_mcp         = Join-Path $FACTORY_PATH "link-mcp.ps1"
+        link_roo         = Join-Path $FACTORY_PATH "link-roo.ps1"
+    }
+}
+
 foreach ($agent in $agents) {
     $agentDir   = Join-Path $FACTORY_PATH $agent.Folder
     $promptFile = Join-Path $agentDir "prompt.md"
@@ -242,14 +292,26 @@ foreach ($agent in $agents) {
 
     if (-not (Test-Path $promptFile)) {
         Write-Warn "prompt.md nao encontrado: $($agent.Folder)"
+        $manifest.agents[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
         continue
     }
+
+    $autoGeneratedHeader = @"
+<!--
+AUTO-GENERATED BY ai_software_factory/install.ps1
+DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+To update: cd $FACTORY_PATH && .\install.ps1
+Sources: $($agent.Folder)/prompt.md + $($agent.Folder)/knowledge/* + install.ps1 mcpBlock
+-->
+"@
 
     $sb = [System.Text.StringBuilder]::new()
     [void]$sb.AppendLine("---")
     [void]$sb.AppendLine("name: $($agent.Name)")
     [void]$sb.AppendLine("description: $($agent.Description)")
     [void]$sb.AppendLine("---")
+    [void]$sb.AppendLine("")
+    [void]$sb.AppendLine($autoGeneratedHeader.TrimEnd())
     [void]$sb.AppendLine("")
     [void]$sb.AppendLine("<!-- BEGIN ai_software_factory managed block -->")
     [void]$sb.AppendLine("")
@@ -277,6 +339,15 @@ foreach ($agent in $agents) {
         "created"   { $tally.agents_created++ }
         "updated"   { $tally.agents_updated++ }
         "unchanged" { $tally.agents_unchanged++ }
+    }
+    $sourceHash    = (Get-FileHash $promptFile -Algorithm SHA256).Hash.Substring(0, 16)
+    $installedHash = if (Test-Path $outputFile) { (Get-FileHash $outputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $manifest.agents[$agent.Name] = [ordered]@{
+        status         = $status
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $outputFile
+        installed_hash = $installedHash
     }
 }
 
@@ -384,12 +455,18 @@ if ($hasPython) {
     $tally.knowledge_status = "skipped"
 }
 
+# Atualizar hash do DB no manifesto (calculado apos o ingest)
+$manifest.knowledge_db_hash = if (Test-Path $DB_PATH) {
+    (Get-FileHash $DB_PATH -Algorithm SHA256).Hash.Substring(0, 16)
+} else { $null }
+
 # ═════════════════════════════════════════════════════════════════════════════
-#  FASE 6 — .mcp.json + settings.json (merge cirurgico, atomico)
+#  FASE 6 — .mcp.json + .claude.json (merge cirurgico, atomico)
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "MCP Configuration"
 
 $mcpEntry = [ordered]@{
+    type    = "stdio"
     command = "python"
     args    = @($SERVER_PATH)
     env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
@@ -401,12 +478,12 @@ $mcpJsonStr = $mcpJson | ConvertTo-Json -Depth 5
 $mcpStatus = Write-IfChanged -Path (Join-Path $FACTORY_PATH ".mcp.json") -Content $mcpJsonStr -Label ".mcp.json"
 $tally.mcp_status = $mcpStatus
 
-# settings.json global — merge cirurgico com escrita atomica
+# .claude.json global — merge cirurgico com escrita atomica
 $claudeDir = Split-Path $CLAUDE_SETTINGS
 if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null }
 
 try {
-    # Ler settings existente
+    # Ler .claude.json existente
     $settings = [ordered]@{}
     $settingsRaw = ""
     if (Test-Path $CLAUDE_SETTINGS) {
@@ -422,20 +499,21 @@ try {
             # JSON invalido — criar backup antes de qualquer alteracao
             $badBackup = "$CLAUDE_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
             Copy-Item $CLAUDE_SETTINGS $badBackup -Force
-            Write-Warn "settings.json estava invalido. Backup criado: $badBackup"
-            Write-Warn "Recriando settings.json com apenas a entrada MCP."
+            Write-Warn ".claude.json estava invalido. Backup criado: $badBackup"
+            Write-Warn "Recriando .claude.json com apenas a entrada MCP."
         }
     }
 
     # Verificar se ja esta correto (evita escrita desnecessaria)
     $existing = if ($parseOk) { $settings["mcpServers"]?["knowledge"] } else { $null }
     $alreadyCurrent = $existing -and
+                      ($existing["type"]    -eq $mcpEntry.type) -and
                       ($existing["command"] -eq $mcpEntry.command) -and
                       ($existing["args"]    -contains $SERVER_PATH) -and
                       ($existing["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
 
     if ($alreadyCurrent) {
-        Write-Skip "settings.json ja configurado corretamente"
+        Write-Skip ".claude.json ja configurado corretamente"
     } else {
         # Backup com timestamp apenas quando ha mudanca real
         if ($parseOk -and (Test-Path $CLAUDE_SETTINGS)) {
@@ -448,8 +526,8 @@ try {
         if (-not $settings.ContainsKey("mcpServers")) { $settings["mcpServers"] = @{} }
         $settings["mcpServers"]["knowledge"] = $mcpEntry
 
-        # Validar JSON resultante antes de escrever
-        $newJson = $settings | ConvertTo-Json -Depth 5
+        # Validar JSON resultante antes de escrever (depth 20 para preservar toda a estrutura)
+        $newJson = $settings | ConvertTo-Json -Depth 20
         $newJson | ConvertFrom-Json | Out-Null  # lanca excecao se invalido
 
         # Escrita atomica: temp → rename
@@ -457,18 +535,56 @@ try {
         [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
         Move-Item $tmpSettings $CLAUDE_SETTINGS -Force
 
-        Write-OK "settings.json atualizado (MCP global registrado)"
+        Write-OK ".claude.json atualizado (MCP global registrado)"
     }
 } catch {
-    Write-Warn "Nao foi possivel atualizar settings.json: $_"
+    Write-Warn "Nao foi possivel atualizar .claude.json: $_"
     # Restaurar backup se disponivel
     $latestBak = Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if ($latestBak) {
         Copy-Item $latestBak.FullName $CLAUDE_SETTINGS -Force
-        Write-Warn "settings.json restaurado: $($latestBak.Name)"
+        Write-Warn ".claude.json restaurado: $($latestBak.Name)"
     }
     Write-Warn "Use link-mcp.ps1 em cada projeto como alternativa."
+}
+
+# Roo Code mcp_settings.json — mesmo merge cirurgico para cada instalacao encontrada
+foreach ($rooMcp in $ROO_MCP_PATHS) {
+    if (-not (Test-Path (Split-Path $rooMcp))) { continue }
+    try {
+        $rooSettings = [ordered]@{ mcpServers = [ordered]@{} }
+        if (Test-Path $rooMcp) {
+            $rooRaw = Get-Content $rooMcp -Raw -Encoding UTF8
+            if ($rooRaw -and $rooRaw.Trim()) {
+                $rooSettings = $rooRaw | ConvertFrom-Json -AsHashtable
+            }
+        }
+
+        $existingRoo = $rooSettings["mcpServers"]?["knowledge"]
+        $rooAlreadyCurrent = $existingRoo -and
+                             ($existingRoo["command"] -eq $mcpEntry.command) -and
+                             ($existingRoo["args"]    -contains $SERVER_PATH) -and
+                             ($existingRoo["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
+
+        if ($rooAlreadyCurrent) {
+            Write-Skip "Roo mcp_settings.json ja configurado: $rooMcp"
+        } else {
+            if (-not $rooSettings.ContainsKey("mcpServers")) { $rooSettings["mcpServers"] = @{} }
+            $rooSettings["mcpServers"]["knowledge"] = $mcpEntry
+
+            $rooJson = $rooSettings | ConvertTo-Json -Depth 10
+            $rooJson | ConvertFrom-Json | Out-Null
+
+            $tmpRoo = "$rooMcp.tmp"
+            [System.IO.File]::WriteAllText($tmpRoo, ($rooJson -replace "`r`n","`n"), $utf8NoBom)
+            Move-Item $tmpRoo $rooMcp -Force
+
+            Write-OK "Roo mcp_settings.json atualizado: $rooMcp"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel atualizar Roo mcp_settings.json ($rooMcp): $_"
+    }
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -486,7 +602,7 @@ foreach ($agent in $agents) {
     if (-not (Test-Path $promptFile)) { continue }
 
     $promptContent = (Get-Content $promptFile -Raw -Encoding UTF8).TrimEnd()
-    $agentLabel    = ($agent.Description -split " — ")[0].Trim()
+    $agentLabel    = "$($agent.Emoji) $(($agent.Description -split ' — ')[0].Trim())"
 
     $customInstructions = @"
 FACTORY_ROOT: $FACTORY_PATH
@@ -496,7 +612,7 @@ Voce opera sobre o projeto aberto no VS Code. Use as ferramentas do editor
 
 Para consultar o conhecimento completo da factory (skills, schemas, templates,
 checklists e playbooks), use o MCP knowledge search se disponivel.
-Se o MCP nao estiver disponivel, leia diretamente os arquivos em FACTORY_ROOT.
+Se o MCP nao estiver disponivel: (1) informe explicitamente ao usuario que o MCP falhou; (2) declare que esta usando fallback via leitura direta de arquivos em FACTORY_ROOT; (3) recomende executar test-mcp.ps1; (4) nunca afirme que um artefato nao existe sem consultar MCP ou declarar a falha.
 "@
 
     $customModes.Add([ordered]@{
@@ -525,7 +641,23 @@ $agentListLines
 ## Acesso ao conhecimento
 
 O banco de conhecimento completo esta disponivel via MCP knowledge search.
-Para vincular o MCP a este projeto: `$env:FACTORY_ROOT\link-mcp.ps1
+Para vincular o MCP a este projeto: & "`$env:FACTORY_ROOT\link-mcp.ps1"
+
+## Politica MCP-first
+
+Consulte o MCP antes de responder sobre qualquer knowledge interna da factory
+(skills, schemas, templates, examples, checklists, playbooks, Golden Models,
+gates, failure modes, knowledge cards, heuristicas, principios).
+
+Nao invente artefatos. Busque primeiro.
+
+Antes de afirmar que uma skill/schema/template/checklist nao existe, consulte o MCP.
+
+Se o MCP falhar:
+1. Informe explicitamente que o MCP falhou.
+2. Declare que esta usando fallback via leitura direta de arquivos.
+3. Recomende: & "`$env:FACTORY_ROOT\test-mcp.ps1"
+4. Prossiga com fallback declarado se seguro — nunca use fallback silencioso.
 
 # END ai_software_factory managed block
 "@
@@ -638,7 +770,7 @@ if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_uncha
 # link-mcp.ps1
 $linkMcp = @"
 # link-mcp.ps1 — Vincular MCP da factory ao projeto atual
-# Uso: `$env:FACTORY_ROOT\link-mcp.ps1
+# Uso: & "`$env:FACTORY_ROOT\link-mcp.ps1"
 
 `$ErrorActionPreference = "Stop"
 `$FACTORY_PATH = if (`$env:FACTORY_ROOT) { `$env:FACTORY_ROOT } else { Write-Error "FACTORY_ROOT nao definido."; exit 1 }
@@ -659,7 +791,7 @@ if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_uncha
 # link-roo.ps1
 $linkRoo = @"
 # link-roo.ps1 — Vincular agentes Roo Code/Cline ao projeto atual
-# Uso: `$env:FACTORY_ROOT\link-roo.ps1
+# Uso: & "`$env:FACTORY_ROOT\link-roo.ps1"
 
 `$ErrorActionPreference = "Stop"
 `$FACTORY_PATH = if (`$env:FACTORY_ROOT) { `$env:FACTORY_ROOT } else { Write-Error "FACTORY_ROOT nao definido."; exit 1 }
@@ -681,6 +813,48 @@ Write-Host "Agentes: techlead po architect engineer devbackend devfrontend qa de
 "@
 $s = Write-IfChanged -Path (Join-Path $FACTORY_PATH "link-roo.ps1") -Content $linkRoo -Label "link-roo.ps1"
 if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_unchanged++ }
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  FASE FINAL — MCP Health Check
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "MCP Health Check"
+
+$testMcpPath    = Join-Path $FACTORY_PATH "test-mcp.ps1"
+$testHealthPath = Join-Path $FACTORY_PATH "tools\mcp-knowledge-search\test_health.py"
+
+if (Test-Path $testMcpPath) {
+    try {
+        & $testMcpPath
+        if ($LASTEXITCODE -eq 0) {
+            Write-OK "MCP health check passou"
+        } else {
+            Write-Warn "MCP health check reportou problemas (veja output acima)"
+            Write-Warn "  Para diagnostico: .\test-mcp.ps1"
+            Write-Warn "  Para corrigir:    .\install.ps1 -ForceDeps"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel executar test-mcp.ps1: $_"
+    }
+} elseif ($hasPython -and (Test-Path $testHealthPath)) {
+    # Fallback: rodar test_health.py diretamente
+    try {
+        & $pythonCmd $testHealthPath --db $DB_PATH
+        if ($LASTEXITCODE -eq 0) {
+            Write-OK "MCP health check passou (via test_health.py)"
+        } else {
+            Write-Warn "MCP health check falhou (via test_health.py)"
+            Write-Warn "  Execute: .\update-knowledge.ps1"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel executar test_health.py: $_"
+    }
+} else {
+    Write-Skip "Health check pulado (test-mcp.ps1 nao disponivel nesta fase)"
+}
+
+# ─── Gravar manifesto completo (apos todas as fases) ─────────────────────────
+$manifestJson = $manifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $manifestPath -Content $manifestJson -Label ".ai_software_factory_manifest.json" | Out-Null
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  RESUMO
@@ -718,7 +892,15 @@ if ($hasPython) {
     Write-Host "    .\update-knowledge.ps1"
     Write-Host ""
     Write-Host "  Vincular MCP ou Roo a outro projeto:" -ForegroundColor Cyan
-    Write-Host "    `$env:FACTORY_ROOT\link-mcp.ps1"
-    Write-Host "    `$env:FACTORY_ROOT\link-roo.ps1"
+    Write-Host "    & `"`$env:FACTORY_ROOT\link-mcp.ps1`""
+    Write-Host "    & `"`$env:FACTORY_ROOT\link-roo.ps1`""
+    Write-Host ""
+}
+Write-Host "  Diagnostico completo:" -ForegroundColor Cyan
+Write-Host "    .\doctor.ps1"
+Write-Host ""
+if ($frWasUnset) {
+    Write-Host "  NOTA: FACTORY_ROOT foi definido pela primeira vez." -ForegroundColor Yellow
+    Write-Host "        Abra um novo terminal para que a variavel esteja disponivel." -ForegroundColor Yellow
     Write-Host ""
 }

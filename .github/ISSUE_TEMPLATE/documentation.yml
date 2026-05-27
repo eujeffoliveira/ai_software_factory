@@ -1,0 +1,52 @@
+name: Documentation
+description: Report unclear, incorrect, or missing documentation
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for documentation issues: errors, ambiguities, outdated information, or missing content.
+
+  - type: input
+    id: file
+    attributes:
+      label: Affected file or page
+      description: Path to the file, section heading, or URL (e.g., `docs/INSTALLATION.md`, `CONTRIBUTING.md#adding-knowledge`).
+      placeholder: "docs/INSTALLATION.md"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: problem_type
+    attributes:
+      label: Problem type
+      options:
+        - Factual error (something described incorrectly)
+        - Ambiguous or confusing wording
+        - Missing documentation (topic not covered)
+        - Outdated content (no longer matches the code)
+        - Broken link or reference
+        - Translation / language issue
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What is the problem?
+      description: Describe what is wrong, unclear, or missing. Quote the specific text if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested improvement
+      description: How should it be written or what should be added?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that helps understand the issue (e.g., what you were trying to do when you found this).

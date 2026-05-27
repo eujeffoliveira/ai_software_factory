@@ -1,5 +1,5 @@
 # link-mcp.ps1 — Vincular MCP da factory ao projeto atual
-# Uso: $env:FACTORY_ROOT\link-mcp.ps1
+# Uso: & "$env:FACTORY_ROOT\link-mcp.ps1"
 
 $ErrorActionPreference = "Stop"
 $FACTORY_PATH = if ($env:FACTORY_ROOT) { $env:FACTORY_ROOT } else { Write-Error "FACTORY_ROOT nao definido."; exit 1 }

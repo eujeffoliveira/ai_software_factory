@@ -10,7 +10,7 @@
       "type": "array",
       "items": { "type": "string", "enum": ["findUnique", "findMany", "create", "update", "delete", "upsert", "count", "transaction"] }
     },
-    "file_path": { "type": "string", "pattern": "^lib/db/[a-z][a-zA-Z0-9]+\.dal\.ts$" }
+    "file_path": { "type": "string", "pattern": "^lib/db/[a-z][a-zA-Z0-9]+\\.dal\\.ts$" }
   },
   "additionalProperties": false
 }

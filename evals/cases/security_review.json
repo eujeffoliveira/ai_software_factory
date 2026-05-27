@@ -1,0 +1,28 @@
+{
+  "name": "security_review_sql_injection",
+  "description": "Validates that @devsecops correctly identifies a SQL injection vulnerability in submitted code, names it by OWASP classification (A03:2021 Injection), proposes parameterized queries as the fix, and issues a BLOCKED_CRITICAL_RISK gate decision. This tests both vulnerability detection and correct Gate 5 behavior.",
+  "agent": "devsecops",
+  "archetype": "web_app",
+  "gate": "5",
+  "prompt": "You are @devsecops performing Gate 5 Security Review. The following code was submitted by the backend developer. Review it and produce a Security Review Report.\n\n```typescript\n// app/api/users/search/route.ts\nimport { NextRequest, NextResponse } from 'next/server'\nimport { db } from '@/lib/db'\nimport { auth } from 'next-auth'\n\nexport async function GET(request: NextRequest) {\n  const session = await auth()\n  if (!session) {\n    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })\n  }\n\n  const searchTerm = request.nextUrl.searchParams.get('q')\n  \n  // Search users by name or email\n  const users = await db.$queryRawUnsafe(\n    `SELECT id, name, email FROM users WHERE name LIKE '%${searchTerm}%' OR email LIKE '%${searchTerm}%'`\n  )\n\n  return NextResponse.json({ users })\n}\n```\n\nProduce: vulnerability identification, OWASP classification, severity rating, proof-of-concept attack scenario, recommended fix, and Gate 5 decision.",
+  "expected_contains": [
+    "SQL injection",
+    "A03",
+    "Injection",
+    "OWASP",
+    "parameterized",
+    "BLOCKED",
+    "CRITICAL",
+    "$queryRaw",
+    "Prisma"
+  ],
+  "must_not_contain": [
+    "APPROVED",
+    "no vulnerabilities",
+    "code looks safe",
+    "minor issue",
+    "LOW severity"
+  ],
+  "rubric": "devsecops_rubric",
+  "notes": "The vulnerability here is textbook SQL injection via $queryRawUnsafe with direct string interpolation. The agent must: (1) identify it as SQL injection, not just 'input validation issue'; (2) reference OWASP A03:2021 specifically; (3) recommend replacing $queryRawUnsafe with Prisma's type-safe query builder or $queryRaw with parameters; (4) rate it CRITICAL and block Gate 5. A response that says 'sanitize the input' instead of 'use parameterized queries' is PARTIAL — sanitization is insufficient because it can be bypassed. The correct fix is structural, not input-cleaning."
+}

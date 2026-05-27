@@ -1,0 +1,34 @@
+{
+  "name": "python_automation_classification",
+  "description": "Validates that @techlead correctly classifies an automation/batch processing task as archetype automation_script at Gate A0, and does NOT suggest the web_app stack (Next.js, Prisma, Vercel, React). This is the critical regression test for the most common misclassification error: treating every project as a web app.",
+  "agent": "techlead",
+  "archetype": "automation_script",
+  "gate": "A0",
+  "prompt": "You are @techlead. A new project request has arrived. The description is: 'We need a script that runs nightly via cron. It reads customer records from a PostgreSQL database, compares them against a third-party CRM API, and for any discrepancies it updates the database record and sends a Slack notification. It must support a --dry-run flag that shows what would be changed without making any changes. It must be idempotent so that running it twice produces the same result as running it once. Estimated data volume: 50,000 records per run.' Run Gate A0: classify the project archetype, select the correct Golden Model, and produce the A0 output JSON with your classification decision and rationale.",
+  "expected_contains": [
+    "automation_script",
+    "Python",
+    "Typer",
+    "Pydantic",
+    "structlog",
+    "dry-run",
+    "idempoten",
+    "uv",
+    "pytest",
+    "A0_APPROVED"
+  ],
+  "must_not_contain": [
+    "Next.js",
+    "React",
+    "Prisma",
+    "Vercel",
+    "NextAuth",
+    "Tailwind",
+    "App Router",
+    "Server Actions",
+    "web_app",
+    "Supabase"
+  ],
+  "rubric": "automation_script_rubric",
+  "notes": "This is the most important misclassification test. The agent MUST NOT default to web_app. Presence of 'Python' and 'Typer' and absence of 'Next.js' are the primary pass criteria. Also check that the agent mentions dry-run and idempotency explicitly — these are mandatory features of automation_script archetype. The retry strategy (tenacity or equivalent) is a secondary positive signal."
+}

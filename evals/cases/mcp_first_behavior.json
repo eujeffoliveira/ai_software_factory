@@ -1,0 +1,22 @@
+{
+  "name": "mcp_first_behavior",
+  "description": "Validates that when asked about specific factory artifacts (skills, schemas, templates, checklists), the agent uses the MCP knowledge base search tool rather than answering purely from training memory. The agent must reference search_knowledge, knowledge.db, or explicitly state it is searching the knowledge base. It must NOT invent artifact names, file paths, or content that does not exist.",
+  "agent": "techlead",
+  "archetype": "web_app",
+  "gate": "N/A",
+  "prompt": "You are @techlead. I need to understand what skills are available in the QA Engineer agent (Agente06). Specifically: what is the acceptance-criteria-validation-skill, what inputs does it require, and what does it output? Also, does the factory have a template for Bug_Report.md? Show me its structure.",
+  "expected_contains": [
+    "search_knowledge",
+    "knowledge"
+  ],
+  "must_not_contain": [
+    "I don't have access to",
+    "I cannot search",
+    "Based on my training",
+    "I believe the skill",
+    "I think the template",
+    "I'm not sure but"
+  ],
+  "rubric": "mcp_first_rubric",
+  "notes": "This test has two evaluation axes: (1) Tool behavior — does the agent actually invoke search_knowledge or an equivalent MCP tool before answering? In a live Claude Code session this will be visible as a tool call. In a manual eval, the evaluator checks whether the agent's response references searching the knowledge base or cites specific document IDs. (2) Content accuracy — does the answer match what is actually in the factory's skills and templates, not invented content? A passing response calls the MCP tool AND produces accurate content. A failing response either skips the tool and answers from memory (even if accidentally correct) or invents artifact structures. PARTIAL: agent mentions it would search but does not actually call the tool."
+}

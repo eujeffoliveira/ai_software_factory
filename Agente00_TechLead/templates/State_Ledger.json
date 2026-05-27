@@ -1,6 +1,8 @@
 {
   "project_name": "{{PROJECT_NAME}}",
   "project_id": "{{PROJECT_ID}}",
+  "project_archetype": "{{ARCHETYPE}}",
+  "golden_model": "{{GOLDEN_MODEL_PATH}}",
   "created_at": "{{ISO_DATETIME}}",
   "updated_at": "{{ISO_DATETIME}}",
   "current_phase": "requirements",
@@ -25,5 +27,10 @@
   "blocked_tasks": [],
   "human_approvals_required": [],
   "gate_history": [],
-  "next_action": "Route to Agente01_ProductOwner with initial briefing"
+  "mcp_status": {
+    "server_online": null,
+    "last_checked": null,
+    "documents_indexed": null
+  },
+  "next_action": "Run Gate A0 to classify project archetype, then route to Agente01_ProductOwner with initial briefing"
 }

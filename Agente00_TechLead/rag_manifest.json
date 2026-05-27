@@ -1,4 +1,5 @@
 ﻿{
+  "_note": "Declarative runtime policy — not yet enforced programmatically. Defines which sources this agent may access at runtime. Future: MCP server and ingest.py will support per-agent source filtering via this manifest.",
   "agent_id": "Agente00_TechLead",
   "edition": "generic-white-label",
   "version": "1.0.0",

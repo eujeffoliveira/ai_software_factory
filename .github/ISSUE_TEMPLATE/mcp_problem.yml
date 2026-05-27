@@ -1,0 +1,143 @@
+name: MCP Problem
+description: Report a problem with the MCP Knowledge Search server
+labels: ["mcp", "support"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for problems with the MCP Knowledge Search server (search returning no results, server not connecting, knowledge.db issues, etc.).
+        **Do not include secrets, API keys, tokens, or personal data in any field.**
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Required diagnostics — run before filling this form
+
+        ```powershell
+        .\doctor.ps1
+        .\test-mcp.ps1
+        ```
+
+        Paste the full output of both commands below.
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS
+        - Linux (Ubuntu/Debian)
+        - Linux (other)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      description: Run `python --version` (or `python3 --version`).
+      placeholder: "3.11.x"
+    validations:
+      required: true
+
+  - type: input
+    id: claude_code_version
+    attributes:
+      label: Claude Code version
+      description: Run `claude --version`.
+      placeholder: "2.x.x"
+
+  - type: input
+    id: factory_version
+    attributes:
+      label: Factory version
+      description: Run `Get-Content VERSION`.
+      placeholder: "0.1.0"
+
+  - type: input
+    id: factory_root
+    attributes:
+      label: FACTORY_ROOT value
+      description: Run `echo $env:FACTORY_ROOT`. Replace your username with a placeholder if needed.
+      placeholder: "C:\\Users\\<username>\\ai_software_factory"
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor_output
+    attributes:
+      label: doctor.ps1 output
+      description: Full output of `.\doctor.ps1`. Remove personal paths or values if needed.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: test_mcp_output
+    attributes:
+      label: test-mcp.ps1 output
+      description: Full output of `.\test-mcp.ps1`.
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: knowledge_db_exists
+    attributes:
+      label: Does knowledge.db exist?
+      description: Run `Test-Path "$env:FACTORY_ROOT\knowledge.db"` — True or False?
+      options:
+        - "True"
+        - "False"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mcp_in_slash_mcp
+    attributes:
+      label: Does /mcp show the knowledge server?
+      description: In a Claude Code session, run `/mcp`. Does `knowledge` appear as connected?
+      options:
+        - "Yes — connected"
+        - "Yes — but shows error"
+        - "No — not listed"
+        - "Did not check"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: silent_fallback
+    attributes:
+      label: Did the agent use silent fallback?
+      description: Did an agent respond without mentioning MCP failure when it should have searched the knowledge base?
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: mcp_logs
+    attributes:
+      label: MCP log excerpt
+      description: |
+        Relevant lines from `tools/mcp-knowledge-search/logs/mcp-knowledge.log`.
+        Remove any personal data or sensitive values before posting.
+      render: json

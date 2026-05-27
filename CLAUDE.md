@@ -21,6 +21,8 @@ All 11 agents received a **capability upgrade on 2026-05-18**: executable tools,
 - `install.ps1` (PowerShell/Windows) + `install.sh` (Git Bash/Linux/macOS) + `docs/INSTALL_CLI.md` — Universal Factory CLI installer
 - Agent-specific `tools/` subdirectories: Agente06 (Playwright E2E templates + audit script), Agente07 (git security hooks + SENTINEL framework), Agente08 (branch-protection + parallel-agent locking hooks), Agente10 (predictive-rigor governance framework)
 
+All 8 relevant agents received a **multi-archetype Golden Model upgrade on 2026-05-22**: the factory evolved from a single web-only stack to a matrix of 8 project archetypes. A new `standards/` directory was created at the repo root with archetype-specific Golden Models, Gate A0 (project classification before Gate 1), automation templates and checklists, and example multi-agent prompt sequences. All relevant agent `knowledge/decision_rules.md` files were extended with DR-CLASS-001 through DR-CLASS-005, and all relevant `prompt.md` files received a "Project Archetype Classification" table.
+
 ---
 
 ## Core architectural rule: Build-time vs. Runtime isolation
@@ -61,7 +63,8 @@ The MCP Knowledge Search is a FastMCP server with SQLite FTS5 that indexes all f
 
 **Configured automatically by `install.ps1`:**
 - `knowledge.db` — SQLite FTS5 database (7,000+ indexed documents)
-- `~/.claude/settings.json` — global `mcpServers.knowledge` entry
+- `~/.claude.json` — global `mcpServers.knowledge` entry (nível raiz, escopo user)
+- `%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json` — Roo Code global MCP
 - `.mcp.json` — local factory configuration (use `link-mcp.ps1` in other projects)
 
 **Exposed tools:**
@@ -76,7 +79,7 @@ The MCP Knowledge Search is a FastMCP server with SQLite FTS5 that indexes all f
 **What is indexed:** `skills/`, `schemas/`, `templates/`, `examples/`, `checklists/`, `knowledge/`, `bibliography/playbooks/`
 
 **To update after editing content:** `.\update-knowledge.ps1`
-**To activate in another project:** `$env:FACTORY_ROOT\link-mcp.ps1`
+**To activate in another project:** `& "$env:FACTORY_ROOT\link-mcp.ps1"`
 
 Rules:
 - The MCP serves deep content (skills, schemas, templates, examples) on demand.
@@ -93,7 +96,7 @@ To activate in a project:
 
 ```powershell
 # Run from the target project folder
-$env:FACTORY_ROOT\link-roo.ps1
+& "$env:FACTORY_ROOT\link-roo.ps1"
 ```
 
 This copies `.roomodes` and `.clinerules` to the current project (with automatic backup). Open VS Code and select the desired mode in Roo Code.
@@ -127,6 +130,35 @@ Playbooks are **build-time reference** for enriching agent knowledge. They are n
 
 ---
 
+## Standards (`standards/`)
+
+The `standards/` directory houses the Golden Model matrix — archetype-specific tech stacks, Gate A0 definition, automation templates, checklists, and example prompt sequences. All files in `standards/` are indexed by MCP/RAG (`knowledge.db`).
+
+```
+standards/
+├── project-classification.md          # Gate A0: 8 archetypes, decision tree, ADR rules, JSON output template
+├── golden-model-web-app.md            # web_app archetype (Next.js 16 stack)
+├── golden-model-python-automation.md  # automation_script archetype (Python 3.12+, uv, Typer, Pydantic v2)
+├── golden-model-data-pipeline.md      # data_pipeline archetype (Python + Polars + DuckDB + Pandera)
+├── golden-model-api-service.md        # api_service archetype (FastAPI or Next.js Route Handlers)
+├── golden-model-cli-tool.md           # cli_tool archetype (Typer + pyproject.toml packaging)
+├── golden-model-mcp-server.md         # mcp_server archetype (FastMCP + Pydantic schemas)
+├── golden-model-integration-worker.md # integration_worker archetype (Redis/queues + tenacity + dead-letter)
+└── golden-model-notebook-analysis.md  # notebook_analysis archetype (Jupyter + Polars/Pandas, never production)
+```
+
+Companion directories (also indexed by MCP/RAG):
+- `templates/automation/` — 10 artifact templates for the `automation_script` archetype
+- `checklists/automation/` — 8 operational checklists (idempotency, dry-run, secrets, logging, retries, testing, etc.)
+- `examples/requests/` — 6 example multi-agent prompt sequences (one per archetype)
+
+Rules:
+- Do not put agent knowledge (principles, heuristics, decision rules) in `standards/`. That belongs in each agent's `knowledge/` folder.
+- `standards/project-classification.md` is the authoritative source for Gate A0 and archetype selection.
+- After editing any file in `standards/`, `templates/automation/`, `checklists/automation/`, or `examples/requests/`, run `.\update-knowledge.ps1` to reindex.
+
+---
+
 ## Universal Factory CLI
 
 **Prerequisites:** Python 3.x must be available on PATH (required for MCP Knowledge Search).
@@ -139,9 +171,9 @@ Run the installer from the repo root in PowerShell:
 .\install.ps1 -ForceDeps
 ```
 
-`install.ps1` is fully idempotent — running it twice reports all items as `sem mudancas`. It uses content comparison with LF normalization and UTF-8 without BOM. `~/.claude/settings.json` receives a surgical merge that adds `mcpServers.knowledge` without touching any other keys; a timestamped backup is created only when a real change is made.
+`install.ps1` is fully idempotent — running it twice reports all items as `sem mudancas`. It uses content comparison with LF normalization and UTF-8 without BOM. `~/.claude.json` receives a surgical merge that adds `mcpServers.knowledge` at the root level without touching any other keys; a timestamped backup is created only when a real change is made.
 
-**What `install.ps1` does (11 phases):**
+**What `install.ps1` does (10 phases):**
 
 1. Sets `FACTORY_ROOT` as a Windows user environment variable
 2. Detects Python and installs MCP dependencies via pip (controlled by SHA256 hash — skipped if unchanged)
@@ -152,9 +184,10 @@ Run the installer from the repo root in PowerShell:
 4. Creates `knowledge-config.json` (gitignored)
 5. Creates/updates `knowledge.db` via `ingest.py` — SQLite FTS5 with 7,000+ indexed documents (reindexes only if any `.md` is newer than the DB)
 6. Creates `.mcp.json` (gitignored) at the factory root
-7. Merges `mcpServers.knowledge` into `~/.claude/settings.json` without touching other keys
-8. Creates `roo/.roomodes` and `roo/.clinerules` (gitignored) for Roo Code / Cline
-9. Generates helper scripts: `factory.ps1`, `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1`
+7. Merges `mcpServers.knowledge` into `~/.claude.json` (root level, user scope) without touching other keys
+8. Merges `mcpServers.knowledge` into Roo Code's `mcp_settings.json` (all installations found in `%APPDATA%`)
+9. Creates `roo/.roomodes` and `roo/.clinerules` (gitignored) for Roo Code / Cline
+10. Generates helper scripts: `factory.ps1`, `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1`
 
 After installation, all 11 agents are available as `@agent-name` inside any Claude Code session from any directory:
 
@@ -177,8 +210,8 @@ factory Agente02_SoftwareArchitect gemini
 | Script | Purpose |
 |--------|---------|
 | `update-knowledge.ps1` | Reindex `knowledge.db` after editing `knowledge/`, `skills/`, etc. without regenerating agent files |
-| `link-mcp.ps1` | From another project: `$env:FACTORY_ROOT\link-mcp.ps1` — activates MCP Knowledge Search in that project |
-| `link-roo.ps1` | From another project: `$env:FACTORY_ROOT\link-roo.ps1` — copies `.roomodes`/`.clinerules` to that project |
+| `link-mcp.ps1` | From another project: `& "$env:FACTORY_ROOT\link-mcp.ps1"` — activates MCP Knowledge Search in that project |
+| `link-roo.ps1` | From another project: `& "$env:FACTORY_ROOT\link-roo.ps1"` — copies `.roomodes`/`.clinerules` to that project |
 
 **When to re-run `install.ps1`:** after `git pull`, after editing any agent's `prompt.md`, after editing any `knowledge/` file, or after cloning to a new machine.
 
@@ -246,7 +279,10 @@ When building a new agent, produce build reports in `build/`:
 | `context/prompts/prompt_*_generico.md` | Ready-to-use system prompts for each agent |
 | `context/client_profile.md` | Client instantiation profile — filled by whoever forks the repo |
 | `context/prompts/instantiation_prompt.md` | Instantiation prompt — run after cloning to adapt agents to a client |
+| `context/prompts/prompt_padrao_destilacao_conhecimento.md` | Standard knowledge distillation prompt (27-step workflow) — run when adding new sources to any agent |
 | `lib/STATUS_DOWNLOADS.md` | Status index of all reference books per agent |
+| `standards/project-classification.md` | Gate A0: 8 archetypes, decision tree, archetype classification rules |
+| `standards/golden-model-*.md` | Archetype-specific Golden Models (8 files) |
 
 Never modify `context/` files unless explicitly asked to update the master definitions.
 Never modify `context/client_profile.md` on behalf of a client without explicit instruction — it is their source of truth.
@@ -271,7 +307,22 @@ The instantiation prompt is idempotent: re-run it whenever the client profile ch
 
 ## Golden Model (governed by Agente00)
 
-The mandatory tech stack for all projects produced by this factory:
+The Golden Model is a **matrix of 8 archetypes**, not a single stack. Before applying any technical standard, classify the project using Gate A0 (`standards/project-classification.md`).
+
+**Rule:** Choosing the correct archetype requires no ADR. ADRs are only required for deviations *within* the chosen archetype.
+
+| Archetype | Golden Model | Primary stack |
+|-----------|-------------|---------------|
+| `web_app` | `standards/golden-model-web-app.md` | Next.js 16 + React 19 + TypeScript + Tailwind + NextAuth + Supabase + Prisma + Vercel |
+| `automation_script` | `standards/golden-model-python-automation.md` | Python 3.12+ + uv + Typer + Pydantic v2 + structlog + pytest |
+| `data_pipeline` | `standards/golden-model-data-pipeline.md` | Python + Polars + DuckDB + Pandera |
+| `api_service` | `standards/golden-model-api-service.md` | FastAPI (Python) or Next.js Route Handlers |
+| `cli_tool` | `standards/golden-model-cli-tool.md` | Python + Typer + pyproject.toml |
+| `mcp_server` | `standards/golden-model-mcp-server.md` | Python + FastMCP + Pydantic schemas |
+| `integration_worker` | `standards/golden-model-integration-worker.md` | Python + Redis/queues + tenacity + dead-letter |
+| `notebook_analysis` | `standards/golden-model-notebook-analysis.md` | Jupyter + Polars/Pandas (never directly production) |
+
+### `web_app` stack (default for user-facing applications)
 
 - **Framework**: Next.js 16 (App Router) — never `middleware.ts`, always `proxy.ts`
 - **Frontend**: React 19 + TypeScript 5 + Tailwind CSS v4
@@ -286,13 +337,15 @@ The mandatory tech stack for all projects produced by this factory:
 - **Env vars**: always via `lib/env.ts`, never scattered `process.env`
 - **Logs**: structured JSON (`audit_log` for human actions, `sync_log` for jobs)
 
-Any deviation from the Golden Model requires an ADR. Gate 2 is blocked until the ADR is approved.
+Any deviation within an archetype requires an ADR. Gate 2 is blocked until the ADR is approved.
 
 ---
 
 ## Quality gates and status codes
 
-7 sequential gates govern pipeline advancement. Key rules:
+**Gate A0 — Project Classification** runs before all numbered gates. It classifies the project archetype and selects the corresponding Golden Model. Status codes: `A0_APPROVED` | `A0_AMBIGUOUS` | `A0_BLOCKED`. Gate A0 is only required when the archetype is not immediately obvious.
+
+8 sequential gates govern pipeline advancement (A0 + Gates 1–7). Key rules:
 
 - Gates never skip — RETURNED always goes back to the previous agent
 - Gate 5 (Security) and Gate 4 (QA) blocks cannot be overridden by the Tech Lead
@@ -345,3 +398,72 @@ Each skill requires exactly 6 files. When adding a skill to an existing agent:
 - Re-run `.\install.ps1` whenever: (a) any agent's `prompt.md` changes, (b) any `knowledge/` file changes, (c) the repo is cloned to a new machine or relocated. The installer propagates the full hybrid content (prompt + 8 knowledge files + MCP block) to `~/.claude/agents/`. Running it twice is safe — second run reports all items unchanged.
 - `update-knowledge.ps1` reindexes `knowledge.db` without regenerating the agent files — use it for knowledge-only edits after `install.ps1` has run at least once.
 - `link-mcp.ps1` and `link-roo.ps1` are generated by the installer and live at the factory root — they are gitignored and machine-specific.
+- When adding a new archetype or updating a Golden Model spec, edit the corresponding `standards/golden-model-<archetype>.md` — never embed archetype-specific stack rules inside individual agent files
+- `standards/project-classification.md` is the authoritative source for Gate A0 — update it when adding new archetypes or changing classification criteria
+- After editing files in `standards/`, `templates/automation/`, `checklists/automation/`, or `examples/requests/`, run `.\update-knowledge.ps1` to reindex the knowledge base (or `.\install.ps1` if any `prompt.md` also changed)
+- To add new knowledge sources (books, courses, playbooks, articles) to any agent, use `context/prompts/prompt_padrao_destilacao_conhecimento.md` — it is a 27-step distillation workflow executable by any AI with repo access. Run `.\install.ps1` after distillation is complete.
+- Never commit or push changes without explicit authorization from the user
+
+---
+
+## Session progress — Block 3 (Documentação, Governança, Licenciamento)
+
+### Completed across Blocks 1–3
+
+**Block 1 (bugs):**
+- `install.ps1`: added `Emoji` field to `$agents` array; Roo mode name generation uses `"$($agent.Emoji) $(($agent.Description -split ' — ')[0].Trim())"`
+- `tools/mcp-knowledge-search/test_health.py` line 101: fixed FTS5 query from `FROM documents WHERE documents MATCH` → `FROM fts_docs WHERE fts_docs MATCH`
+
+**Block 2 (versioning + ops):**
+- `VERSION` — single line `0.1.0`
+- `CHANGELOG.md` — Keep a Changelog format, `[0.1.0]` entry
+- `RELEASE_NOTES.md` — user-friendly v0.1.0 notes
+- `doctor.ps1` — 14-category diagnostic, calls `test-mcp.ps1` internally, exits 0 (OK/WARN) or 1 (ERROR)
+- `uninstall.ps1` — rewrite: params `-KeepKnowledge`, `-Full`, `-WhatIf`, `-Force`; safety marker check; atomic backup
+- `docs/INSTALLATION.md` — 8 install phases, idempotency, post-install structure
+- `docs/OPERATIONS.md` — agent usage, update commands, diagnostics
+- `docs/TROUBLESHOOTING.md` — problem/fix pairs for install, MCP, agents, Roo Code, uninstall
+- `install.ps1` — `$FACTORY_VERSION` from VERSION file; `$frWasUnset` flag; manifest with `factory_version`, preserved `installed_at`, `knowledge_db_hash`, `scripts` section; `doctor.ps1` hint in RESUMO
+
+**Block 3 (docs/governance) — done so far:**
+- `LICENSE` — Apache 2.0, Copyright 2026 Jefferson Oliveira
+- `LICENSE-DOCS` — CC BY 4.0 reference with scope definition (applies to docs/prompts/templates/knowledge, NOT code)
+- `NOTICE` — dual licensing scope with explicit file lists, generated artifacts note, third-party deps
+- `CONTRIBUTING.md` — prerequisites, setup, commands table, how to add knowledge/agent/skill/bug fix, PR checklist, licensing policy
+
+### Pending — Block 3
+
+Create these files (in order):
+
+1. `CODE_OF_CONDUCT.md` — Contributor Covenant v2.1 based
+2. `SECURITY.md` — responsible disclosure process, secrets policy, MCP log note. **CAUTION: content filtering triggered in previous session when generating this file. Keep content concise, avoid detailed exploitation terminology.**
+3. `SUPPORT.md` — where to open issues, what to attach (doctor.ps1 + test-mcp.ps1 output, OS, Python version, Claude Code version)
+4. `.github/ISSUE_TEMPLATE/bug_report.yml`
+5. `.github/ISSUE_TEMPLATE/mcp_problem.yml` — must include fields for doctor.ps1 and test-mcp.ps1 output
+6. `.github/ISSUE_TEMPLATE/agent_behavior.yml`
+7. `.github/ISSUE_TEMPLATE/documentation.yml`
+8. `.github/ISSUE_TEMPLATE/feature_request.yml`
+9. `.github/PULL_REQUEST_TEMPLATE.md` — type checklist, license checklist, validation checklist
+10. `docs/MCP_RAG.md` — how the FTS5 knowledge base works, ingest pipeline, query patterns
+11. `docs/ROO_CODE.md` — how Roo modes are generated and activated
+12. `docs/AGENTS.md` — all 11 agents: role, skills, when to use
+13. `docs/AGENT_CAPABILITY_MATRIX.md` — matrix table (agent × capability)
+14. `docs/GOLDEN_MODELS.md` — 8 archetypes, Gate A0, how to pick one
+15. `docs/PROJECT_ARCHETYPES.md` — detailed archetype descriptions
+16. `docs/ADDING_KNOWLEDGE.md` — step-by-step: create .md → ingest → verify → test
+17. `docs/CLIENT_COMPATIBILITY.md` — Claude Code, Roo Code/Cline, Gemini CLI
+18. `docs/TESTING.md` — how to test the factory (doctor, test-mcp, manual agent test)
+19. `docs/recipes/criar-web-app.md`
+20. `docs/recipes/criar-automacao-python.md`
+21. `docs/recipes/revisar-projeto-existente.md`
+22. `docs/recipes/gerar-plano-de-testes.md`
+23. `docs/recipes/auditar-seguranca.md`
+24. `docs/recipes/criar-pipeline-dados.md`
+25. `docs/recipes/criar-mcp-server.md`
+26. `docs/recipes/adicionar-novo-conhecimento.md`
+27. `README.md` — reorganize as portal of entry: quick-start prominent, detailed content moved to docs/, add license section (dual-license table), add links to all new docs
+
+### Known issues
+
+- Content filtering (API Error: Output blocked by content filtering policy) triggered when the assistant's response included SECURITY.md content or large batches of security-adjacent text. Workaround: write SECURITY.md in a standalone call with minimal surrounding context.
+- Content filtering also triggered on "sim" response when context included the full CONTRIBUTING.md content. Restart terminal and continue from this CLAUDE.md as reference.

@@ -1,0 +1,32 @@
+{
+  "name": "project_archetype_classification_multi",
+  "description": "Validates that @techlead correctly classifies three distinct project descriptions into their correct archetypes: cli_tool, api_service, and integration_worker. Tests the breadth of Gate A0 classification logic across non-web-app archetypes. All three must be correct for a PASS.",
+  "agent": "techlead",
+  "archetype": "multiple",
+  "gate": "A0",
+  "prompt": "You are @techlead. You have received three separate project intake requests in the same batch. Run Gate A0 for each one and produce an archetype classification with rationale.\n\nProject A: 'A command-line tool that takes a CSV file as input, validates it against a configurable schema, generates a formatted PDF report, and outputs it to a specified directory. It will be distributed as a standalone binary that data analysts install locally. No web interface, no API, no database.'\n\nProject B: 'A REST API that exposes customer profile data from our internal database to partner organizations. Partners authenticate via API keys. The API must support filtering, pagination, and field selection. It will be deployed as a containerized service. No UI needed.'\n\nProject C: 'A background worker that subscribes to a Kafka topic, receives order events, enriches them with product catalog data from a Redis cache, applies business rules, and publishes the result to another Kafka topic. Must handle message failures with retry and dead-letter queue support.'",
+  "expected_contains": [
+    "cli_tool",
+    "api_service",
+    "integration_worker",
+    "Project A",
+    "Project B",
+    "Project C",
+    "Typer",
+    "FastAPI",
+    "tenacity",
+    "dead-letter"
+  ],
+  "must_not_contain": [
+    "web_app",
+    "Next.js",
+    "automation_script",
+    "data_pipeline",
+    "notebook_analysis",
+    "mcp_server",
+    "React",
+    "Prisma"
+  ],
+  "rubric": "techlead_rubric",
+  "notes": "All three classifications must be correct for PASS. One wrong classification = FAIL. Rationale quality matters: the agent should explain WHY Project A is cli_tool (local binary, no server, no API) vs. why it is NOT automation_script (automation_scripts are scheduled jobs; this is an interactive tool). Similarly, why Project B is api_service (REST, external consumers) vs. web_app (no UI). Project C is integration_worker specifically because it: subscribes to a message queue, has retry/dead-letter requirements, and is event-driven rather than request-driven. Note: 'tenacity' is the retry library in the integration_worker Golden Model. Its mention is a strong positive signal."
+}

@@ -1,6 +1,8 @@
 {
   "project_name": "Enterprise Portal — Supplier Management Module",
   "project_id": "proj-supplier-mgmt-v1",
+  "project_archetype": "web_app",
+  "golden_model": "standards/golden-model-web-app.md",
   "created_at": "2026-05-10T09:00:00Z",
   "updated_at": "2026-05-17T14:30:00Z",
   "current_phase": "qa",
@@ -81,5 +83,10 @@
     { "gate": 2, "status": "APPROVED_WITH_ADR", "decided_at": "2026-05-13T11:00:00Z", "notes": "ADR-001 for email service" },
     { "gate": 3, "status": "APPROVED", "decided_at": "2026-05-14T10:00:00Z", "notes": "All tasks atomic" }
   ],
+  "mcp_status": {
+    "server_online": true,
+    "last_checked": "2026-05-17T14:00:00Z",
+    "documents_indexed": 7718
+  },
   "next_action": "Await QA_Report.md from Agente06_QaEngineer then issue Gate 4 decision"
 }

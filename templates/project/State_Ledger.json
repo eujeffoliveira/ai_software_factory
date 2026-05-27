@@ -1,0 +1,36 @@
+{
+  "project_name": "",
+  "project_id": "",
+  "project_archetype": "",
+  "golden_model": "",
+  "created_at": "",
+  "updated_at": "",
+  "current_phase": "requirements",
+  "current_agent": "Agente00_TechLead",
+  "next_agent": "Agente01_ProductOwner",
+  "approved_artifacts": {
+    "prd": false,
+    "architecture": false,
+    "api_contract": false,
+    "db_schema": false,
+    "execution_plan": false,
+    "qa": false,
+    "security": false,
+    "deployment": false,
+    "rollback": false,
+    "post_deploy": false
+  },
+  "open_questions": [],
+  "decisions": [],
+  "adrs": [],
+  "risks": [],
+  "blocked_tasks": [],
+  "human_approvals_required": [],
+  "gate_history": [],
+  "mcp_status": {
+    "server_online": null,
+    "last_checked": null,
+    "documents_indexed": null
+  },
+  "next_action": ""
+}

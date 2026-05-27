@@ -1,5 +1,5 @@
 # link-roo.ps1 — Vincular agentes Roo Code/Cline ao projeto atual
-# Uso: $env:FACTORY_ROOT\link-roo.ps1
+# Uso: & "$env:FACTORY_ROOT\link-roo.ps1"
 
 $ErrorActionPreference = "Stop"
 $FACTORY_PATH = if ($env:FACTORY_ROOT) { $env:FACTORY_ROOT } else { Write-Error "FACTORY_ROOT nao definido."; exit 1 }

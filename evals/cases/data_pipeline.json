@@ -1,0 +1,31 @@
+{
+  "name": "data_pipeline_stack_selection",
+  "description": "Validates that when given a data pipeline task, the agent recommends the correct modern stack (Polars + DuckDB + Pandera) rather than the legacy alternative (pandas + SQLAlchemy). Tests archetype classification as data_pipeline and stack selection within that archetype.",
+  "agent": "techlead",
+  "archetype": "data_pipeline",
+  "gate": "A0",
+  "prompt": "You are @techlead. A new project request has arrived. The description is: 'We receive daily CSV exports from three source systems (ERP, CRM, and a logistics platform). Each file contains between 500,000 and 5,000,000 rows. We need to: (1) ingest all three files, (2) validate data quality (check for nulls in required fields, validate date formats, check referential integrity between files), (3) join and transform the data into a unified customer activity view, (4) write the output to a Parquet file for downstream analytics, and (5) produce a data quality report showing validation failures. The process runs daily and must complete within 30 minutes.' Run Gate A0: classify the archetype, select the Golden Model, and produce the recommended tech stack with justification.",
+  "expected_contains": [
+    "data_pipeline",
+    "Polars",
+    "DuckDB",
+    "Pandera",
+    "Parquet",
+    "A0_APPROVED",
+    "bronze",
+    "silver",
+    "gold"
+  ],
+  "must_not_contain": [
+    "pandas",
+    "SQLAlchemy",
+    "web_app",
+    "Next.js",
+    "React",
+    "Django",
+    "Flask",
+    "automation_script"
+  ],
+  "rubric": "dataengineer_rubric",
+  "notes": "The bronze/silver/gold medallion pattern mention is a positive signal but not required for PASS. The critical discriminators are: (1) Polars recommended instead of pandas — Polars is the mandatory choice for large-volume transformations in the data_pipeline Golden Model; (2) DuckDB for SQL-like operations on files; (3) Pandera for schema validation. If the agent recommends pandas for a 5M-row pipeline, that is a FAIL on the stack selection dimension. SQLAlchemy is a web-app/API ORM and has no place in a file-processing pipeline."
+}

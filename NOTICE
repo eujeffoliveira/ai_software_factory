@@ -1,0 +1,52 @@
+AI Software Factory
+Copyright (c) 2026 Jefferson Oliveira
+
+─────────────────────────────────────────────────────────────────────────────
+
+This product includes software developed by Jefferson Oliveira.
+https://github.com/eujeffoliveira/ai_software_factory
+
+─────────────────────────────────────────────────────────────────────────────
+
+Licensing
+─────────
+
+Code, scripts and tooling (install.ps1, uninstall.ps1, doctor.ps1,
+test-mcp.ps1, update-knowledge.ps1, link-mcp.ps1, link-roo.ps1,
+tools/mcp-knowledge-search/server.py, tools/mcp-knowledge-search/database.py,
+tools/mcp-knowledge-search/ingest.py, tools/mcp-knowledge-search/test_health.py,
+and all other .ps1, .py, .sh, .js, .ts files) are licensed under the
+Apache License, Version 2.0.
+
+Documentation, prompts, templates, examples, playbooks, checklists and
+knowledge artifacts (all .md files in docs/, Agente*/knowledge/,
+Agente*/skills/, Agente*/templates/, Agente*/examples/, Agente*/checklists/,
+bibliography/playbooks/, standards/, and all Agente*/prompt.md files) are
+licensed under Creative Commons Attribution 4.0 International (CC BY 4.0),
+unless otherwise noted.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Generated artifacts
+────────────────────
+
+Files generated at runtime (knowledge.db, roo/.roomodes, roo/.clinerules,
+~/.claude/agents/*.md, .mcp.json, knowledge-config.json) are derivative
+works of this project and inherit the applicable license based on their type
+(code/config = Apache-2.0, documentation/prompts = CC BY 4.0).
+
+─────────────────────────────────────────────────────────────────────────────
+
+Third-party materials
+──────────────────────
+
+This project's knowledge base may reference or be inspired by third-party
+books, papers, articles and open-source projects. Such third-party materials
+remain under their respective licenses and are not relicensed by this project.
+
+Third-party open-source dependencies used at runtime:
+  - FastMCP (MIT License) — https://github.com/jlowin/fastmcp
+  - SQLite (Public Domain) — https://sqlite.org
+  - Python standard library (PSF License) — https://python.org
+
+─────────────────────────────────────────────────────────────────────────────

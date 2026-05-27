@@ -1,0 +1,95 @@
+name: Bug Report
+description: Report something that is not working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please fill in as much detail as possible.
+        **Do not include secrets, API keys, tokens, or personal data in any field.**
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: What is happening? Be as specific as possible.
+      placeholder: "Example: Running install.ps1 completes without error but @techlead is not recognized in Claude Code."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands or actions that trigger the bug.
+      placeholder: |
+        1. Run `.\install.ps1`
+        2. Open a new terminal
+        3. Run `claude` in any directory
+        4. Type `@techlead hello`
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happens instead?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS
+        - Linux (Ubuntu/Debian)
+        - Linux (other)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: factory_version
+    attributes:
+      label: Factory version
+      description: Run `Get-Content VERSION` (or `cat VERSION`) in the factory root.
+      placeholder: "0.1.0"
+
+  - type: input
+    id: claude_code_version
+    attributes:
+      label: Claude Code version
+      description: Run `claude --version`.
+      placeholder: "2.x.x"
+
+  - type: textarea
+    id: doctor_output
+    attributes:
+      label: doctor.ps1 output
+      description: Run `.\doctor.ps1` and paste the full output here. Remove any paths or values that are personal/sensitive.
+      render: text
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste relevant log lines here. Remove secrets, tokens, and personal data before posting.
+      render: text
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or additional context
+      description: Add any other context that helps understand the problem.

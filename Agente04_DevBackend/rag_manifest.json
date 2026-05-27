@@ -1,4 +1,5 @@
 {
+  "_note": "Declarative runtime policy — not yet enforced programmatically. Defines which sources this agent may access at runtime. Future: MCP server and ingest.py will support per-agent source filtering via this manifest.",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "agent_id": "Agente04_DevBackend",
   "version": "1.0.0",

@@ -1,0 +1,81 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new feature, a new agent, a new archetype, a new skill, or an improvement to an existing capability.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem this feature solves
+      description: What limitation or gap does this address? What is currently impossible or painful?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you would like to see added or changed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you consider? Why is your proposal better?
+
+  - type: checkboxes
+    id: impact_agents
+    attributes:
+      label: Affected agents (select all that apply)
+      options:
+        - label: "@techlead (Agente00)"
+        - label: "@po (Agente01)"
+        - label: "@architect (Agente02)"
+        - label: "@engineer (Agente03)"
+        - label: "@devbackend (Agente04)"
+        - label: "@devfrontend (Agente05)"
+        - label: "@qa (Agente06)"
+        - label: "@devsecops (Agente07)"
+        - label: "@devops (Agente08)"
+        - label: "@uxui (Agente09)"
+        - label: "@dataengineer (Agente10)"
+        - label: No agents affected
+
+  - type: checkboxes
+    id: impact_areas
+    attributes:
+      label: Affected areas (select all that apply)
+      options:
+        - label: install.ps1 / installer
+        - label: MCP Knowledge Search (server, ingest, or database)
+        - label: knowledge.db / RAG pipeline
+        - label: Standards / Golden Models
+        - label: Skills
+        - label: Checklists or templates
+        - label: Roo Code / .roomodes
+        - label: Licensing or governance
+        - label: Documentation
+        - label: New archetype
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority (your assessment)
+      options:
+        - Low — nice to have
+        - Medium — would meaningfully improve the workflow
+        - High — blocks an important use case
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, examples, screenshots, or anything else that helps explain the request.

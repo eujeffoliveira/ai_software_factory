@@ -7,6 +7,11 @@
   "properties": {
     "project_name": { "type": "string", "minLength": 1 },
     "project_id": { "type": "string", "minLength": 1 },
+    "project_archetype": {
+      "type": "string",
+      "enum": ["web_app", "automation_script", "data_pipeline", "api_service", "cli_tool", "mcp_server", "integration_worker", "notebook_analysis", ""]
+    },
+    "golden_model": { "type": "string" },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" },
     "current_phase": {
@@ -141,7 +146,16 @@
         }
       }
     },
-    "next_action": { "type": "string", "minLength": 1 }
+    "next_action": { "type": "string", "minLength": 1 },
+    "mcp_status": {
+      "type": "object",
+      "properties": {
+        "server_online": { "type": ["boolean", "null"] },
+        "last_checked": { "type": ["string", "null"] },
+        "documents_indexed": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }
