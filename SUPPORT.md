@@ -71,7 +71,7 @@ Or check `knowledge-config.json` for the `factory_version` field (generated afte
 | MCP search returns no results | Run `.\update-knowledge.ps1`, then `.\test-mcp.ps1` |
 | `doctor.ps1` shows ERROR on `FACTORY_ROOT` | Re-run `.\install.ps1` to set the env var |
 | Python import errors in MCP | Run `.\install.ps1 -ForceDeps` |
-| Roo Code modes not appearing | Run `.\link-roo.ps1` from within the target project |
+| Codex custom agents not available | Re-run `.\install.ps1` and check `~/.codex/agents/` |
 
 See `docs/TROUBLESHOOTING.md` for a full problem/fix reference.
 

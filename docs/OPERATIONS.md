@@ -26,18 +26,6 @@ Em qualquer projeto, abra uma sessão Claude Code e chame os agentes com `@nome`
 
 Os agentes funcionam **em qualquer diretório**, sem configuração adicional por projeto.
 
-### Roo Code / Cline
-
-1. Após `.\install.ps1`, execute `.\link-roo.ps1` na raiz do projeto:
-   ```powershell
-   cd meu-projeto
-   & "$env:FACTORY_ROOT\link-roo.ps1"
-   ```
-2. Reinicie o VS Code / Roo Code
-3. Selecione o modo no painel do Roo Code (🏗️ Tech Lead, 📋 Product Owner, etc.)
-
----
-
 ## Atualizar após mudanças
 
 ### Atualizar agentes (editou prompt.md ou knowledge)
@@ -73,7 +61,8 @@ git pull
 
 ## Vincular MCP a um projeto específico
 
-Alguns projetos precisam de `.mcp.json` local (ex: Roo Code sem MCP global):
+Alguns projetos precisam de `.mcp.json` local ou de `.codex/config.toml`
+específico do projeto:
 
 ```powershell
 cd meu-projeto

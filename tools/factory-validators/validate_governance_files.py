@@ -14,7 +14,7 @@ GitHub templates:
   .github/ISSUE_TEMPLATE/feature_request.yml
 
 Key docs:
-  docs/INSTALLATION.md, docs/MCP_RAG.md, docs/ROO_CODE.md, docs/CODEX.md,
+  docs/INSTALLATION.md, docs/MCP_RAG.md, docs/CODEX.md,
   docs/AGENTS.md, docs/AGENT_CAPABILITY_MATRIX.md, docs/GOLDEN_MODELS.md,
   docs/TESTING.md, docs/ADDING_KNOWLEDGE.md
 """
@@ -48,7 +48,6 @@ REQUIRED = [
     # Key docs
     "docs/INSTALLATION.md",
     "docs/MCP_RAG.md",
-    "docs/ROO_CODE.md",
     "docs/CODEX.md",
     "docs/AGENTS.md",
     "docs/AGENT_CAPABILITY_MATRIX.md",

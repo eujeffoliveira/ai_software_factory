@@ -61,7 +61,7 @@ python -m pytest tools/mcp-knowledge-search/tests/ -v
 
 ## Factory Validators
 
-10 scripts Python que validam a estrutura e consistência da factory sem precisar de instalação.
+11 scripts Python que validam a estrutura e consistência da factory sem precisar de instalação.
 
 **Executar todos:**
 
@@ -87,7 +87,7 @@ python tools/factory-validators/validate_agent_structure.py
 | `validate_source_maps` | source_map.json de cada agente: JSON válido, agent_id, lista de fontes |
 | `validate_golden_models` | 8 golden models + project-classification.md em standards/ |
 | `validate_prompt_mcp_policy` | prompt.md de cada agente contém knowledge/ e regra de isolamento runtime |
-| `validate_runtime_compatibility` | wiring Claude/Codex/Roo, AGENTS.md, custom agents e MCP |
+| `validate_runtime_compatibility` | wiring Claude/Codex, AGENTS.md, custom agents e MCP |
 | `validate_no_hardcoded_paths` | Nenhum caminho absoluto de máquina em arquivos .md de agentes |
 | `validate_markdown_links` | Links internos em docs/ e raiz apontam para arquivos existentes |
 
@@ -116,21 +116,19 @@ O script verifica as categorias principais do ambiente instalado:
 | 3 | Dependências MCP | Pacote `mcp` instalado no Python detectado |
 | 4 | Claude Code | CLI detectável quando disponível |
 | 5 | Codex | CLI/config detectável quando disponível |
-| 6 | Roo Code/Cline | Extensão e settings quando disponíveis |
-| 7 | Agentes Claude | 11 arquivos em `~/.claude/agents/` com conteúdo válido |
-| 8 | Custom agents Codex | 11 arquivos em `~/.codex/agents/` com conteúdo válido |
-| 9 | Knowledge Database | `knowledge.db` existe na raiz da factory |
-| 10 | MCP Health Check | Executa `test-mcp.ps1` |
-| 11 | MCP Configuração | `~/.claude.json`, `~/.codex/config.toml`, `.mcp.json` e `.codex/config.toml` |
-| 12 | Roo Configurações | `roo/.roomodes` e `roo/.clinerules` |
-| 13 | Paths de agente | Nenhum arquivo de agente tem FACTORY_ROOT obsoleto |
-| 14 | Scripts principais | `install`, `uninstall`, `doctor`, `test-mcp`, `link-*` |
-| 15 | Permissões | Escrita em `~/.claude/agents/`, `~/.codex/agents/` e FACTORY_ROOT |
-| 16 | Variáveis de ambiente | `FACTORY_ROOT` disponível |
+| 6 | Agentes Claude | 11 arquivos em `~/.claude/agents/` com conteúdo válido |
+| 7 | Custom agents Codex | 11 arquivos em `~/.codex/agents/` com conteúdo válido |
+| 8 | Knowledge Database | `knowledge.db` existe na raiz da factory |
+| 9 | MCP Health Check | Executa `test-mcp.ps1` |
+| 10 | MCP Configuração | `~/.claude.json`, `~/.codex/config.toml`, `.mcp.json` e `.codex/config.toml` |
+| 11 | Paths de agente | Nenhum arquivo de agente tem FACTORY_ROOT obsoleto |
+| 12 | Scripts principais | `install`, `uninstall`, `doctor`, `test-mcp`, `link-mcp` |
+| 13 | Permissões | Escrita em `~/.claude/agents/`, `~/.codex/agents/` e FACTORY_ROOT |
+| 14 | Variáveis de ambiente | `FACTORY_ROOT` disponível |
 
 **Códigos de saída:** `0` = OK ou WARN, `1` = pelo menos um ERROR
 
-**Interpretação:** `OK` = passou, `WARN` = opcional ausente (ex: Roo Code não instalado), `ERROR` = falha crítica — executar `.\install.ps1`
+**Interpretação:** `OK` = passou, `WARN` = aviso não crítico, `ERROR` = falha crítica — executar `.\install.ps1`
 
 ---
 
@@ -146,7 +144,7 @@ O script verifica as categorias principais do ambiente instalado:
 |---|-------------|---------------------|
 | 1 | FACTORY_ROOT definido | Variável de ambiente existe e diretório é válido |
 | 2 | server.py existe | `tools/mcp-knowledge-search/server.py` presente |
-| 3 | knowledge.db existe | Banco em `tools/mcp-knowledge-search/knowledge.db` |
+| 3 | knowledge.db existe | Banco na raiz da factory |
 | 4 | FTS query funciona | Query de teste retorna ao menos 1 resultado |
 | 5 | Pacote mcp instalado | `import mcp` não levanta ImportError |
 | 6 | Tool listing funciona | Servidor responde corretamente à listagem de ferramentas |
@@ -183,10 +181,6 @@ Esperado: retorna resultados do `knowledge.db` com trechos de artefatos da facto
 ```
 
 Esperado: retorna JSON com `project_type: "automation_script"`.
-
-**Verificação do Roo Code** (após `link-roo.ps1` em um projeto): abrir VS Code, verificar 11 modos com emojis, selecionar "🏗️ Tech Lead" e fazer uma pergunta.
-
----
 
 ## Sequência recomendada pós-instalação
 
@@ -241,7 +235,6 @@ Invoke-Pester tests/powershell/Install.Tests.ps1 -Output Detailed
 | `Doctor.Tests.ps1` | `doctor.ps1` | Sintaxe AST, funções helper, categorias principais no conteúdo, exit code 0 ou 1 via child process |
 | `Uninstall.Tests.ps1` | `uninstall.ps1` | Sintaxe AST, 4 parâmetros, modo `-WhatIf` não deleta arquivos (usa `$TestDrive`), segurança do marcador AUTO-GENERATED |
 | `LinkMcp.Tests.ps1` | `link-mcp.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem `.mcp.json`, cópia real para `$TestDrive` com backup |
-| `LinkRoo.Tests.ps1` | `link-roo.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem arquivos `roo/`, cópia de `.roomodes` + `.clinerules` com backup |
 
 **Técnicas usadas:**
 

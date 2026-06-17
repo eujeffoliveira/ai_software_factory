@@ -1,5 +1,5 @@
 """
-Validate multi-runtime compatibility wiring for Claude Code, Codex, and Roo/Cline.
+Validate multi-runtime compatibility wiring for Claude Code and Codex.
 
 This is a static repository check. It does not require the Claude or Codex CLIs
 to be installed and does not inspect user-local generated files.
@@ -71,7 +71,6 @@ def main() -> int:
             "$CODEX_AGENTS_DIR",
             "developer_instructions",
             "[mcp_servers.knowledge]",
-            "roo/.roomodes",
         ],
         errors,
     )
@@ -98,12 +97,12 @@ def main() -> int:
     )
     require_contains(
         ".gitignore",
-        ["knowledge.db", ".mcp.json", ".codex/", "roo/"],
+        ["knowledge.db", ".mcp.json", ".codex/"],
         errors,
     )
     require_contains(
         "docs/CLIENT_COMPATIBILITY.md",
-        ["Claude Code", "Codex", "Roo Code", "MCP"],
+        ["Claude Code", "Codex", "MCP"],
         errors,
     )
     require_contains(
@@ -111,6 +110,19 @@ def main() -> int:
         ["Codex", "custom agents", ".codex/config.toml", "MCP"],
         errors,
     )
+
+    retired_runtime_markers = {
+        "install.ps1": ["Roo Code", "roo/.roomodes", "link-roo.ps1", "mcp_settings.json"],
+        "doctor.ps1": ["Roo Code", "roo/.roomodes", "link-roo.ps1", "mcp_settings.json"],
+        "README.md": ["Roo Code", "Cline", "link-roo.ps1", ".roomodes"],
+        "docs/CLIENT_COMPATIBILITY.md": ["Roo Code", "Cline", "link-roo.ps1", ".roomodes"],
+        "docs/INSTALLATION.md": ["Roo Code", "Cline", "link-roo.ps1", ".roomodes"],
+    }
+    for rel, markers in retired_runtime_markers.items():
+        content = read_text(rel)
+        for marker in markers:
+            if marker in content:
+                errors.append(f"  {rel} contains retired Roo/Cline marker: {marker}")
 
     total_checks = 11 + len(AGENT_NAMES)
     failed = len(errors)

@@ -6,6 +6,11 @@ Versionamento semântico via [SemVer](https://semver.org/lang/pt-BR/).
 
 ---
 
+## [Unreleased]
+
+### Removed
+- Integração de runtime baseada em custom modes do VS Code; a factory agora mantém suporte completo para Claude Code e Codex.
+
 ## [0.1.0] - 2026-05-22
 
 ### Added
@@ -15,8 +20,6 @@ Versionamento semântico via [SemVer](https://semver.org/lang/pt-BR/).
 - MCP/RAG central via `tools/mcp-knowledge-search/server.py` (FastMCP)
 - Ferramenta `health_check()` no servidor MCP para diagnóstico
 - Log estruturado JSON em `tools/mcp-knowledge-search/logs/mcp-knowledge.log`
-- Suporte Roo Code/Cline com `roo/.roomodes` e `roo/.clinerules`
-- Emojis nos nomes dos modos Roo (🏗️ 📋 📐 ⚙️ 🔌 🎨 🧪 🔒 🚀 ✏️ 🗄️)
 - Política MCP-first em todos os agentes (fallback explícito, nunca silencioso)
 - `test-mcp.ps1` — validação de saúde do MCP (7 checks, colorido, exit 0/1)
 - `test_health.py` — validador standalone Python (5 checks)
@@ -26,8 +29,8 @@ Versionamento semântico via [SemVer](https://semver.org/lang/pt-BR/).
 - `uninstall.ps1` com modos `-KeepKnowledge`, `-Full`, `-WhatIf`, `-Force`
 - Instalação idempotente: só escreve o que mudou (hash-driven)
 - Instalação atômica: temp → rename + backup com timestamp
-- Configuração MCP para Claude Code (`~/.claude.json`) e Roo Code
-- `link-mcp.ps1` e `link-roo.ps1` para vincular factory a projetos existentes
+- Configuração MCP para Claude Code (`~/.claude.json`)
+- `link-mcp.ps1` para vincular factory a projetos existentes
 - `update-knowledge.ps1` para reindexar após editar conhecimento
 - Documentação operacional: `docs/INSTALLATION.md`, `docs/OPERATIONS.md`, `docs/TROUBLESHOOTING.md`
 - Variável de ambiente `FACTORY_ROOT` configurada automaticamente

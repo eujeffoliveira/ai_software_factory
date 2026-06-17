@@ -5,7 +5,7 @@
 > Use os documentos atuais:
 > - **Instalação:** [`docs/INSTALLATION.md`](INSTALLATION.md)
 > - **Operações:** [`docs/OPERATIONS.md`](OPERATIONS.md)
-> - **Roo Code / Cline:** [`docs/ROO_CODE.md`](ROO_CODE.md)
+> - **Codex:** [`docs/CODEX.md`](CODEX.md)
 > - **Gemini CLI:** [`docs/CLIENT_COMPATIBILITY.md`](CLIENT_COMPATIBILITY.md#gemini-cli)
 > - **Troubleshooting:** [`docs/TROUBLESHOOTING.md`](TROUBLESHOOTING.md)
 >

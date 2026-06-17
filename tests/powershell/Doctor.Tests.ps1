@@ -77,28 +77,28 @@ Describe "doctor.ps1 — 14 diagnostic categories" {
         $content | Should -Match '4\.\s*Claude Code'
     }
 
-    It "category 5: Roo Code check present" {
-        $content | Should -Match '(?i)5\.\s*Roo'
+    It "category 5: Codex check present" {
+        $content | Should -Match '5\.\s*Codex'
     }
 
-    It "category 6: Agentes check present" {
+    It "category 6: Claude agents check present" {
         $content | Should -Match '(?i)6\.\s*(Claude Code — Agentes|Agentes)'
     }
 
-    It "category 7: Knowledge Database check present" {
-        $content | Should -Match '(?i)7\.\s*Knowledge'
+    It "category 7: Codex custom agents check present" {
+        $content | Should -Match '(?i)7\.\s*Codex'
     }
 
-    It "category 8: MCP Health check present" {
-        $content | Should -Match '(?i)8\.\s*MCP'
+    It "category 8: Knowledge Database check present" {
+        $content | Should -Match '(?i)8\.\s*Knowledge'
     }
 
-    It "category 9: MCP Configuracao check present" {
+    It "category 9: MCP Health check present" {
         $content | Should -Match '(?i)9\.\s*MCP'
     }
 
-    It "category 10: Roo Code configuracoes check present" {
-        $content | Should -Match '(?i)10\.\s*Roo'
+    It "category 10: MCP Configuracao check present" {
+        $content | Should -Match '(?i)10\.\s*MCP'
     }
 
     It "category 11: Paths em agentes check present" {

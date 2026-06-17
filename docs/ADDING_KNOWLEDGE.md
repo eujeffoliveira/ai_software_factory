@@ -36,7 +36,7 @@ context/prompts/prompt_padrao_destilacao_conhecimento.md
 Este é um workflow de 27 passos que guia a IA pelo processo completo de destilação. Para usá-lo:
 
 1. Abra `context/prompts/prompt_padrao_destilacao_conhecimento.md`
-2. Copie o conteúdo para uma nova sessão do Claude Code ou Roo Code
+2. Copie o conteúdo para uma nova sessão do Claude Code ou Codex
 3. Na seção "Fontes novas a processar", liste os caminhos ou descrições das novas fontes
 4. Execute a sessão — a IA auditará o repositório e destilará nos artefatos corretos
 5. Após a conclusão: execute `.\install.ps1`

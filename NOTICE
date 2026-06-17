@@ -12,7 +12,7 @@ Licensing
 ─────────
 
 Code, scripts and tooling (install.ps1, uninstall.ps1, doctor.ps1,
-test-mcp.ps1, update-knowledge.ps1, link-mcp.ps1, link-roo.ps1,
+test-mcp.ps1, update-knowledge.ps1, link-mcp.ps1,
 tools/mcp-knowledge-search/server.py, tools/mcp-knowledge-search/database.py,
 tools/mcp-knowledge-search/ingest.py, tools/mcp-knowledge-search/test_health.py,
 and all other .ps1, .py, .sh, .js, .ts files) are licensed under the
@@ -30,8 +30,9 @@ unless otherwise noted.
 Generated artifacts
 ────────────────────
 
-Files generated at runtime (knowledge.db, roo/.roomodes, roo/.clinerules,
-~/.claude/agents/*.md, .mcp.json, knowledge-config.json) are derivative
+Files generated at runtime (knowledge.db, ~/.claude/agents/*.md,
+~/.codex/agents/*.toml, .mcp.json, .codex/config.toml,
+knowledge-config.json) are derivative
 works of this project and inherit the applicable license based on their type
 (code/config = Apache-2.0, documentation/prompts = CC BY 4.0).
 

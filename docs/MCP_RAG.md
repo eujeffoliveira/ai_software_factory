@@ -8,7 +8,7 @@ O banco é criado pelo script `tools/mcp-knowledge-search/ingest.py` durante a e
 
 ## Como o servidor MCP funciona
 
-O servidor MCP (`tools/mcp-knowledge-search/server.py`) é um processo **stdio** baseado em FastMCP. Ele é iniciado **sob demanda** por Claude Code, Codex ou Roo Code quando um agente realiza a primeira chamada de ferramenta — não precisa estar rodando em background.
+O servidor MCP (`tools/mcp-knowledge-search/server.py`) é um processo **stdio** baseado em FastMCP. Ele é iniciado **sob demanda** por Claude Code ou Codex quando um agente realiza a primeira chamada de ferramenta — não precisa estar rodando em background.
 
 Fluxo de uma chamada:
 
@@ -25,7 +25,6 @@ A configuração do servidor fica em:
 - `~/.claude.json` — escopo global, nível raiz (`mcpServers.knowledge`) — usado pelo Claude Code
 - `~/.codex/config.toml` — escopo global Codex (`mcp_servers.knowledge`)
 - `.codex/config.toml` — escopo local Codex em projetos confiáveis
-- `%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json` — usado pelo Roo Code
 - `.mcp.json` — configuração local por projeto (criado por `link-mcp.ps1`)
 
 ## Política MCP-first
@@ -169,7 +168,7 @@ Execute `.\update-knowledge.ps1` após editar qualquer `.md` em:
 - `checklists/automation/`
 - `examples/requests/`
 
-Execute `.\install.ps1` após editar o `prompt.md` de qualquer agente — o instalador propaga o conteúdo completo para `~/.claude/agents/`, `~/.codex/agents/` e `roo/.roomodes`.
+Execute `.\install.ps1` após editar o `prompt.md` de qualquer agente — o instalador propaga o conteúdo completo para `~/.claude/agents/` e `~/.codex/agents/`.
 
 ## O que é indexado
 

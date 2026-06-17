@@ -53,10 +53,6 @@ $CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
 $CODEX_HOME_DIR    = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE ".codex" }
 $CODEX_AGENTS_DIR  = Join-Path $CODEX_HOME_DIR "agents"
 $CODEX_CONFIG      = Join-Path $CODEX_HOME_DIR "config.toml"
-$ROO_MCP_PATHS     = @(
-    "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json",
-    "$env:APPDATA\Code\User\globalStorage\RooVeterinaryInc.roo-cline\settings\mcp_settings.json"
-)
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 
 $agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer")
@@ -257,44 +253,14 @@ if (Test-Path $CODEX_CONFIG) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  5 — Roo Code: remover mcpServers.knowledge
-# ═════════════════════════════════════════════════════════════════════════════
-Write-Header "Roo Code — MCP entry"
-
-foreach ($rooMcp in $ROO_MCP_PATHS) {
-    if (-not (Test-Path $rooMcp)) { Write-Skip "Nao encontrado: $rooMcp"; continue }
-    try {
-        $rooRaw      = Get-Content $rooMcp -Raw -Encoding UTF8
-        $rooSettings = $rooRaw | ConvertFrom-Json -AsHashtable
-
-        if ($rooSettings.ContainsKey("mcpServers") -and $rooSettings["mcpServers"].ContainsKey("knowledge")) {
-            if ($WhatIf) {
-                Write-What "Removeria mcpServers.knowledge de: $rooMcp"
-            } else {
-                $rooSettings["mcpServers"].Remove("knowledge")
-                $rooJson = $rooSettings | ConvertTo-Json -Depth 10
-                $tmpRoo  = "$rooMcp.tmp"
-                [System.IO.File]::WriteAllText($tmpRoo, ($rooJson -replace "`r`n","`n"), $utf8NoBom)
-                Move-Item $tmpRoo $rooMcp -Force
-                Write-OK "mcpServers.knowledge removido de: $(Split-Path $rooMcp -Parent | Split-Path -Parent | Split-Path -Leaf)\..."
-            }
-        } else {
-            Write-Skip "mcpServers.knowledge nao encontrado em: $(Split-Path $rooMcp -Leaf)"
-        }
-    } catch {
-        Write-Warn "Nao foi possivel editar $rooMcp : $_"
-    }
-}
-
-# ═════════════════════════════════════════════════════════════════════════════
-#  6 — factory.ps1 (script auxiliar gerado)
+#  5 — factory.ps1 (script auxiliar gerado)
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "factory.ps1"
 
 Remove-IfExists -Path (Join-Path $BIN_DIR "factory.ps1") -Label "~/.local/bin/factory.ps1"
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  7 — Arquivos gerados no repositorio
+#  6 — Arquivos gerados no repositorio
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Arquivos gerados no repositorio"
 
@@ -307,9 +273,6 @@ $alwaysRemove = @(
 foreach ($rel in $alwaysRemove) {
     Remove-IfExists -Path (Join-Path $FACTORY_PATH $rel) -Label $rel
 }
-
-# roo/ — gerado pelo install.ps1
-Remove-IfExists -Path (Join-Path $FACTORY_PATH "roo") -Label "roo/" -Recurse
 
 $projectCodexConfig = Join-Path $FACTORY_PATH ".codex\config.toml"
 if (Test-Path $projectCodexConfig) {
@@ -334,11 +297,11 @@ if ($Full) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  8 — Scripts gerados (restaurar via git se possivel)
+#  7 — Scripts gerados (restaurar via git se possivel)
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Scripts gerados — restaurar via git"
 
-$generatedScripts = @("update-knowledge.ps1", "link-mcp.ps1", "link-roo.ps1")
+$generatedScripts = @("update-knowledge.ps1", "link-mcp.ps1")
 foreach ($f in $generatedScripts) {
     $scriptPath = Join-Path $FACTORY_PATH $f
     if (-not (Test-Path $scriptPath)) { Write-Skip "Nao encontrado: $f"; continue }
@@ -359,7 +322,7 @@ foreach ($f in $generatedScripts) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  9 — FACTORY_ROOT (apenas -Full)
+#  8 — FACTORY_ROOT (apenas -Full)
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "FACTORY_ROOT"
 
@@ -381,7 +344,7 @@ if ($Full) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  10 — Dependencias Python (apenas -Full)
+#  9 — Dependencias Python (apenas -Full)
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Dependencias Python"
 

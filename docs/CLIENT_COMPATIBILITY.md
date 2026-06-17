@@ -6,8 +6,6 @@
 |---|---|---|---|---|
 | Claude Code | Sim | Sim | `@nome` via `~/.claude/agents/*.md` | Completo |
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
-| Roo Code | Sim | Sim | custom modes via `roo/.roomodes` | Completo |
-| Cline | Sim | Sim | custom modes via `roo/.roomodes` | Completo |
 | Gemini CLI | Parcial | Não | wrapper `factory.ps1` | Parcial |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
@@ -68,30 +66,6 @@ O MCP `knowledge` é configurado em:
 
 Leia detalhes em `docs/CODEX.md`.
 
-## Roo Code / Cline
-
-Roo Code e Cline usam custom modes gerados em `roo/`.
-
-Configuração por projeto:
-
-```powershell
-cd C:\meu-projeto
-& "$env:FACTORY_ROOT\link-roo.ps1"
-```
-
-Isso copia:
-
-```text
-.roomodes
-.clinerules
-```
-
-O MCP pode vir do settings global do Roo ou do `.mcp.json` local criado por:
-
-```powershell
-& "$env:FACTORY_ROOT\link-mcp.ps1"
-```
-
 ## Gemini CLI
 
 Gemini CLI tem suporte parcial via `factory.ps1`.
@@ -105,7 +79,7 @@ Limitações:
 
 - sem `@nome`;
 - sem MCP `knowledge`;
-- sem custom modes;
+- sem custom agents nativos;
 - sem handoff automático;
 - exige fornecer contexto manual quando necessário.
 
@@ -120,17 +94,23 @@ Para clientes sem integração:
 
 Esse modo não deve ser usado para operação de produção da factory.
 
+## Compatibilidade removida
+
+O runtime de custom modes do VS Code não é mais suportado pela factory. O
+instalador não gera custom modes, não cria script dedicado para esse runtime,
+não edita configurações do VS Code e o diagnóstico não valida esses artefatos.
+
 ## Comparação de recursos
 
-| Recurso | Claude Code | Codex | Roo/Cline | Gemini CLI | Manual |
-|---|---:|---:|---:|---:|---:|
-| Prompt completo | Sim | Sim | Sim | Parcial | Manual |
-| Knowledge embutida | Sim | Sim | Sim | Não | Manual |
-| MCP Knowledge | Sim | Sim | Sim | Não | Não |
-| Agentes especializados | `@nome` | custom agents | custom modes | wrapper | Manual |
-| State Ledger | Sim | Sim | Sim | Manual | Manual |
-| Quality gates | Sim | Sim | Sim | Manual | Manual |
-| Config por projeto | Opcional | `.codex/config.toml` | `.roomodes`/`.clinerules` | Não | Não |
+| Recurso | Claude Code | Codex | Gemini CLI | Manual |
+|---|---:|---:|---:|---:|
+| Prompt completo | Sim | Sim | Parcial | Manual |
+| Knowledge embutida | Sim | Sim | Não | Manual |
+| MCP Knowledge | Sim | Sim | Não | Não |
+| Agentes especializados | `@nome` | custom agents | wrapper | Manual |
+| State Ledger | Sim | Sim | Manual | Manual |
+| Quality gates | Sim | Sim | Manual | Manual |
+| Config por projeto | Opcional | `.codex/config.toml` | Não | Não |
 
 ## Validação
 
@@ -140,5 +120,5 @@ Esse modo não deve ser usado para operação de produção da factory.
 python tools/factory-validators/run_all.py
 ```
 
-`doctor.ps1` valida agentes Claude, custom agents Codex, MCP, `knowledge.db`,
-scripts esperados e configuração Roo quando disponível.
+`doctor.ps1` valida agentes Claude, custom agents Codex, MCP, `knowledge.db` e
+scripts esperados.

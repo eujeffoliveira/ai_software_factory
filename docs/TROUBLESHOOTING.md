@@ -166,36 +166,6 @@ Se o MCP estiver inativo: o agente deve declarar isso explicitamente (não silen
 
 ---
 
-## Problemas com Roo Code
-
-### Modos não aparecem no Roo Code
-
-**Sintoma**: Modos customizados não listados.
-
-**Fix**:
-1. Verificar se `.roomodes` foi copiado para o projeto:
-   ```powershell
-   cd meu-projeto
-   & "$env:FACTORY_ROOT\link-roo.ps1"
-   ```
-2. Recarregar a janela VS Code (`Ctrl+Shift+P` → "Developer: Reload Window")
-
----
-
-### MCP não funciona no Roo Code
-
-**Sintoma**: Ferramenta `search_knowledge` não disponível no Roo.
-
-**Fix**:
-1. Verificar se `mcp_settings.json` foi atualizado:
-   ```powershell
-   cd $env:FACTORY_ROOT
-   .\install.ps1
-   ```
-2. Reiniciar VS Code completamente
-
----
-
 ## Problemas de desinstalação
 
 ### `uninstall.ps1` não remove agente (sem marcador)

@@ -31,9 +31,9 @@ Thank you for your interest in contributing. This document explains how to set u
 | Python | 3.10+ | MCP server, knowledge ingestion |
 | PowerShell | 7.2+ | Install/doctor/uninstall scripts |
 | Claude Code | latest | Running agents (Claude Code CLI) |
+| Codex | latest | Running custom agents and MCP in Codex |
 
 Optional but recommended:
-- Roo Code extension (VS Code) — for testing Roo modes
 - SQLite CLI — for inspecting knowledge.db manually
 
 ---
@@ -63,14 +63,13 @@ The installer is idempotent — re-running it after changes updates only what ch
 
 | Command | What it does |
 |---|---|
-| `.\install.ps1` | Installs/updates agents, MCP server, Roo modes |
+| `.\install.ps1` | Installs/updates agents and MCP server |
 | `.\install.ps1 -WhatIf` | Dry-run — shows what would change |
 | `.\doctor.ps1` | Full diagnostic (14 categories) |
 | `.\test-mcp.ps1` | MCP health check (7 checks) |
 | `.\update-knowledge.ps1` | Re-ingests all knowledge files into knowledge.db |
 | `.\uninstall.ps1 -WhatIf` | Dry-run uninstall |
 | `.\link-mcp.ps1` | Links MCP server to a project's .mcp.json |
-| `.\link-roo.ps1` | Generates Roo Code modes for a project |
 | `& "$env:FACTORY_ROOT\init-project.ps1"` | Initializes `.factory/` workspace in the current project (optional, for multi-sprint projects) |
 | `python tools/factory-validators/run_all.py` | Run all 10 factory structure validators |
 | `python -m pytest tools/mcp-knowledge-search/tests/ -v` | Run 39 MCP unit tests |
@@ -220,7 +219,7 @@ Format:
 When adding new knowledge sources (books, course modules, articles, playbooks), use the standard distillation workflow instead of editing knowledge files manually.
 
 1. Open `context/prompts/prompt_padrao_destilacao_conhecimento.md`.
-2. Copy its contents into a new Claude Code or Roo Code session.
+2. Copy its contents into a new Claude Code or Codex session.
 3. In the "Fontes novas a processar" section, list the paths or descriptions of your new sources.
 4. Run the prompt — it guides the AI through 27 distillation steps covering all artifact types.
 5. After the session completes, run `.\install.ps1` to propagate the changes.

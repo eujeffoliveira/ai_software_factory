@@ -1,7 +1,7 @@
 # Codex
 
 Este guia explica como usar a AI Software Factory no Codex preservando a mesma
-fonte canônica dos agentes usados por Claude Code e Roo Code.
+fonte canônica dos agentes usados por Claude Code.
 
 ## Modelo de integração
 
@@ -101,8 +101,8 @@ cd C:\meu-projeto
 & "$env:FACTORY_ROOT\link-mcp.ps1"
 ```
 
-Esse comando cria `.mcp.json` para clientes compatíveis com o formato Claude/Roo
-e adiciona um bloco gerenciado em `.codex/config.toml` para Codex.
+Esse comando cria `.mcp.json` para clientes compatíveis com o formato Claude e
+adiciona um bloco gerenciado em `.codex/config.toml` para Codex.
 
 ## Teste rápido
 

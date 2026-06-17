@@ -14,7 +14,6 @@ The factory supports multiple agent runtimes from the same canonical sources:
 |---|---|---|---|
 | Claude Code | `~/.claude/agents/<name>.md` and `@name` | `~/.claude.json` plus `.mcp.json` | Primary historical runtime |
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
-| Roo Code / Cline | `roo/.roomodes` and `roo/.clinerules` | Roo `mcp_settings.json` or `.mcp.json` | Project-linked VS Code modes |
 | Gemini CLI | `factory.ps1` wrapper | none | Partial/manual support |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
@@ -118,19 +117,15 @@ or updates:
 
 - Claude agents in `~/.claude/agents/`
 - Codex custom agents in `~/.codex/agents/`
-- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, `.mcp.json`, and Roo
-  settings when available
+- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, and `.mcp.json`
 - local `.codex/config.toml` for this factory repository
-- Roo/Cline files in `roo/`
-- helper scripts such as `update-knowledge.ps1`, `link-mcp.ps1`, and
-  `link-roo.ps1`
+- helper scripts such as `update-knowledge.ps1` and `link-mcp.ps1`
 
 Do not hand-edit generated user-local files. Update `install.ps1` or the
 canonical `AgenteXX_*/` sources, then run the installer.
 
 Generated local artifacts with machine-specific paths are intentionally
-gitignored: `knowledge.db`, `knowledge-config.json`, `.mcp.json`, `.codex/`,
-and `roo/`.
+gitignored: `knowledge.db`, `knowledge-config.json`, `.mcp.json`, and `.codex/`.
 
 ## Validation Commands
 

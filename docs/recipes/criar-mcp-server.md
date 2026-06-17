@@ -7,7 +7,7 @@ Criar um servidor MCP (Model Context Protocol) em Python com FastMCP que expõe 
 ## Quando usar
 
 - Você precisa que agentes de IA acessem uma base de dados, API interna ou serviço específico
-- Você quer expor capacidades de busca, geração de documentos ou consulta a sistemas legados para agentes Claude Code ou Roo Code
+- Você quer expor capacidades de busca, geração de documentos ou consulta a sistemas legados para agentes Claude Code ou Codex
 - Você está construindo uma extensão da própria fábrica (como o `tools/mcp-knowledge-search/` já existente)
 - Você precisa de integração entre Claude Code e ferramentas proprietárias da sua organização
 

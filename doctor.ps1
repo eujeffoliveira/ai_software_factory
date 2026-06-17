@@ -221,52 +221,9 @@ if (Test-Path $codexConfig) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  6. ROO CODE / CLINE
+#  6. CLAUDE AGENTS
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "6. Roo Code / Cline"
-
-$rooExtPaths = @(
-    "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline",
-    "$env:APPDATA\Code\User\globalStorage\RooVeterinaryInc.roo-cline"
-)
-$rooDetected = $false
-foreach ($rooPath in $rooExtPaths) {
-    if (Test-Path $rooPath) {
-        Write-CheckOK "Roo Code detectado: $rooPath"
-        $rooDetected = $true
-
-        # Verificar mcp_settings.json
-        $rooMcp = Join-Path $rooPath "settings\mcp_settings.json"
-        if (Test-Path $rooMcp) {
-            try {
-                $rooSettings = Get-Content $rooMcp -Raw | ConvertFrom-Json
-                if ($rooSettings.mcpServers.knowledge) {
-                    Write-CheckOK "mcpServers.knowledge configurado em Roo mcp_settings.json"
-                } else {
-                    Write-CheckWarn "mcpServers.knowledge ausente em Roo mcp_settings.json"
-                    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-                    $hadWarning = $true
-                }
-            } catch {
-                Write-CheckWarn "mcp_settings.json invalido: $_"
-                $hadWarning = $true
-            }
-        } else {
-            Write-CheckWarn "mcp_settings.json nao encontrado em Roo settings"
-            $hadWarning = $true
-        }
-        break
-    }
-}
-if (-not $rooDetected) {
-    Write-CheckWarn "Roo Code/Cline nao detectado (extensao VS Code — opcional)"
-    $hadWarning = $true
-}
-
-# ═════════════════════════════════════════════════════════════════════════════
-#  7. CLAUDE AGENTS
-# ═════════════════════════════════════════════════════════════════════════════
-Write-Section "7. Claude Code — Agentes"
+Write-Section "6. Claude Code — Agentes"
 
 $claudeAgentsDir = "$env:USERPROFILE\.claude\agents"
 
@@ -309,9 +266,9 @@ if ($agentsOK.Count -eq 11) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  8. CODEX CUSTOM AGENTS
+#  7. CODEX CUSTOM AGENTS
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "8. Codex — Custom Agents"
+Write-Section "7. Codex — Custom Agents"
 
 if (Test-Path $codexAgentsDir) {
     Write-CheckOK "Diretorio ~/.codex/agents/ existe"
@@ -355,9 +312,9 @@ if ($codexOK.Count -eq 11) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  9. KNOWLEDGE DB
+#  8. KNOWLEDGE DB
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "9. Knowledge Database"
+Write-Section "8. Knowledge Database"
 
 $dbPath = Join-Path $factoryRoot "knowledge.db"
 if (Test-Path $dbPath) {
@@ -369,9 +326,9 @@ if (Test-Path $dbPath) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  10. MCP HEALTH CHECK (via test-mcp.ps1)
+#  9. MCP HEALTH CHECK (via test-mcp.ps1)
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "10. MCP Health Check"
+Write-Section "9. MCP Health Check"
 
 $testMcpPath = Join-Path $factoryRoot "test-mcp.ps1"
 if (Test-Path $testMcpPath) {
@@ -411,9 +368,9 @@ if (Test-Path $testMcpPath) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  11. MCP CONFIGURACAO
+#  10. MCP CONFIGURACAO
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "11. MCP Configuracao"
+Write-Section "10. MCP Configuracao"
 
 $claudeSettings = "$env:USERPROFILE\.claude.json"
 if (Test-Path $claudeSettings) {
@@ -493,37 +450,9 @@ if (Test-Path $projectCodexConfig) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  12. ROO CONFIGS
+#  11. PATHS NOS AGENTES GERADOS
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "12. Roo Code — Configuracoes"
-
-$rooModes = Join-Path $factoryRoot "roo\.roomodes"
-$rooRules = Join-Path $factoryRoot "roo\.clinerules"
-
-if (Test-Path $rooModes) {
-    try {
-        $modes = (Get-Content $rooModes -Raw | ConvertFrom-Json).customModes
-        Write-CheckOK "roo/.roomodes existe ($($modes.Count) modos)"
-    } catch {
-        Write-CheckWarn "roo/.roomodes existe mas JSON invalido"
-        $hadWarning = $true
-    }
-} else {
-    Write-CheckWarn "roo/.roomodes nao encontrado — execute .\install.ps1 se usar Roo Code"
-    $hadWarning = $true
-}
-
-if (Test-Path $rooRules) {
-    Write-CheckOK "roo/.clinerules existe"
-} else {
-    Write-CheckWarn "roo/.clinerules nao encontrado"
-    $hadWarning = $true
-}
-
-# ═════════════════════════════════════════════════════════════════════════════
-#  13. PATHS NOS AGENTES GERADOS
-# ═════════════════════════════════════════════════════════════════════════════
-Write-Section "13. Paths em agentes (FACTORY_ROOT)"
+Write-Section "11. Paths em agentes (FACTORY_ROOT)"
 
 $staleAgents = @()
 foreach ($name in $agentNames) {
@@ -551,9 +480,9 @@ if ($staleAgents.Count -gt 0) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  14. SCRIPTS PRINCIPAIS
+#  12. SCRIPTS PRINCIPAIS
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "14. Scripts principais"
+Write-Section "12. Scripts principais"
 
 $requiredScripts = @{
     "install.ps1"          = "Instalador principal"
@@ -562,7 +491,6 @@ $requiredScripts = @{
     "update-knowledge.ps1" = "Reindexador do knowledge"
     "doctor.ps1"           = "Diagnostico geral"
     "link-mcp.ps1"         = "Vinculador MCP por projeto"
-    "link-roo.ps1"         = "Vinculador Roo por projeto"
 }
 
 foreach ($script in $requiredScripts.Keys) {
@@ -576,9 +504,9 @@ foreach ($script in $requiredScripts.Keys) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  15. PERMISSOES
+#  13. PERMISSOES
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "15. Permissoes de escrita"
+Write-Section "13. Permissoes de escrita"
 
 # ~/.claude/agents/
 $testFile = Join-Path $claudeAgentsDir ".doctor_write_test"
@@ -619,9 +547,9 @@ try {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  16. VARIAVEIS DE AMBIENTE NA SESSAO
+#  14. VARIAVEIS DE AMBIENTE NA SESSAO
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Section "16. Variaveis de ambiente na sessao"
+Write-Section "14. Variaveis de ambiente na sessao"
 
 $envVars = @("FACTORY_ROOT")
 foreach ($var in $envVars) {

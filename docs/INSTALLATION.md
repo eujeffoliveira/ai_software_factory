@@ -4,12 +4,11 @@
 
 | Requisito | Verificação | Observação |
 |-----------|------------|-----------|
-| Windows 10/11 | — | Linux/macOS: só `install.sh` (CLI), sem Roo |
+| Windows 10/11 | — | Linux/macOS: `install.sh` mantém o fluxo CLI legado |
 | PowerShell 5.1+ | `$PSVersionTable.PSVersion` | Disponível nativamente |
 | Python 3.x no PATH | `python --version` | Necessário para MCP/RAG |
 | Claude Code | `claude --version` | Para usar agentes com `@nome` |
 | Codex | `codex --version` | Para usar custom agents e MCP no Codex |
-| Roo Code/Cline (VS Code) | Extensão instalada | Opcional |
 
 ---
 
@@ -27,7 +26,7 @@ Abra um **novo terminal** depois da instalação — `FACTORY_ROOT` só fica dis
 
 ## O que o instalador faz
 
-O `install.ps1` executa 9 fases em sequência:
+O `install.ps1` executa 8 fases em sequência:
 
 ### Fase 1 — FACTORY_ROOT
 Define a variável de ambiente `FACTORY_ROOT` apontando para o diretório da factory. Usada por todos os scripts auxiliares.
@@ -64,12 +63,8 @@ Cria/atualiza `knowledge.db` (SQLite FTS5, ~7.000 documentos). Indexa todos os `
 - Atualiza `~/.claude.json` (Claude Code global) com `mcpServers.knowledge`
 - Atualiza `~/.codex/config.toml` com `mcp_servers.knowledge`
 - Cria `.codex/config.toml` local na factory com caminhos relativos
-- Atualiza Roo Code `mcp_settings.json` (se detectado)
 
-### Fase 8 — Roo Code / Cline
-Gera `roo/.roomodes` com 11 custom modes e `roo/.clinerules` com política MCP-first.
-
-### Fase 9 — Scripts auxiliares
+### Fase 8 — Scripts auxiliares
 Gera/atualiza scripts em `~/.local/bin/` e na raiz da factory.
 
 ### Fase Final — MCP Health Check
@@ -146,12 +141,8 @@ chmod +x install.sh
 ├── .mcp.json                ← gerado
 ├── .codex/
 │   └── config.toml          ← gerado para Codex local
-├── roo/
-│   ├── .roomodes            ← gerado
-│   └── .clinerules          ← gerado
 ├── update-knowledge.ps1     ← gerado
-├── link-mcp.ps1             ← gerado
-└── link-roo.ps1             ← gerado
+└── link-mcp.ps1             ← gerado
 ```
 
 ---
@@ -167,6 +158,5 @@ Após a instalação, veja:
 | [AGENTS.md](AGENTS.md) | Referência dos 11 agentes e exemplos de prompt |
 | [MCP_RAG.md](MCP_RAG.md) | Como o MCP Knowledge Search funciona |
 | [CODEX.md](CODEX.md) | Como usar custom agents e MCP no Codex |
-| [ROO_CODE.md](ROO_CODE.md) | Como usar com Roo Code / Cline |
 | [GOLDEN_MODELS.md](GOLDEN_MODELS.md) | Stack técnica por arquétipo |
 | [recipes/](recipes/) | Fluxos prontos para uso por arquétipo |

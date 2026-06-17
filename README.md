@@ -1,8 +1,8 @@
 # AI Software Factory — Multi-Agent SDLC Framework
 
-Uma instalação multi-runtime de 11 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code, Codex e Roo Code/Cline.
+Uma instalação multi-runtime de 11 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code e Codex.
 
-Suporta **Claude Code** (`@nome`), **Codex** (custom agents/subagents) e **Roo Code / Cline** (custom modes no VS Code).
+Suporta **Claude Code** (`@nome`) e **Codex** (custom agents/subagents). O wrapper `factory.ps1` mantém uso manual parcial com Gemini CLI.
 
 ---
 
@@ -61,7 +61,6 @@ Cada agente tem acesso a dois layers de conhecimento:
 ```
 ~/.claude/agents/<nome>.md       ← Claude Code (@nome)
 ~/.codex/agents/<nome>.toml      ← Codex custom agents
-roo/.roomodes                    ← Roo Code / Cline custom modes
 knowledge.db (SQLite FTS5)       ← ~7.000 docs indexados via MCP sob demanda
 ```
 
@@ -85,7 +84,6 @@ A factory suporta **8 arquétipos de projeto**: `web_app`, `automation_script`, 
 | Python 3.x no PATH | `python --version` |
 | Claude Code | `claude --version` |
 | Codex | `codex --version` |
-| Roo Code / Cline (opcional) | Extensão VS Code |
 
 Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime completo é o `install.ps1` no Windows.
 
@@ -101,9 +99,8 @@ Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime
 | Instala 11 agentes | `~/.claude/agents/<nome>.md` |
 | Instala 11 custom agents Codex | `~/.codex/agents/<nome>.toml` |
 | Cria `knowledge.db` | SQLite FTS5, ~7.000 documentos |
-| Configura MCP global | `~/.claude.json`, `~/.codex/config.toml` + Roo Code `mcp_settings.json` |
-| Gera modos Roo Code | `roo/.roomodes` + `roo/.clinerules` |
-| Gera scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1` |
+| Configura MCP global | `~/.claude.json`, `~/.codex/config.toml` |
+| Gera scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1` |
 
 Após a instalação, reabra o terminal e verifique:
 
@@ -143,19 +140,6 @@ Use no início de cada sessão:
 > **Para prompts simples não é necessário nenhum setup.** Use `init-project.ps1` apenas para projetos longos com múltiplos gates e agentes.
 
 Ver: [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md)
-
----
-
-## Roo Code / Cline
-
-Por projeto, uma vez após `.\install.ps1`:
-
-```powershell
-cd meu-projeto
-& "$env:FACTORY_ROOT\link-roo.ps1"
-```
-
-Selecione o modo no painel do Roo Code (🏗️ Tech Lead, 📋 Product Owner, etc.).
 
 ---
 
@@ -209,9 +193,8 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 | [`docs/PROJECT_ARCHETYPES.md`](docs/PROJECT_ARCHETYPES.md) | Gate A0, classificação, ADR vs. não-ADR |
 | [`docs/MCP_RAG.md`](docs/MCP_RAG.md) | knowledge.db, MCP-first, ferramentas, logs, troubleshooting |
 | [`docs/CODEX.md`](docs/CODEX.md) | Codex custom agents, MCP e limitações |
-| [`docs/ROO_CODE.md`](docs/ROO_CODE.md) | Custom modes, link-roo.ps1, .roomodes, Cline |
 | [`docs/ADDING_KNOWLEDGE.md`](docs/ADDING_KNOWLEDGE.md) | Distilação de conhecimento, source_map.json, comandos |
-| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Roo, Cline, Gemini CLI, uso manual |
+| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Gemini CLI, uso manual |
 | [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | Problemas comuns e soluções |
 | [`docs/TESTING.md`](docs/TESTING.md) | Factory validators, pytest MCP, doctor.ps1, test-mcp.ps1 |
 | [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md) | State Ledger, .factory/, init-project, gates, riscos, ADRs |

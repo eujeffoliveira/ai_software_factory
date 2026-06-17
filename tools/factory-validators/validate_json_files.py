@@ -2,7 +2,7 @@
 Validate that all .json files in the repository are valid JSON.
 
 Scans: AgenteXX_*/, standards/, tools/, .github/, root *.json
-Skips: lib/ (gitignored books), roo/ (generated), build/
+Skips: lib/ (gitignored books), build/
 Handles UTF-8 BOM (utf-8-sig encoding).
 """
 import json
@@ -12,7 +12,7 @@ from pathlib import Path
 
 FACTORY_ROOT = Path(os.environ.get("FACTORY_ROOT", Path(__file__).parent.parent.parent))
 
-SKIP_DIRS = {"lib", "roo", "node_modules", ".git"}
+SKIP_DIRS = {"lib", "node_modules", ".git"}
 
 SCAN_ROOTS = [
     lambda r: [p for p in r.iterdir() if p.is_dir() and p.name.startswith("Agente")],
