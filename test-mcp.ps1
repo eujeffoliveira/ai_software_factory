@@ -108,6 +108,46 @@ if ($pythonCmd -and (Test-Path $serverPath)) {
     }
 }
 
+# ─── Check 8: Codex project config nao aponta para cwd errado ────────────────
+$projectCodexConfig = Join-Path $factoryRoot ".codex\config.toml"
+if (Test-Path $projectCodexConfig) {
+    $codexRaw = Get-Content $projectCodexConfig -Raw -Encoding UTF8
+    $hasKnowledgeMcp = $codexRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$"
+    if ($hasKnowledgeMcp -and ($codexRaw -match '(?m)^\s*cwd\s*=\s*"\.\."\s*$')) {
+        Write-CheckError "Codex project config usa cwd = `"..`", que quebra o startup a partir da raiz do repo" "cd '$factoryRoot' && .\install.ps1"
+        $hadError = $true
+    } elseif ($hasKnowledgeMcp) {
+        Write-CheckOK "Codex project config contem MCP knowledge sem cwd legado"
+    } else {
+        Write-CheckWarn ".codex/config.toml existe, mas nao contem [mcp_servers.knowledge]"
+    }
+} else {
+    Write-CheckWarn ".codex/config.toml nao encontrado — execute .\install.ps1 para habilitar MCP no Codex"
+}
+
+# ─── Check 9: handshake MCP real + list_tools ────────────────────────────────
+$mcpToolsTestPath = Join-Path $factoryRoot "tools\mcp-knowledge-search\test_mcp_tools.py"
+if ($pythonCmd -and (Test-Path $mcpToolsTestPath) -and (Test-Path $serverPath) -and (Test-Path $dbPath)) {
+    $toolsOutput = & $pythonCmd $mcpToolsTestPath --factory-root $factoryRoot 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        $toolsLine = ($toolsOutput | Select-String "^TOOLS:" | Select-Object -First 1).Line
+        if ($toolsLine) {
+            $toolNames = $toolsLine -replace "^TOOLS:\s*", ""
+            Write-CheckOK "MCP list_tools passou ($toolNames)"
+        } else {
+            Write-CheckOK "MCP list_tools passou"
+        }
+    } else {
+        Write-CheckError "MCP list_tools falhou — Codex provavelmente mostrara Tools: (none)" "cd '$factoryRoot' && .\install.ps1 -ForceDeps"
+        $toolsOutput | Select-Object -First 8 | ForEach-Object {
+            Write-Host "        $_" -ForegroundColor Red
+        }
+        $hadError = $true
+    }
+} elseif (-not (Test-Path $mcpToolsTestPath)) {
+    Write-CheckWarn "test_mcp_tools.py nao encontrado — pulando verificacao MCP list_tools"
+}
+
 # ─── Resumo ───────────────────────────────────────────────────────────────────
 Write-Host ""
 if ($hadError) {

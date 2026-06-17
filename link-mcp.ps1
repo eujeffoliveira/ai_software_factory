@@ -67,4 +67,4 @@ if ($hasUnmanagedKnowledge) {
     Write-Host "[OK] .codex/config.toml vinculado: $(Get-Location)" -ForegroundColor Green
 }
 
-Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code, Roo/Cline ou Codex."
+Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code ou Codex."
