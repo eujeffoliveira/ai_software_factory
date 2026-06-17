@@ -2,7 +2,7 @@
 Validate that all required governance and community files exist.
 
 Governance files (root level):
-  README.md, LICENSE, LICENSE-DOCS, NOTICE, CONTRIBUTING.md,
+  README.md, AGENTS.md, CLAUDE.md, LICENSE, LICENSE-DOCS, NOTICE, CONTRIBUTING.md,
   CODE_OF_CONDUCT.md, SECURITY.md, SUPPORT.md, CHANGELOG.md, VERSION
 
 GitHub templates:
@@ -14,7 +14,7 @@ GitHub templates:
   .github/ISSUE_TEMPLATE/feature_request.yml
 
 Key docs:
-  docs/INSTALLATION.md, docs/MCP_RAG.md, docs/ROO_CODE.md,
+  docs/INSTALLATION.md, docs/MCP_RAG.md, docs/ROO_CODE.md, docs/CODEX.md,
   docs/AGENTS.md, docs/AGENT_CAPABILITY_MATRIX.md, docs/GOLDEN_MODELS.md,
   docs/TESTING.md, docs/ADDING_KNOWLEDGE.md
 """
@@ -27,6 +27,8 @@ FACTORY_ROOT = Path(os.environ.get("FACTORY_ROOT", Path(__file__).parent.parent.
 REQUIRED = [
     # Root governance
     "README.md",
+    "AGENTS.md",
+    "CLAUDE.md",
     "LICENSE",
     "LICENSE-DOCS",
     "NOTICE",
@@ -47,6 +49,7 @@ REQUIRED = [
     "docs/INSTALLATION.md",
     "docs/MCP_RAG.md",
     "docs/ROO_CODE.md",
+    "docs/CODEX.md",
     "docs/AGENTS.md",
     "docs/AGENT_CAPABILITY_MATRIX.md",
     "docs/GOLDEN_MODELS.md",

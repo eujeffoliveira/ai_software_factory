@@ -25,6 +25,7 @@ VALIDATORS = [
     "validate_source_maps",
     "validate_golden_models",
     "validate_prompt_mcp_policy",
+    "validate_runtime_compatibility",
     "validate_no_hardcoded_paths",
     "validate_markdown_links",
 ]

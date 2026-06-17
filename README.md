@@ -1,8 +1,8 @@
 # AI Software Factory — Multi-Agent SDLC Framework
 
-Uma instalação global de 11 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use `@techlead`, `@qa`, `@architect` em qualquer projeto — sem copiar nada.
+Uma instalação multi-runtime de 11 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code, Codex e Roo Code/Cline.
 
-Suporta **Claude Code** (`@nome`) e **Roo Code / Cline** (custom modes no VS Code).
+Suporta **Claude Code** (`@nome`), **Codex** (custom agents/subagents) e **Roo Code / Cline** (custom modes no VS Code).
 
 ---
 
@@ -14,15 +14,20 @@ cd ai_software_factory
 .\install.ps1
 ```
 
-Abra um **novo terminal** e use os agentes em qualquer projeto:
+Abra um **novo terminal** e use os agentes:
 
 ```
+# Claude Code
 @techlead classifique o arquétipo deste projeto e conduza o fluxo SDLC
 @po escreva o PRD para o módulo de autenticação
 @architect proponha a arquitetura para a API de pagamentos
 @qa crie os testes E2E Playwright para o fluxo de checkout
 @devsecops revise este código por vulnerabilidades OWASP Top 10
 @devops o deploy falhou — analise o log e proponha rollback
+
+# Codex
+Use the techlead custom agent to classify this project and propose the SDLC flow.
+Spawn qa and devsecops as subagents and summarize their findings.
 ```
 
 ---
@@ -49,13 +54,15 @@ Ver descrição detalhada de cada agente em [`docs/AGENTS.md`](docs/AGENTS.md).
 
 ## Como funciona
 
-A factory funciona como **instalação global**: os agentes vivem em `~/.claude/agents/` e funcionam em qualquer diretório, sem configuração por projeto.
+A factory funciona como **instalação multi-runtime**: os agentes são gerados a partir das mesmas fontes para cada cliente.
 
 Cada agente tem acesso a dois layers de conhecimento:
 
 ```
-~/.claude/agents/<nome>.md       ← prompt + 8 knowledge files embutidos (zero latência)
-knowledge.db (SQLite FTS5)       ← ~7.000 docs indexados, acessados via MCP sob demanda
+~/.claude/agents/<nome>.md       ← Claude Code (@nome)
+~/.codex/agents/<nome>.toml      ← Codex custom agents
+roo/.roomodes                    ← Roo Code / Cline custom modes
+knowledge.db (SQLite FTS5)       ← ~7.000 docs indexados via MCP sob demanda
 ```
 
 O **Tech Lead** (`@techlead`) orquestra todos os outros agentes através de gates sequenciais (A0, 1–7). Nenhum agente avança sem o artefato obrigatório do gate anterior.
@@ -77,9 +84,10 @@ A factory suporta **8 arquétipos de projeto**: `web_app`, `automation_script`, 
 | Windows 10/11 | — |
 | Python 3.x no PATH | `python --version` |
 | Claude Code | `claude --version` |
+| Codex | `codex --version` |
 | Roo Code / Cline (opcional) | Extensão VS Code |
 
-Linux/macOS: `install.sh` configura apenas aliases de CLI — sem agentes globais, sem MCP/RAG, sem Roo Code.
+Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime completo é o `install.ps1` no Windows.
 
 ---
 
@@ -91,15 +99,16 @@ Linux/macOS: `install.sh` configura apenas aliases de CLI — sem agentes globai
 |------|-----------|
 | Define `FACTORY_ROOT` | Variável de ambiente de usuário Windows |
 | Instala 11 agentes | `~/.claude/agents/<nome>.md` |
+| Instala 11 custom agents Codex | `~/.codex/agents/<nome>.toml` |
 | Cria `knowledge.db` | SQLite FTS5, ~7.000 documentos |
-| Configura MCP global | `~/.claude.json` + Roo Code `mcp_settings.json` |
+| Configura MCP global | `~/.claude.json`, `~/.codex/config.toml` + Roo Code `mcp_settings.json` |
 | Gera modos Roo Code | `roo/.roomodes` + `roo/.clinerules` |
 | Gera scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1` |
 
 Após a instalação, reabra o terminal e verifique:
 
 ```powershell
-.\doctor.ps1     # diagnóstico completo (14 categorias)
+.\doctor.ps1     # diagnóstico completo multi-runtime
 .\test-mcp.ps1   # health check do MCP (7 checks)
 ```
 
@@ -150,6 +159,28 @@ Selecione o modo no painel do Roo Code (🏗️ Tech Lead, 📋 Product Owner, e
 
 ---
 
+## Codex
+
+Após `.\install.ps1`, os custom agents ficam disponíveis em `~/.codex/agents/`.
+No Codex, peça explicitamente para usar ou spawnar o agente:
+
+```text
+Use the architect custom agent to review this design.
+Spawn qa and devsecops as subagents, wait for both, then summarize risks.
+```
+
+O MCP `knowledge` é configurado em `~/.codex/config.toml`. Para vincular outro
+projeto:
+
+```powershell
+cd meu-projeto
+& "$env:FACTORY_ROOT\link-mcp.ps1"
+```
+
+Ver: [`docs/CODEX.md`](docs/CODEX.md)
+
+---
+
 ## Atualização
 
 ```powershell
@@ -177,9 +208,10 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 | [`docs/GOLDEN_MODELS.md`](docs/GOLDEN_MODELS.md) | 8 arquétipos com stack técnica obrigatória |
 | [`docs/PROJECT_ARCHETYPES.md`](docs/PROJECT_ARCHETYPES.md) | Gate A0, classificação, ADR vs. não-ADR |
 | [`docs/MCP_RAG.md`](docs/MCP_RAG.md) | knowledge.db, MCP-first, ferramentas, logs, troubleshooting |
+| [`docs/CODEX.md`](docs/CODEX.md) | Codex custom agents, MCP e limitações |
 | [`docs/ROO_CODE.md`](docs/ROO_CODE.md) | Custom modes, link-roo.ps1, .roomodes, Cline |
 | [`docs/ADDING_KNOWLEDGE.md`](docs/ADDING_KNOWLEDGE.md) | Distilação de conhecimento, source_map.json, comandos |
-| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Roo, Cline, Gemini CLI, uso manual |
+| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Roo, Cline, Gemini CLI, uso manual |
 | [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | Problemas comuns e soluções |
 | [`docs/TESTING.md`](docs/TESTING.md) | Factory validators, pytest MCP, doctor.ps1, test-mcp.ps1 |
 | [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md) | State Ledger, .factory/, init-project, gates, riscos, ADRs |

@@ -5,11 +5,11 @@
 | Suite | Ferramenta | Escopo | Como executar |
 |-------|-----------|--------|--------------|
 | MCP pytest | pytest | 39 testes: database.py + server.py (6 ferramentas) | `python -m pytest tools/mcp-knowledge-search/tests/ -v` |
-| Factory Validators | Python | 10 validadores: estrutura, JSON, licenças, links | `python tools/factory-validators/run_all.py` |
+| Factory Validators | Python | 11 validadores: estrutura, runtimes, JSON, licenças, links | `python tools/factory-validators/run_all.py` |
 | Pester (PowerShell) | Pester v5 | Syntax + comportamento de install/doctor/uninstall/link | `Invoke-Pester tests/powershell/` |
-| Smoke Prompts | Manual | 9 arquivos com prompts pré-escritos + pass/fail signals | Copiar prompt → Claude Code |
+| Smoke Prompts | Manual | 9 arquivos com prompts pré-escritos + pass/fail signals | Copiar prompt → Claude Code ou Codex |
 | Eval Harness | PowerShell + humano | 7 casos semi-automatizados + 8 rubricas de pontuação | `.\evals\run-evals.ps1` |
-| Diagnóstico de instalação | PowerShell | 14 categorias do ambiente instalado | `.\doctor.ps1` |
+| Diagnóstico de instalação | PowerShell | diagnóstico multi-runtime do ambiente instalado | `.\doctor.ps1` |
 | MCP health check | PowerShell | 7 verificações do servidor MCP | `.\test-mcp.ps1` |
 | CI automático | GitHub Actions | MCP pytest + factory validators, em push/PR | `.github/workflows/validate-factory.yml` |
 
@@ -87,6 +87,7 @@ python tools/factory-validators/validate_agent_structure.py
 | `validate_source_maps` | source_map.json de cada agente: JSON válido, agent_id, lista de fontes |
 | `validate_golden_models` | 8 golden models + project-classification.md em standards/ |
 | `validate_prompt_mcp_policy` | prompt.md de cada agente contém knowledge/ e regra de isolamento runtime |
+| `validate_runtime_compatibility` | wiring Claude/Codex/Roo, AGENTS.md, custom agents e MCP |
 | `validate_no_hardcoded_paths` | Nenhum caminho absoluto de máquina em arquivos .md de agentes |
 | `validate_markdown_links` | Links internos em docs/ e raiz apontam para arquivos existentes |
 
@@ -106,24 +107,26 @@ Execute do diretório raiz da factory:
 .\doctor.ps1
 ```
 
-O script verifica 14 categorias do ambiente instalado:
+O script verifica as categorias principais do ambiente instalado:
 
 | # | Categoria | O que verifica |
 |---|-----------|----------------|
 | 1 | FACTORY_ROOT | Variável de ambiente definida e aponta para diretório existente |
 | 2 | Python | Interpretador Python 3.x disponível no PATH |
 | 3 | Dependências MCP | Pacote `mcp` instalado no Python detectado |
-| 4 | Arquivos de agente | 11 arquivos em `~/.claude/agents/` com conteúdo válido |
-| 5 | knowledge.db | Banco existe em `tools/mcp-knowledge-search/knowledge.db` |
-| 6 | Tamanho do banco | knowledge.db tem tamanho razoável (não vazio ou corrompido) |
-| 7 | ~/.claude.json | Entrada `mcpServers.knowledge` presente na raiz |
-| 8 | mcp_settings.json | Configuração global Roo Code presente (se instalado) |
-| 9 | .mcp.json | Arquivo de configuração local existe na raiz da factory |
-| 10 | roo/.roomodes | Arquivo de modos Roo Code gerado |
-| 11 | roo/.clinerules | Arquivo de regras Cline gerado |
-| 12 | Scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1`, `link-roo.ps1` existem |
-| 13 | Factory manifest | `knowledge-config.json` existe e contém versão |
-| 14 | Paths de agente | Nenhum arquivo de agente tem FACTORY_ROOT obsoleto |
+| 4 | Claude Code | CLI detectável quando disponível |
+| 5 | Codex | CLI/config detectável quando disponível |
+| 6 | Roo Code/Cline | Extensão e settings quando disponíveis |
+| 7 | Agentes Claude | 11 arquivos em `~/.claude/agents/` com conteúdo válido |
+| 8 | Custom agents Codex | 11 arquivos em `~/.codex/agents/` com conteúdo válido |
+| 9 | Knowledge Database | `knowledge.db` existe na raiz da factory |
+| 10 | MCP Health Check | Executa `test-mcp.ps1` |
+| 11 | MCP Configuração | `~/.claude.json`, `~/.codex/config.toml`, `.mcp.json` e `.codex/config.toml` |
+| 12 | Roo Configurações | `roo/.roomodes` e `roo/.clinerules` |
+| 13 | Paths de agente | Nenhum arquivo de agente tem FACTORY_ROOT obsoleto |
+| 14 | Scripts principais | `install`, `uninstall`, `doctor`, `test-mcp`, `link-*` |
+| 15 | Permissões | Escrita em `~/.claude/agents/`, `~/.codex/agents/` e FACTORY_ROOT |
+| 16 | Variáveis de ambiente | `FACTORY_ROOT` disponível |
 
 **Códigos de saída:** `0` = OK ou WARN, `1` = pelo menos um ERROR
 
@@ -200,7 +203,7 @@ python tools/factory-validators/run_all.py
 # 4. Suite pytest (requer pip install fastmcp pytest)
 python -m pytest tools/mcp-knowledge-search/tests/ -v
 
-# 5. Teste manual no Claude Code
+# 5. Teste manual no Claude Code ou Codex
 claude
 # @techlead health_check()
 ```
@@ -235,7 +238,7 @@ Invoke-Pester tests/powershell/Install.Tests.ps1 -Output Detailed
 | Arquivo | Script testado | O que verifica |
 |---------|---------------|----------------|
 | `Install.Tests.ps1` | `install.ps1` | Sintaxe AST, parâmetro `-ForceDeps`, array `$agents` com 11 entradas, arquivo VERSION, marcadores de idempotência |
-| `Doctor.Tests.ps1` | `doctor.ps1` | Sintaxe AST, 4 funções helper, presença das 14 categorias no conteúdo, exit code 0 ou 1 via child process |
+| `Doctor.Tests.ps1` | `doctor.ps1` | Sintaxe AST, funções helper, categorias principais no conteúdo, exit code 0 ou 1 via child process |
 | `Uninstall.Tests.ps1` | `uninstall.ps1` | Sintaxe AST, 4 parâmetros, modo `-WhatIf` não deleta arquivos (usa `$TestDrive`), segurança do marcador AUTO-GENERATED |
 | `LinkMcp.Tests.ps1` | `link-mcp.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem `.mcp.json`, cópia real para `$TestDrive` com backup |
 | `LinkRoo.Tests.ps1` | `link-roo.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem arquivos `roo/`, cópia de `.roomodes` + `.clinerules` com backup |
@@ -251,7 +254,7 @@ Invoke-Pester tests/powershell/Install.Tests.ps1 -Output Detailed
 
 ## Smoke Prompts
 
-Prompts pré-escritos com comportamento esperado e sinais de pass/fail. Não são automatizados — requerem uma sessão Claude Code.
+Prompts pré-escritos com comportamento esperado e sinais de pass/fail. Não são automatizados — requerem uma sessão Claude Code ou Codex.
 
 **Localização:** `tests/agent-smoke-prompts/`
 
@@ -276,7 +279,7 @@ Prompts pré-escritos com comportamento esperado e sinais de pass/fail. Não sã
    code tests/agent-smoke-prompts/techlead.md
    ```
 2. Copiar o prompt da seção correspondente
-3. Colar em uma sessão Claude Code com o agente indicado
+3. Colar em uma sessão Claude Code com o agente indicado ou pedir ao Codex para usar o custom agent correspondente
 4. Comparar a resposta com "Expected behavior" e "Pass signals"
 
 **Testes de maior prioridade para regressão:**
@@ -369,8 +372,8 @@ Resultados são salvos em `evals/results/<timestamp>-results.json`.
 O workflow `.github/workflows/validate-factory.yml` roda automaticamente em push e PR para `main`:
 
 - **python-tests**: executa os 39 testes pytest em Python 3.11 e 3.12
-- **factory-validators**: executa os 10 validadores de estrutura
+- **factory-validators**: executa a suíte de validadores de estrutura e compatibilidade
 
-Smoke prompts e eval cases **não rodam em CI** — requerem uma sessão Claude Code ao vivo.
+Smoke prompts e eval cases **não rodam em CI** — requerem uma sessão Claude Code ou Codex ao vivo.
 
 Para contribuir com novos testes, veja `CONTRIBUTING.md`.

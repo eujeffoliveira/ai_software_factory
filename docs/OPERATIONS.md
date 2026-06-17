@@ -87,7 +87,7 @@ Isso copia o `.mcp.json` da factory para o projeto atual.
 ## Diagnóstico
 
 ```powershell
-# Diagnóstico completo (14 categorias)
+# Diagnóstico completo multi-runtime
 cd $env:FACTORY_ROOT
 .\doctor.ps1
 

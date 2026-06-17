@@ -8,14 +8,14 @@ O banco é criado pelo script `tools/mcp-knowledge-search/ingest.py` durante a e
 
 ## Como o servidor MCP funciona
 
-O servidor MCP (`tools/mcp-knowledge-search/server.py`) é um processo **stdio** baseado em FastMCP. Ele é iniciado **sob demanda** pelo Claude Code ou Roo Code quando um agente realiza a primeira chamada de ferramenta — não precisa estar rodando em background.
+O servidor MCP (`tools/mcp-knowledge-search/server.py`) é um processo **stdio** baseado em FastMCP. Ele é iniciado **sob demanda** por Claude Code, Codex ou Roo Code quando um agente realiza a primeira chamada de ferramenta — não precisa estar rodando em background.
 
 Fluxo de uma chamada:
 
 ```
-Agente no Claude Code
+Agente no runtime
   → chama search_knowledge("termo")
-    → Claude Code inicia server.py via stdio (se não estiver ativo)
+    → cliente inicia server.py via stdio (se não estiver ativo)
       → server.py executa query FTS5 em knowledge.db
         → retorna resultados JSON
 ```
@@ -23,6 +23,8 @@ Agente no Claude Code
 A configuração do servidor fica em:
 
 - `~/.claude.json` — escopo global, nível raiz (`mcpServers.knowledge`) — usado pelo Claude Code
+- `~/.codex/config.toml` — escopo global Codex (`mcp_servers.knowledge`)
+- `.codex/config.toml` — escopo local Codex em projetos confiáveis
 - `%APPDATA%\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json` — usado pelo Roo Code
 - `.mcp.json` — configuração local por projeto (criado por `link-mcp.ps1`)
 
@@ -80,6 +82,27 @@ Para testar a funcionalidade diretamente:
 @techlead health_check()
 ```
 
+## Verificar no Codex
+
+Após `.\install.ps1`, o Codex recebe a entrada `knowledge` em
+`~/.codex/config.toml`. No repositório da factory também existe uma configuração
+local gerada em `.codex/config.toml`.
+
+Em uma sessão Codex, use `/mcp` quando disponível e confirme que `knowledge`
+aparece conectado.
+
+Para ativar o MCP em outro projeto:
+
+```powershell
+cd C:\meu-projeto
+& "$env:FACTORY_ROOT\link-mcp.ps1"
+```
+
+Esse comando cria dois arquivos no projeto alvo:
+
+- `.mcp.json` para clientes que usam o formato `mcpServers`
+- `.codex/config.toml` para Codex, usando o formato `mcp_servers`
+
 ## test-mcp.ps1
 
 Execute do diretório da factory:
@@ -94,7 +117,7 @@ O script executa 7 verificações em sequência:
 |---|-------------|-------------|
 | 1 | FACTORY_ROOT | Variável de ambiente definida e aponta para diretório válido |
 | 2 | server.py | Arquivo `tools/mcp-knowledge-search/server.py` existe |
-| 3 | knowledge.db | Banco de dados existe em `tools/mcp-knowledge-search/knowledge.db` |
+| 3 | knowledge.db | Banco de dados existe na raiz da factory |
 | 4 | FTS query | Executa query de teste e retorna ao menos 1 resultado |
 | 5 | mcp package | Pacote `mcp` instalado no Python atual |
 | 6 | Tool listing | Servidor responde à listagem de ferramentas via protocolo MCP |
@@ -122,7 +145,7 @@ Exemplo de linha de log:
 
 | Problema | Solução |
 |----------|---------|
-| Servidor não aparece em `/mcp` | Execute `.\install.ps1` — reconfigura `~/.claude.json` |
+| Servidor não aparece em `/mcp` | Execute `.\install.ps1` — reconfigura `~/.claude.json`, `~/.codex/config.toml` e `.mcp.json` |
 | `knowledge.db` não existe | Execute `.\update-knowledge.ps1` para criar o banco |
 | Python não encontrado | Instale Python 3.x e adicione ao PATH; depois `.\install.ps1` |
 | Dependências MCP faltando | Execute `.\install.ps1 -ForceDeps` |
@@ -146,7 +169,7 @@ Execute `.\update-knowledge.ps1` após editar qualquer `.md` em:
 - `checklists/automation/`
 - `examples/requests/`
 
-Execute `.\install.ps1` após editar o `prompt.md` de qualquer agente — o instalador propaga o conteúdo completo (prompt + 8 arquivos de knowledge + bloco MCP) para `~/.claude/agents/`.
+Execute `.\install.ps1` após editar o `prompt.md` de qualquer agente — o instalador propaga o conteúdo completo para `~/.claude/agents/`, `~/.codex/agents/` e `roo/.roomodes`.
 
 ## O que é indexado
 

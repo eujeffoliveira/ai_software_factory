@@ -9,4 +9,5 @@ lib
 knowledge.db
 knowledge-config.json
 .mcp.json
+.codex/
 roo/

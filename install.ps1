@@ -49,10 +49,64 @@ function Write-IfChanged {
     return $status
 }
 
+function ConvertTo-TomlString {
+    param([string]$Value)
+    $escaped = $Value.Replace("\", "\\").Replace('"', '\"')
+    return '"' + $escaped + '"'
+}
+
+function ConvertTo-TomlMultilineString {
+    param([string]$Value)
+    $escaped = $Value.Replace("\", "\\").Replace('"""', '\"""')
+    return '"""' + "`n" + $escaped.TrimEnd() + "`n" + '"""'
+}
+
+function Set-ManagedTextBlock {
+    param(
+        [string]$Path,
+        [string]$BeginMarker,
+        [string]$EndMarker,
+        [string]$Block,
+        [string]$Label
+    )
+
+    $parent = Split-Path $Path
+    if ($parent -and -not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+
+    $existing = if (Test-Path $Path) {
+        [System.IO.File]::ReadAllText($Path, $utf8NoBom)
+    } else { "" }
+
+    $normalizedBlock = $Block.Trim() + "`n"
+    $start = $existing.IndexOf($BeginMarker)
+    $end = if ($start -ge 0) { $existing.IndexOf($EndMarker, $start) } else { -1 }
+
+    if ($start -ge 0 -and $end -ge $start) {
+        $endAfter = $end + $EndMarker.Length
+        while ($endAfter -lt $existing.Length -and ($existing[$endAfter] -eq "`r" -or $existing[$endAfter] -eq "`n")) {
+            $endAfter++
+        }
+        $updated = $existing.Substring(0, $start).TrimEnd() + "`n`n" + $normalizedBlock + $existing.Substring($endAfter).TrimStart()
+    } elseif ($existing.Trim()) {
+        $updated = $existing.TrimEnd() + "`n`n" + $normalizedBlock
+    } else {
+        $updated = $normalizedBlock
+    }
+
+    return Write-IfChanged -Path $Path -Content $updated -Label $Label
+}
+
 # ─── Caminhos base ────────────────────────────────────────────────────────────
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
 $CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
+$CODEX_HOME_DIR    = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE ".codex" }
+$CODEX_AGENTS_DIR  = Join-Path $CODEX_HOME_DIR "agents"
+$CODEX_CONFIG      = Join-Path $CODEX_HOME_DIR "config.toml"
+$PROJECT_CODEX_DIR = Join-Path $FACTORY_PATH ".codex"
+$PROJECT_CODEX_CONFIG = Join-Path $PROJECT_CODEX_DIR "config.toml"
 $ROO_MCP_PATHS     = @(
     "$env:APPDATA\Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\mcp_settings.json",
     "$env:APPDATA\Code\User\globalStorage\RooVeterinaryInc.roo-cline\settings\mcp_settings.json"
@@ -99,9 +153,14 @@ $tally = @{
     agents_created   = 0
     agents_updated   = 0
     agents_unchanged = 0
+    codex_created    = 0
+    codex_updated    = 0
+    codex_unchanged  = 0
     knowledge_docs   = 0
     knowledge_status = "skipped"
     mcp_status       = "unchanged"
+    codex_mcp_status = "unchanged"
+    codex_project_status = "unchanged"
     roo_status       = "unchanged"
     deps_status      = "skipped"
     scripts_updated  = 0
@@ -356,7 +415,150 @@ Write-Host ("  Agentes: {0} criados, {1} atualizados, {2} sem mudancas" -f `
     $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged) -ForegroundColor Gray
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  FASE 5 — knowledge-config.json + ingest (backup/restore on failure)
+#  FASE 5 — Codex: ~/.codex/agents/
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "Codex — Custom Agents"
+
+if (-not (Test-Path $CODEX_AGENTS_DIR)) {
+    New-Item -ItemType Directory -Path $CODEX_AGENTS_DIR -Force | Out-Null
+    Write-OK "Criado: $CODEX_AGENTS_DIR"
+} else {
+    Write-Skip "Ja existe: $CODEX_AGENTS_DIR"
+}
+
+$codexMcpBlock = @"
+
+---
+
+<!-- BEGIN ai_software_factory:codex-runtime -->
+## Codex Runtime
+
+Este arquivo e um custom agent do Codex. Ele e usado como subagente quando o
+usuario pede explicitamente para delegar trabalho a um papel especializado
+(por exemplo: "use o agente qa" ou "spawn techlead e architect").
+
+No Codex, a invocacao principal nao usa a sintaxe Claude `@nome`. Use:
+- `AGENTS.md` para instrucoes persistentes do repositorio.
+- `.codex/config.toml` ou `~/.codex/config.toml` para MCP e settings.
+- `~/.codex/agents/*.toml` para estes custom agents.
+
+## Acesso ao Conhecimento via MCP
+
+Use o servidor MCP `knowledge` antes de responder sobre artefatos internos da
+factory: skills, schemas, templates, examples, checklists, playbooks, Golden
+Models, gates, failure modes, knowledge cards, heuristicas e principios.
+
+Se o MCP falhar:
+1. Informe explicitamente que o MCP falhou.
+2. Declare que esta usando fallback via leitura direta de arquivos.
+3. Recomende: `& "$env:FACTORY_ROOT\test-mcp.ps1"`.
+4. Prossiga com fallback declarado se seguro; nunca use fallback silencioso.
+
+Ferramentas esperadas: `health_check`, `knowledge_stats`, `search_knowledge`,
+`search_with_filters`, `get_full_document`, `get_context`.
+
+## Isolamento runtime
+
+No runtime, leia primeiro apenas a pasta do agente (`AgenteXX_*`) e o MCP
+knowledge. `context/` e `lib/` sao fontes build-time e nao devem ser usadas
+para substituir knowledge destilada, salvo instrucao explicita do usuario.
+
+FACTORY_ROOT deve apontar para a raiz da factory. Se estiver ausente, peca ao
+usuario para executar `install.ps1` a partir da factory.
+<!-- END ai_software_factory:codex-runtime -->
+"@
+
+$codexManifestPath = Join-Path $CODEX_AGENTS_DIR ".ai_software_factory_manifest.json"
+$existingCodexInstalledAt = if (Test-Path $codexManifestPath) {
+    try { (Get-Content $codexManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
+$codexManifest = [ordered]@{
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingCodexInstalledAt) { $existingCodexInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    mcp_server        = "knowledge"
+    agents            = [ordered]@{}
+}
+
+foreach ($agent in $agents) {
+    $agentDir   = Join-Path $FACTORY_PATH $agent.Folder
+    $promptFile = Join-Path $agentDir "prompt.md"
+    $outputFile = Join-Path $CODEX_AGENTS_DIR "$($agent.Name).toml"
+
+    if (-not (Test-Path $promptFile)) {
+        Write-Warn "prompt.md nao encontrado: $($agent.Folder)"
+        $codexManifest.agents[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        continue
+    }
+
+    $agentInstructions = [System.Text.StringBuilder]::new()
+    [void]$agentInstructions.AppendLine("<!--")
+    [void]$agentInstructions.AppendLine("AUTO-GENERATED BY ai_software_factory/install.ps1")
+    [void]$agentInstructions.AppendLine("DO NOT EDIT DIRECTLY — changes will be overwritten on next install.")
+    [void]$agentInstructions.AppendLine("To update: cd `$env:FACTORY_ROOT && .\install.ps1")
+    [void]$agentInstructions.AppendLine("Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 codexMcpBlock")
+    [void]$agentInstructions.AppendLine("-->")
+    [void]$agentInstructions.AppendLine("")
+    [void]$agentInstructions.AppendLine("<!-- BEGIN ai_software_factory managed block -->")
+    [void]$agentInstructions.AppendLine("")
+    [void]$agentInstructions.AppendLine((Get-Content $promptFile -Raw -Encoding UTF8).TrimEnd())
+    [void]$agentInstructions.AppendLine("")
+
+    foreach ($relPath in $knowledgeFiles) {
+        $fullPath = Join-Path $agentDir $relPath
+        if (Test-Path $fullPath) {
+            $display = "$($agent.Folder)/$($relPath.Replace('\','/'))"
+            [void]$agentInstructions.AppendLine("---")
+            [void]$agentInstructions.AppendLine("<!-- SOURCE: $display -->")
+            [void]$agentInstructions.AppendLine("")
+            [void]$agentInstructions.AppendLine((Get-Content $fullPath -Raw -Encoding UTF8).TrimEnd())
+            [void]$agentInstructions.AppendLine("")
+        }
+    }
+
+    [void]$agentInstructions.AppendLine($codexMcpBlock)
+    [void]$agentInstructions.AppendLine("")
+    [void]$agentInstructions.AppendLine("<!-- END ai_software_factory managed block -->")
+
+    $nickname = (($agent.Description -split ' — ')[0].Trim())
+    $toml = @(
+        "# AUTO-GENERATED BY ai_software_factory/install.ps1",
+        "# DO NOT EDIT DIRECTLY — changes will be overwritten on next install.",
+        "name = $(ConvertTo-TomlString $agent.Name)",
+        "description = $(ConvertTo-TomlString $agent.Description)",
+        "nickname_candidates = [$(ConvertTo-TomlString $nickname)]",
+        "developer_instructions = $(ConvertTo-TomlMultilineString $agentInstructions.ToString())"
+    ) -join "`n"
+
+    $status = Write-IfChanged -Path $outputFile -Content $toml -Label "codex/$($agent.Name).toml"
+    switch ($status) {
+        "created"   { $tally.codex_created++ }
+        "updated"   { $tally.codex_updated++ }
+        "unchanged" { $tally.codex_unchanged++ }
+    }
+
+    $sourceHash    = (Get-FileHash $promptFile -Algorithm SHA256).Hash.Substring(0, 16)
+    $installedHash = if (Test-Path $outputFile) { (Get-FileHash $outputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $codexManifest.agents[$agent.Name] = [ordered]@{
+        status         = $status
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $outputFile
+        installed_hash = $installedHash
+    }
+}
+
+$codexManifestJson = $codexManifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $codexManifestPath -Content $codexManifestJson -Label "codex/.ai_software_factory_manifest.json" | Out-Null
+
+Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+Write-Host ("  Codex agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+    $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged) -ForegroundColor Gray
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  FASE 6 — knowledge-config.json + ingest (backup/restore on failure)
 # ═════════════════════════════════════════════════════════════════════════════
 if ($hasPython) {
     Write-Header "MCP Knowledge Base"
@@ -548,6 +750,61 @@ try {
     }
     Write-Warn "Use link-mcp.ps1 em cada projeto como alternativa."
 }
+
+# Codex global config.toml — bloco gerenciado, sem sobrescrever configuracoes pessoais
+$codexGlobalBegin = "# BEGIN ai_software_factory:codex-mcp"
+$codexGlobalEnd   = "# END ai_software_factory:codex-mcp"
+$codexGlobalBlock = @"
+$codexGlobalBegin
+[mcp_servers.knowledge]
+command = "python"
+args = [$(ConvertTo-TomlString $SERVER_PATH)]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+
+[mcp_servers.knowledge.env]
+KNOWLEDGE_DB = $(ConvertTo-TomlString $DB_PATH)
+$codexGlobalEnd
+"@
+
+try {
+    $codexConfigRaw = if (Test-Path $CODEX_CONFIG) { Get-Content $CODEX_CONFIG -Raw -Encoding UTF8 } else { "" }
+    $hasUnmanagedKnowledge = ($codexConfigRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") -and ($codexConfigRaw -notlike "*$codexGlobalBegin*")
+
+    if ($hasUnmanagedKnowledge) {
+        Write-Warn "Codex config ja possui [mcp_servers.knowledge] fora do bloco gerenciado; preservando configuracao existente."
+        Write-Warn "  Para trocar para a factory, remova a entrada antiga e reexecute install.ps1."
+        $tally.codex_mcp_status = "skipped"
+    } else {
+        $tally.codex_mcp_status = Set-ManagedTextBlock -Path $CODEX_CONFIG -BeginMarker $codexGlobalBegin -EndMarker $codexGlobalEnd -Block $codexGlobalBlock -Label "~/.codex/config.toml (MCP)"
+    }
+} catch {
+    Write-Warn "Nao foi possivel atualizar ~/.codex/config.toml: $_"
+    $tally.codex_mcp_status = "failed"
+}
+
+# Codex project config — gerado com caminhos relativos para a propria factory
+$projectCodexConfig = @"
+# AUTO-GENERATED BY ai_software_factory/install.ps1
+# Project-scoped Codex configuration for this factory repository.
+# Paths are resolved relative to this .codex directory.
+
+[agents]
+max_threads = 6
+max_depth = 1
+
+[mcp_servers.knowledge]
+command = "python"
+args = ["tools/mcp-knowledge-search/server.py"]
+cwd = ".."
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+
+[mcp_servers.knowledge.env]
+KNOWLEDGE_DB = "knowledge.db"
+"@
+if (-not (Test-Path $PROJECT_CODEX_DIR)) { New-Item -ItemType Directory -Path $PROJECT_CODEX_DIR -Force | Out-Null }
+$tally.codex_project_status = Write-IfChanged -Path $PROJECT_CODEX_CONFIG -Content $projectCodexConfig -Label ".codex/config.toml"
 
 # Roo Code mcp_settings.json — mesmo merge cirurgico para cada instalacao encontrada
 foreach ($rooMcp in $ROO_MCP_PATHS) {
@@ -777,13 +1034,68 @@ $linkMcp = @"
 `$SOURCE_MCP = Join-Path `$FACTORY_PATH ".mcp.json"
 `$TARGET_MCP = Join-Path (Get-Location).Path ".mcp.json"
 if (-not (Test-Path `$SOURCE_MCP)) { Write-Error ".mcp.json nao encontrado. Execute install.ps1 primeiro."; exit 1 }
+
+function ConvertTo-TomlString([string]`$Value) {
+    return '"' + `$Value.Replace("\", "\\").Replace('"', '\"') + '"'
+}
+
+function Set-ManagedBlock([string]`$Path, [string]`$Begin, [string]`$End, [string]`$Block) {
+    `$nl = [Environment]::NewLine
+    `$existing = if (Test-Path `$Path) { Get-Content `$Path -Raw -Encoding UTF8 } else { "" }
+    `$start = `$existing.IndexOf(`$Begin)
+    `$endIndex = if (`$start -ge 0) { `$existing.IndexOf(`$End, `$start) } else { -1 }
+    if (`$start -ge 0 -and `$endIndex -ge `$start) {
+        `$endAfter = `$endIndex + `$End.Length
+        while (`$endAfter -lt `$existing.Length -and (`$existing[`$endAfter] -eq [char]13 -or `$existing[`$endAfter] -eq [char]10)) { `$endAfter++ }
+        return (`$existing.Substring(0, `$start).TrimEnd() + `$nl + `$nl + `$Block.Trim() + `$nl + `$existing.Substring(`$endAfter).TrimStart())
+    }
+    if (`$existing.Trim()) { return `$existing.TrimEnd() + `$nl + `$nl + `$Block.Trim() + `$nl }
+    return `$Block.Trim() + `$nl
+}
+
 if (Test-Path `$TARGET_MCP) {
     `$bak = "`$TARGET_MCP.bak_`$(Get-Date -Format 'yyyyMMdd_HHmmss')"
     Copy-Item `$TARGET_MCP `$bak; Write-Host "  [BAK] `$bak" -ForegroundColor DarkGray
 }
 Copy-Item `$SOURCE_MCP `$TARGET_MCP -Force
 Write-Host "[OK] .mcp.json vinculado: `$(Get-Location)" -ForegroundColor Green
-Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code."
+
+`$TARGET_CODEX_DIR = Join-Path (Get-Location).Path ".codex"
+`$TARGET_CODEX_CONFIG = Join-Path `$TARGET_CODEX_DIR "config.toml"
+if (-not (Test-Path `$TARGET_CODEX_DIR)) { New-Item -ItemType Directory -Path `$TARGET_CODEX_DIR -Force | Out-Null }
+
+`$begin = "# BEGIN ai_software_factory:codex-mcp"
+`$end = "# END ai_software_factory:codex-mcp"
+`$serverPath = Join-Path `$FACTORY_PATH "tools\mcp-knowledge-search\server.py"
+`$dbPath = Join-Path `$FACTORY_PATH "knowledge.db"
+`$codexRaw = if (Test-Path `$TARGET_CODEX_CONFIG) { Get-Content `$TARGET_CODEX_CONFIG -Raw -Encoding UTF8 } else { "" }
+`$hasUnmanagedKnowledge = (`$codexRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") -and (`$codexRaw -notlike "*`$begin*")
+
+if (`$hasUnmanagedKnowledge) {
+    Write-Host "[WARN] .codex/config.toml ja possui [mcp_servers.knowledge] fora do bloco gerenciado; preservado." -ForegroundColor Yellow
+} else {
+    `$codexBlock = @(
+        `$begin,
+        "[mcp_servers.knowledge]",
+        'command = "python"',
+        "args = [`$(ConvertTo-TomlString `$serverPath)]",
+        "startup_timeout_sec = 20",
+        "tool_timeout_sec = 60",
+        "",
+        "[mcp_servers.knowledge.env]",
+        "KNOWLEDGE_DB = `$(ConvertTo-TomlString `$dbPath)",
+        `$end
+    ) -join [Environment]::NewLine
+    if (Test-Path `$TARGET_CODEX_CONFIG) {
+        `$bak = "`$TARGET_CODEX_CONFIG.bak_`$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+        Copy-Item `$TARGET_CODEX_CONFIG `$bak; Write-Host "  [BAK] `$bak" -ForegroundColor DarkGray
+    }
+    `$newCodexConfig = Set-ManagedBlock `$TARGET_CODEX_CONFIG `$begin `$end `$codexBlock
+    Set-Content -Path `$TARGET_CODEX_CONFIG -Value `$newCodexConfig -Encoding UTF8
+    Write-Host "[OK] .codex/config.toml vinculado: `$(Get-Location)" -ForegroundColor Green
+}
+
+Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code, Roo/Cline ou Codex."
 "@
 $s = Write-IfChanged -Path (Join-Path $FACTORY_PATH "link-mcp.ps1") -Content $linkMcp -Label "link-mcp.ps1"
 if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_unchanged++ }
@@ -868,6 +1180,10 @@ $agentSummary = "{0} criados  {1} atualizados  {2} sem mudancas" -f `
     $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged
 Write-Host ("  ║  Agentes      {0,-36}║" -f $agentSummary) -ForegroundColor Green
 
+$codexSummary = "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+    $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged
+Write-Host ("  ║  Codex agents {0,-36}║" -f $codexSummary) -ForegroundColor Green
+
 $kbSummary = switch ($tally.knowledge_status) {
     "rebuilt"   { "reconstruido — $($tally.knowledge_docs) documentos" }
     "unchanged" { "sem mudancas — $($tally.knowledge_docs) documentos" }
@@ -876,6 +1192,8 @@ $kbSummary = switch ($tally.knowledge_status) {
 }
 Write-Host ("  ║  Knowledge DB {0,-36}║" -f $kbSummary) -ForegroundColor Green
 Write-Host ("  ║  MCP Config   {0,-36}║" -f $tally.mcp_status) -ForegroundColor Green
+Write-Host ("  ║  Codex MCP    {0,-36}║" -f $tally.codex_mcp_status) -ForegroundColor Green
+Write-Host ("  ║  Codex local  {0,-36}║" -f $tally.codex_project_status) -ForegroundColor Green
 Write-Host ("  ║  Roo Config   {0,-36}║" -f $tally.roo_status) -ForegroundColor Green
 Write-Host ("  ║  Dependencias {0,-36}║" -f $tally.deps_status) -ForegroundColor Green
 Write-Host ("  ║  Scripts      {0,-36}║" -f ("{0} atualizados  {1} sem mudancas" -f $tally.scripts_updated, $tally.scripts_unchanged)) -ForegroundColor Green
@@ -886,6 +1204,10 @@ Write-Host "  FACTORY_ROOT = $FACTORY_PATH" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "  Claude Code — use em qualquer projeto:" -ForegroundColor Cyan
 Write-Host "    @techlead  @qa  @architect  @po  @devbackend ..."
+Write-Host ""
+Write-Host "  Codex — custom agents instalados:" -ForegroundColor Cyan
+Write-Host "    spawn/use techlead, qa, architect, po, devbackend ... como subagentes"
+Write-Host "    MCP: ~/.codex/config.toml e .codex/config.toml nesta factory"
 Write-Host ""
 if ($hasPython) {
     Write-Host "  Atualizar apos git pull / editar conhecimento:" -ForegroundColor Cyan
