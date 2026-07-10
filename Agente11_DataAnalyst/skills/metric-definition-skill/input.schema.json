@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Metric Definition Skill Input",
+  "type": "object",
+  "required": ["metrics"],
+  "properties": {
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "decision_supported": { "type": "string" },
+    "data_sources": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "source_fields": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

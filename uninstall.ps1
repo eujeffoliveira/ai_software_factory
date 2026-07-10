@@ -55,7 +55,7 @@ $CODEX_AGENTS_DIR  = Join-Path $CODEX_HOME_DIR "agents"
 $CODEX_CONFIG      = Join-Path $CODEX_HOME_DIR "config.toml"
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 
-$agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer")
+$agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer","dataanalyst")
 
 # ─── Banner ──────────────────────────────────────────────────────────────────
 $modeLabel = if ($WhatIf) { "WhatIf" } elseif ($Full) { "Full" } else { "Normal" }

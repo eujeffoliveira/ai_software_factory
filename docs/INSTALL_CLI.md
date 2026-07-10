@@ -15,11 +15,11 @@
 
 ## O que o instalador faz
 
-O instalador configura os 11 agentes do SDLC para uso imediato em qualquer sessão Claude Code, além de instalar um wrapper para o Gemini CLI.
+O instalador configura os 12 agentes do SDLC para uso imediato em qualquer sessão Claude Code, além de instalar um wrapper para o Gemini CLI.
 
 | O que cria | Onde | Para quê |
 |------------|------|----------|
-| `~/.claude/agents/<nome>.md` (11 arquivos) | Global do Claude Code | Habilita `@techlead`, `@po`, `@architect`, etc. em qualquer sessão |
+| `~/.claude/agents/<nome>.md` (12 arquivos) | Global do Claude Code | Habilita `@techlead`, `@po`, `@architect`, etc. em qualquer sessão |
 | `~/.local/bin/factory.ps1` | Terminal | Wrapper para uso com Gemini CLI |
 
 Ambos os instaladores são **idempotentes** — podem ser executados novamente sem problema após mover o repositório ou clonar em uma nova máquina.
@@ -98,6 +98,7 @@ Os agentes ficam disponíveis globalmente — não é necessário abrir o projet
 | `@devops` | Agente08_DevOps | DevOps — CI/CD, Vercel, monitoramento, runbooks |
 | `@uxui` | Agente09_UxUiDesigner | UX/UI — pesquisa, wireframes, design system, acessibilidade |
 | `@dataengineer` | Agente10_DataIntegrationEngineer | Data Engineer — pipelines, ETL, integrações, governança |
+| `@dataanalyst` | Agente11_DataAnalyst | Data Analyst — métricas, análise exploratória, insights, dashboards |
 
 ### Exemplos de uso dentro de uma sessão
 

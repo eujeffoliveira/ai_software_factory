@@ -34,7 +34,7 @@ Da raiz da factory:
 
 O instalador cria ou atualiza:
 
-- `~/.codex/agents/*.toml` com os 11 custom agents
+- `~/.codex/agents/*.toml` com os 12 custom agents
 - `~/.codex/agents/.ai_software_factory_manifest.json`
 - bloco `mcp_servers.knowledge` em `~/.codex/config.toml`
 - `.codex/config.toml` local nesta factory, com caminhos relativos
@@ -69,6 +69,7 @@ devsecops
 devops
 uxui
 dataengineer
+dataanalyst
 ```
 
 ## MCP Knowledge

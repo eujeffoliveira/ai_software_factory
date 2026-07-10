@@ -1,0 +1,89 @@
+{
+  "_note": "Declarative runtime policy - not yet enforced programmatically. Defines which sources this agent may access at runtime.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente11_DataAnalyst",
+  "version": "1.0.0",
+  "description": "RAG policy for Agente11. Defines which collections are indexed and which raw sources are blocked from retrieval at runtime.",
+  "collections": [
+    {
+      "collection_id": "agent11-core",
+      "description": "Core agent artifacts: prompt, config, context view, skill manifest, quality gate, failure modes, and handoff schema",
+      "sources": [
+        "Agente11_DataAnalyst/prompt.md",
+        "Agente11_DataAnalyst/agent_config.json",
+        "Agente11_DataAnalyst/context_view.md",
+        "Agente11_DataAnalyst/skills_manifest.md",
+        "Agente11_DataAnalyst/quality_gate.md",
+        "Agente11_DataAnalyst/failure_modes.md",
+        "Agente11_DataAnalyst/handoff_schema.json"
+      ],
+      "chunking": {
+        "strategy": "section",
+        "delimiter": "^## ",
+        "max_chunk_tokens": 512,
+        "overlap_tokens": 64
+      },
+      "retrieval": {
+        "top_k": 5,
+        "similarity_threshold": 0.75
+      }
+    },
+    {
+      "collection_id": "agent11-knowledge",
+      "description": "Distilled analytics principles, heuristics, decision rules, and knowledge cards",
+      "sources": [
+        "Agente11_DataAnalyst/knowledge/principles.md",
+        "Agente11_DataAnalyst/knowledge/heuristics.md",
+        "Agente11_DataAnalyst/knowledge/decision_rules.md",
+        "Agente11_DataAnalyst/knowledge/knowledge_cards.md",
+        "Agente11_DataAnalyst/knowledge/microsoft_power_bi_pl300.md",
+        "Agente11_DataAnalyst/knowledge/microsoft_fabric_analytics_dp600.md"
+      ],
+      "chunking": {
+        "strategy": "item",
+        "delimiter": "^## (P|H|DR|Card)[0-9]",
+        "max_chunk_tokens": 384,
+        "overlap_tokens": 32
+      },
+      "retrieval": {
+        "top_k": 8,
+        "similarity_threshold": 0.7
+      }
+    },
+    {
+      "collection_id": "agent11-skills",
+      "description": "Skill definitions, checklists, schemas, templates, and examples",
+      "sources": [
+        "Agente11_DataAnalyst/skills/",
+        "Agente11_DataAnalyst/checklists/",
+        "Agente11_DataAnalyst/schemas/",
+        "Agente11_DataAnalyst/templates/",
+        "Agente11_DataAnalyst/examples/"
+      ],
+      "chunking": {
+        "strategy": "file",
+        "max_chunk_tokens": 1024,
+        "overlap_tokens": 128
+      },
+      "retrieval": {
+        "top_k": 4,
+        "similarity_threshold": 0.72
+      }
+    }
+  ],
+  "blocked_raw_sources": [
+    "context/",
+    "lib/",
+    "*.pdf",
+    "context/base_teorica.md",
+    "context/integrantes.md",
+    "context/reference_architecture_generico.md",
+    "context/manual_arquitetura_componentes_generico.md"
+  ],
+  "retrieval_policy": {
+    "fallback_on_no_match": "use_context_view",
+    "cite_sources_in_output": false,
+    "allow_cross_agent_retrieval": false,
+    "note": "Cross-agent retrieval is blocked. Agente11 operates only from its own folder and project input artifacts provided at runtime."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Microsoft Fabric Data Engineering Skill Output",
+  "type": "object",
+  "required": ["workload_selection", "load_pattern", "orchestration", "monitoring", "security_lifecycle"],
+  "properties": {
+    "workload_selection": { "type": "array", "items": { "type": "string" } },
+    "load_pattern": { "type": "array", "items": { "type": "string" } },
+    "data_layers": { "type": "array", "items": { "type": "string" } },
+    "orchestration": { "type": "array", "items": { "type": "string" } },
+    "monitoring": { "type": "array", "items": { "type": "string" } },
+    "security_lifecycle": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

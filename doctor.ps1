@@ -37,7 +37,8 @@ $codexHome      = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env
 $codexAgentsDir = Join-Path $codexHome "agents"
 $codexConfig    = Join-Path $codexHome "config.toml"
 $projectCodexConfig = Join-Path $factoryRoot ".codex\config.toml"
-$agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer")
+$agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer","dataanalyst")
+$expectedAgentCount = $agentNames.Count
 
 Write-Host ""
 Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Blue
@@ -249,11 +250,11 @@ foreach ($name in $agentNames) {
     }
 }
 
-if ($agentsOK.Count -eq 11) {
-    Write-CheckOK "Todos os 11 agentes instalados com marcador AUTO-GENERATED"
+if ($agentsOK.Count -eq $expectedAgentCount) {
+    Write-CheckOK "Todos os $expectedAgentCount agentes instalados com marcador AUTO-GENERATED"
 } else {
     if ($agentsOK.Count -gt 0) {
-        Write-CheckOK "$($agentsOK.Count)/11 agentes OK"
+        Write-CheckOK "$($agentsOK.Count)/$expectedAgentCount agentes OK"
     }
     if ($agentsMissing.Count -gt 0) {
         Write-CheckError "Agentes ausentes ($($agentsMissing.Count)): $($agentsMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1"
@@ -295,11 +296,11 @@ foreach ($name in $agentNames) {
     }
 }
 
-if ($codexOK.Count -eq 11) {
-    Write-CheckOK "Todos os 11 custom agents Codex instalados"
+if ($codexOK.Count -eq $expectedAgentCount) {
+    Write-CheckOK "Todos os $expectedAgentCount custom agents Codex instalados"
 } else {
     if ($codexOK.Count -gt 0) {
-        Write-CheckOK "$($codexOK.Count)/11 custom agents Codex OK"
+        Write-CheckOK "$($codexOK.Count)/$expectedAgentCount custom agents Codex OK"
     }
     if ($codexMissing.Count -gt 0) {
         Write-CheckError "Custom agents Codex ausentes ($($codexMissing.Count)): $($codexMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1"

@@ -118,6 +118,7 @@ Evaluate integration readiness before Task Planning. Check: all integrations spe
 | 5 | `api-ingestion-skill` | When external REST/GraphQL API must be consumed |
 | 6 | `idempotent-sync-design-skill` | When a sync operation must be made safe for repeated execution |
 | 7 | `data-privacy-risk-skill` | When a data flow involves personal data subject to LGPD or similar regulation |
+| 8 | `microsoft-fabric-data-engineering-skill` | When Microsoft Fabric ingestion, lakehouse, warehouse, Eventstream/Eventhouse, orchestration, monitoring, or DP-700 work is required |
 
 ## Workflow
 

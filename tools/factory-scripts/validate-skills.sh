@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# validate-skills.sh — Valida estrutura de skills em todos os 11 agentes
+# validate-skills.sh — Valida estrutura de skills em todos os 12 agentes
 # Verifica os 6 arquivos obrigatorios + sections do skill.md
 #
 # Uso: bash tools/factory-scripts/validate-skills.sh [--verbose]

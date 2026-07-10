@@ -1,6 +1,6 @@
 # AI Software Factory — Multi-Agent SDLC Framework
 
-Uma instalação multi-runtime de 11 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code e Codex.
+Uma instalação multi-runtime de 12 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code e Codex.
 
 Suporta **Claude Code** (`@nome`) e **Codex** (custom agents/subagents). O wrapper `factory.ps1` mantém uso manual parcial com Gemini CLI.
 
@@ -47,6 +47,7 @@ Spawn qa and devsecops as subagents and summarize their findings.
 | `@devops` | DevOps | CI/CD, deploy, rollback, SRE | Deployment_Plan.md |
 | `@uxui` | UX/UI Designer | Pesquisa, wireframes, design system | Design_Spec.md |
 | `@dataengineer` | Data Engineer | Pipelines de dados, ETL, integrações | Integration_Plan.md |
+| `@dataanalyst` | Data Analyst | Métricas, análise exploratória, insights | Insight_Report.md |
 
 Ver descrição detalhada de cada agente em [`docs/AGENTS.md`](docs/AGENTS.md).
 
@@ -96,8 +97,8 @@ Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime
 | Ação | Resultado |
 |------|-----------|
 | Define `FACTORY_ROOT` | Variável de ambiente de usuário Windows |
-| Instala 11 agentes | `~/.claude/agents/<nome>.md` |
-| Instala 11 custom agents Codex | `~/.codex/agents/<nome>.toml` |
+| Instala 12 agentes | `~/.claude/agents/<nome>.md` |
+| Instala 12 custom agents Codex | `~/.codex/agents/<nome>.toml` |
 | Cria `knowledge.db` | SQLite FTS5, ~7.000 documentos |
 | Configura MCP global | `~/.claude.json`, `~/.codex/config.toml` |
 | Gera scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1` |
@@ -187,7 +188,7 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 |-----------|----------|
 | [`docs/INSTALLATION.md`](docs/INSTALLATION.md) | Instalação detalhada, fases, idempotência, uninstall |
 | [`docs/OPERATIONS.md`](docs/OPERATIONS.md) | Uso do dia-a-dia, atualização, diagnóstico, múltiplas factories |
-| [`docs/AGENTS.md`](docs/AGENTS.md) | Referência dos 11 agentes: papel, quando chamar, artefatos, exemplos |
+| [`docs/AGENTS.md`](docs/AGENTS.md) | Referência dos 12 agentes: papel, quando chamar, artefatos, exemplos |
 | [`docs/AGENT_CAPABILITY_MATRIX.md`](docs/AGENT_CAPABILITY_MATRIX.md) | Matriz agente × capacidade × gate × arquétipo |
 | [`docs/GOLDEN_MODELS.md`](docs/GOLDEN_MODELS.md) | 8 arquétipos com stack técnica obrigatória |
 | [`docs/PROJECT_ARCHETYPES.md`](docs/PROJECT_ARCHETYPES.md) | Gate A0, classificação, ADR vs. não-ADR |

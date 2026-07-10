@@ -17,6 +17,7 @@ Referência rápida: qual agente faz o quê, quais artefatos produz, quais gates
 | DevOps | `@devops` | Deploy, rollback, SLOs, infraestrutura | Deployment_Plan.md | Gate 6 | Gate 6 (humano obrigatório) | Templates CI/CD, runbooks, checklists de deploy, skills de pipeline | web_app, api_service, mcp_server |
 | UX/UI Designer | `@uxui` | Design de interação, fluxos, acessibilidade | Design_Spec.md, wireframes | — | — | Templates wireframe, checklists de acessibilidade, skills UX, exemplos de design | web_app |
 | Data Engineer | `@dataengineer` | Estratégia de dados, pipelines, governança | Integration_Plan.md, schemas de pipeline | — | — | Templates pipeline, checklists ETL, schemas de integração, decision rules de dados | data_pipeline, integration_worker |
+| Data Analyst | `@dataanalyst` | Métricas, exploração, insights, dashboards | Analysis_Brief.md, Metric_Catalog.md, Insight_Report.md | Analysis Review | Decisões baseadas em análise insegura | Templates de análise, checklists de qualidade, schemas de métricas, decision rules analíticas | web_app, data_pipeline, notebook_analysis |
 
 ## Habilidades por agente
 
@@ -33,6 +34,7 @@ Referência rápida: qual agente faz o quê, quais artefatos produz, quais gates
 | DevOps | 8+ | ci-cd-pipeline, deployment-plan, rollback-plan, slo-definition, infra-review |
 | UX/UI Designer | 6+ | wireframe-design, user-flow, accessibility-audit, design-spec, usability-review |
 | Data Engineer | 8+ | pipeline-design, etl-mapping, integration-plan, data-quality-check, governance-schema |
+| Data Analyst | 4+ | analysis-question-framing, metric-definition, exploratory-data-analysis, insight-reporting |
 
 ## Regras de bloqueio
 

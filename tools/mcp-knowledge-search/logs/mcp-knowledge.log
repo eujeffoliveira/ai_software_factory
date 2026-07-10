@@ -1,67 +1,68 @@
-{"timestamp": "2026-05-22T20:20:28.576302Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
-{"timestamp": "2026-05-22T20:53:15.093335Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
-{"timestamp": "2026-05-22T20:53:32.837107Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
-{"timestamp": "2026-05-22T21:41:49.225440Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 3}
-{"timestamp": "2026-05-22T21:41:49.241737Z", "event": "health_check", "status": "error", "db_exists": false, "reason": "knowledge.db not found"}
-{"timestamp": "2026-05-22T21:41:49.265585Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 0}
-{"timestamp": "2026-05-22T21:41:49.285880Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.306576Z", "event": "search_knowledge", "query": "MCP-first", "status": "error", "reason": "no such column: first", "duration_ms": 2}
-{"timestamp": "2026-05-22T21:41:49.375701Z", "event": "search_knowledge", "query": "xyzzy_nonexistent_99", "category": null, "limit": 20, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.396308Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.417065Z", "event": "search_with_filters", "query": "Next.js", "status": "error", "reason": "fts5: syntax error near \".\"", "duration_ms": 3}
-{"timestamp": "2026-05-22T21:41:49.448246Z", "event": "search_with_filters", "query": "query", "status": "error", "reason": "Expecting value: line 1 column 1 (char 0)", "duration_ms": 2}
-{"timestamp": "2026-05-22T21:41:49.465463Z", "event": "search_with_filters", "query": "Tech Lead", "filters": "{}", "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.485441Z", "event": "get_full_document", "doc_id": "md:docs/AGENTS.md", "found": true, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.506585Z", "event": "get_full_document", "doc_id": "md:does/not/exist.md", "found": false, "duration_ms": 2, "status": "not_found"}
-{"timestamp": "2026-05-22T21:41:49.525616Z", "event": "get_context", "doc_id": "md:docs/AGENTS.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.544984Z", "event": "get_context", "doc_id": "md:does/not/exist.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.566704Z", "event": "knowledge_stats", "total_documents": 3, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:41:49.589568Z", "event": "knowledge_stats", "total_documents": 0, "duration_ms": 4, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.727852Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 3}
-{"timestamp": "2026-05-22T21:42:28.738430Z", "event": "health_check", "status": "error", "db_exists": false, "reason": "knowledge.db not found"}
-{"timestamp": "2026-05-22T21:42:28.763261Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 0}
-{"timestamp": "2026-05-22T21:42:28.782622Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.804031Z", "event": "search_knowledge", "query": "MCP-first", "category": null, "limit": 20, "results_count": 2, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.823256Z", "event": "search_knowledge", "query": "xyzzy_nonexistent_99", "category": null, "limit": 20, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.845215Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.866497Z", "event": "search_with_filters", "query": "Next.js", "filters": "{\"category\": \"markdown\"}", "limit": 20, "results_count": 1, "duration_ms": 3, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.887351Z", "event": "search_with_filters", "query": "query", "status": "error", "reason": "Expecting value: line 1 column 1 (char 0)", "duration_ms": 2}
-{"timestamp": "2026-05-22T21:42:28.907035Z", "event": "search_with_filters", "query": "Tech Lead", "filters": "{}", "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.929664Z", "event": "get_full_document", "doc_id": "md:docs/AGENTS.md", "found": true, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.951686Z", "event": "get_full_document", "doc_id": "md:does/not/exist.md", "found": false, "duration_ms": 2, "status": "not_found"}
-{"timestamp": "2026-05-22T21:42:28.971467Z", "event": "get_context", "doc_id": "md:docs/AGENTS.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:28.991804Z", "event": "get_context", "doc_id": "md:does/not/exist.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:29.016004Z", "event": "knowledge_stats", "total_documents": 3, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:42:29.039250Z", "event": "knowledge_stats", "total_documents": 0, "duration_ms": 3, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.434337Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 3}
-{"timestamp": "2026-05-22T21:44:05.443622Z", "event": "health_check", "status": "error", "db_exists": false, "reason": "knowledge.db not found"}
-{"timestamp": "2026-05-22T21:44:05.471069Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 0}
-{"timestamp": "2026-05-22T21:44:05.489879Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.511589Z", "event": "search_knowledge", "query": "MCP-first", "category": null, "limit": 20, "results_count": 2, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.534114Z", "event": "search_knowledge", "query": "xyzzy_nonexistent_99", "category": null, "limit": 20, "results_count": 0, "duration_ms": 3, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.555381Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.576186Z", "event": "search_with_filters", "query": "Next.js", "filters": "{\"category\": \"markdown\"}", "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.595361Z", "event": "search_with_filters", "query": "query", "status": "error", "reason": "Expecting value: line 1 column 1 (char 0)", "duration_ms": 2}
-{"timestamp": "2026-05-22T21:44:05.613381Z", "event": "search_with_filters", "query": "Tech Lead", "filters": "{}", "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.634159Z", "event": "get_full_document", "doc_id": "md:docs/AGENTS.md", "found": true, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.661005Z", "event": "get_full_document", "doc_id": "md:does/not/exist.md", "found": false, "duration_ms": 2, "status": "not_found"}
-{"timestamp": "2026-05-22T21:44:05.680672Z", "event": "get_context", "doc_id": "md:docs/AGENTS.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.703006Z", "event": "get_context", "doc_id": "md:does/not/exist.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.725735Z", "event": "knowledge_stats", "total_documents": 3, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T21:44:05.750119Z", "event": "knowledge_stats", "total_documents": 0, "duration_ms": 4, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.125443Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 3}
-{"timestamp": "2026-05-22T22:03:54.134438Z", "event": "health_check", "status": "error", "db_exists": false, "reason": "knowledge.db not found"}
-{"timestamp": "2026-05-22T22:03:54.156198Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 0}
-{"timestamp": "2026-05-22T22:03:54.174911Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.195872Z", "event": "search_knowledge", "query": "MCP-first", "category": null, "limit": 20, "results_count": 2, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.216137Z", "event": "search_knowledge", "query": "xyzzy_nonexistent_99", "category": null, "limit": 20, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.234060Z", "event": "search_knowledge", "query": "Tech Lead", "category": null, "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.252868Z", "event": "search_with_filters", "query": "Next.js", "filters": "{\"category\": \"markdown\"}", "limit": 20, "results_count": 1, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.270943Z", "event": "search_with_filters", "query": "query", "status": "error", "reason": "Expecting value: line 1 column 1 (char 0)", "duration_ms": 2}
-{"timestamp": "2026-05-22T22:03:54.289497Z", "event": "search_with_filters", "query": "Tech Lead", "filters": "{}", "limit": 20, "results_count": 1, "duration_ms": 3, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.307568Z", "event": "get_full_document", "doc_id": "md:docs/AGENTS.md", "found": true, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.327408Z", "event": "get_full_document", "doc_id": "md:does/not/exist.md", "found": false, "duration_ms": 2, "status": "not_found"}
-{"timestamp": "2026-05-22T22:03:54.344980Z", "event": "get_context", "doc_id": "md:docs/AGENTS.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.362690Z", "event": "get_context", "doc_id": "md:does/not/exist.md", "window": 5, "results_count": 0, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.382391Z", "event": "knowledge_stats", "total_documents": 3, "duration_ms": 2, "status": "ok"}
-{"timestamp": "2026-05-22T22:03:54.403160Z", "event": "knowledge_stats", "total_documents": 0, "duration_ms": 3, "status": "ok"}
+{"timestamp": "2026-06-17T02:57:57.939131Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T02:59:48.816015Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:00:42.290816Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:01:52.065969Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:02:17.180381Z", "event": "server_start", "db_path": "knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:03:00.292178Z", "event": "server_start", "db_path": "knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:04:10.359970Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:08:57.421195Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:09:11.721873Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:09:27.217384Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:09:55.754952Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:10:16.149478Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:10:21.345590Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:12:04.201425Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:12:10.918472Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:12:55.254448Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-17T03:13:01.596811Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-19T20:15:33.810254Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-19T21:43:36.790103Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-19T22:17:52.728306Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-19T22:36:13.436767Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-25T12:06:13.854263Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-25T12:12:33.922925Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-25T12:26:57.647034Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-06-25T12:38:35.844156Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:03:12.497820Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:04:31.365996Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:04:39.405396Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:07:50.305984Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:08:50.920091Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:09:20.488663Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:10:13.347948Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:15:06.459972Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:15:54.687306Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:23:23.883561Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:23:51.492889Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:27:53.661991Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T19:27:58.846707Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-03T20:17:28.626091Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T12:52:40.035249Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T12:56:28.506477Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T12:57:54.539525Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:00:30.924870Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:01:21.728521Z", "event": "health_check", "status": "ok", "db_exists": true, "total_documents": 8107}
+{"timestamp": "2026-07-10T13:01:21.798354Z", "event": "search_knowledge", "query": "Agente00 OR Agente01 OR Agente02 OR Agente03 OR Agente04 OR Agente05 OR Agente06 OR Agente07 OR Agente08 OR Agente09 OR Agente10", "category": null, "limit": 20, "results_count": 0, "duration_ms": 12, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:21.865789Z", "event": "search_knowledge", "query": "agent_config OR \"Agent Sources\" OR \"The 11 agents\" OR dataengineer", "category": null, "limit": 20, "results_count": 0, "duration_ms": 11, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:26.222513Z", "event": "knowledge_stats", "total_documents": 8107, "duration_ms": 15, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:26.289922Z", "event": "search_knowledge", "query": "techlead", "category": null, "limit": 20, "results_count": 20, "duration_ms": 17, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:26.371200Z", "event": "search_knowledge", "query": "Product Owner OR DevBackend OR QaEngineer OR DataIntegrationEngineer", "category": null, "limit": 20, "results_count": 0, "duration_ms": 8, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:26.470592Z", "event": "search_knowledge", "query": "\"Data Engineer\" OR \"Tech Lead\" OR \"Product Owner\"", "category": null, "limit": 20, "results_count": 0, "duration_ms": 6, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:30.108011Z", "event": "get_full_document", "doc_id": "md:docs/AGENT_CAPABILITY_MATRIX.md:4", "found": true, "duration_ms": 3, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:34.765903Z", "event": "get_full_document", "doc_id": "md:docs/AGENT_CAPABILITY_MATRIX.md", "found": false, "duration_ms": 2, "status": "not_found"}
+{"timestamp": "2026-07-10T13:01:34.861358Z", "event": "search_knowledge", "query": "\"Agent Capability Matrix\" OR \"Capabilities\" OR \"Responsável\" OR \"Owner Agent\"", "category": null, "limit": 30, "results_count": 0, "duration_ms": 5, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:35.066512Z", "event": "search_knowledge", "query": "Agente00_TechLead Agente01_ProductOwner Agente02_SoftwareArchitect Agente03_SoftwareEngineer Agente04_DevBackend Agente05_DevFrontend Agente06_QaEngineer Agente07_DevSecOps Agente08_DevOps Agente09_Ux", "category": null, "limit": 30, "results_count": 1, "duration_ms": 23, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:39.534319Z", "event": "get_context", "doc_id": "md:docs/AGENT_CAPABILITY_MATRIX.md:4", "window": 10, "results_count": 5, "duration_ms": 8, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:44.327883Z", "event": "get_full_document", "doc_id": "md:docs/AGENT_CAPABILITY_MATRIX.md:1", "found": true, "duration_ms": 2, "status": "ok"}
+{"timestamp": "2026-07-10T13:01:44.412693Z", "event": "get_full_document", "doc_id": "md:docs/AGENT_CAPABILITY_MATRIX.md:2", "found": true, "duration_ms": 3, "status": "ok"}
+{"timestamp": "2026-07-10T13:11:15.176668Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:11:47.973074Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:12:00.196773Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:12:30.707432Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:12:37.145896Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:14:30.809638Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:18:44.130040Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:18:56.166518Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:21:49.316527Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:21:49.318448Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-07-10T13:23:04.180479Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}

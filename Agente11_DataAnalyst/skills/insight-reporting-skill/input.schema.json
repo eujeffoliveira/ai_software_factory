@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Insight Reporting Skill Input",
+  "type": "object",
+  "required": ["analysis_question", "evidence"],
+  "properties": {
+    "analysis_question": { "type": "string" },
+    "metric_refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^MET-[0-9]{3,}$" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "caveats": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

@@ -29,6 +29,7 @@ Each file in `tests/agent-smoke-prompts/` contains pre-written prompts with expe
 | `qa.md` | @qa | Test plan generation, coverage threshold (80%), BDD alignment |
 | `devsecops.md` | @devsecops | SQL injection detection, Gate 5 incontornável, secrets policy, LGPD |
 | `dataengineer.md` | @dataengineer | Polars+DuckDB+Pandera stack, data quality checks, bronze/silver/gold |
+| `dataanalyst.md` | @dataanalyst | Metric definitions, confidence labels, causal guardrails, dashboard specs |
 | `automation-script-flow.md` | All | Full flow: classification → PRD → architecture → plan (no web_app stack) |
 | `mcp-first.md` | All | MCP search triggered, no hallucinated content, fallback behavior |
 | `web-app-flow.md` | All | web_app Golden Model compliance end-to-end |
@@ -110,6 +111,7 @@ Rubrics in `evals/rubrics/` provide scoring guidance for each agent and topic. E
 | `qa_rubric.md` | @qa | Coverage adequacy, Vitest/Playwright distinction, edge cases, BDD alignment, performance | 15 |
 | `devsecops_rubric.md` | @devsecops | OWASP Top 10, threat model, secrets policy, LGPD, Gate 5 blocking | 15 |
 | `dataengineer_rubric.md` | @dataengineer | Pipeline archetype selection, Pandera quality, idempotency, bronze/silver/gold | 15 |
+| `dataanalyst_rubric.md` | @dataanalyst | Metric definitions, data quality, causality, confidence, recommendations | 15 |
 | `automation_script_rubric.md` | Any agent | automation_script stack, dry-run, idempotency, retry, secrets | 18 |
 | `mcp_first_rubric.md` | All agents | MCP search triggered, source citation, no hallucination, fallback | 15 |
 | `governance_rubric.md` | All agents | Dual licensing, secrets, copyright, governance awareness | 15 |

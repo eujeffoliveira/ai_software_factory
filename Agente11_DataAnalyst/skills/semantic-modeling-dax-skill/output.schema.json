@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantic Modeling DAX Skill Output",
+  "type": "object",
+  "required": ["model_purpose", "tables", "relationships", "measures", "security_and_lifecycle"],
+  "properties": {
+    "model_purpose": { "type": "string" },
+    "tables": { "type": "array", "items": { "type": "string" } },
+    "relationships": { "type": "array", "items": { "type": "string" } },
+    "measures": { "type": "array", "items": { "type": "string" } },
+    "scale_and_performance": { "type": "array", "items": { "type": "string" } },
+    "security_and_lifecycle": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

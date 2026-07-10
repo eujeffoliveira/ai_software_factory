@@ -103,6 +103,20 @@
         "Art. 16 — Deletion After End of Legal Basis",
         "Art. 46 — Security Requirements"
       ]
+    },
+    {
+      "source_id": "DP700",
+      "title": "Microsoft Learn DP-700 local study package",
+      "format": "markdown-certification-package",
+      "path": "external/certificacoes/dp-700",
+      "collected_at": "2026-07-08T14:11:05.897Z",
+      "availability": "Build-time distillation only; runtime uses local Agente10 artifacts",
+      "key_areas": [
+        "Implement and manage a Fabric analytics solution",
+        "Ingest and transform data",
+        "Monitor and optimize a Fabric analytics solution",
+        "Dataflow Gen2, pipelines, notebooks, Spark, KQL, Eventstream, Eventhouse, warehouse, OneLake security"
+      ]
     }
   ],
   "artifact_map": [

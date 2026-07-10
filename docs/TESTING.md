@@ -82,7 +82,7 @@ python tools/factory-validators/validate_agent_structure.py
 | `validate_governance_files` | 24 arquivos de governança e documentação obrigatórios |
 | `validate_licensing` | LICENSE (Apache-2.0), LICENSE-DOCS (CC BY 4.0), NOTICE, CONTRIBUTING, VERSION |
 | `validate_json_files` | Todos os 325+ arquivos `.json` são JSON válido (inclui BOM UTF-8) |
-| `validate_agent_structure` | 11 agentes com 8 arquivos + 6 pastas + 5 arquivos em knowledge/ |
+| `validate_agent_structure` | 12 agentes com 8 arquivos + 6 pastas + 5 arquivos em knowledge/ |
 | `validate_skill_structure` | 97 skills com 6 arquivos obrigatórios + seção Knowledge Access Policy |
 | `validate_source_maps` | source_map.json de cada agente: JSON válido, agent_id, lista de fontes |
 | `validate_golden_models` | 8 golden models + project-classification.md em standards/ |
@@ -116,8 +116,8 @@ O script verifica as categorias principais do ambiente instalado:
 | 3 | Dependências MCP | Pacote `mcp` instalado no Python detectado |
 | 4 | Claude Code | CLI detectável quando disponível |
 | 5 | Codex | CLI/config detectável quando disponível |
-| 6 | Agentes Claude | 11 arquivos em `~/.claude/agents/` com conteúdo válido |
-| 7 | Custom agents Codex | 11 arquivos em `~/.codex/agents/` com conteúdo válido |
+| 6 | Agentes Claude | 12 arquivos em `~/.claude/agents/` com conteúdo válido |
+| 7 | Custom agents Codex | 12 arquivos em `~/.codex/agents/` com conteúdo válido |
 | 8 | Knowledge Database | `knowledge.db` existe na raiz da factory |
 | 9 | MCP Health Check | Executa `test-mcp.ps1` |
 | 10 | MCP Configuração | `~/.claude.json`, `~/.codex/config.toml`, `.mcp.json` e `.codex/config.toml` |
@@ -231,7 +231,7 @@ Invoke-Pester tests/powershell/Install.Tests.ps1 -Output Detailed
 
 | Arquivo | Script testado | O que verifica |
 |---------|---------------|----------------|
-| `Install.Tests.ps1` | `install.ps1` | Sintaxe AST, parâmetro `-ForceDeps`, array `$agents` com 11 entradas, arquivo VERSION, marcadores de idempotência |
+| `Install.Tests.ps1` | `install.ps1` | Sintaxe AST, parâmetro `-ForceDeps`, array `$agents` com 12 entradas, arquivo VERSION, marcadores de idempotência |
 | `Doctor.Tests.ps1` | `doctor.ps1` | Sintaxe AST, funções helper, categorias principais no conteúdo, exit code 0 ou 1 via child process |
 | `Uninstall.Tests.ps1` | `uninstall.ps1` | Sintaxe AST, 4 parâmetros, modo `-WhatIf` não deleta arquivos (usa `$TestDrive`), segurança do marcador AUTO-GENERATED |
 | `LinkMcp.Tests.ps1` | `link-mcp.ps1` | Sintaxe AST, exit 1 sem `FACTORY_ROOT`, exit 1 sem `.mcp.json`, cópia real para `$TestDrive` com backup |
@@ -260,6 +260,7 @@ Prompts pré-escritos com comportamento esperado e sinais de pass/fail. Não sã
 | `qa.md` | `@qa` | Geração de plano de testes, threshold 80% de cobertura, alinhamento BDD |
 | `devsecops.md` | `@devsecops` | SQL injection → OWASP A03, Gate 5 incontornável, detecção de secrets, LGPD |
 | `dataengineer.md` | `@dataengineer` | Stack Polars+DuckDB+Pandera, qualidade de dados, bronze/silver/gold |
+| `dataanalyst.md` | `@dataanalyst` | Métricas, análise exploratória, confiança, caveats e dashboard specs |
 | `automation-script-flow.md` | Todos | Fluxo completo Gate A0→3 para automation_script (regressão crítica: não deve retornar stack web_app) |
 | `mcp-first.md` | Todos | MCP search acionado, citação de fonte, sem alucinação, comportamento de fallback |
 | `web-app-flow.md` | Todos | Golden Model web_app, Gate A0→2, invariantes críticos (proxy.ts, prisma migrate) |
@@ -319,6 +320,7 @@ evals/
 | `qa_rubric.md` | `@qa` | Cobertura, Vitest/Playwright, edge cases, BDD, performance | 15 |
 | `devsecops_rubric.md` | `@devsecops` | OWASP Top 10, threat model, secrets, LGPD, bloqueio Gate 5 | 15 |
 | `dataengineer_rubric.md` | `@dataengineer` | Arquétipo de pipeline, Pandera, idempotência, camadas bronze/silver/gold | 15 |
+| `dataanalyst_rubric.md` | `@dataanalyst` | Definição de métricas, qualidade de dados, causalidade, confiança e recomendações | 15 |
 | `automation_script_rubric.md` | Qualquer | Stack automation_script, dry-run, idempotência, retry, secrets | 18 |
 | `mcp_first_rubric.md` | Todos | MCP search acionado, citação de fonte, sem alucinação, fallback | 15 |
 | `governance_rubric.md` | Todos | Licenciamento dual, secrets, copyright, governança | 15 |

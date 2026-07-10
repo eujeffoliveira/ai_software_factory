@@ -2,7 +2,7 @@
 
 ## Visão geral do pipeline
 
-A factory implementa um pipeline SDLC sequencial com 11 agentes especializados. O Tech Lead orquestra o fluxo e valida os gates. Nenhum gate pode ser pulado — retornos (`RETURNED`) sempre voltam ao agente anterior.
+A factory implementa um pipeline SDLC sequencial com 12 agentes especializados. O Tech Lead orquestra o fluxo e valida os gates. Nenhum gate pode ser pulado — retornos (`RETURNED`) sempre voltam ao agente anterior.
 
 ```
 Humano
@@ -39,7 +39,7 @@ Humano
                                            (SLO monitoring)
 ```
 
-**Agentes paralelos:** `@uxui` (Agente09) e `@dataengineer` (Agente10) operam em paralelo com outros agentes conforme necessidade do projeto.
+**Agentes paralelos:** `@uxui` (Agente09), `@dataengineer` (Agente10) e `@dataanalyst` (Agente11) operam em paralelo com outros agentes conforme necessidade do projeto.
 
 ## State Ledger
 
@@ -322,6 +322,28 @@ Todo artefato entregue por um agente segue o contrato do **Handoff Package** —
 @dataengineer projete o pipeline de ingestão de dados do ERP com Polars e DuckDB
 @dataengineer avalie a estratégia de sincronização incremental para 10M de registros
 @dataengineer defina a estratégia de dead-letter queue para o worker de integração
+```
+
+---
+
+### @dataanalyst — Agente11_DataAnalyst
+
+**Papel:** Análise de dados, métricas, exploração, insights, especificação de dashboards e revisão de qualidade analítica.
+
+**Quando chamar:**
+- Transformar perguntas de negócio em plano de análise
+- Definir KPIs, métricas, funis, cohorts, retenção e churn
+- Revisar qualidade de dados antes de usar conclusões
+- Produzir relatórios de insights com confiança e caveats
+- Especificar dashboards para implementação pelo frontend
+
+**Produz:** Analysis_Brief.md, Metric_Catalog.md, Exploratory_Analysis_Report.md, Insight_Report.md, Dashboard_Spec.md
+
+**Exemplos de prompt:**
+```
+@dataanalyst defina as métricas de ativação, retenção e churn para este PRD
+@dataanalyst analise este perfil de dados e diga se a conclusão é confiável
+@dataanalyst especifique o dashboard de onboarding para o @devfrontend
 ```
 
 ---

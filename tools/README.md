@@ -7,7 +7,7 @@ Shared scripts, servers, and utilities available to all agents in the ai_softwar
 ```
 tools/
 ├── factory-scripts/          # Factory management and validation scripts
-│   ├── validate-framework.sh     # Validates all 11 agents have required files
+│   ├── validate-framework.sh     # Validates all 12 agents have required files
 │   ├── validate-skills.sh        # Validates all skills have 6 required files + sections
 │   ├── credential-preflight.sh   # Tests API credentials (Supabase, OpenAI, Anthropic)
 │   ├── memory-guard.sh           # Checks Claude process count and memory

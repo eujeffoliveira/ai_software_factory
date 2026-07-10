@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Power BI Analytics Delivery Skill Output",
+  "type": "object",
+  "required": ["report_purpose", "data_model", "pages", "governance", "qa_acceptance_criteria"],
+  "properties": {
+    "report_purpose": {
+      "type": "object",
+      "required": ["audience", "decision_supported"],
+      "properties": {
+        "audience": { "type": "string" },
+        "decision_supported": { "type": "string" },
+        "distribution_method": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "data_model": {
+      "type": "object",
+      "required": ["source_mode", "semantic_model"],
+      "properties": {
+        "source_mode": { "type": "string", "enum": ["Import", "DirectQuery", "Direct Lake", "mixed", "unknown"] },
+        "semantic_model": { "type": "string" },
+        "rls_required": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "pages": { "type": "array", "items": { "type": "string" } },
+    "governance": { "type": "array", "items": { "type": "string" } },
+    "qa_acceptance_criteria": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

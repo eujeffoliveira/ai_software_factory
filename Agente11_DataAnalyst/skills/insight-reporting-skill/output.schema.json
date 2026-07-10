@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Insight Reporting Skill Output",
+  "type": "object",
+  "required": ["executive_summary", "findings", "recommended_actions"],
+  "properties": {
+    "executive_summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "finding", "confidence", "recommendation"],
+        "properties": {
+          "finding_id": { "type": "string", "pattern": "^FIND-[0-9]{3,}$" },
+          "finding": { "type": "string" },
+          "metric_refs": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low", "insufficient_evidence"] },
+          "caveats": { "type": "array", "items": { "type": "string" } },
+          "recommendation": { "type": "string" },
+          "owner": { "type": "string" },
+          "validation_step": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "owner", "validation_metric"],
+        "properties": {
+          "action": { "type": "string" },
+          "owner": { "type": "string" },
+          "validation_metric": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

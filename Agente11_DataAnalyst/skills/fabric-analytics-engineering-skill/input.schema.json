@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fabric Analytics Engineering Skill Input",
+  "type": "object",
+  "required": ["analytics_requirement"],
+  "properties": {
+    "analytics_requirement": { "type": "string" },
+    "data_assets": { "type": "array", "items": { "type": "string" } },
+    "semantic_model_needs": { "type": "array", "items": { "type": "string" } },
+    "governance_requirements": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

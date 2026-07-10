@@ -58,11 +58,11 @@ Describe "install.ps1 — syntax and structure" {
         $content | Should -Match '\$agents\s*='
     }
 
-    It "\$agents array contains 11 entries" {
+    It "\$agents array contains 12 entries" {
         # Count agent object literals — each entry has 'Name ='
         $content = Get-Content $script -Raw
         $matches = [regex]::Matches($content, '(?i)\bName\s*=\s*"[^"]+"')
-        $matches.Count | Should -Be 11
+        $matches.Count | Should -Be 12
     }
 }
 

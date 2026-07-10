@@ -56,7 +56,7 @@ AgenteXX_RoleName/
   tools/                 optional executable tools
 ```
 
-The 11 agents are:
+The 12 agents are:
 
 - `techlead` - Tech Lead, gates, ADRs, risks, State Ledger
 - `po` - Product Owner, PRD, user stories, acceptance criteria
@@ -69,6 +69,7 @@ The 11 agents are:
 - `devops` - CI/CD, deployment, rollback, runbooks
 - `uxui` - UX flows, wireframes, design system, accessibility
 - `dataengineer` - pipelines, ETL, integrations, data governance
+- `dataanalyst` - metrics, exploratory analysis, insights, dashboard specs
 
 ## Codex-Specific Guidance
 

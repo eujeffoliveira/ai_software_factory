@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Exploratory Data Analysis Skill Input",
+  "type": "object",
+  "required": ["analysis_question"],
+  "properties": {
+    "analysis_question": { "type": "string" },
+    "dataset_profiles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "schemas": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "known_caveats": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

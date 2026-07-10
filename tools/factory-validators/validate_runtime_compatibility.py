@@ -23,6 +23,7 @@ AGENT_NAMES = [
     "devops",
     "uxui",
     "dataengineer",
+    "dataanalyst",
 ]
 
 
@@ -47,8 +48,9 @@ def main() -> int:
     errors: list[str] = []
 
     agent_dirs = sorted(p for p in FACTORY_ROOT.iterdir() if p.is_dir() and p.name.startswith("Agente"))
-    if len(agent_dirs) != 11:
-        errors.append(f"  Expected 11 AgenteXX directories, found {len(agent_dirs)}")
+    expected_agent_count = len(AGENT_NAMES)
+    if len(agent_dirs) != expected_agent_count:
+        errors.append(f"  Expected {expected_agent_count} AgenteXX directories, found {len(agent_dirs)}")
     for agent_dir in agent_dirs:
         if not (agent_dir / "prompt.md").is_file():
             errors.append(f"  {agent_dir.name} missing prompt.md")
@@ -124,7 +126,7 @@ def main() -> int:
             if marker in content:
                 errors.append(f"  {rel} contains retired Roo/Cline marker: {marker}")
 
-    total_checks = 11 + len(AGENT_NAMES)
+    total_checks = expected_agent_count + len(AGENT_NAMES)
     failed = len(errors)
     passed = total_checks - failed if failed <= total_checks else 0
     print(f"validate_runtime_compatibility: {total_checks} checks, {passed} OK, {failed} failed")

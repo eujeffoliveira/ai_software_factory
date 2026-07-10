@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantic Modeling DAX Skill Input",
+  "type": "object",
+  "required": ["business_domain"],
+  "properties": {
+    "business_domain": { "type": "string" },
+    "metrics": { "type": "array", "items": { "type": "string" } },
+    "tables": { "type": "array", "items": { "type": "string" } },
+    "storage_mode": { "type": "string" },
+    "security_requirements": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

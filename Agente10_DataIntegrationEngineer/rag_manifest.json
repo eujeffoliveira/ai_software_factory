@@ -35,7 +35,8 @@
         "Agente10_DataIntegrationEngineer/knowledge/principles.md",
         "Agente10_DataIntegrationEngineer/knowledge/heuristics.md",
         "Agente10_DataIntegrationEngineer/knowledge/decision_rules.md",
-        "Agente10_DataIntegrationEngineer/knowledge/knowledge_cards.md"
+        "Agente10_DataIntegrationEngineer/knowledge/knowledge_cards.md",
+        "Agente10_DataIntegrationEngineer/knowledge/microsoft_fabric_data_engineering_dp700.md"
       ],
       "chunking": {
         "strategy": "item",

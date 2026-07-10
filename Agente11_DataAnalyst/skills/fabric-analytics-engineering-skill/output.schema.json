@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fabric Analytics Engineering Skill Output",
+  "type": "object",
+  "required": ["asset_decisions", "semantic_model_decisions", "governance", "lifecycle", "routing"],
+  "properties": {
+    "asset_decisions": { "type": "array", "items": { "type": "string" } },
+    "semantic_model_decisions": { "type": "array", "items": { "type": "string" } },
+    "governance": { "type": "array", "items": { "type": "string" } },
+    "lifecycle": { "type": "array", "items": { "type": "string" } },
+    "routing": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

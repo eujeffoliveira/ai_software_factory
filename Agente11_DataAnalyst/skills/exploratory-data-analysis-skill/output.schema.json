@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Exploratory Data Analysis Skill Output",
+  "type": "object",
+  "required": ["data_quality_summary", "findings", "eda_conclusion"],
+  "properties": {
+    "data_quality_summary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["check", "status"],
+        "properties": {
+          "check": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "caveat", "block", "not_evaluated"] },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "observation", "confidence"],
+        "properties": {
+          "finding_id": { "type": "string", "pattern": "^FIND-[0-9]{3,}$" },
+          "observation": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low", "insufficient_evidence"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "eda_conclusion": { "type": "string", "enum": ["ready", "ready_with_caveats", "blocked"] }
+  },
+  "additionalProperties": false
+}

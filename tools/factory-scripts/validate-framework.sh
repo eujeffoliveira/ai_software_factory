@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
 # validate-framework.sh — Valida a estrutura da ai_software_factory
-# Verifica que todos os 11 agentes (Agente00-Agente10) têm os arquivos obrigatórios.
+# Verifica que todos os 12 agentes (Agente00-Agente11) têm os arquivos obrigatórios.
 #
 # Uso: bash tools/factory-scripts/validate-framework.sh
 # Adaptado de: https://github.com/eujeffoliveira/a-gusman-claude/tree/main/scripts
@@ -53,6 +53,7 @@ REQUIRED_SKILL_FILES=(
 
 AGENT_COUNT=0
 TOTAL_SKILLS=0
+EXPECTED_AGENTS=12
 
 echo "--- Agents ---"
 for agent_dir in "$REPO_ROOT"/Agente[0-9][0-9]_*/; do
@@ -105,7 +106,7 @@ echo "--- Root tools/ ---"
 
 echo ""
 echo "=== Summary ==="
-echo "Agents:       $AGENT_COUNT / 11 expected"
+echo "Agents:       $AGENT_COUNT / $EXPECTED_AGENTS expected"
 echo "Total skills: $TOTAL_SKILLS"
 echo ""
 if [[ $ERRORS -gt 0 ]]; then

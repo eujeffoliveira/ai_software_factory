@@ -57,7 +57,7 @@ Gate A0 must be completed **before Gate 1** (PRD Review) or any technical work b
   "golden_model": "python_automation",
   "classification_rationale": "Project is a scheduled Python script that reads an API and writes a report. No browser UI.",
   "required_agents": ["techlead", "engineer", "qa", "devsecops"],
-  "optional_agents": ["dataengineer", "devops"],
+  "optional_agents": ["dataengineer", "dataanalyst", "devops"],
   "required_artifacts": [
     "Automation_Brief.md",
     "Automation_Design.md",
@@ -117,14 +117,14 @@ Gate A0 must be completed **before Gate 1** (PRD Review) or any technical work b
 
 | Archetype | Required | Optional | Usually Not Applicable |
 |-----------|---------|----------|----------------------|
-| `web_app` | techlead, po, architect, engineer, devbackend, devfrontend, qa, devsecops, devops | uxui, dataengineer | — |
-| `automation_script` | techlead, engineer, qa, devsecops | dataengineer, devops | po, architect, devfrontend, uxui |
-| `data_pipeline` | techlead, dataengineer, engineer, qa | devops, devsecops | devfrontend, uxui, po |
-| `api_service` | techlead, architect, engineer, devbackend, qa, devsecops | devops | devfrontend, uxui |
+| `web_app` | techlead, po, architect, engineer, devbackend, devfrontend, qa, devsecops, devops | uxui, dataengineer, dataanalyst | — |
+| `automation_script` | techlead, engineer, qa, devsecops | dataengineer, dataanalyst, devops | po, architect, devfrontend, uxui |
+| `data_pipeline` | techlead, dataengineer, engineer, qa | dataanalyst, devops, devsecops | devfrontend, uxui, po |
+| `api_service` | techlead, architect, engineer, devbackend, qa, devsecops | dataanalyst, devops | devfrontend, uxui |
 | `cli_tool` | techlead, engineer, qa | devsecops | po, devfrontend, uxui, devops |
 | `mcp_server` | techlead, engineer, qa, devsecops | devops | po, devfrontend, uxui |
-| `integration_worker` | techlead, dataengineer, engineer, qa, devsecops | devops | devfrontend, uxui |
-| `notebook_analysis` | techlead, dataengineer | qa | po, devfrontend, uxui, devops, devsecops |
+| `integration_worker` | techlead, dataengineer, engineer, qa, devsecops | dataanalyst, devops | devfrontend, uxui |
+| `notebook_analysis` | techlead, dataanalyst | dataengineer, qa | po, devfrontend, uxui, devops, devsecops |
 
 ---
 

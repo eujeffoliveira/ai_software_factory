@@ -15,6 +15,7 @@
 | 5 | `api-ingestion-skill` | `skills/api-ingestion-skill/` | `External_API_Assessment.md` | External REST/GraphQL API must be consumed |
 | 6 | `idempotent-sync-design-skill` | `skills/idempotent-sync-design-skill/` | Idempotency section in `Sync_Strategy.md` | A sync operation must be made safe for repeated execution |
 | 7 | `data-privacy-risk-skill` | `skills/data-privacy-risk-skill/` | `Data_Risks.md` (LGPD sections) | Data flow involves personal data subject to LGPD or equivalent regulation |
+| 8 | `microsoft-fabric-data-engineering-skill` | `skills/microsoft-fabric-data-engineering-skill/` | `Fabric_Data_Engineering_Spec.md` | Microsoft Fabric ingestion, lakehouse, warehouse, Eventstream/Eventhouse, orchestration, monitoring, or DP-700 work is required |
 
 ---
 
@@ -146,6 +147,25 @@
 
 ---
 
+### 8. microsoft-fabric-data-engineering-skill
+
+**Purpose:** Design Microsoft Fabric data engineering specs for Dataflow Gen2, pipelines, notebooks/Spark, lakehouse/Delta, medallion architecture, OneLake shortcuts, mirroring, Eventstream/Eventhouse/KQL, warehouse/T-SQL, monitoring, optimization, security, and lifecycle.
+
+**When to Invoke:** Whenever an integration or data pipeline targets Microsoft Fabric, especially DP-700-style workloads that require workload selection, full/incremental/streaming load patterns, orchestration, monitoring, security, or CI/CD.
+
+**Key Outputs:**
+- Fabric workload selection with rationale
+- Full/incremental/streaming load pattern
+- Cursor/watermark/checkpoint and idempotency strategy
+- Bronze/silver/gold layer contracts when medallion architecture applies
+- Orchestration trigger, schedule, parameters, dependencies, and recovery
+- Monitoring, alerting, item-specific troubleshooting, and optimization targets
+- Workspace/item/OneLake security and lifecycle requirements
+
+**Blocks Gate 3.5 if missing:** Yes when Architecture.md specifies Microsoft Fabric data engineering implementation or Fabric is the selected analytical platform.
+
+---
+
 ## Invocation Order (Typical)
 
 ```
@@ -157,6 +177,7 @@ For each external system:
   5. sync-strategy-skill          → Sync_Strategy.md
   6. etl-planning-skill           → ETL plan                      [if bulk migration]
   7. data-quality-validation-skill → Data_Quality_Checklist.md
+  8. microsoft-fabric-data-engineering-skill → Fabric_Data_Engineering_Spec.md [if Microsoft Fabric]
 Compile: Integration_Spec.md (master document)
 ```
 

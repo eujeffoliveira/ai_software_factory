@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Power BI Analytics Delivery Skill Input",
+  "type": "object",
+  "required": ["request", "audience"],
+  "properties": {
+    "request": { "type": "string" },
+    "audience": { "type": "string" },
+    "decision_supported": { "type": "string" },
+    "metrics": { "type": "array", "items": { "type": "string" } },
+    "data_sources": { "type": "array", "items": { "type": "string" } },
+    "security_requirements": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

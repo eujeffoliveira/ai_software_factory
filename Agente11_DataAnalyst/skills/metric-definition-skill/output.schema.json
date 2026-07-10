@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Metric Definition Skill Output",
+  "type": "object",
+  "required": ["metrics"],
+  "properties": {
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["metric_id", "metric_name", "business_owner", "grain", "status"],
+        "properties": {
+          "metric_id": { "type": "string", "pattern": "^MET-[0-9]{3,}$" },
+          "metric_name": { "type": "string" },
+          "business_owner": { "type": "string" },
+          "decision_supported": { "type": "string" },
+          "grain": { "type": "string" },
+          "numerator": { "type": "string" },
+          "denominator": { "type": "string" },
+          "filters": { "type": "array", "items": { "type": "string" } },
+          "exclusions": { "type": "array", "items": { "type": "string" } },
+          "source_fields": { "type": "array", "items": { "type": "string" } },
+          "refresh_cadence": { "type": "string" },
+          "validation_rules": { "type": "array", "items": { "type": "string" } },
+          "known_caveats": { "type": "array", "items": { "type": "string" } },
+          "status": { "type": "string", "enum": ["complete", "partial", "blocked"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

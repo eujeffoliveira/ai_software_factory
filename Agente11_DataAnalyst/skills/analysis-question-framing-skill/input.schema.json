@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Analysis Question Framing Skill Input",
+  "type": "object",
+  "required": ["request"],
+  "properties": {
+    "request": { "type": "string" },
+    "decision_context": { "type": "string" },
+    "available_data_sources": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "known_metrics": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

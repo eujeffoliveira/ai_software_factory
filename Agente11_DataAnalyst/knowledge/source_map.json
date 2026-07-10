@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "agent_id": "Agente11_DataAnalyst",
+  "version": "1.0.0",
+  "build_date": "2026-07-10",
+  "description": "Build-time source map for the initial Data Analyst agent. Sources are distilled into runtime-local artifacts and are not accessed directly at runtime.",
+  "sources": [
+    {
+      "source_id": "SRC-01",
+      "title": "AI Software Factory internal agent architecture",
+      "format": "repository-pattern",
+      "path": "Agente10_DataIntegrationEngineer/",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "agent_config.json",
+          "sections": ["runtime isolation", "handoff", "quality gate"],
+          "notes": "Used as structural reference for a runtime-local specialist agent."
+        },
+        {
+          "artifact": "rag_manifest.json",
+          "sections": ["collections", "blocked_raw_sources"],
+          "notes": "Used to preserve source isolation and retrieval boundaries."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "General analytics rigor patterns",
+      "format": "distilled-practice",
+      "path": "internal-distillation",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/principles.md",
+          "sections": ["P1 through P10"],
+          "notes": "Decision-first analysis, metric contracts, data quality, confidence, causality, privacy, and actionability."
+        },
+        {
+          "artifact": "knowledge/decision_rules.md",
+          "sections": ["DR001 through DR012"],
+          "notes": "Rules for blocking unsafe analysis handoffs."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Factory dashboard and frontend handoff conventions",
+      "format": "repository-pattern",
+      "path": "Agente09_UxUiDesigner/",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "templates/Dashboard_Spec.md",
+          "sections": ["chart inventory", "states", "frontend handoff"],
+          "notes": "Dashboard specs align with frontend and QA handoff expectations."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "Microsoft Learn PL-300 local study package",
+      "format": "markdown-certification-package",
+      "path": "external/certificacoes/pl-300",
+      "collected_at": "2026-07-08T14:03:48.942Z",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/microsoft_power_bi_pl300.md",
+          "sections": ["Power BI data preparation", "semantic modeling", "DAX", "report delivery", "workspace security"],
+          "notes": "Distilled from PL-300 guide, learning paths, module summaries, and review checklist."
+        },
+        {
+          "artifact": "skills/power-bi-analytics-delivery-skill/",
+          "sections": ["skill.md", "schemas", "checklist", "examples"],
+          "notes": "Operationalizes Power BI report/dashboard delivery."
+        },
+        {
+          "artifact": "skills/semantic-modeling-dax-skill/",
+          "sections": ["skill.md", "schemas", "checklist", "examples"],
+          "notes": "Operationalizes semantic model and DAX review."
+        }
+      ]
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "Microsoft Learn DP-600 local study package",
+      "format": "markdown-certification-package",
+      "path": "external/certificacoes/dp-600",
+      "collected_at": "2026-07-08T14:20:55.497Z",
+      "runtime_accessible": false,
+      "contributed_to": [
+        {
+          "artifact": "knowledge/microsoft_fabric_analytics_dp600.md",
+          "sections": ["Fabric analytics solution maintenance", "data preparation", "semantic model scale", "governance", "AI readiness"],
+          "notes": "Distilled from DP-600 guide, learning paths, module summaries, and review checklist."
+        },
+        {
+          "artifact": "skills/fabric-analytics-engineering-skill/",
+          "sections": ["skill.md", "schemas", "checklist", "examples"],
+          "notes": "Operationalizes Fabric analytics engineering decisions and routing."
+        }
+      ]
+    }
+  ]
+}

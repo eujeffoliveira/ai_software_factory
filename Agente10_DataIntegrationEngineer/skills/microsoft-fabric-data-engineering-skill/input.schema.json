@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Microsoft Fabric Data Engineering Skill Input",
+  "type": "object",
+  "required": ["requirement", "source_systems"],
+  "properties": {
+    "requirement": { "type": "string" },
+    "source_systems": { "type": "array", "items": { "type": "string" } },
+    "target_items": { "type": "array", "items": { "type": "string" } },
+    "latency_requirement": { "type": "string" },
+    "security_requirements": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

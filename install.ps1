@@ -130,7 +130,8 @@ $agents = @(
     @{ Folder = "Agente07_DevSecOps";               Emoji = "🔒";  Name = "devsecops";    Description = "DevSecOps — auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
     @{ Folder = "Agente08_DevOps";                  Emoji = "🚀";  Name = "devops";       Description = "DevOps — CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
     @{ Folder = "Agente09_UxUiDesigner";            Emoji = "✏️";  Name = "uxui";         Description = "UX/UI Designer — pesquisa de usuario, wireframes, design system e acessibilidade" },
-    @{ Folder = "Agente10_DataIntegrationEngineer"; Emoji = "🗄️";  Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" }
+    @{ Folder = "Agente10_DataIntegrationEngineer"; Emoji = "🗄️";  Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" },
+    @{ Folder = "Agente11_DataAnalyst";             Emoji = "📊";  Name = "dataanalyst";  Description = "Data Analyst — metricas, analise exploratoria, insights e especificacao de dashboards" }
 )
 
 $knowledgeFiles = @(

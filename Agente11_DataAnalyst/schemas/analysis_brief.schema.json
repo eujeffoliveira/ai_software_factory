@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-software-factory/schemas/agente11-analysis-brief",
+  "title": "Analysis Brief",
+  "type": "object",
+  "required": ["decision_supported", "business_question", "scope", "available_data", "candidate_metrics", "open_questions"],
+  "properties": {
+    "decision_supported": { "type": "string" },
+    "business_question": { "type": "string" },
+    "scope": {
+      "type": "object",
+      "required": ["population", "time_window", "comparison_baseline", "required_confidence"],
+      "properties": {
+        "population": { "type": "string" },
+        "exclusions": { "type": "array", "items": { "type": "string" } },
+        "time_window": { "type": "string" },
+        "comparison_baseline": { "type": "string" },
+        "required_confidence": { "type": "string", "enum": ["high", "medium", "low", "exploratory"] }
+      },
+      "additionalProperties": false
+    },
+    "available_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "grain", "refresh_cadence"],
+        "properties": {
+          "source": { "type": "string" },
+          "grain": { "type": "string" },
+          "refresh_cadence": { "type": "string" },
+          "known_caveats": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "candidate_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["metric_id", "name", "definition_status"],
+        "properties": {
+          "metric_id": { "type": "string", "pattern": "^MET-[0-9]{3,}$" },
+          "name": { "type": "string" },
+          "why_needed": { "type": "string" },
+          "definition_status": { "type": "string", "enum": ["draft", "complete", "blocked"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "directed_to", "blocking"],
+        "properties": {
+          "question": { "type": "string" },
+          "directed_to": { "type": "string" },
+          "blocking": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
