@@ -131,7 +131,6 @@ quando o cliente expõe esse comando.
 - A configuração `.codex/config.toml` local só é carregada por projetos
   confiáveis no Codex.
 - O MCP `knowledge` depende de Python, pacote `mcp` e `knowledge.db` atualizado.
-- O Gemini CLI continua parcial e não recebe MCP automaticamente.
 
 ## Quando reexecutar o instalador
 

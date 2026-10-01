@@ -6,7 +6,8 @@
 > - **Instalação:** [`docs/INSTALLATION.md`](INSTALLATION.md)
 > - **Operações:** [`docs/OPERATIONS.md`](OPERATIONS.md)
 > - **Codex:** [`docs/CODEX.md`](CODEX.md)
-> - **Gemini CLI:** [`docs/CLIENT_COMPATIBILITY.md`](CLIENT_COMPATIBILITY.md#gemini-cli)
+> - **Antigravity:** [`docs/ANTIGRAVITY.md`](ANTIGRAVITY.md)
+> - **GitHub Copilot:** [`docs/COPILOT.md`](COPILOT.md)
 > - **Troubleshooting:** [`docs/TROUBLESHOOTING.md`](TROUBLESHOOTING.md)
 >
 > O conteúdo abaixo é preservado apenas como referência histórica.

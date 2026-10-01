@@ -365,11 +365,11 @@ if (Test-Path $GEMINI_MCP_CONFIG) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  5 — factory.ps1 (script auxiliar gerado)
+#  5 — Scripts auxiliares legados
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Header "factory.ps1"
+Write-Header "Scripts auxiliares legados"
 
-Remove-IfExists -Path (Join-Path $BIN_DIR "factory.ps1") -Label "~/.local/bin/factory.ps1"
+Remove-IfExists -Path (Join-Path $BIN_DIR "factory.ps1") -Label "~/.local/bin/factory.ps1 (legado)"
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  6 — Arquivos gerados no repositorio

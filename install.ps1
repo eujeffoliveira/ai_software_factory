@@ -1551,61 +1551,15 @@ if ($enableCopilot) {
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  FASE 7 — factory.ps1 (Gemini CLI)
+#  FASE 7 — Scripts auxiliares
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header "Scripts auxiliares"
 
-if (-not (Test-Path $BIN_DIR)) { New-Item -ItemType Directory -Path $BIN_DIR | Out-Null }
-
-$agentHelpLines = ($agents | ForEach-Object {
-    "    Write-Host `"  $($_.Name.PadRight(14)) — $($_.Folder)`""
-}) -join "`n"
-
-$factoryScript = @"
-# factory.ps1 — AI Agent CLI para Gemini/Claude
-# Gerado por install.ps1 — re-execute para atualizar
-# Uso: factory <agent-folder> [engine] [query]
-
-param(
-    [string]`$AgentFolder,
-    [string]`$Engine = "gemini",
-    [Parameter(ValueFromRemainingArguments=`$true)]
-    [string[]]`$QueryParts
-)
-
-`$FACTORY_PATH = if (`$env:FACTORY_ROOT) { `$env:FACTORY_ROOT } else { "$FACTORY_PATH" }
-
-if (-not `$AgentFolder) {
-    Write-Host "Uso: factory <agent-folder> [engine] [query]"
-    Write-Host "  engine: gemini (padrao) | claude"
-    Write-Host "Agentes:"
-$agentHelpLines
-    exit 1
+# Limpeza de factory.ps1 legado (Gemini CLI depreciado)
+$legacyFactoryPs1 = Join-Path $BIN_DIR "factory.ps1"
+if (Test-Path $legacyFactoryPs1) {
+    Remove-Item $legacyFactoryPs1 -Force -ErrorAction SilentlyContinue
 }
-
-`$AgentDir   = Join-Path `$FACTORY_PATH `$AgentFolder
-`$PromptFile = Join-Path `$AgentDir "prompt.md"
-if (-not (Test-Path `$AgentDir))   { Write-Error "Pasta nao encontrada: `$AgentDir"; exit 1 }
-if (-not (Test-Path `$PromptFile)) { Write-Error "prompt.md nao encontrado em `$AgentDir"; exit 1 }
-
-`$System   = Get-Content `$PromptFile -Raw
-`$QueryStr = `$QueryParts -join " "
-
-switch (`$Engine) {
-    "gemini" {
-        if (`$QueryStr) { & gemini --system-prompt `$System -p `$QueryStr }
-        else            { & gemini --system-prompt `$System }
-    }
-    "claude" {
-        if (`$QueryStr) { & claude --system-prompt `$System -p `$QueryStr --add-dir `$AgentDir }
-        else            { & claude --system-prompt `$System --add-dir `$AgentDir }
-    }
-    default { Write-Error "Engine desconhecida: '`$Engine'. Use 'gemini' ou 'claude'."; exit 1 }
-}
-"@
-
-$s = Write-IfChanged -Path (Join-Path $BIN_DIR "factory.ps1") -Content $factoryScript -Label "factory.ps1"
-if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_unchanged++ }
 
 # update-knowledge.ps1
 $updateKnowledge = @"

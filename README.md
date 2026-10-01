@@ -2,7 +2,7 @@
 
 Uma instalação multi-runtime de 12 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code, Codex, Antigravity e GitHub Copilot.
 
-Suporta **Claude Code** (`@nome`), **Codex** (custom agents/subagents), **Antigravity** (skills/subagents) e **GitHub Copilot** (prompt files e Agent mode MCP). O wrapper `factory.ps1` mantém uso manual parcial com Gemini CLI.
+Suporta **Claude Code** (`@nome`), **Codex** (custom agents/subagents), **Antigravity** (skills/subagents) e **GitHub Copilot** (prompt files e Agent mode MCP).
 
 ---
 
@@ -255,7 +255,7 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 | [`docs/ANTIGRAVITY.md`](docs/ANTIGRAVITY.md) | Antigravity skills, subagentes, MCP e regras |
 | [`docs/COPILOT.md`](docs/COPILOT.md) | GitHub Copilot prompt files, instruções e MCP |
 | [`docs/ADDING_KNOWLEDGE.md`](docs/ADDING_KNOWLEDGE.md) | Distilação de conhecimento, source_map.json, comandos |
-| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Antigravity, GitHub Copilot, Gemini CLI |
+| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Antigravity, GitHub Copilot |
 | [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | Problemas comuns e soluções |
 | [`docs/TESTING.md`](docs/TESTING.md) | Factory validators, pytest MCP, doctor.ps1, test-mcp.ps1 |
 | [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md) | State Ledger, .factory/, init-project, gates, riscos, ADRs |

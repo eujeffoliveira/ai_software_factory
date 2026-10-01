@@ -8,7 +8,6 @@
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
 | Antigravity | Sim | Sim | skills (`techlead`, etc.) em `~/.gemini/config/plugins/` | Completo |
 | GitHub Copilot | Sim | Sim | prompt files (`.github/prompts/`) + `.vscode/mcp.json` | Completo |
-| Gemini CLI | Parcial | Não | wrapper `factory.ps1` | Parcial |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
 Todos os runtimes completos usam a mesma fonte canônica:
@@ -117,23 +116,6 @@ para busca de principios, heuristicas e playbooks.
 
 Leia detalhes em `docs/COPILOT.md`.
 
-## Gemini CLI
-
-Gemini CLI tem suporte parcial via `factory.ps1`.
-
-```powershell
-factory Agente06_QaEngineer gemini "Escreva testes E2E para checkout"
-factory Agente02_SoftwareArchitect gemini
-```
-
-Limitações:
-
-- sem `@nome`;
-- sem MCP `knowledge`;
-- sem custom agents nativos;
-- sem handoff automático;
-- exige fornecer contexto manual quando necessário.
-
 ## Uso manual
 
 Para clientes sem integração:
@@ -147,21 +129,20 @@ Esse modo não deve ser usado para operação de produção da factory.
 
 ## Compatibilidade removida
 
-O runtime de custom modes do VS Code não é mais suportado pela factory. O
-instalador não gera custom modes, não cria script dedicado para esse runtime,
-não edita configurações do VS Code e o diagnóstico não valida esses artefatos.
+- **Custom modes legados do VS Code**: substituídos pelo suporte nativo ao **GitHub Copilot** (reusable prompt files em `.github/prompts/` e Agent mode MCP).
+- **Gemini CLI (`factory.ps1`)**: utilitário legado de terminal depreciado em favor da integração nativa com o **Google Antigravity** (plugin global, skills modulares e progressive disclosure).
 
 ## Comparação de recursos
 
-| Recurso | Claude Code | Codex | Antigravity | GitHub Copilot | Gemini CLI | Manual |
-|---|---:|---:|---:|---:|---:|---:|
-| Prompt completo | Sim | Sim | Sim | Sim | Parcial | Manual |
-| Knowledge embutida | Sim | Sim | Sim | Sim | Não | Manual |
-| MCP Knowledge | Sim | Sim | Sim | Sim | Não | Não |
-| Agentes especializados | `@nome` | custom agents | skills (`techlead`, etc.) | prompt files | wrapper | Manual |
-| State Ledger | Sim | Sim | Sim | Sim | Manual | Manual |
-| Quality gates | Sim | Sim | Sim | Sim | Manual | Manual |
-| Config por projeto | Opcional | `.codex/config.toml` | `AGENTS.md` | `.github/` & `.vscode/` | Não | Não |
+| Recurso | Claude Code | Codex | Antigravity | GitHub Copilot | Manual |
+|---|---:|---:|---:|---:|---:|
+| Prompt completo | Sim | Sim | Sim | Sim | Manual |
+| Knowledge embutida | Sim | Sim | Sim | Sim | Manual |
+| MCP Knowledge | Sim | Sim | Sim | Sim | Não |
+| Agentes especializados | `@nome` | custom agents | skills (`techlead`, etc.) | prompt files | Manual |
+| State Ledger | Sim | Sim | Sim | Sim | Manual |
+| Quality gates | Sim | Sim | Sim | Sim | Manual |
+| Config por projeto | Opcional | `.codex/config.toml` | `AGENTS.md` | `.github/` & `.vscode/` | Não |
 
 ## Validação
 

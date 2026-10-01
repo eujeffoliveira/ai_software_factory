@@ -16,7 +16,6 @@ The factory supports multiple agent runtimes from the same canonical sources:
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
 | Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` (`<name>`) | `~/.gemini/config/mcp_config.json` | Progressive skills, MCP tools `mcp_knowledge_*` |
 | GitHub Copilot | `.github/prompts/<name>.prompt.md` & instructions | `.vscode/mcp.json` | VS Code Copilot Chat prompt files and Agent mode MCP |
-| Gemini CLI | `factory.ps1` wrapper | none | Partial/manual support |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
 runtime files must be derived from those sources, not hand-maintained as forks.
