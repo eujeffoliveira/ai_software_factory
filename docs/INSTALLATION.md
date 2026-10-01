@@ -214,6 +214,12 @@ Para remover os componentes instalados pela factory, utilize o script [`uninstal
 
 # 4. Desinstalacao completa sem confirmacoes interativas:
 .\uninstall.ps1 -Full -Force
+
+# 5. Desinstalacao seletiva por runtime (remove apenas o runtime especificado, preservando os demais):
+.\uninstall.ps1 -Claude
+.\uninstall.ps1 -Codex
+.\uninstall.ps1 -Copilot
+.\uninstall.ps1 -Antigravity
 ```
 
 ### O que o `uninstall.ps1` limpa:
