@@ -48,10 +48,14 @@ Isso garante paridade total entre runtimes sem duplicar prompts nem criar forks 
 Na raiz da factory:
 
 ```powershell
+# Instalação direta para Antigravity:
+.\install.ps1 -Antigravity
+
+# Ou através do instalador interativo inteligente:
 .\install.ps1
 ```
 
-O instalador cria ou atualiza:
+O instalador detecta a presença do Antigravity (via CLI `agy` ou diretório `~/.gemini/`) e cria ou atualiza:
 
 - O plugin `ai-software-factory` em `~/.gemini/config/plugins/ai-software-factory/`
 - As 12 skills com frontmatter YAML e instruções completas (usando os nomes diretos dos agentes: `techlead`, `po`, `architect`, etc.)

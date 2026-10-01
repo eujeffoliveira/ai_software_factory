@@ -85,11 +85,44 @@ Quando algo muda (editou um `prompt.md`, atualizou a factory), o instalador dete
 
 ---
 
-## Opções do instalador
+## Opções e Seleção de Runtimes
+
+O instalador é **inteligente**: ele detecta automaticamente quais ambientes de IA estão presentes no seu sistema (Claude Code, Codex, Antigravity, GitHub Copilot) e pergunta interativamente quais você deseja instalar, evitando a criação de arquivos desnecessários.
+
+### Uso Interativo (Padrão)
 
 ```powershell
-.\install.ps1            # instalação normal
-.\install.ps1 -ForceDeps # força reinstalação das dependências Python
+.\install.ps1
+```
+
+O instalador exibe os runtimes detectados e apresenta as opções:
+- `[D] Detectados (padrao)`: instala apenas para os runtimes encontrados no ambiente.
+- `[A] Todos`: instala para todos os 4 runtimes suportados.
+- `[C] Customizado`: permite selecionar individualmente (ex: `1,3`).
+- `[Q] Cancelar`: cancela a operação.
+
+### Uso Não Interativo (Flags / Automação)
+
+Você pode passar flags diretamente pela linha de comando:
+
+```powershell
+# Instalação rápida para runtimes específicos:
+.\install.ps1 -Antigravity
+.\install.ps1 -Copilot
+.\install.ps1 -Codex
+.\install.ps1 -Claude
+
+# Combinações de flags:
+.\install.ps1 -Antigravity -Copilot
+
+# Forçar todos os runtimes sem prompt:
+.\install.ps1 -All
+
+# Passar lista de runtimes por parâmetro:
+.\install.ps1 -Runtime Antigravity, Copilot -NonInteractive
+
+# Forçar reinstalação de dependências Python:
+.\install.ps1 -ForceDeps
 ```
 
 ---
@@ -97,7 +130,7 @@ Quando algo muda (editou um `prompt.md`, atualizou a factory), o instalador dete
 ## Verificar a instalação
 
 ```powershell
-.\doctor.ps1      # diagnóstico completo multi-runtime
+.\doctor.ps1      # diagnóstico completo multi-runtime (respeita runtimes instalados)
 .\test-mcp.ps1    # health check específico do MCP
 ```
 
@@ -116,33 +149,42 @@ chmod +x install.sh
 
 ## Estrutura gerada
 
-```
-~/.claude/
-├── agents/
-│   ├── techlead.md          ← gerado pela factory
-│   ├── po.md
-│   ├── architect.md
-│   ├── ...
-│   └── .ai_software_factory_manifest.json
-└── .claude.json             ← atualizado (mcpServers.knowledge)
+Conforme os runtimes selecionados:
 
-~/.codex/
+```
+~/.claude/                          (se Claude selecionado)
 ├── agents/
-│   ├── techlead.toml        ← gerado pela factory
-│   ├── po.toml
-│   ├── architect.toml
+│   ├── techlead.md
 │   ├── ...
 │   └── .ai_software_factory_manifest.json
-└── config.toml              ← atualizado (mcp_servers.knowledge)
+└── .claude.json                     ← atualizado (mcpServers.knowledge)
+
+~/.codex/                           (se Codex selecionado)
+├── agents/
+│   ├── techlead.toml
+│   ├── ...
+│   └── .ai_software_factory_manifest.json
+└── config.toml                      ← atualizado (mcp_servers.knowledge)
+
+~/.gemini/config/                   (se Antigravity selecionado)
+├── plugins/ai-software-factory/
+│   ├── plugin.json
+│   ├── mcp_config.json
+│   └── skills/<nome>/SKILL.md
+└── mcp_config.json                  ← atualizado (mcpServers.knowledge)
 
 <factory>/
-├── knowledge.db             ← criado pelo ingest
-├── knowledge-config.json    ← gerado
-├── .mcp.json                ← gerado
-├── .codex/
-│   └── config.toml          ← gerado para Codex local
-├── update-knowledge.ps1     ← gerado
-└── link-mcp.ps1             ← gerado
+├── .github/                         (se Copilot selecionado)
+│   ├── copilot-instructions.md
+│   └── prompts/<nome>.prompt.md
+├── .vscode/                         (se Copilot selecionado)
+│   └── mcp.json
+├── knowledge.db                     ← criado pelo ingest (FTS5)
+├── knowledge-config.json
+├── .mcp.json                        ← universal MCP config
+├── .codex/config.toml               ← gerado para Codex local
+├── update-knowledge.ps1
+└── link-mcp.ps1
 ```
 
 ---

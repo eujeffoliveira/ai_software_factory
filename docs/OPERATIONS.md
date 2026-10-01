@@ -22,9 +22,39 @@ Em qualquer projeto, abra uma sessão Claude Code e chame os agentes com `@nome`
 @devops configure o CI/CD no GitHub Actions para Vercel
 @uxui proponha o wireframe da tela de dashboard
 @dataengineer projete o pipeline de ingestão dos dados de vendas
+@dataanalyst defina as métricas e KPIs para o módulo
 ```
 
-Os agentes funcionam **em qualquer diretório**, sem configuração adicional por projeto.
+### Codex
+
+No Codex, requisite o custom agent explicitamente ou faça spawn de subagentes:
+
+```text
+Use the architect custom agent to review this technical design.
+Spawn qa and devsecops as subagents, wait for both, then compare risks.
+```
+
+### Antigravity (AGY)
+
+No Google Antigravity, acione as skills diretamente pelo nome ou invoque subagentes:
+
+```text
+Ative a skill techlead para avaliar os quality gates deste projeto.
+Use a skill qa para elaborar o plano de testes Vitest e Playwright.
+Invoque techlead e architect como subagentes para refinarem a arquitetura.
+```
+
+### GitHub Copilot (VS Code)
+
+No VS Code Copilot Chat, anexe os prompt files reutilizáveis (`#file:`) ou invoque a persona:
+
+```text
+#file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
+#file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
+Atue sob a persona @architect para elaborar o diagrama C4 de componentes.
+```
+
+No modo Agent do Copilot, as ferramentas do MCP `knowledge` são consumidas nativamente para busca semântica.
 
 ## Atualizar após mudanças
 
@@ -61,22 +91,24 @@ git pull
 
 ## Vincular MCP a um projeto específico
 
-Alguns projetos precisam de `.mcp.json` local ou de `.codex/config.toml`
-específico do projeto:
+Para habilitar a busca de conhecimento e ferramentas MCP em projetos externos:
 
 ```powershell
 cd meu-projeto
 & "$env:FACTORY_ROOT\link-mcp.ps1"
 ```
 
-Isso copia o `.mcp.json` da factory para o projeto atual.
+Isso copia/atualiza automaticamente no projeto atual:
+- `.mcp.json` (para Claude Code)
+- `.codex/config.toml` (para Codex)
+- `.vscode/mcp.json` (para GitHub Copilot Agent mode)
 
 ---
 
 ## Diagnóstico
 
 ```powershell
-# Diagnóstico completo multi-runtime
+# Diagnóstico completo multi-runtime (respeita os runtimes instalados)
 cd $env:FACTORY_ROOT
 .\doctor.ps1
 
@@ -89,8 +121,14 @@ cd $env:FACTORY_ROOT
 ## Versão instalada
 
 ```powershell
+# Versão da factory:
 Get-Content "$env:FACTORY_ROOT\VERSION"
+
+# Manifestos por runtime instalado:
 Get-Content "$env:USERPROFILE\.claude\agents\.ai_software_factory_manifest.json" | ConvertFrom-Json | Select-Object factory_version, installed_at
+Get-Content "$env:USERPROFILE\.codex\agents\.ai_software_factory_manifest.json" | ConvertFrom-Json | Select-Object factory_version, installed_at
+Get-Content "$env:USERPROFILE\.gemini\config\plugins\ai-software-factory\.ai_software_factory_manifest.json" | ConvertFrom-Json | Select-Object factory_version, installed_at
+Get-Content "$env:FACTORY_ROOT\.github\prompts\.ai_software_factory_manifest.json" | ConvertFrom-Json | Select-Object factory_version, installed_at
 ```
 
 ---

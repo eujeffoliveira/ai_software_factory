@@ -105,35 +105,48 @@ if (Test-Path $versionFile) {
     $hadWarning = $true
 }
 
-$manifestPath = "$env:USERPROFILE\.claude\agents\.ai_software_factory_manifest.json"
-if (Test-Path $manifestPath) {
+$claudeAgentsDir    = "$env:USERPROFILE\.claude\agents"
+$manifestPath       = "$claudeAgentsDir\.ai_software_factory_manifest.json"
+$codexManifestPath  = Join-Path $codexAgentsDir ".ai_software_factory_manifest.json"
+$geminiManifestPath = Join-Path $geminiPluginDir ".ai_software_factory_manifest.json"
+$copilotManifestPath = Join-Path $copilotPromptsDir ".ai_software_factory_manifest.json"
+
+$hasClaudeManifest       = Test-Path $manifestPath
+$hasCodexManifest        = Test-Path $codexManifestPath
+$hasAntigravityManifest  = Test-Path $geminiManifestPath
+$hasCopilotManifest      = Test-Path $copilotManifestPath
+
+$anyRuntimeInstalled = $hasClaudeManifest -or $hasCodexManifest -or $hasAntigravityManifest -or $hasCopilotManifest
+
+if (-not $anyRuntimeInstalled) {
+    Write-CheckError "Nenhum manifesto de runtime encontrado (Claude, Codex, Antigravity ou Copilot)" "cd '$factoryRoot' && .\install.ps1"
+    $hadError = $true
+}
+
+if ($hasClaudeManifest) {
     try {
         $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
         if ($manifest.factory_version) {
             if ($manifest.factory_version -eq $factoryVersion) {
-                Write-CheckOK "Manifesto alinhado com VERSION ($($manifest.factory_version))"
+                Write-CheckOK "Manifesto Claude alinhado com VERSION ($($manifest.factory_version))"
             } else {
-                Write-CheckWarn "Manifesto v$($manifest.factory_version) != VERSION v$factoryVersion — reinstale"
+                Write-CheckWarn "Manifesto Claude v$($manifest.factory_version) != VERSION v$factoryVersion — reinstale"
                 $hadWarning = $true
             }
         } else {
-            Write-CheckWarn "Campo factory_version ausente no manifesto — reinstale para atualizar"
+            Write-CheckWarn "Campo factory_version ausente no manifesto Claude — reinstale para atualizar"
             $hadWarning = $true
         }
         if ($manifest.installed_at) {
-            Write-CheckOK "Instalado em: $($manifest.installed_at)"
+            Write-CheckOK "Claude instalado em: $($manifest.installed_at)"
         }
     } catch {
-        Write-CheckWarn "Manifesto existe mas JSON invalido: $_"
+        Write-CheckWarn "Manifesto Claude existe mas JSON invalido: $_"
         $hadWarning = $true
     }
-} else {
-    Write-CheckError "Manifesto nao encontrado em ~/.claude/agents/" "cd '$factoryRoot' && .\install.ps1"
-    $hadError = $true
 }
 
-$codexManifestPath = Join-Path $codexAgentsDir ".ai_software_factory_manifest.json"
-if (Test-Path $codexManifestPath) {
+if ($hasCodexManifest) {
     try {
         $codexManifest = Get-Content $codexManifestPath -Raw | ConvertFrom-Json
         if ($codexManifest.factory_version -eq $factoryVersion) {
@@ -149,9 +162,42 @@ if (Test-Path $codexManifestPath) {
         Write-CheckWarn "Manifesto Codex existe mas JSON invalido: $_"
         $hadWarning = $true
     }
-} else {
-    Write-CheckError "Manifesto Codex nao encontrado em ~/.codex/agents/" "cd '$factoryRoot' && .\install.ps1"
-    $hadError = $true
+}
+
+if ($hasAntigravityManifest) {
+    try {
+        $antigravityManifest = Get-Content $geminiManifestPath -Raw | ConvertFrom-Json
+        if ($antigravityManifest.factory_version -eq $factoryVersion) {
+            Write-CheckOK "Manifesto Antigravity alinhado com VERSION ($($antigravityManifest.factory_version))"
+        } else {
+            Write-CheckWarn "Manifesto Antigravity v$($antigravityManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            $hadWarning = $true
+        }
+        if ($antigravityManifest.installed_at) {
+            Write-CheckOK "Antigravity instalado em: $($antigravityManifest.installed_at)"
+        }
+    } catch {
+        Write-CheckWarn "Manifesto Antigravity existe mas JSON invalido: $_"
+        $hadWarning = $true
+    }
+}
+
+if ($hasCopilotManifest) {
+    try {
+        $copilotManifest = Get-Content $copilotManifestPath -Raw | ConvertFrom-Json
+        if ($copilotManifest.factory_version -eq $factoryVersion) {
+            Write-CheckOK "Manifesto Copilot alinhado com VERSION ($($copilotManifest.factory_version))"
+        } else {
+            Write-CheckWarn "Manifesto Copilot v$($copilotManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            $hadWarning = $true
+        }
+        if ($copilotManifest.installed_at) {
+            Write-CheckOK "Copilot instalado em: $($copilotManifest.installed_at)"
+        }
+    } catch {
+        Write-CheckWarn "Manifesto Copilot existe mas JSON invalido: $_"
+        $hadWarning = $true
+    }
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -235,44 +281,46 @@ if (Test-Path $codexConfig) {
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Section "6. Claude Code — Agentes"
 
-$claudeAgentsDir = "$env:USERPROFILE\.claude\agents"
-
-if (Test-Path $claudeAgentsDir) {
-    Write-CheckOK "Diretorio ~/.claude/agents/ existe"
-} else {
-    Write-CheckError "~/.claude/agents/ nao encontrado" "cd '$factoryRoot' && .\install.ps1"
-    $hadError = $true
-}
-
-$agentsMissing  = @()
-$agentsNoMarker = @()
-$agentsOK       = @()
-
-foreach ($name in $agentNames) {
-    $file = Join-Path $claudeAgentsDir "$name.md"
-    if (-not (Test-Path $file)) {
-        $agentsMissing += $name
-    } elseif (-not (Select-String -Path $file -Pattern "AUTO-GENERATED BY ai_software_factory" -Quiet -ErrorAction SilentlyContinue)) {
-        $agentsNoMarker += $name
+if ($hasClaudeManifest) {
+    if (Test-Path $claudeAgentsDir) {
+        Write-CheckOK "Diretorio ~/.claude/agents/ existe"
     } else {
-        $agentsOK += $name
-    }
-}
-
-if ($agentsOK.Count -eq $expectedAgentCount) {
-    Write-CheckOK "Todos os $expectedAgentCount agentes instalados com marcador AUTO-GENERATED"
-} else {
-    if ($agentsOK.Count -gt 0) {
-        Write-CheckOK "$($agentsOK.Count)/$expectedAgentCount agentes OK"
-    }
-    if ($agentsMissing.Count -gt 0) {
-        Write-CheckError "Agentes ausentes ($($agentsMissing.Count)): $($agentsMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1"
+        Write-CheckError "~/.claude/agents/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Claude"
         $hadError = $true
     }
-    if ($agentsNoMarker.Count -gt 0) {
-        Write-CheckWarn "Agentes sem marcador AUTO-GENERATED (podem ser externos): $($agentsNoMarker -join ', ')"
-        $hadWarning = $true
+
+    $agentsMissing  = @()
+    $agentsNoMarker = @()
+    $agentsOK       = @()
+
+    foreach ($name in $agentNames) {
+        $file = Join-Path $claudeAgentsDir "$name.md"
+        if (-not (Test-Path $file)) {
+            $agentsMissing += $name
+        } elseif (-not (Select-String -Path $file -Pattern "AUTO-GENERATED BY ai_software_factory" -Quiet -ErrorAction SilentlyContinue)) {
+            $agentsNoMarker += $name
+        } else {
+            $agentsOK += $name
+        }
     }
+
+    if ($agentsOK.Count -eq $expectedAgentCount) {
+        Write-CheckOK "Todos os $expectedAgentCount agentes instalados com marcador AUTO-GENERATED"
+    } else {
+        if ($agentsOK.Count -gt 0) {
+            Write-CheckOK "$($agentsOK.Count)/$expectedAgentCount agentes OK"
+        }
+        if ($agentsMissing.Count -gt 0) {
+            Write-CheckError "Agentes ausentes ($($agentsMissing.Count)): $($agentsMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1 -Claude"
+            $hadError = $true
+        }
+        if ($agentsNoMarker.Count -gt 0) {
+            Write-CheckWarn "Agentes sem marcador AUTO-GENERATED (podem ser externos): $($agentsNoMarker -join ', ')"
+            $hadWarning = $true
+        }
+    }
+} else {
+    Write-Host "  [SKIP]  Claude Code nao configurado neste ambiente (opcional — .\install.ps1 -Claude)" -ForegroundColor DarkGray
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -280,45 +328,49 @@ if ($agentsOK.Count -eq $expectedAgentCount) {
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Section "7. Codex — Custom Agents"
 
-if (Test-Path $codexAgentsDir) {
-    Write-CheckOK "Diretorio ~/.codex/agents/ existe"
-} else {
-    Write-CheckError "~/.codex/agents/ nao encontrado" "cd '$factoryRoot' && .\install.ps1"
-    $hadError = $true
-}
-
-$codexMissing  = @()
-$codexNoMarker = @()
-$codexOK       = @()
-
-foreach ($name in $agentNames) {
-    $file = Join-Path $codexAgentsDir "$name.toml"
-    if (-not (Test-Path $file)) {
-        $codexMissing += $name
+if ($hasCodexManifest) {
+    if (Test-Path $codexAgentsDir) {
+        Write-CheckOK "Diretorio ~/.codex/agents/ existe"
     } else {
-        $content = Get-Content $file -Raw -Encoding UTF8
-        if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^developer_instructions\s*=") {
-            $codexOK += $name
-        } else {
-            $codexNoMarker += $name
-        }
-    }
-}
-
-if ($codexOK.Count -eq $expectedAgentCount) {
-    Write-CheckOK "Todos os $expectedAgentCount custom agents Codex instalados"
-} else {
-    if ($codexOK.Count -gt 0) {
-        Write-CheckOK "$($codexOK.Count)/$expectedAgentCount custom agents Codex OK"
-    }
-    if ($codexMissing.Count -gt 0) {
-        Write-CheckError "Custom agents Codex ausentes ($($codexMissing.Count)): $($codexMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1"
+        Write-CheckError "~/.codex/agents/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Codex"
         $hadError = $true
     }
-    if ($codexNoMarker.Count -gt 0) {
-        Write-CheckWarn "Custom agents Codex sem marcador/campo esperado: $($codexNoMarker -join ', ')"
-        $hadWarning = $true
+
+    $codexMissing  = @()
+    $codexNoMarker = @()
+    $codexOK       = @()
+
+    foreach ($name in $agentNames) {
+        $file = Join-Path $codexAgentsDir "$name.toml"
+        if (-not (Test-Path $file)) {
+            $codexMissing += $name
+        } else {
+            $content = Get-Content $file -Raw -Encoding UTF8
+            if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^developer_instructions\s*=") {
+                $codexOK += $name
+            } else {
+                $codexNoMarker += $name
+            }
+        }
     }
+
+    if ($codexOK.Count -eq $expectedAgentCount) {
+        Write-CheckOK "Todos os $expectedAgentCount custom agents Codex instalados"
+    } else {
+        if ($codexOK.Count -gt 0) {
+            Write-CheckOK "$($codexOK.Count)/$expectedAgentCount custom agents Codex OK"
+        }
+        if ($codexMissing.Count -gt 0) {
+            Write-CheckError "Custom agents Codex ausentes ($($codexMissing.Count)): $($codexMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1 -Codex"
+            $hadError = $true
+        }
+        if ($codexNoMarker.Count -gt 0) {
+            Write-CheckWarn "Custom agents Codex sem marcador/campo esperado: $($codexNoMarker -join ', ')"
+            $hadWarning = $true
+        }
+    }
+} else {
+    Write-Host "  [SKIP]  Codex nao configurado neste ambiente (opcional — .\install.ps1 -Codex)" -ForegroundColor DarkGray
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -326,54 +378,58 @@ if ($codexOK.Count -eq $expectedAgentCount) {
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Section "7B. Antigravity — Plugin & Skills"
 
-if (Test-Path $geminiPluginDir) {
-    Write-CheckOK "Diretorio do plugin Antigravity existe: $geminiPluginDir"
-    $pluginJsonPath = Join-Path $geminiPluginDir "plugin.json"
-    if (Test-Path $pluginJsonPath) {
-        Write-CheckOK "plugin.json do Antigravity presente"
+if ($hasAntigravityManifest) {
+    if (Test-Path $geminiPluginDir) {
+        Write-CheckOK "Diretorio do plugin Antigravity existe: $geminiPluginDir"
+        $pluginJsonPath = Join-Path $geminiPluginDir "plugin.json"
+        if (Test-Path $pluginJsonPath) {
+            Write-CheckOK "plugin.json do Antigravity presente"
+        } else {
+            Write-CheckWarn "plugin.json ausente no plugin Antigravity"
+            $hadWarning = $true
+        }
     } else {
-        Write-CheckWarn "plugin.json ausente no plugin Antigravity"
+        Write-CheckWarn "Plugin Antigravity nao encontrado em $geminiPluginDir"
+        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Antigravity"
         $hadWarning = $true
     }
-} else {
-    Write-CheckWarn "Plugin Antigravity nao encontrado em $geminiPluginDir"
-    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-    $hadWarning = $true
-}
 
-$antigravityMissing  = @()
-$antigravityNoMarker = @()
-$antigravityOK       = @()
+    $antigravityMissing  = @()
+    $antigravityNoMarker = @()
+    $antigravityOK       = @()
 
-foreach ($name in $agentNames) {
-    $file = Join-Path $geminiSkillsDir "$name\SKILL.md"
-    if (-not (Test-Path $file)) {
-        $antigravityMissing += $name
-    } else {
-        $content = Get-Content $file -Raw -Encoding UTF8
-        if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^name:\s*$name") {
-            $antigravityOK += $name
+    foreach ($name in $agentNames) {
+        $file = Join-Path $geminiSkillsDir "$name\SKILL.md"
+        if (-not (Test-Path $file)) {
+            $antigravityMissing += $name
         } else {
-            $antigravityNoMarker += $name
+            $content = Get-Content $file -Raw -Encoding UTF8
+            if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^name:\s*$name") {
+                $antigravityOK += $name
+            } else {
+                $antigravityNoMarker += $name
+            }
         }
     }
-}
 
-if ($antigravityOK.Count -eq $expectedAgentCount) {
-    Write-CheckOK "Todas as $expectedAgentCount skills do Antigravity instaladas com marcador AUTO-GENERATED"
+    if ($antigravityOK.Count -eq $expectedAgentCount) {
+        Write-CheckOK "Todas as $expectedAgentCount skills do Antigravity instaladas com marcador AUTO-GENERATED"
+    } else {
+        if ($antigravityOK.Count -gt 0) {
+            Write-CheckOK "$($antigravityOK.Count)/$expectedAgentCount skills Antigravity OK"
+        }
+        if ($antigravityMissing.Count -gt 0) {
+            Write-CheckWarn "Skills Antigravity ausentes ($($antigravityMissing.Count)): $($antigravityMissing -join ', ')"
+            Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Antigravity"
+            $hadWarning = $true
+        }
+        if ($antigravityNoMarker.Count -gt 0) {
+            Write-CheckWarn "Skills Antigravity sem marcador AUTO-GENERATED: $($antigravityNoMarker -join ', ')"
+            $hadWarning = $true
+        }
+    }
 } else {
-    if ($antigravityOK.Count -gt 0) {
-        Write-CheckOK "$($antigravityOK.Count)/$expectedAgentCount skills Antigravity OK"
-    }
-    if ($antigravityMissing.Count -gt 0) {
-        Write-CheckWarn "Skills Antigravity ausentes ($($antigravityMissing.Count)): $($antigravityMissing -join ', ')"
-        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-        $hadWarning = $true
-    }
-    if ($antigravityNoMarker.Count -gt 0) {
-        Write-CheckWarn "Skills Antigravity sem marcador AUTO-GENERATED: $($antigravityNoMarker -join ', ')"
-        $hadWarning = $true
-    }
+    Write-Host "  [SKIP]  Antigravity nao configurado neste ambiente (opcional — .\install.ps1 -Antigravity)" -ForegroundColor DarkGray
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -381,61 +437,65 @@ if ($antigravityOK.Count -eq $expectedAgentCount) {
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Section "7C. GitHub Copilot — Prompt Files & Instructions"
 
-if (Test-Path $copilotInstructions) {
-    $instrContent = Get-Content $copilotInstructions -Raw -Encoding UTF8
-    if ($instrContent -match "AUTO-GENERATED BY ai_software_factory") {
-        Write-CheckOK ".github/copilot-instructions.md presente com marcador AUTO-GENERATED"
+if ($hasCopilotManifest) {
+    if (Test-Path $copilotInstructions) {
+        $instrContent = Get-Content $copilotInstructions -Raw -Encoding UTF8
+        if ($instrContent -match "AUTO-GENERATED BY ai_software_factory") {
+            Write-CheckOK ".github/copilot-instructions.md presente com marcador AUTO-GENERATED"
+        } else {
+            Write-CheckWarn ".github/copilot-instructions.md presente mas sem marcador AUTO-GENERATED"
+            $hadWarning = $true
+        }
     } else {
-        Write-CheckWarn ".github/copilot-instructions.md presente mas sem marcador AUTO-GENERATED"
+        Write-CheckWarn ".github/copilot-instructions.md nao encontrado"
+        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
         $hadWarning = $true
     }
-} else {
-    Write-CheckWarn ".github/copilot-instructions.md nao encontrado"
-    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-    $hadWarning = $true
-}
 
-if (Test-Path $copilotPromptsDir) {
-    Write-CheckOK "Diretorio de prompts do Copilot existe: $copilotPromptsDir"
-} else {
-    Write-CheckWarn "Diretorio .github/prompts/ nao encontrado"
-    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-    $hadWarning = $true
-}
-
-$copilotMissing  = @()
-$copilotNoMarker = @()
-$copilotOK       = @()
-
-foreach ($name in $agentNames) {
-    $file = Join-Path $copilotPromptsDir "$name.prompt.md"
-    if (-not (Test-Path $file)) {
-        $copilotMissing += $name
+    if (Test-Path $copilotPromptsDir) {
+        Write-CheckOK "Diretorio de prompts do Copilot existe: $copilotPromptsDir"
     } else {
-        $content = Get-Content $file -Raw -Encoding UTF8
-        if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^description:\s*>-?") {
-            $copilotOK += $name
+        Write-CheckWarn "Diretorio .github/prompts/ nao encontrado"
+        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+        $hadWarning = $true
+    }
+
+    $copilotMissing  = @()
+    $copilotNoMarker = @()
+    $copilotOK       = @()
+
+    foreach ($name in $agentNames) {
+        $file = Join-Path $copilotPromptsDir "$name.prompt.md"
+        if (-not (Test-Path $file)) {
+            $copilotMissing += $name
         } else {
-            $copilotNoMarker += $name
+            $content = Get-Content $file -Raw -Encoding UTF8
+            if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^description:\s*>-?") {
+                $copilotOK += $name
+            } else {
+                $copilotNoMarker += $name
+            }
         }
     }
-}
 
-if ($copilotOK.Count -eq $expectedAgentCount) {
-    Write-CheckOK "Todos os $expectedAgentCount prompt files do Copilot instalados com marcador AUTO-GENERATED"
+    if ($copilotOK.Count -eq $expectedAgentCount) {
+        Write-CheckOK "Todos os $expectedAgentCount prompt files do Copilot instalados com marcador AUTO-GENERATED"
+    } else {
+        if ($copilotOK.Count -gt 0) {
+            Write-CheckOK "$($copilotOK.Count)/$expectedAgentCount prompt files Copilot OK"
+        }
+        if ($copilotMissing.Count -gt 0) {
+            Write-CheckWarn "Prompt files Copilot ausentes ($($copilotMissing.Count)): $($copilotMissing -join ', ')"
+            Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+            $hadWarning = $true
+        }
+        if ($copilotNoMarker.Count -gt 0) {
+            Write-CheckWarn "Prompt files Copilot sem marcador/formato esperado: $($copilotNoMarker -join ', ')"
+            $hadWarning = $true
+        }
+    }
 } else {
-    if ($copilotOK.Count -gt 0) {
-        Write-CheckOK "$($copilotOK.Count)/$expectedAgentCount prompt files Copilot OK"
-    }
-    if ($copilotMissing.Count -gt 0) {
-        Write-CheckWarn "Prompt files Copilot ausentes ($($copilotMissing.Count)): $($copilotMissing -join ', ')"
-        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-        $hadWarning = $true
-    }
-    if ($copilotNoMarker.Count -gt 0) {
-        Write-CheckWarn "Prompt files Copilot sem marcador/formato esperado: $($copilotNoMarker -join ', ')"
-        $hadWarning = $true
-    }
+    Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional — .\install.ps1 -Copilot)" -ForegroundColor DarkGray
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -499,34 +559,38 @@ if (Test-Path $testMcpPath) {
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Section "10. MCP Configuracao"
 
-$claudeSettings = "$env:USERPROFILE\.claude.json"
-if (Test-Path $claudeSettings) {
-    try {
-        $settings  = Get-Content $claudeSettings -Raw | ConvertFrom-Json
-        $knowledge = $settings.mcpServers.knowledge
-        if ($knowledge) {
-            Write-CheckOK "mcpServers.knowledge configurado em ~/.claude.json"
-            $configuredServer = if ($knowledge.args) { $knowledge.args[0] } else { "" }
-            $expectedServer   = Join-Path $factoryRoot "tools\mcp-knowledge-search\server.py"
-            if ($configuredServer -eq $expectedServer) {
-                Write-CheckOK "server.py path correto em ~/.claude.json"
+if ($hasClaudeManifest) {
+    $claudeSettings = "$env:USERPROFILE\.claude.json"
+    if (Test-Path $claudeSettings) {
+        try {
+            $settings  = Get-Content $claudeSettings -Raw | ConvertFrom-Json
+            $knowledge = $settings.mcpServers.knowledge
+            if ($knowledge) {
+                Write-CheckOK "mcpServers.knowledge configurado em ~/.claude.json"
+                $configuredServer = if ($knowledge.args) { $knowledge.args[0] } else { "" }
+                $expectedServer   = Join-Path $factoryRoot "tools\mcp-knowledge-search\server.py"
+                if ($configuredServer -eq $expectedServer) {
+                    Write-CheckOK "server.py path correto em ~/.claude.json"
+                } else {
+                    Write-CheckWarn "server.py em ~/.claude.json aponta para: $configuredServer"
+                    Write-CheckWarn "          Esperado: $expectedServer"
+                    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Claude"
+                    $hadWarning = $true
+                }
             } else {
-                Write-CheckWarn "server.py em ~/.claude.json aponta para: $configuredServer"
-                Write-CheckWarn "          Esperado: $expectedServer"
-                Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-                $hadWarning = $true
+                Write-CheckError "mcpServers.knowledge ausente em ~/.claude.json" "cd '$factoryRoot' && .\install.ps1 -Claude"
+                $hadError = $true
             }
-        } else {
-            Write-CheckError "mcpServers.knowledge ausente em ~/.claude.json" "cd '$factoryRoot' && .\install.ps1"
-            $hadError = $true
+        } catch {
+            Write-CheckWarn "Nao foi possivel ler ~/.claude.json: $_"
+            $hadWarning = $true
         }
-    } catch {
-        Write-CheckWarn "Nao foi possivel ler ~/.claude.json: $_"
-        $hadWarning = $true
+    } else {
+        Write-CheckError "~/.claude.json nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Claude"
+        $hadError = $true
     }
 } else {
-    Write-CheckError "~/.claude.json nao encontrado" "cd '$factoryRoot' && .\install.ps1"
-    $hadError = $true
+    Write-Host "  [SKIP]  Claude Code nao configurado neste ambiente (opcional — .\install.ps1 -Claude)" -ForegroundColor DarkGray
 }
 
 $mcpJson = Join-Path $factoryRoot ".mcp.json"
@@ -538,100 +602,114 @@ if (Test-Path $mcpJson) {
 }
 
 $expectedServer = Join-Path $factoryRoot "tools\mcp-knowledge-search\server.py"
-if (Test-Path $codexConfig) {
-    try {
-        $codexRaw = Get-Content $codexConfig -Raw -Encoding UTF8
-        if ($codexRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") {
-            Write-CheckOK "mcp_servers.knowledge configurado em ~/.codex/config.toml"
-            if ($codexRaw -like "*$expectedServer*") {
-                Write-CheckOK "server.py path correto em ~/.codex/config.toml"
-            } else {
-                Write-CheckWarn "Codex global config possui knowledge, mas nao aponta claramente para esta factory"
-                Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
-                $hadWarning = $true
-            }
-        } else {
-            Write-CheckError "mcp_servers.knowledge ausente em ~/.codex/config.toml" "cd '$factoryRoot' && .\install.ps1"
-            $hadError = $true
-        }
-    } catch {
-        Write-CheckWarn "Nao foi possivel ler ~/.codex/config.toml: $_"
-        $hadWarning = $true
-    }
-} else {
-    Write-CheckError "~/.codex/config.toml nao encontrado" "cd '$factoryRoot' && .\install.ps1"
-    $hadError = $true
-}
 
-if (Test-Path $projectCodexConfig) {
-    $projectCodexRaw = Get-Content $projectCodexConfig -Raw -Encoding UTF8
-    if ($projectCodexRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") {
-        Write-CheckOK ".codex/config.toml existe na raiz da factory com MCP knowledge"
-    } else {
-        Write-CheckWarn ".codex/config.toml existe, mas sem mcp_servers.knowledge"
-        $hadWarning = $true
-    }
-} else {
-    Write-CheckWarn ".codex/config.toml ausente na factory (execute .\install.ps1)"
-    $hadWarning = $true
-}
-
-if (Test-Path $geminiMcpConfig) {
-    try {
-        $geminiRaw = Get-Content $geminiMcpConfig -Raw -Encoding UTF8
-        if ($geminiRaw -and $geminiRaw.Trim()) {
-            $geminiSettings = $geminiRaw | ConvertFrom-Json
-            if ($geminiSettings.mcpServers.knowledge) {
-                Write-CheckOK "mcpServers.knowledge configurado em ~/.gemini/config/mcp_config.json"
-                $configuredServer = if ($geminiSettings.mcpServers.knowledge.args) { $geminiSettings.mcpServers.knowledge.args[0] } else { "" }
-                if ($configuredServer -eq $expectedServer) {
-                    Write-CheckOK "server.py path correto em mcp_config.json"
+if ($hasCodexManifest) {
+    if (Test-Path $codexConfig) {
+        try {
+            $codexRaw = Get-Content $codexConfig -Raw -Encoding UTF8
+            if ($codexRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") {
+                Write-CheckOK "mcp_servers.knowledge configurado em ~/.codex/config.toml"
+                $expectedServerEscaped = $expectedServer.Replace("\", "\\")
+                if ($codexRaw -like "*$expectedServer*" -or $codexRaw -like "*$expectedServerEscaped*") {
+                    Write-CheckOK "server.py path correto em ~/.codex/config.toml"
                 } else {
-                    Write-CheckWarn "server.py em mcp_config.json aponta para: $configuredServer"
-                    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
+                    Write-CheckWarn "Codex global config possui knowledge, mas nao aponta claramente para esta factory"
+                    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Codex"
                     $hadWarning = $true
                 }
             } else {
-                Write-CheckWarn "mcpServers.knowledge ausente em ~/.gemini/config/mcp_config.json"
-                $hadWarning = $true
+                Write-CheckError "mcp_servers.knowledge ausente em ~/.codex/config.toml" "cd '$factoryRoot' && .\install.ps1 -Codex"
+                $hadError = $true
             }
+        } catch {
+            Write-CheckWarn "Nao foi possivel ler ~/.codex/config.toml: $_"
+            $hadWarning = $true
         }
-    } catch {
-        Write-CheckWarn "Nao foi possivel ler ~/.gemini/config/mcp_config.json: $_"
+    } else {
+        Write-CheckError "~/.codex/config.toml nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Codex"
+        $hadError = $true
+    }
+
+    if (Test-Path $projectCodexConfig) {
+        $projectCodexRaw = Get-Content $projectCodexConfig -Raw -Encoding UTF8
+        if ($projectCodexRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") {
+            Write-CheckOK ".codex/config.toml existe na raiz da factory com MCP knowledge"
+        } else {
+            Write-CheckWarn ".codex/config.toml existe, mas sem mcp_servers.knowledge"
+            $hadWarning = $true
+        }
+    } else {
+        Write-CheckWarn ".codex/config.toml ausente na factory (execute .\install.ps1 -Codex)"
         $hadWarning = $true
     }
 } else {
-    Write-CheckWarn "~/.gemini/config/mcp_config.json nao encontrado"
-    $hadWarning = $true
+    Write-Host "  [SKIP]  Codex nao configurado neste ambiente (opcional — .\install.ps1 -Codex)" -ForegroundColor DarkGray
 }
 
-$pluginMcpPath = Join-Path $geminiPluginDir "mcp_config.json"
-if (Test-Path $pluginMcpPath) {
-    Write-CheckOK "mcp_config.json presente no plugin Antigravity"
-} else {
-    Write-CheckWarn "mcp_config.json ausente no plugin Antigravity"
-    $hadWarning = $true
-}
-
-if (Test-Path $vscodeMcpConfig) {
-    try {
-        $vscodeRaw = Get-Content $vscodeMcpConfig -Raw -Encoding UTF8
-        if ($vscodeRaw -and $vscodeRaw.Trim()) {
-            $vscodeSettings = $vscodeRaw | ConvertFrom-Json
-            if ($vscodeSettings.mcpServers.knowledge) {
-                Write-CheckOK ".vscode/mcp.json configurado com MCP knowledge"
-            } else {
-                Write-CheckWarn ".vscode/mcp.json existe mas sem mcpServers.knowledge"
-                $hadWarning = $true
+if ($hasAntigravityManifest) {
+    if (Test-Path $geminiMcpConfig) {
+        try {
+            $geminiRaw = Get-Content $geminiMcpConfig -Raw -Encoding UTF8
+            if ($geminiRaw -and $geminiRaw.Trim()) {
+                $geminiSettings = $geminiRaw | ConvertFrom-Json
+                if ($geminiSettings.mcpServers.knowledge) {
+                    Write-CheckOK "mcpServers.knowledge configurado em ~/.gemini/config/mcp_config.json"
+                    $configuredServer = if ($geminiSettings.mcpServers.knowledge.args) { $geminiSettings.mcpServers.knowledge.args[0] } else { "" }
+                    if ($configuredServer -eq $expectedServer) {
+                        Write-CheckOK "server.py path correto em mcp_config.json"
+                    } else {
+                        Write-CheckWarn "server.py em mcp_config.json aponta para: $configuredServer"
+                        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Antigravity"
+                        $hadWarning = $true
+                    }
+                } else {
+                    Write-CheckWarn "mcpServers.knowledge ausente em ~/.gemini/config/mcp_config.json"
+                    $hadWarning = $true
+                }
             }
+        } catch {
+            Write-CheckWarn "Nao foi possivel ler ~/.gemini/config/mcp_config.json: $_"
+            $hadWarning = $true
         }
-    } catch {
-        Write-CheckWarn "Nao foi possivel ler .vscode/mcp.json: $_"
+    } else {
+        Write-CheckWarn "~/.gemini/config/mcp_config.json nao encontrado"
+        $hadWarning = $true
+    }
+
+    $pluginMcpPath = Join-Path $geminiPluginDir "mcp_config.json"
+    if (Test-Path $pluginMcpPath) {
+        Write-CheckOK "mcp_config.json presente no plugin Antigravity"
+    } else {
+        Write-CheckWarn "mcp_config.json ausente no plugin Antigravity"
         $hadWarning = $true
     }
 } else {
-    Write-CheckWarn ".vscode/mcp.json nao encontrado (execute .\install.ps1)"
-    $hadWarning = $true
+    Write-Host "  [SKIP]  Antigravity nao configurado neste ambiente (opcional — .\install.ps1 -Antigravity)" -ForegroundColor DarkGray
+}
+
+if ($hasCopilotManifest) {
+    if (Test-Path $vscodeMcpConfig) {
+        try {
+            $vscodeRaw = Get-Content $vscodeMcpConfig -Raw -Encoding UTF8
+            if ($vscodeRaw -and $vscodeRaw.Trim()) {
+                $vscodeSettings = $vscodeRaw | ConvertFrom-Json
+                if ($vscodeSettings.mcpServers.knowledge) {
+                    Write-CheckOK ".vscode/mcp.json configurado com MCP knowledge"
+                } else {
+                    Write-CheckWarn ".vscode/mcp.json existe mas sem mcpServers.knowledge"
+                    $hadWarning = $true
+                }
+            }
+        } catch {
+            Write-CheckWarn "Nao foi possivel ler .vscode/mcp.json: $_"
+            $hadWarning = $true
+        }
+    } else {
+        Write-CheckWarn ".vscode/mcp.json nao encontrado (execute .\install.ps1 -Copilot)"
+        $hadWarning = $true
+    }
+} else {
+    Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional — .\install.ps1 -Copilot)" -ForegroundColor DarkGray
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -694,13 +772,18 @@ foreach ($script in $requiredScripts.Keys) {
 Write-Section "13. Permissoes de escrita"
 
 # ~/.claude/agents/
-$testFile = Join-Path $claudeAgentsDir ".doctor_write_test"
-try {
-    [System.IO.File]::WriteAllText($testFile, "test", [System.Text.UTF8Encoding]::new($false))
-    Remove-Item $testFile -Force
-    Write-CheckOK "Escrita em ~/.claude/agents/ OK"
-} catch {
-    Write-CheckError "Sem permissao de escrita em ~/.claude/agents/" "Verifique permissoes do diretorio"
+if (Test-Path $claudeAgentsDir) {
+    $testFile = Join-Path $claudeAgentsDir ".doctor_write_test"
+    try {
+        [System.IO.File]::WriteAllText($testFile, "test", [System.Text.UTF8Encoding]::new($false))
+        Remove-Item $testFile -Force
+        Write-CheckOK "Escrita em ~/.claude/agents/ OK"
+    } catch {
+        Write-CheckError "Sem permissao de escrita em ~/.claude/agents/" "Verifique permissoes do diretorio"
+        $hadError = $true
+    }
+} elseif ($hasClaudeManifest) {
+    Write-CheckError "~/.claude/agents/ nao existe" "cd '$factoryRoot' && .\install.ps1 -Claude"
     $hadError = $true
 }
 
@@ -715,8 +798,8 @@ if (Test-Path $codexAgentsDir) {
         Write-CheckError "Sem permissao de escrita em ~/.codex/agents/" "Verifique permissoes do diretorio"
         $hadError = $true
     }
-} else {
-    Write-CheckError "~/.codex/agents/ nao existe" "cd '$factoryRoot' && .\install.ps1"
+} elseif ($hasCodexManifest) {
+    Write-CheckError "~/.codex/agents/ nao existe" "cd '$factoryRoot' && .\install.ps1 -Codex"
     $hadError = $true
 }
 
@@ -742,6 +825,25 @@ if (Test-Path $geminiPluginDir) {
         Write-CheckError "Sem permissao de escrita em plugin Antigravity" "Verifique permissoes de: $geminiPluginDir"
         $hadError = $true
     }
+} elseif ($hasAntigravityManifest) {
+    Write-CheckError "Plugin Antigravity nao encontrado em $geminiPluginDir" "cd '$factoryRoot' && .\install.ps1 -Antigravity"
+    $hadError = $true
+}
+
+# GitHub Copilot prompts
+if (Test-Path $copilotPromptsDir) {
+    $testCopilotFile = Join-Path $copilotPromptsDir ".doctor_write_test"
+    try {
+        [System.IO.File]::WriteAllText($testCopilotFile, "test", [System.Text.UTF8Encoding]::new($false))
+        Remove-Item $testCopilotFile -Force
+        Write-CheckOK "Escrita em .github/prompts/ OK"
+    } catch {
+        Write-CheckError "Sem permissao de escrita em .github/prompts/" "Verifique permissoes do diretorio"
+        $hadError = $true
+    }
+} elseif ($hasCopilotManifest) {
+    Write-CheckError "Diretorio .github/prompts/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Copilot"
+    $hadError = $true
 }
 
 # ═════════════════════════════════════════════════════════════════════════════

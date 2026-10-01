@@ -29,10 +29,14 @@ canônica e reexecute `.\install.ps1`.
 Da raiz da factory:
 
 ```powershell
+# Instalação direta para Codex:
+.\install.ps1 -Codex
+
+# Ou através do instalador interativo inteligente:
 .\install.ps1
 ```
 
-O instalador cria ou atualiza:
+O instalador detecta a presença do Codex (via CLI `codex` ou diretório `~/.codex/`) e cria ou atualiza:
 
 - `~/.codex/agents/*.toml` com os 12 custom agents
 - `~/.codex/agents/.ai_software_factory_manifest.json`

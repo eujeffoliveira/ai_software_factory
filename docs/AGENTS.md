@@ -79,6 +79,13 @@ Todo artefato entregue por um agente segue o contrato do **Handoff Package** —
 
 ## Agentes — Referência Individual
 
+> [!NOTE]
+> **Como invocar os agentes em cada runtime suportado:**
+> - **Claude Code:** chame com `@nome` (ex: `@techlead`, `@po`, `@qa`).
+> - **Codex:** requisite ou faça spawn do custom agent (ex: `Use the techlead custom agent...`, `Spawn qa as subagent...`).
+> - **Antigravity (AGY):** ative a skill pelo nome direto ou invoque subagente (ex: `Ative a skill techlead...`, `Invoque qa como subagente...`).
+> - **GitHub Copilot:** no Copilot Chat anexe `#file:<nome>.prompt.md` ou dirija-se à persona (ex: `Atue como o @techlead...`).
+
 ---
 
 ### @techlead — Agente00_TechLead

@@ -11,7 +11,14 @@ Suporta **Claude Code** (`@nome`), **Codex** (custom agents/subagents), **Antigr
 ```powershell
 git clone https://github.com/eujeffoliveira/ai_software_factory
 cd ai_software_factory
+
+# Instalação interativa (detecta os ambientes presentes e pergunta o que instalar):
 .\install.ps1
+
+# Ou instale diretamente para runtimes específicos:
+.\install.ps1 -Antigravity
+.\install.ps1 -Copilot
+.\install.ps1 -All
 ```
 
 Abra um **novo terminal** e use os agentes:
@@ -104,11 +111,14 @@ Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime
 
 ## O que o instalador faz
 
-`.\install.ps1` é idempotente — pode rodar múltiplas vezes sem efeitos colaterais.
+`.\install.ps1` é **inteligente** e **idempotente**:
+- **Detecção automática**: identifica quais ambientes estão presentes na máquina (Claude Code, Codex, Antigravity, GitHub Copilot).
+- **Seleção interativa ou via flags**: pergunta quais você deseja instalar para evitar arquivos desnecessários (`-Antigravity`, `-Copilot`, `-Codex`, `-Claude`, `-All`).
+- **Geração sob demanda**: apenas os agentes, skills, prompts e configurações MCP dos runtimes selecionados são gerados ou atualizados.
 
-| Ação | Resultado |
-|------|-----------|
-| Define `FACTORY_ROOT` | Variável de ambiente de usuário Windows |
+| Ação | Resultado (se runtime selecionado) |
+|------|-----------------------------------|
+| Define `FACTORY_ROOT` | Variável de ambiente de usuário Windows (sempre) |
 | Instala 12 agentes Claude | `~/.claude/agents/<nome>.md` |
 | Instala 12 custom agents Codex | `~/.codex/agents/<nome>.toml` |
 | Instala plugin e 12 skills Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` |
@@ -120,7 +130,7 @@ Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime
 Após a instalação, reabra o terminal e verifique:
 
 ```powershell
-.\doctor.ps1     # diagnóstico completo multi-runtime
+.\doctor.ps1     # diagnóstico completo multi-runtime (respeita os runtimes instalados)
 .\test-mcp.ps1   # health check do MCP (7 checks)
 ```
 
@@ -177,6 +187,40 @@ cd meu-projeto
 ```
 
 Ver: [`docs/CODEX.md`](docs/CODEX.md)
+
+---
+
+## Antigravity
+
+Após `.\install.ps1 -Antigravity` (ou via seleção interativa), as 12 skills ficam instaladas em `~/.gemini/config/plugins/ai-software-factory/skills/`.
+No Google Antigravity, acione as skills diretamente pelo nome ou invoque subagentes:
+
+```text
+Ative a skill techlead para avaliar os quality gates deste projeto.
+Use a skill qa para elaborar os testes unitários e de integração.
+Invoque techlead e architect como subagentes para refinarem a solução.
+```
+
+O MCP `knowledge` fica disponível como ferramentas nativas (`mcp_knowledge_search_knowledge`, `mcp_knowledge_get_full_document`, etc.).
+
+Ver: [`docs/ANTIGRAVITY.md`](docs/ANTIGRAVITY.md)
+
+---
+
+## GitHub Copilot
+
+Após `.\install.ps1 -Copilot` (ou via seleção interativa), os prompt files e instruções são gerados em `.github/prompts/` e `.github/copilot-instructions.md`.
+No VS Code Copilot Chat, anexe o prompt reutilizável com `#file:` ou invoque a persona:
+
+```text
+#file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
+#file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
+Atue sob a persona @architect para elaborar o diagrama C4 de componentes.
+```
+
+No modo Agent do Copilot Chat, as ferramentas MCP são chamadas automaticamente via `.vscode/mcp.json`.
+
+Ver: [`docs/COPILOT.md`](docs/COPILOT.md)
 
 ---
 

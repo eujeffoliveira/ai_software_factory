@@ -134,9 +134,57 @@ cd $env:FACTORY_ROOT
 # Verificar se os arquivos existem
 ls "$env:USERPROFILE\.claude\agents\" | Where-Object Name -match "\.md$"
 
-# Reinstalar
+# Reinstalar para Claude
 cd $env:FACTORY_ROOT
-.\install.ps1
+.\install.ps1 -Claude
+```
+
+---
+
+### Custom agents não aparecem no Codex
+
+**Sintoma**: `techlead` ou outro custom agent não é encontrado no Codex.
+
+**Fix**:
+```powershell
+# Verificar se os arquivos .toml existem
+ls "$env:USERPROFILE\.codex\agents\" | Where-Object Name -match "\.toml$"
+
+# Reinstalar para Codex
+cd $env:FACTORY_ROOT
+.\install.ps1 -Codex
+```
+
+---
+
+### Skills não aparecem no Antigravity
+
+**Sintoma**: Antigravity não lista as skills da factory (`techlead`, `qa`, etc.).
+
+**Fix**:
+```powershell
+# Verificar se as skills foram instaladas no plugin
+ls "$env:USERPROFILE\.gemini\config\plugins\ai-software-factory\skills\"
+
+# Reinstalar para Antigravity
+cd $env:FACTORY_ROOT
+.\install.ps1 -Antigravity
+```
+
+---
+
+### Prompt files não aparecem no GitHub Copilot
+
+**Sintoma**: `#file:techlead.prompt.md` não aparece no VS Code Copilot Chat.
+
+**Fix**:
+```powershell
+# Verificar se a pasta .github/prompts existe no workspace
+ls "$env:FACTORY_ROOT\.github\prompts\"
+
+# Reinstalar para Copilot
+cd $env:FACTORY_ROOT
+.\install.ps1 -Copilot
 ```
 
 ---

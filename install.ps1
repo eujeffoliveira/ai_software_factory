@@ -3,7 +3,14 @@
 # Documentacao: docs/INSTALL_CLI.md
 
 param(
-    [switch]$ForceDeps  # Forca reinstalacao das dependencias Python
+    [switch]$ForceDeps,          # Forca reinstalacao das dependencias Python
+    [string[]]$Runtime,          # Runtimes a instalar: claude, codex, antigravity, copilot, all
+    [switch]$Claude,             # Instalar para Claude Code (~/.claude/agents/)
+    [switch]$Codex,              # Instalar para Codex (~/.codex/agents/)
+    [switch]$Antigravity,        # Instalar para Antigravity (~/.gemini/.../skills/)
+    [switch]$Copilot,            # Instalar para GitHub Copilot (.github/prompts/)
+    [switch]$All,                # Instalar para todos os runtimes suportados
+    [switch]$NonInteractive      # Executar sem prompts interativos
 )
 
 $ErrorActionPreference = "Stop"
@@ -172,6 +179,7 @@ $tally = @{
     knowledge_docs        = 0
     knowledge_status      = "skipped"
     mcp_status            = "unchanged"
+    claude_mcp_status     = "unchanged"
     codex_mcp_status      = "unchanged"
     codex_project_status  = "unchanged"
     gemini_mcp_status     = "unchanged"
@@ -191,6 +199,182 @@ Write-Host "  ╚═════════════════════
 Write-Host ""
 Write-Host "  Factory: $FACTORY_PATH" -ForegroundColor Gray
 Write-Host "  Version: $FACTORY_VERSION" -ForegroundColor DarkGray
+Write-Host ""
+
+# ─── Deteccao de runtimes no sistema ──────────────────────────────────────────
+$detected = [ordered]@{
+    claude      = $false
+    codex       = $false
+    antigravity = $false
+    copilot     = $false
+}
+$detectionDetails = @{}
+
+# Claude Code
+if (Get-Command claude -ErrorAction SilentlyContinue) {
+    $detected.claude = $true
+    $detectionDetails["claude"] = "CLI 'claude' encontrado no PATH"
+} elseif (Test-Path "$env:USERPROFILE\.claude") {
+    $detected.claude = $true
+    $detectionDetails["claude"] = "~/.claude encontrado"
+}
+
+# Codex
+$detectedCodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE ".codex" }
+if (Get-Command codex -ErrorAction SilentlyContinue) {
+    $detected.codex = $true
+    $detectionDetails["codex"] = "CLI 'codex' encontrado no PATH"
+} elseif (Test-Path $detectedCodexHome) {
+    $detected.codex = $true
+    $detectionDetails["codex"] = "$detectedCodexHome encontrado"
+}
+
+# Antigravity
+if (Get-Command agy -ErrorAction SilentlyContinue) {
+    $detected.antigravity = $true
+    $detectionDetails["antigravity"] = "CLI 'agy' encontrado no PATH"
+} elseif (Test-Path "$env:USERPROFILE\.gemini") {
+    $detected.antigravity = $true
+    $detectionDetails["antigravity"] = "~/.gemini encontrado"
+}
+
+# GitHub Copilot
+if (Get-Command code -ErrorAction SilentlyContinue) {
+    $detected.copilot = $true
+    $detectionDetails["copilot"] = "VS Code ('code') encontrado no PATH"
+} elseif (Test-Path "$env:USERPROFILE\.vscode") {
+    $detected.copilot = $true
+    $detectionDetails["copilot"] = "~/.vscode encontrado"
+} elseif ((Test-Path (Join-Path $FACTORY_PATH ".vscode")) -or (Test-Path (Join-Path $FACTORY_PATH ".github"))) {
+    $detected.copilot = $true
+    $detectionDetails["copilot"] = "Workspace .vscode/.github"
+}
+
+# ─── Resolucao dos runtimes selecionados ──────────────────────────────────────
+$enableClaude      = $false
+$enableCodex       = $false
+$enableAntigravity = $false
+$enableCopilot     = $false
+
+$hasExplicitSelection = $All -or $Claude -or $Codex -or $Antigravity -or $Copilot -or ($Runtime -and $Runtime.Count -gt 0)
+
+if ($All) {
+    $enableClaude      = $true
+    $enableCodex       = $true
+    $enableAntigravity = $true
+    $enableCopilot     = $true
+} elseif ($hasExplicitSelection) {
+    $enableClaude      = [bool]$Claude
+    $enableCodex       = [bool]$Codex
+    $enableAntigravity = [bool]$Antigravity
+    $enableCopilot     = [bool]$Copilot
+
+    if ($Runtime) {
+        foreach ($r in $Runtime) {
+            switch ($r.ToLower().Trim()) {
+                "all"         { $enableClaude = $true; $enableCodex = $true; $enableAntigravity = $true; $enableCopilot = $true }
+                "claude"      { $enableClaude = $true }
+                "codex"       { $enableCodex = $true }
+                "antigravity" { $enableAntigravity = $true }
+                "gemini"      { $enableAntigravity = $true }
+                "copilot"     { $enableCopilot = $true }
+                "github"      { $enableCopilot = $true }
+            }
+        }
+    }
+} else {
+    $isInteractive = $false
+    if (-not $NonInteractive -and [Environment]::UserInteractive) {
+        try {
+            $isInteractive = (-not [Console]::IsInputRedirected)
+        } catch {
+            $isInteractive = $false
+        }
+    }
+
+    if ($isInteractive) {
+        Write-Host "  Runtimes de IA detectados neste ambiente:" -ForegroundColor Cyan
+        Write-Host ("    [{0}] Claude Code      {1}" -f $(if ($detected.claude) {"X"} else {" "}), $(if ($detected.claude) {"($($detectionDetails['claude']))"} else {"(nao detectado)"})) -ForegroundColor $(if ($detected.claude) {"Green"} else {"DarkGray"})
+        Write-Host ("    [{0}] Codex            {1}" -f $(if ($detected.codex) {"X"} else {" "}), $(if ($detected.codex) {"($($detectionDetails['codex']))"} else {"(nao detectado)"})) -ForegroundColor $(if ($detected.codex) {"Green"} else {"DarkGray"})
+        Write-Host ("    [{0}] Antigravity      {1}" -f $(if ($detected.antigravity) {"X"} else {" "}), $(if ($detected.antigravity) {"($($detectionDetails['antigravity']))"} else {"(nao detectado)"})) -ForegroundColor $(if ($detected.antigravity) {"Green"} else {"DarkGray"})
+        Write-Host ("    [{0}] GitHub Copilot   {1}" -f $(if ($detected.copilot) {"X"} else {" "}), $(if ($detected.copilot) {"($($detectionDetails['copilot']))"} else {"(nao detectado)"})) -ForegroundColor $(if ($detected.copilot) {"Green"} else {"DarkGray"})
+        Write-Host ""
+        Write-Host "  Opcoes de instalacao:" -ForegroundColor Cyan
+        Write-Host "    [D] Instalar apenas para os runtimes detectados (Padrao)" -ForegroundColor Yellow
+        Write-Host "    [A] Instalar para TODOS os runtimes suportados"
+        Write-Host "    [C] Personalizar selecao (escolher um por um)"
+        Write-Host "    [Q] Cancelar e sair"
+        Write-Host ""
+
+        $choice = Read-Host "  Escolha [D/a/c/q] (padrao: D)"
+        $choice = if ([string]::IsNullOrWhiteSpace($choice)) { "D" } else { $choice.Trim().ToUpper() }
+
+        switch ($choice) {
+            "A" {
+                $enableClaude      = $true
+                $enableCodex       = $true
+                $enableAntigravity = $true
+                $enableCopilot     = $true
+            }
+            "C" {
+                Write-Host ""
+                Write-Host "  Selecao personalizada:" -ForegroundColor Cyan
+                $ans = Read-Host "    Instalar para Claude Code? [s/N]"
+                $enableClaude = ($ans -match '^[sSyY]')
+                $ans = Read-Host "    Instalar para Codex? [s/N]"
+                $enableCodex = ($ans -match '^[sSyY]')
+                $ans = Read-Host "    Instalar para Antigravity? [S/n]"
+                $enableAntigravity = ([string]::IsNullOrWhiteSpace($ans) -or $ans -match '^[sSyY]')
+                $ans = Read-Host "    Instalar para GitHub Copilot? [S/n]"
+                $enableCopilot = ([string]::IsNullOrWhiteSpace($ans) -or $ans -match '^[sSyY]')
+            }
+            "Q" {
+                Write-Host "  Instalacao cancelada pelo usuario." -ForegroundColor Yellow
+                exit 0
+            }
+            default {
+                $enableClaude      = $detected.claude
+                $enableCodex       = $detected.codex
+                $enableAntigravity = $detected.antigravity
+                $enableCopilot     = $detected.copilot
+
+                if (-not ($enableClaude -or $enableCodex -or $enableAntigravity -or $enableCopilot)) {
+                    Write-Host "  Nenhum runtime detectado automaticamente. Habilitando todos por padrao." -ForegroundColor Yellow
+                    $enableClaude      = $true
+                    $enableCodex       = $true
+                    $enableAntigravity = $true
+                    $enableCopilot     = $true
+                }
+            }
+        }
+    } else {
+        $hasAnyDetected = $detected.claude -or $detected.codex -or $detected.antigravity -or $detected.copilot
+        if ($hasAnyDetected) {
+            $enableClaude      = $detected.claude
+            $enableCodex       = $detected.codex
+            $enableAntigravity = $detected.antigravity
+            $enableCopilot     = $detected.copilot
+        } else {
+            $enableClaude      = $true
+            $enableCodex       = $true
+            $enableAntigravity = $true
+            $enableCopilot     = $true
+        }
+    }
+}
+
+if (-not ($enableClaude -or $enableCodex -or $enableAntigravity -or $enableCopilot)) {
+    Write-Warn "Nenhum runtime selecionado. Nada a ser instalado."
+    exit 0
+}
+
+$selectedNames = @()
+if ($enableClaude)      { $selectedNames += "Claude Code" }
+if ($enableCodex)       { $selectedNames += "Codex" }
+if ($enableAntigravity) { $selectedNames += "Antigravity" }
+if ($enableCopilot)     { $selectedNames += "GitHub Copilot" }
+
+Write-Host ("  Runtimes selecionados: " + ($selectedNames -join ", ")) -ForegroundColor Green
 Write-Host ""
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -267,7 +451,11 @@ if ($hasPython) {
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 4 — Claude Code: ~/.claude/agents/
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Header "Claude Code — Agentes"
+$manifest     = $null
+$manifestPath = $null
+
+if ($enableClaude) {
+    Write-Header "Claude Code — Agentes"
 
 if (-not (Test-Path $CLAUDE_AGENTS_DIR)) {
     New-Item -ItemType Directory -Path $CLAUDE_AGENTS_DIR -Force | Out-Null
@@ -423,14 +611,19 @@ Sources: $($agent.Folder)/prompt.md + $($agent.Folder)/knowledge/* + install.ps1
     }
 }
 
-Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
-Write-Host ("  Agentes: {0} criados, {1} atualizados, {2} sem mudancas" -f `
-    $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged) -ForegroundColor Gray
+    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host ("  Agentes: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+        $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged) -ForegroundColor Gray
+} else {
+    Write-Header "Claude Code — Agentes"
+    Write-Skip "Runtime Claude Code nao selecionado para instalacao"
+}
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 5 — Codex: ~/.codex/agents/
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Header "Codex — Custom Agents"
+if ($enableCodex) {
+    Write-Header "Codex — Custom Agents"
 
 if (-not (Test-Path $CODEX_AGENTS_DIR)) {
     New-Item -ItemType Directory -Path $CODEX_AGENTS_DIR -Force | Out-Null
@@ -567,14 +760,19 @@ foreach ($agent in $agents) {
 $codexManifestJson = $codexManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $codexManifestPath -Content $codexManifestJson -Label "codex/.ai_software_factory_manifest.json" | Out-Null
 
-Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
-Write-Host ("  Codex agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
-    $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged) -ForegroundColor Gray
+    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host ("  Codex agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+        $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged) -ForegroundColor Gray
+} else {
+    Write-Header "Codex — Custom Agents"
+    Write-Skip "Runtime Codex nao selecionado para instalacao"
+}
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 5B — Antigravity: ~/.gemini/config/plugins/ai-software-factory/
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Header "Antigravity — Plugin e Skills"
+if ($enableAntigravity) {
+    Write-Header "Antigravity — Plugin e Skills"
 
 if (-not (Test-Path $GEMINI_SKILLS_DIR)) {
     New-Item -ItemType Directory -Path $GEMINI_SKILLS_DIR -Force | Out-Null
@@ -748,14 +946,19 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
 $antigravityManifestJson = $antigravityManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $antigravityManifestPath -Content $antigravityManifestJson -Label "antigravity/.ai_software_factory_manifest.json" | Out-Null
 
-Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
-Write-Host ("  Antigravity skills: {0} criadas, {1} atualizadas, {2} sem mudancas" -f `
-    $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged) -ForegroundColor Gray
+    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host ("  Antigravity skills: {0} criadas, {1} atualizadas, {2} sem mudancas" -f `
+        $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged) -ForegroundColor Gray
+} else {
+    Write-Header "Antigravity — Plugin e Skills"
+    Write-Skip "Runtime Antigravity nao selecionado para instalacao"
+}
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 5C — GitHub Copilot: .github/prompts/ & copilot-instructions.md
 # ═════════════════════════════════════════════════════════════════════════════
-Write-Header "GitHub Copilot — Prompt Files e Instructions"
+if ($enableCopilot) {
+    Write-Header "GitHub Copilot — Prompt Files e Instructions"
 
 if (-not (Test-Path $COPILOT_DIR)) {
     New-Item -ItemType Directory -Path $COPILOT_DIR -Force | Out-Null
@@ -987,9 +1190,13 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
 $copilotManifestJson = $copilotManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $copilotManifestPath -Content $copilotManifestJson -Label "copilot/.ai_software_factory_manifest.json" | Out-Null
 
-Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
-Write-Host ("  Copilot prompt files: {0} criados, {1} atualizados, {2} sem mudancas" -f `
-    $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged) -ForegroundColor Gray
+    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host ("  Copilot prompt files: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+        $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged) -ForegroundColor Gray
+} else {
+    Write-Header "GitHub Copilot — Prompt Files e Instructions"
+    Write-Skip "Runtime GitHub Copilot nao selecionado para instalacao"
+}
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 6 — knowledge-config.json + ingest (backup/restore on failure)
@@ -1048,7 +1255,7 @@ if ($hasPython) {
             db_path  = $dbTemp
             sources  = $knowledgeConfig.sources
         }
-        $tempConfig | ConvertTo-Json -Depth 5 | Set-Content $configTemp -Encoding UTF8
+        [System.IO.File]::WriteAllText($configTemp, ($tempConfig | ConvertTo-Json -Depth 5), $utf8NoBom)
 
         & $pythonCmd $INGEST_PATH --config $configTemp 2>&1 | Write-Host
 
@@ -1091,9 +1298,11 @@ if ($hasPython) {
 }
 
 # Atualizar hash do DB no manifesto (calculado apos o ingest)
-$manifest.knowledge_db_hash = if (Test-Path $DB_PATH) {
-    (Get-FileHash $DB_PATH -Algorithm SHA256).Hash.Substring(0, 16)
-} else { $null }
+if ($manifest) {
+    $manifest.knowledge_db_hash = if (Test-Path $DB_PATH) {
+        (Get-FileHash $DB_PATH -Algorithm SHA256).Hash.Substring(0, 16)
+    } else { $null }
+}
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 6 — .mcp.json + .claude.json (merge cirurgico, atomico)
@@ -1114,80 +1323,88 @@ $mcpStatus = Write-IfChanged -Path (Join-Path $FACTORY_PATH ".mcp.json") -Conten
 $tally.mcp_status = $mcpStatus
 
 # .claude.json global — merge cirurgico com escrita atomica
-$claudeDir = Split-Path $CLAUDE_SETTINGS
-if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null }
+if ($enableClaude) {
+    $claudeDir = Split-Path $CLAUDE_SETTINGS
+    if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null }
 
-try {
-    # Ler .claude.json existente
-    $settings = [ordered]@{}
-    $settingsRaw = ""
-    if (Test-Path $CLAUDE_SETTINGS) {
-        $settingsRaw = Get-Content $CLAUDE_SETTINGS -Raw -Encoding UTF8
-    }
-
-    $parseOk = $false
-    if ($settingsRaw -and $settingsRaw.Trim()) {
-        try {
-            $settings = $settingsRaw | ConvertFrom-Json -AsHashtable
-            $parseOk = $true
-        } catch {
-            # JSON invalido — criar backup antes de qualquer alteracao
-            $badBackup = "$CLAUDE_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-            Copy-Item $CLAUDE_SETTINGS $badBackup -Force
-            Write-Warn ".claude.json estava invalido. Backup criado: $badBackup"
-            Write-Warn "Recriando .claude.json com apenas a entrada MCP."
-        }
-    }
-
-    # Verificar se ja esta correto (evita escrita desnecessaria)
-    $existing = if ($parseOk) { $settings["mcpServers"]?["knowledge"] } else { $null }
-    $alreadyCurrent = $existing -and
-                      ($existing["type"]    -eq $mcpEntry.type) -and
-                      ($existing["command"] -eq $mcpEntry.command) -and
-                      ($existing["args"]    -contains $SERVER_PATH) -and
-                      ($existing["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
-
-    if ($alreadyCurrent) {
-        Write-Skip ".claude.json ja configurado corretamente"
-    } else {
-        # Backup com timestamp apenas quando ha mudanca real
-        if ($parseOk -and (Test-Path $CLAUDE_SETTINGS)) {
-            $tsBackup = "$CLAUDE_SETTINGS.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-            Copy-Item $CLAUDE_SETTINGS $tsBackup -Force
-            Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+    try {
+        # Ler .claude.json existente
+        $settings = [ordered]@{}
+        $settingsRaw = ""
+        if (Test-Path $CLAUDE_SETTINGS) {
+            $settingsRaw = Get-Content $CLAUDE_SETTINGS -Raw -Encoding UTF8
         }
 
-        # Atualizar apenas a chave da factory
-        if (-not $settings.ContainsKey("mcpServers")) { $settings["mcpServers"] = @{} }
-        $settings["mcpServers"]["knowledge"] = $mcpEntry
+        $parseOk = $false
+        if ($settingsRaw -and $settingsRaw.Trim()) {
+            try {
+                $settings = $settingsRaw | ConvertFrom-Json -AsHashtable
+                $parseOk = $true
+            } catch {
+                # JSON invalido — criar backup antes de qualquer alteracao
+                $badBackup = "$CLAUDE_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                Copy-Item $CLAUDE_SETTINGS $badBackup -Force
+                Write-Warn ".claude.json estava invalido. Backup criado: $badBackup"
+                Write-Warn "Recriando .claude.json com apenas a entrada MCP."
+            }
+        }
 
-        # Validar JSON resultante antes de escrever (depth 20 para preservar toda a estrutura)
-        $newJson = $settings | ConvertTo-Json -Depth 20
-        $newJson | ConvertFrom-Json | Out-Null  # lanca excecao se invalido
+        # Verificar se ja esta correto (evita escrita desnecessaria)
+        $existing = if ($parseOk -and $settings.Contains("mcpServers")) { $settings["mcpServers"]["knowledge"] } else { $null }
+        $alreadyCurrent = $existing -and
+                          ($existing["type"]    -eq $mcpEntry.type) -and
+                          ($existing["command"] -eq $mcpEntry.command) -and
+                          ($existing["args"]    -contains $SERVER_PATH) -and
+                          ($existing.Contains("env") -and $existing["env"]["KNOWLEDGE_DB"] -eq $DB_PATH)
 
-        # Escrita atomica: temp → rename
-        $tmpSettings = "$CLAUDE_SETTINGS.tmp"
-        [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
-        Move-Item $tmpSettings $CLAUDE_SETTINGS -Force
+        if ($alreadyCurrent) {
+            Write-Skip ".claude.json ja configurado corretamente"
+            $tally.claude_mcp_status = "unchanged"
+        } else {
+            # Backup com timestamp apenas quando ha mudanca real
+            if ($parseOk -and (Test-Path $CLAUDE_SETTINGS)) {
+                $tsBackup = "$CLAUDE_SETTINGS.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                Copy-Item $CLAUDE_SETTINGS $tsBackup -Force
+                Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+            }
 
-        Write-OK ".claude.json atualizado (MCP global registrado)"
+            # Atualizar apenas a chave da factory
+            if (-not $settings.Contains("mcpServers")) { $settings["mcpServers"] = [ordered]@{} }
+            $settings["mcpServers"]["knowledge"] = $mcpEntry
+
+            # Validar JSON resultante antes de escrever (depth 20 para preservar toda a estrutura)
+            $newJson = $settings | ConvertTo-Json -Depth 20
+            $newJson | ConvertFrom-Json | Out-Null  # lanca excecao se invalido
+
+            # Escrita atomica: temp → rename
+            $tmpSettings = "$CLAUDE_SETTINGS.tmp"
+            [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+            Move-Item $tmpSettings $CLAUDE_SETTINGS -Force
+
+            Write-OK ".claude.json atualizado (MCP global registrado)"
+            $tally.claude_mcp_status = "updated"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel atualizar .claude.json: $_"
+        # Restaurar backup se disponivel
+        $latestBak = Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        if ($latestBak) {
+            Copy-Item $latestBak.FullName $CLAUDE_SETTINGS -Force
+            Write-Warn ".claude.json restaurado: $($latestBak.Name)"
+        }
+        Write-Warn "Use link-mcp.ps1 em cada projeto como alternativa."
+        $tally.claude_mcp_status = "failed"
     }
-} catch {
-    Write-Warn "Nao foi possivel atualizar .claude.json: $_"
-    # Restaurar backup se disponivel
-    $latestBak = Get-ChildItem "$CLAUDE_SETTINGS.bak_*" -ErrorAction SilentlyContinue |
-        Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    if ($latestBak) {
-        Copy-Item $latestBak.FullName $CLAUDE_SETTINGS -Force
-        Write-Warn ".claude.json restaurado: $($latestBak.Name)"
-    }
-    Write-Warn "Use link-mcp.ps1 em cada projeto como alternativa."
+} else {
+    $tally.claude_mcp_status = "pulado"
 }
 
 # Codex global config.toml — bloco gerenciado, sem sobrescrever configuracoes pessoais
-$codexGlobalBegin = "# BEGIN ai_software_factory:codex-mcp"
-$codexGlobalEnd   = "# END ai_software_factory:codex-mcp"
-$codexGlobalBlock = @"
+if ($enableCodex) {
+    $codexGlobalBegin = "# BEGIN ai_software_factory:codex-mcp"
+    $codexGlobalEnd   = "# END ai_software_factory:codex-mcp"
+    $codexGlobalBlock = @"
 $codexGlobalBegin
 [mcp_servers.knowledge]
 command = "python"
@@ -1200,24 +1417,24 @@ KNOWLEDGE_DB = $(ConvertTo-TomlString $DB_PATH)
 $codexGlobalEnd
 "@
 
-try {
-    $codexConfigRaw = if (Test-Path $CODEX_CONFIG) { Get-Content $CODEX_CONFIG -Raw -Encoding UTF8 } else { "" }
-    $hasUnmanagedKnowledge = ($codexConfigRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") -and ($codexConfigRaw -notlike "*$codexGlobalBegin*")
+    try {
+        $codexConfigRaw = if (Test-Path $CODEX_CONFIG) { Get-Content $CODEX_CONFIG -Raw -Encoding UTF8 } else { "" }
+        $hasUnmanagedKnowledge = ($codexConfigRaw -match "(?m)^\s*\[mcp_servers\.knowledge\]\s*$") -and ($codexConfigRaw -notlike "*$codexGlobalBegin*")
 
-    if ($hasUnmanagedKnowledge) {
-        Write-Warn "Codex config ja possui [mcp_servers.knowledge] fora do bloco gerenciado; preservando configuracao existente."
-        Write-Warn "  Para trocar para a factory, remova a entrada antiga e reexecute install.ps1."
-        $tally.codex_mcp_status = "skipped"
-    } else {
-        $tally.codex_mcp_status = Set-ManagedTextBlock -Path $CODEX_CONFIG -BeginMarker $codexGlobalBegin -EndMarker $codexGlobalEnd -Block $codexGlobalBlock -Label "~/.codex/config.toml (MCP)"
+        if ($hasUnmanagedKnowledge) {
+            Write-Warn "Codex config ja possui [mcp_servers.knowledge] fora do bloco gerenciado; preservando configuracao existente."
+            Write-Warn "  Para trocar para a factory, remova a entrada antiga e reexecute install.ps1."
+            $tally.codex_mcp_status = "skipped"
+        } else {
+            $tally.codex_mcp_status = Set-ManagedTextBlock -Path $CODEX_CONFIG -BeginMarker $codexGlobalBegin -EndMarker $codexGlobalEnd -Block $codexGlobalBlock -Label "~/.codex/config.toml (MCP)"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel atualizar ~/.codex/config.toml: $_"
+        $tally.codex_mcp_status = "failed"
     }
-} catch {
-    Write-Warn "Nao foi possivel atualizar ~/.codex/config.toml: $_"
-    $tally.codex_mcp_status = "failed"
-}
 
-# Codex project config — gerado com caminhos relativos para a propria factory
-$projectCodexConfig = @"
+    # Codex project config — gerado com caminhos relativos para a propria factory
+    $projectCodexConfig = @"
 # AUTO-GENERATED BY ai_software_factory/install.ps1
 # Project-scoped Codex configuration for this factory repository.
 # Paths are resolved relative to the Codex workspace directory.
@@ -1236,90 +1453,102 @@ tool_timeout_sec = 60
 [mcp_servers.knowledge.env]
 KNOWLEDGE_DB = "knowledge.db"
 "@
-if (-not (Test-Path $PROJECT_CODEX_DIR)) { New-Item -ItemType Directory -Path $PROJECT_CODEX_DIR -Force | Out-Null }
-$tally.codex_project_status = Write-IfChanged -Path $PROJECT_CODEX_CONFIG -Content $projectCodexConfig -Label ".codex/config.toml"
+    if (-not (Test-Path $PROJECT_CODEX_DIR)) { New-Item -ItemType Directory -Path $PROJECT_CODEX_DIR -Force | Out-Null }
+    $tally.codex_project_status = Write-IfChanged -Path $PROJECT_CODEX_CONFIG -Content $projectCodexConfig -Label ".codex/config.toml"
+} else {
+    $tally.codex_mcp_status = "pulado"
+    $tally.codex_project_status = "pulado"
+}
 
 # Antigravity global mcp_config.json — merge cirurgico com escrita atomica
-if (Test-Path $GEMINI_CONFIG_DIR) {
-    try {
-        $geminiSettings = [ordered]@{}
-        $geminiSettingsRaw = ""
-        if (Test-Path $GEMINI_MCP_SETTINGS) {
-            $geminiSettingsRaw = Get-Content $GEMINI_MCP_SETTINGS -Raw -Encoding UTF8
-        }
-
-        $parseOk = $false
-        if ($geminiSettingsRaw -and $geminiSettingsRaw.Trim()) {
-            try {
-                $geminiSettings = $geminiSettingsRaw | ConvertFrom-Json -AsHashtable
-                $parseOk = $true
-            } catch {
-                $badBackup = "$GEMINI_MCP_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-                Copy-Item $GEMINI_MCP_SETTINGS $badBackup -Force
-                Write-Warn "mcp_config.json estava invalido. Backup criado: $badBackup"
-            }
-        }
-
-        $geminiMcpEntry = [ordered]@{
-            command = "python"
-            args    = @($SERVER_PATH)
-            env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
-            tools   = [ordered]@{
-                search_knowledge    = [ordered]@{ eager = $true }
-                get_full_document   = [ordered]@{ eager = $true }
-                get_context         = [ordered]@{ eager = $true }
-                health_check        = [ordered]@{ eager = $true }
-                knowledge_stats     = [ordered]@{ eager = $true }
-                search_with_filters = [ordered]@{ eager = $true }
-            }
-        }
-
-        $existingGemini = if ($parseOk) { $geminiSettings["mcpServers"]?["knowledge"] } else { $null }
-        $alreadyCurrentGemini = $existingGemini -and
-                                ($existingGemini["command"] -eq $geminiMcpEntry.command) -and
-                                ($existingGemini["args"]    -contains $SERVER_PATH) -and
-                                ($existingGemini["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
-
-        if ($alreadyCurrentGemini) {
-            Write-Skip "mcp_config.json ja configurado corretamente"
-            $tally.gemini_mcp_status = "unchanged"
-        } else {
-            if ($parseOk -and (Test-Path $GEMINI_MCP_SETTINGS) -and (Get-Item $GEMINI_MCP_SETTINGS).Length -gt 0) {
-                $tsBackup = "$GEMINI_MCP_SETTINGS.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-                Copy-Item $GEMINI_MCP_SETTINGS $tsBackup -Force
-                Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+if ($enableAntigravity) {
+    if (Test-Path $GEMINI_CONFIG_DIR) {
+        try {
+            $geminiSettings = [ordered]@{}
+            $geminiSettingsRaw = ""
+            if (Test-Path $GEMINI_MCP_SETTINGS) {
+                $geminiSettingsRaw = Get-Content $GEMINI_MCP_SETTINGS -Raw -Encoding UTF8
             }
 
-            if (-not $geminiSettings.Contains("mcpServers")) { $geminiSettings["mcpServers"] = [ordered]@{} }
-            $geminiSettings["mcpServers"]["knowledge"] = $geminiMcpEntry
+            $parseOk = $false
+            if ($geminiSettingsRaw -and $geminiSettingsRaw.Trim()) {
+                try {
+                    $geminiSettings = $geminiSettingsRaw | ConvertFrom-Json -AsHashtable
+                    $parseOk = $true
+                } catch {
+                    $badBackup = "$GEMINI_MCP_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                    Copy-Item $GEMINI_MCP_SETTINGS $badBackup -Force
+                    Write-Warn "mcp_config.json estava invalido. Backup criado: $badBackup"
+                }
+            }
 
-            $newJson = $geminiSettings | ConvertTo-Json -Depth 10
-            $tmpSettings = "$GEMINI_MCP_SETTINGS.tmp"
-            [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
-            Move-Item $tmpSettings $GEMINI_MCP_SETTINGS -Force
+            $geminiMcpEntry = [ordered]@{
+                command = "python"
+                args    = @($SERVER_PATH)
+                env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
+                tools   = [ordered]@{
+                    search_knowledge    = [ordered]@{ eager = $true }
+                    get_full_document   = [ordered]@{ eager = $true }
+                    get_context         = [ordered]@{ eager = $true }
+                    health_check        = [ordered]@{ eager = $true }
+                    knowledge_stats     = [ordered]@{ eager = $true }
+                    search_with_filters = [ordered]@{ eager = $true }
+                }
+            }
 
-            Write-OK "mcp_config.json atualizado (MCP Antigravity registrado)"
-            $tally.gemini_mcp_status = "updated"
+            $existingGemini = if ($parseOk -and $geminiSettings.Contains("mcpServers")) { $geminiSettings["mcpServers"]["knowledge"] } else { $null }
+            $alreadyCurrentGemini = $existingGemini -and
+                                    ($existingGemini["command"] -eq $geminiMcpEntry.command) -and
+                                    ($existingGemini["args"]    -contains $SERVER_PATH) -and
+                                    ($existingGemini.Contains("env") -and $existingGemini["env"]["KNOWLEDGE_DB"] -eq $DB_PATH)
+
+            if ($alreadyCurrentGemini) {
+                Write-Skip "mcp_config.json ja configurado corretamente"
+                $tally.gemini_mcp_status = "unchanged"
+            } else {
+                if ($parseOk -and (Test-Path $GEMINI_MCP_SETTINGS) -and (Get-Item $GEMINI_MCP_SETTINGS).Length -gt 0) {
+                    $tsBackup = "$GEMINI_MCP_SETTINGS.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                    Copy-Item $GEMINI_MCP_SETTINGS $tsBackup -Force
+                    Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+                }
+
+                if (-not $geminiSettings.Contains("mcpServers")) { $geminiSettings["mcpServers"] = [ordered]@{} }
+                $geminiSettings["mcpServers"]["knowledge"] = $geminiMcpEntry
+
+                $newJson = $geminiSettings | ConvertTo-Json -Depth 10
+                $tmpSettings = "$GEMINI_MCP_SETTINGS.tmp"
+                [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+                Move-Item $tmpSettings $GEMINI_MCP_SETTINGS -Force
+
+                Write-OK "mcp_config.json atualizado (MCP Antigravity registrado)"
+                $tally.gemini_mcp_status = "updated"
+            }
+        } catch {
+            Write-Warn "Nao foi possivel atualizar mcp_config.json: $_"
+            $tally.gemini_mcp_status = "failed"
         }
-    } catch {
-        Write-Warn "Nao foi possivel atualizar mcp_config.json: $_"
-        $tally.gemini_mcp_status = "failed"
     }
+} else {
+    $tally.gemini_mcp_status = "pulado"
 }
 
 # VS Code project config — gerado para Copilot Agent Mode com suporte MCP
-$vscodeMcpEntry = [ordered]@{
-    mcpServers = [ordered]@{
-        knowledge = [ordered]@{
-            command = "python"
-            args    = @("tools/mcp-knowledge-search/server.py")
-            env     = [ordered]@{ KNOWLEDGE_DB = "knowledge.db" }
+if ($enableCopilot) {
+    $vscodeMcpEntry = [ordered]@{
+        mcpServers = [ordered]@{
+            knowledge = [ordered]@{
+                command = "python"
+                args    = @("tools/mcp-knowledge-search/server.py")
+                env     = [ordered]@{ KNOWLEDGE_DB = "knowledge.db" }
+            }
         }
     }
+    $vscodeMcpJsonStr = $vscodeMcpEntry | ConvertTo-Json -Depth 5
+    if (-not (Test-Path $VSCODE_DIR)) { New-Item -ItemType Directory -Path $VSCODE_DIR -Force | Out-Null }
+    $tally.vscode_mcp_status = Write-IfChanged -Path $VSCODE_MCP_CONFIG -Content $vscodeMcpJsonStr -Label ".vscode/mcp.json"
+} else {
+    $tally.vscode_mcp_status = "pulado"
 }
-$vscodeMcpJsonStr = $vscodeMcpEntry | ConvertTo-Json -Depth 5
-if (-not (Test-Path $VSCODE_DIR)) { New-Item -ItemType Directory -Path $VSCODE_DIR -Force | Out-Null }
-$tally.vscode_mcp_status = Write-IfChanged -Path $VSCODE_MCP_CONFIG -Content $vscodeMcpJsonStr -Label ".vscode/mcp.json"
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 7 — factory.ps1 (Gemini CLI)
@@ -1490,7 +1719,20 @@ if (`$hasUnmanagedKnowledge) {
     Write-Host "[OK] .codex/config.toml vinculado: `$(Get-Location)" -ForegroundColor Green
 }
 
-Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code ou Codex."
+`$TARGET_VSCODE_DIR = Join-Path (Get-Location).Path ".vscode"
+`$TARGET_VSCODE_CONFIG = Join-Path `$TARGET_VSCODE_DIR "mcp.json"
+`$SOURCE_VSCODE_CONFIG = Join-Path `$FACTORY_PATH ".vscode\mcp.json"
+if (Test-Path `$SOURCE_VSCODE_CONFIG) {
+    if (-not (Test-Path `$TARGET_VSCODE_DIR)) { New-Item -ItemType Directory -Path `$TARGET_VSCODE_DIR -Force | Out-Null }
+    if (Test-Path `$TARGET_VSCODE_CONFIG) {
+        `$bak = "`$TARGET_VSCODE_CONFIG.bak_`$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+        Copy-Item `$TARGET_VSCODE_CONFIG `$bak; Write-Host "  [BAK] `$bak" -ForegroundColor DarkGray
+    }
+    Copy-Item `$SOURCE_VSCODE_CONFIG `$TARGET_VSCODE_CONFIG -Force
+    Write-Host "[OK] .vscode/mcp.json vinculado: `$(Get-Location)" -ForegroundColor Green
+}
+
+Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code, Codex ou GitHub Copilot."
 "@
 $s = Write-IfChanged -Path (Join-Path $FACTORY_PATH "link-mcp.ps1") -Content $linkMcp -Label "link-mcp.ps1"
 if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_unchanged++ }
@@ -1534,8 +1776,10 @@ if (Test-Path $testMcpPath) {
 }
 
 # ─── Gravar manifesto completo (apos todas as fases) ─────────────────────────
-$manifestJson = $manifest | ConvertTo-Json -Depth 10
-Write-IfChanged -Path $manifestPath -Content $manifestJson -Label ".ai_software_factory_manifest.json" | Out-Null
+if ($enableClaude -and $manifest -and $manifestPath) {
+    $manifestJson = $manifest | ConvertTo-Json -Depth 10
+    Write-IfChanged -Path $manifestPath -Content $manifestJson -Label ".ai_software_factory_manifest.json" | Out-Null
+}
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  RESUMO
@@ -1545,22 +1789,32 @@ Write-Host "  ╔═════════════════════
 Write-Host "  ║                    Resumo                        ║" -ForegroundColor Green
 Write-Host "  ╠═══════════════════════════════════════════════════╣" -ForegroundColor Green
 
-$agentSummary = "{0} criados  {1} atualizados  {2} sem mudancas" -f `
-    $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged
+$agentSummary = if ($enableClaude) {
+    "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+        $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged
+} else { "pulado (nao selecionado)" }
 Write-Host ("  ║  Agentes      {0,-36}║" -f $agentSummary) -ForegroundColor Green
 
-$codexSummary = "{0} criados  {1} atualizados  {2} sem mudancas" -f `
-    $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged
+$codexSummary = if ($enableCodex) {
+    "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+        $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged
+} else { "pulado (nao selecionado)" }
 Write-Host ("  ║  Codex agents {0,-36}║" -f $codexSummary) -ForegroundColor Green
 
-$antigravitySummary = "{0} criadas  {1} atualizadas  {2} sem mudancas" -f `
-    $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged
+$antigravitySummary = if ($enableAntigravity) {
+    "{0} criadas  {1} atualizadas  {2} sem mudancas" -f `
+        $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged
+} else { "pulado (nao selecionado)" }
 Write-Host ("  ║  Antigravity  {0,-36}║" -f $antigravitySummary) -ForegroundColor Green
 
-$copilotSummary = "{0} criados  {1} atualizados  {2} sem mudancas" -f `
-    $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged
+$copilotSummary = if ($enableCopilot) {
+    "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+        $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged
+} else { "pulado (nao selecionado)" }
 Write-Host ("  ║  Copilot Prmp {0,-36}║" -f $copilotSummary) -ForegroundColor Green
-Write-Host ("  ║  Copilot Inst {0,-36}║" -f $tally.copilot_instr_status) -ForegroundColor Green
+
+$copilotInstrSummary = if ($enableCopilot) { $tally.copilot_instr_status } else { "pulado" }
+Write-Host ("  ║  Copilot Inst {0,-36}║" -f $copilotInstrSummary) -ForegroundColor Green
 
 $kbSummary = switch ($tally.knowledge_status) {
     "rebuilt"   { "reconstruido — $($tally.knowledge_docs) documentos" }
@@ -1570,6 +1824,7 @@ $kbSummary = switch ($tally.knowledge_status) {
 }
 Write-Host ("  ║  Knowledge DB {0,-36}║" -f $kbSummary) -ForegroundColor Green
 Write-Host ("  ║  MCP Config   {0,-36}║" -f $tally.mcp_status) -ForegroundColor Green
+Write-Host ("  ║  Claude MCP   {0,-36}║" -f $tally.claude_mcp_status) -ForegroundColor Green
 Write-Host ("  ║  Codex MCP    {0,-36}║" -f $tally.codex_mcp_status) -ForegroundColor Green
 Write-Host ("  ║  Codex local  {0,-36}║" -f $tally.codex_project_status) -ForegroundColor Green
 Write-Host ("  ║  Gemini MCP   {0,-36}║" -f $tally.gemini_mcp_status) -ForegroundColor Green
@@ -1581,22 +1836,30 @@ Write-Host "  ╚═════════════════════
 Write-Host ""
 Write-Host "  FACTORY_ROOT = $FACTORY_PATH" -ForegroundColor DarkGray
 Write-Host ""
-Write-Host "  Claude Code — use em qualquer projeto:" -ForegroundColor Cyan
-Write-Host "    @techlead  @qa  @architect  @po  @devbackend ..."
-Write-Host ""
-Write-Host "  Codex — custom agents instalados:" -ForegroundColor Cyan
-Write-Host "    spawn/use techlead, qa, architect, po, devbackend ... como subagentes"
-Write-Host "    MCP: ~/.codex/config.toml e .codex/config.toml nesta factory"
-Write-Host ""
-Write-Host "  Antigravity (AGY) — plugin e skills instalados:" -ForegroundColor Cyan
-Write-Host "    Skills: techlead, qa, architect, po, devbackend ... sob demanda"
-Write-Host "    MCP: ~/.gemini/config/mcp_config.json e ~/.gemini/config/plugins/ai-software-factory"
-Write-Host ""
-Write-Host "  GitHub Copilot — prompt files e MCP configurados:" -ForegroundColor Cyan
-Write-Host "    Prompt files: .github/prompts/*.prompt.md (carregue no Copilot Chat)"
-Write-Host "    Instrucoes globais: .github/copilot-instructions.md"
-Write-Host "    MCP: .vscode/mcp.json (VS Code Copilot Agent mode)"
-Write-Host ""
+if ($enableClaude) {
+    Write-Host "  Claude Code — use em qualquer projeto:" -ForegroundColor Cyan
+    Write-Host "    @techlead  @qa  @architect  @po  @devbackend ..."
+    Write-Host ""
+}
+if ($enableCodex) {
+    Write-Host "  Codex — custom agents instalados:" -ForegroundColor Cyan
+    Write-Host "    spawn/use techlead, qa, architect, po, devbackend ... como subagentes"
+    Write-Host "    MCP: ~/.codex/config.toml e .codex/config.toml nesta factory"
+    Write-Host ""
+}
+if ($enableAntigravity) {
+    Write-Host "  Antigravity (AGY) — plugin e skills instalados:" -ForegroundColor Cyan
+    Write-Host "    Skills: techlead, qa, architect, po, devbackend ... sob demanda"
+    Write-Host "    MCP: ~/.gemini/config/mcp_config.json e ~/.gemini/config/plugins/ai-software-factory"
+    Write-Host ""
+}
+if ($enableCopilot) {
+    Write-Host "  GitHub Copilot — prompt files e MCP configurados:" -ForegroundColor Cyan
+    Write-Host "    Prompt files: .github/prompts/*.prompt.md (carregue no Copilot Chat)"
+    Write-Host "    Instrucoes globais: .github/copilot-instructions.md"
+    Write-Host "    MCP: .vscode/mcp.json (VS Code Copilot Agent mode)"
+    Write-Host ""
+}
 if ($hasPython) {
     Write-Host "  Atualizar apos git pull / editar conhecimento:" -ForegroundColor Cyan
     Write-Host "    .\update-knowledge.ps1"

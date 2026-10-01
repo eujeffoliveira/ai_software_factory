@@ -21,11 +21,14 @@ A integracao com o GitHub Copilot e sustentada por tres pilares canonicamente ge
 A fonte da verdade de todos os agentes reside nas pastas `AgenteXX_RoleName/`. Para gerar ou atualizar a configuracao do GitHub Copilot:
 
 ```powershell
-# Na raiz da factory:
+# Instalacao direta para GitHub Copilot:
+.\install.ps1 -Copilot
+
+# Ou atraves do instalador interativo inteligente:
 .\install.ps1
 ```
 
-O `install.ps1` executara:
+O `install.ps1` detecta o ambiente do VS Code / Copilot e executara:
 1. Criacao/atualizacao de `.github/copilot-instructions.md`.
 2. Geracao dos 12 arquivos de prompt em `.github/prompts/<nome>.prompt.md`.
 3. Configuracao do servidor MCP em `.vscode/mcp.json`.
