@@ -66,7 +66,10 @@ if (-not $pythonCmd) {
 
 # --- Check 5: pacote mcp instalado -------------------------------------------
 if ($pythonCmd) {
+    $prevEAP = $ErrorActionPreference
+    $ErrorActionPreference = "SilentlyContinue"
     $mcpCheck = & $pythonCmd -m pip show mcp 2>&1
+    $ErrorActionPreference = $prevEAP
     if ($LASTEXITCODE -eq 0) {
         $mcpVer = ($mcpCheck | Select-String "^Version:") -replace "Version:\s*", ""
         Write-CheckOK "Pacote mcp instalado (v$($mcpVer.Trim()))"

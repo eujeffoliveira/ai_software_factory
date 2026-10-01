@@ -468,15 +468,30 @@ if ($hasPython) {
         $savedHash  = if (Test-Path $REQ_HASH_FILE) { (Get-Content $REQ_HASH_FILE -Raw).Trim() } else { "" }
 
         # Verificar se mcp esta instalado
-        $mcpPresent = & $pythonCmd -m pip show mcp 2>&1
-        $mcpMissing = ($LASTEXITCODE -ne 0)
+        $mcpMissing = $true
+        $prevEAP = $ErrorActionPreference
+        $ErrorActionPreference = "SilentlyContinue"
+        try {
+            $null = & $pythonCmd -c "import mcp" 2>$null
+            $mcpMissing = ($LASTEXITCODE -ne 0)
+        } catch {
+            $mcpMissing = $true
+        } finally {
+            $ErrorActionPreference = $prevEAP
+        }
 
         $needsPip = $ForceDeps -or $mcpMissing -or ($reqHash -ne $savedHash)
 
         if ($needsPip) {
             $reason = if ($ForceDeps) { "-ForceDeps" } elseif ($mcpMissing) { "mcp ausente" } else { "requirements.txt modificado" }
             Write-Host "  Instalando dependencias ($reason)..." -ForegroundColor DarkGray
-            & $pythonCmd -m pip install -r $REQUIREMENTS_PATH -q
+            $prevEAP = $ErrorActionPreference
+            $ErrorActionPreference = "SilentlyContinue"
+            try {
+                & $pythonCmd -m pip install -r $REQUIREMENTS_PATH -q
+            } finally {
+                $ErrorActionPreference = $prevEAP
+            }
             if ($LASTEXITCODE -eq 0) {
                 Set-Content $REQ_HASH_FILE -Value $reqHash -Encoding UTF8
                 Write-OK "Dependencias instaladas"
