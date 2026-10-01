@@ -239,6 +239,20 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 
 ---
 
+## Desinstalação
+
+Para remover os agentes e configurações instaladas:
+
+```powershell
+.\uninstall.ps1 -WhatIf   # preview seguro do que seria removido
+.\uninstall.ps1           # remove agentes e configuracoes, preservando knowledge.db
+.\uninstall.ps1 -Full     # remove tudo (incluindo knowledge.db, logs e FACTORY_ROOT)
+```
+
+Mais detalhes em [`docs/INSTALLATION.md`](docs/INSTALLATION.md#desinstalação).
+
+---
+
 ## Documentação
 
 | Documento | Conteúdo |

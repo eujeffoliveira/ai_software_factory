@@ -1,4 +1,4 @@
-﻿# install.ps1 - AI Software Factory Global Installer
+# install.ps1 - AI Software Factory Global Installer
 # Uso: .\install.ps1 [-ForceDeps]
 # Documentacao: docs/INSTALL_CLI.md
 
@@ -156,7 +156,10 @@ $GEMINI_PLUGIN_DIR = Join-Path $GEMINI_CONFIG_DIR "plugins\ai-software-factory"
 $GEMINI_SKILLS_DIR = Join-Path $GEMINI_PLUGIN_DIR "skills"
 $COPILOT_DIR          = Join-Path $FACTORY_PATH ".github"
 $COPILOT_PROMPTS_DIR  = Join-Path $COPILOT_DIR "prompts"
+$COPILOT_AGENTS_DIR   = Join-Path $COPILOT_DIR "agents"
 $COPILOT_INSTRUCTIONS = Join-Path $COPILOT_DIR "copilot-instructions.md"
+$COPILOT_USER_DIR     = Join-Path $env:USERPROFILE ".copilot"
+$COPILOT_USER_AGENTS_DIR = Join-Path $COPILOT_USER_DIR "agents"
 $VSCODE_DIR           = Join-Path $FACTORY_PATH ".vscode"
 $VSCODE_MCP_CONFIG    = Join-Path $VSCODE_DIR "mcp.json"
 $VSCODE_USER_EXTENSIONS_DIR = if ($env:VSCODE_EXTENSIONS) { $env:VSCODE_EXTENSIONS } else { Join-Path $env:USERPROFILE ".vscode\extensions" }
@@ -214,12 +217,18 @@ $tally = @{
     antigravity_created   = 0
     antigravity_updated   = 0
     antigravity_unchanged = 0
-    copilot_created       = 0
-    copilot_updated       = 0
-    copilot_unchanged     = 0
-    copilot_ext_created   = 0
-    copilot_ext_updated   = 0
-    copilot_ext_unchanged = 0
+    copilot_created         = 0
+    copilot_updated         = 0
+    copilot_unchanged       = 0
+    copilot_ws_created      = 0
+    copilot_ws_updated      = 0
+    copilot_ws_unchanged    = 0
+    copilot_user_created    = 0
+    copilot_user_updated    = 0
+    copilot_user_unchanged  = 0
+    copilot_ext_created     = 0
+    copilot_ext_updated     = 0
+    copilot_ext_unchanged   = 0
     copilot_ext_pkg       = "unchanged"
     copilot_instr_status  = "unchanged"
     knowledge_docs        = 0
@@ -1031,6 +1040,23 @@ if (-not (Test-Path $COPILOT_PROMPTS_DIR)) {
 } else {
     Write-Skip "Ja existe: $COPILOT_PROMPTS_DIR"
 }
+if (-not (Test-Path $COPILOT_AGENTS_DIR)) {
+    New-Item -ItemType Directory -Path $COPILOT_AGENTS_DIR -Force | Out-Null
+    Write-OK "Criado: $COPILOT_AGENTS_DIR"
+} else {
+    Write-Skip "Ja existe: $COPILOT_AGENTS_DIR"
+}
+
+# Diretorios de agentes do usuario (~/.copilot/agents/)
+if (-not (Test-Path $COPILOT_USER_DIR)) {
+    New-Item -ItemType Directory -Path $COPILOT_USER_DIR -Force | Out-Null
+}
+if (-not (Test-Path $COPILOT_USER_AGENTS_DIR)) {
+    New-Item -ItemType Directory -Path $COPILOT_USER_AGENTS_DIR -Force | Out-Null
+    Write-OK "Criado: $COPILOT_USER_AGENTS_DIR"
+} else {
+    Write-Skip "Ja existe: $COPILOT_USER_AGENTS_DIR"
+}
 
 # Diretorios da extensao global do VS Code (~/.vscode/extensions/ai-software-factory.agents/)
 if (-not (Test-Path $COPILOT_EXT_DIR)) {
@@ -1212,6 +1238,34 @@ $copilotManifest = [ordered]@{
     prompts           = [ordered]@{}
 }
 
+$copilotWsManifestPath = Join-Path $COPILOT_AGENTS_DIR ".ai_software_factory_manifest.json"
+$existingWsInstalledAt = if (Test-Path $copilotWsManifestPath) {
+    try { (Get-Content $copilotWsManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
+$copilotWsManifest = [ordered]@{
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingWsInstalledAt) { $existingWsInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    mcp_server        = "knowledge"
+    agents            = [ordered]@{}
+}
+
+$copilotUserManifestPath = Join-Path $COPILOT_USER_DIR ".ai_software_factory_manifest.json"
+$existingUserInstalledAt = if (Test-Path $copilotUserManifestPath) {
+    try { (Get-Content $copilotUserManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
+$copilotUserManifest = [ordered]@{
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingUserInstalledAt) { $existingUserInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    mcp_server        = "knowledge"
+    agents            = [ordered]@{}
+}
+
 $copilotExtManifestPath = Join-Path $COPILOT_EXT_DIR ".ai_software_factory_manifest.json"
 $existingExtInstalledAt = if (Test-Path $copilotExtManifestPath) {
     try { (Get-Content $copilotExtManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
@@ -1227,15 +1281,19 @@ $copilotExtManifest = [ordered]@{
 }
 
 foreach ($agent in $agents) {
-    $agentDir      = Join-Path $FACTORY_PATH $agent.Folder
-    $promptFile    = Join-Path $agentDir "prompt.md"
-    $outputFile    = Join-Path $COPILOT_PROMPTS_DIR "$($agent.Name).prompt.md"
-    $extOutputFile = Join-Path $COPILOT_EXT_AGENTS_DIR "$($agent.Name).agent.md"
+    $agentDir       = Join-Path $FACTORY_PATH $agent.Folder
+    $promptFile     = Join-Path $agentDir "prompt.md"
+    $outputFile     = Join-Path $COPILOT_PROMPTS_DIR "$($agent.Name).prompt.md"
+    $wsOutputFile   = Join-Path $COPILOT_AGENTS_DIR "$($agent.Name).agent.md"
+    $userOutputFile = Join-Path $COPILOT_USER_AGENTS_DIR "$($agent.Name).agent.md"
+    $extOutputFile  = Join-Path $COPILOT_EXT_AGENTS_DIR "$($agent.Name).agent.md"
 
     if (-not (Test-Path $promptFile)) {
         Write-Warn "prompt.md nao encontrado: $($agent.Folder)"
-        $copilotManifest.prompts[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
-        $copilotExtManifest.agents[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        $copilotManifest.prompts[$agent.Name]     = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        $copilotWsManifest.agents[$agent.Name]   = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        $copilotUserManifest.agents[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        $copilotExtManifest.agents[$agent.Name]  = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
         continue
     }
 
@@ -1263,7 +1321,7 @@ foreach ($agent in $agents) {
     [void]$sbManaged.AppendLine("<!-- END ai_software_factory managed block -->")
     $managedBody = $sbManaged.ToString()
 
-    # 1. Gerar .github/prompts/<name>.prompt.md
+    # 1. Gerar .github/prompts/<name>.prompt.md (Prompt files reutilizaveis)
     $promptHeader = @"
 ---
 description: >-
@@ -1295,8 +1353,8 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
         installed_hash = $installedHash
     }
 
-    # 2. Gerar ~/.vscode/extensions/ai-software-factory.agents/agents/<name>.agent.md (Global VS Code Extension)
-    $extAgentHeader = @"
+    # 2. Gerar Definicao de Agente (.agent.md) para Workspace, Usuario e Extensao
+    $agentHeader = @"
 ---
 name: $($agent.Name)
 description: >-
@@ -1311,14 +1369,47 @@ To update: cd $FACTORY_PATH && .\install.ps1
 Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 copilotMcpBlock
 -->
 "@
-    $extAgentContent = $extAgentHeader.TrimEnd() + "`n`n" + $managedBody
-    $extStatus = Write-IfChanged -Path $extOutputFile -Content $extAgentContent -Label "copilot-ext/agents/$($agent.Name).agent.md"
+    $agentContent = $agentHeader.TrimEnd() + "`n`n" + $managedBody
+
+    # 2A. Workspace Custom Agent (.github/agents/<name>.agent.md)
+    $wsStatus = Write-IfChanged -Path $wsOutputFile -Content $agentContent -Label "copilot-ws/agents/$($agent.Name).agent.md"
+    switch ($wsStatus) {
+        "created"   { $tally.copilot_ws_created++ }
+        "updated"   { $tally.copilot_ws_updated++ }
+        "unchanged" { $tally.copilot_ws_unchanged++ }
+    }
+    $wsHash = if (Test-Path $wsOutputFile) { (Get-FileHash $wsOutputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $copilotWsManifest.agents[$agent.Name] = [ordered]@{
+        status         = $wsStatus
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $wsOutputFile
+        installed_hash = $wsHash
+    }
+
+    # 2B. User Global Custom Agent (~/.copilot/agents/<name>.agent.md)
+    $userStatus = Write-IfChanged -Path $userOutputFile -Content $agentContent -Label "copilot-user/agents/$($agent.Name).agent.md"
+    switch ($userStatus) {
+        "created"   { $tally.copilot_user_created++ }
+        "updated"   { $tally.copilot_user_updated++ }
+        "unchanged" { $tally.copilot_user_unchanged++ }
+    }
+    $userHash = if (Test-Path $userOutputFile) { (Get-FileHash $userOutputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $copilotUserManifest.agents[$agent.Name] = [ordered]@{
+        status         = $userStatus
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $userOutputFile
+        installed_hash = $userHash
+    }
+
+    # 2C. Extensao Global VS Code (~/.vscode/extensions/.../agents/<name>.agent.md)
+    $extStatus = Write-IfChanged -Path $extOutputFile -Content $agentContent -Label "copilot-ext/agents/$($agent.Name).agent.md"
     switch ($extStatus) {
         "created"   { $tally.copilot_ext_created++ }
         "updated"   { $tally.copilot_ext_updated++ }
         "unchanged" { $tally.copilot_ext_unchanged++ }
     }
-
     $extInstalledHash = if (Test-Path $extOutputFile) { (Get-FileHash $extOutputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
     $copilotExtManifest.agents[$agent.Name] = [ordered]@{
         status         = $extStatus
@@ -1332,12 +1423,22 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
 $copilotManifestJson = $copilotManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $copilotManifestPath -Content $copilotManifestJson -Label "copilot/.ai_software_factory_manifest.json" | Out-Null
 
+$copilotWsManifestJson = $copilotWsManifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $copilotWsManifestPath -Content $copilotWsManifestJson -Label "copilot-ws/.ai_software_factory_manifest.json" | Out-Null
+
+$copilotUserManifestJson = $copilotUserManifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $copilotUserManifestPath -Content $copilotUserManifestJson -Label "copilot-user/.ai_software_factory_manifest.json" | Out-Null
+
 $copilotExtManifestJson = $copilotExtManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $copilotExtManifestPath -Content $copilotExtManifestJson -Label "copilot-ext/.ai_software_factory_manifest.json" | Out-Null
 
     Write-Host "  ---------------------------------" -ForegroundColor DarkGray
     Write-Host ("  Copilot prompt files:     {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged) -ForegroundColor Gray
+    Write-Host ("  Copilot workspace agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+        $tally.copilot_ws_created, $tally.copilot_ws_updated, $tally.copilot_ws_unchanged) -ForegroundColor Gray
+    Write-Host ("  Copilot user agents:      {0} criados, {1} atualizados, {2} sem mudancas" -f `
+        $tally.copilot_user_created, $tally.copilot_user_updated, $tally.copilot_user_unchanged) -ForegroundColor Gray
     Write-Host ("  Copilot extension agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.copilot_ext_created, $tally.copilot_ext_updated, $tally.copilot_ext_unchanged) -ForegroundColor Gray
 } else {
@@ -2011,6 +2112,18 @@ $copilotSummary = if ($enableCopilot) {
         $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged
 } else { "pulado (nao selecionado)" }
 Write-Host ("  |  Copilot Prmp {0,-36}|" -f $copilotSummary) -ForegroundColor Green
+
+$copilotWsSummary = if ($enableCopilot) {
+    "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+        $tally.copilot_ws_created, $tally.copilot_ws_updated, $tally.copilot_ws_unchanged
+} else { "pulado (nao selecionado)" }
+Write-Host ("  |  Copilot WSAgt{0,-36}|" -f $copilotWsSummary) -ForegroundColor Green
+
+$copilotUserSummary = if ($enableCopilot) {
+    "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+        $tally.copilot_user_created, $tally.copilot_user_updated, $tally.copilot_user_unchanged
+} else { "pulado (nao selecionado)" }
+Write-Host ("  |  Copilot UsrAg{0,-36}|" -f $copilotUserSummary) -ForegroundColor Green
 
 $copilotExtSummary = if ($enableCopilot) {
     "{0} criados  {1} atualizados  {2} sem mudancas" -f `

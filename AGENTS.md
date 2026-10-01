@@ -110,18 +110,20 @@ See `docs/ANTIGRAVITY.md` for full details.
 
 ## GitHub Copilot-Specific Guidance
 
-GitHub Copilot integrates via a global declarative VS Code extension, repository instructions,
-reusable prompt files, and both workspace and global user MCP configurations.
+GitHub Copilot integrates via native Workspace and User Custom Agents (`.github/agents/` and `~/.copilot/agents/`),
+a global declarative VS Code extension, repository instructions, reusable prompt files, and both workspace and global user MCP configurations.
 
 After `.\install.ps1`, GitHub Copilot artifacts are generated:
+- `.github/agents/<name>.agent.md` workspace custom agents appearing directly in the VS Code Agent picker
+- `~/.copilot/agents/<name>.agent.md` user-level custom agents available in any workspace
 - `~/.vscode/extensions/ai-software-factory.agents/` global declarative extension with all 12 `.agent.md` files (authorizing `knowledge/*` tools)
 - `.github/copilot-instructions.md` containing global SDLC engineering rules
 - `.github/prompts/<name>.prompt.md` reusable prompt files for all 12 roles
 - `.vscode/mcp.json` configuring the `knowledge` MCP server for workspace Copilot Agent mode
 - `%APPDATA%\Code\User\mcp.json` configuring `servers.knowledge` globally for VS Code across all projects
 
-Use them in VS Code Copilot Chat globally in any project by addressing agents directly (`@techlead`, `@qa`, etc.),
-or within this repo by attaching prompt files (`#file:techlead.prompt.md`).
+Use them in VS Code Copilot Chat by selecting the agent directly from the Chat Agent picker dropdown (`Agent` -> `techlead`, `qa`, etc.),
+addressing agents (`@techlead`, `@qa`, etc.), or by attaching prompt files (`#file:techlead.prompt.md`).
 In Agent mode, Copilot calls MCP knowledge tools natively.
 See `docs/COPILOT.md` for full details.
 

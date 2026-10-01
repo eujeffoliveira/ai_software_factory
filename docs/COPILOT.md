@@ -10,9 +10,11 @@ A integracao com o GitHub Copilot e sustentada por quatro pilares canonicamente 
 
 | Componente | Localizacao | Alcance | Funcao |
 |---|---|---|---|
-| **Extensao Global VS Code** | `~/.vscode/extensions/ai-software-factory.agents/` | **Global** (qualquer janela/projeto) | Extensao declarativa com `contributes.chatAgents` contendo os 12 agentes em formato `.agent.md`, acessiveis via `@<nome>` no Copilot Chat em qualquer pasta aberta no VS Code |
+| **Workspace Custom Agents** | `.github/agents/*.agent.md` | Workspace atual | Agentes customizados nativos do VS Code que aparecem no seletor de Agentes (`Agent` dropdown) e em Personalizacoes do Agente (Workspace) |
+| **User Custom Agents** | `~/.copilot/agents/*.agent.md` | **Global** (qualquer projeto) | Agentes customizados do usuario para o Copilot, disponiveis no seletor de Agentes em qualquer workspace |
+| **Extensao Global VS Code** | `~/.vscode/extensions/ai-software-factory.agents/` | **Global** (qualquer projeto) | Extensao declarativa com `contributes.chatAgents` contendo os 12 agentes em formato `.agent.md`, acessiveis via `@<nome>` no Copilot Chat |
 | **Instrucoes Globais** | `.github/copilot-instructions.md` | Workspace atual | Regras do SDLC, Quality Gates, State Ledger, ADR policy e isolamento de runtime injetados automaticamente no contexto do Copilot |
-| **Prompt Files Reutilizaveis** | `.github/prompts/*.prompt.md` | Workspace atual | Personas completas dos 12 agentes com conhecimento destilado (principles, heuristics, cards) para invocacao sob demanda via `#file:` no Copilot Chat |
+| **Prompt Files Reutilizaveis** | `.github/prompts/*.prompt.md` | Workspace atual | Personas completas dos 12 agentes com conhecimento destilado para invocacao sob demanda via `#file:` no Copilot Chat |
 | **MCP Knowledge Server** | `.vscode/mcp.json` (workspace) & `%APPDATA%\Code\User\mcp.json` (global) | Workspace e Global | Configuracao do servidor MCP `knowledge` para consulta semantica de conhecimento no VS Code Copilot Agent mode em qualquer projeto |
 
 ---
@@ -151,9 +153,20 @@ A secao **7C. GitHub Copilot — Prompt Files & Instructions** e a secao **10. M
 
 ## 5. Como Usar no VS Code
 
-### Modo 1: Agentes Globais no Copilot Chat (`@nome`) — *Recomendado*
+### Modo 1: Seletor de Agentes no Chat (`Agent` dropdown / Personalizacoes do Agente) — *Nativo do VS Code*
 
-Gracas a extensao instalada em `~/.vscode/extensions/ai-software-factory.agents/`, os agentes estao disponiveis em qualquer projeto:
+O VS Code conta com suporte nativo a **Custom Agents** no painel de Chat:
+1. Na barra de entrada do Chat do VS Code, clique no botao do modo atual (ex: `Agent`, `Ask` ou `Plan`).
+2. O menu suspenso listara diretamente todos os 12 agentes da factory:
+   - `techlead`, `po`, `architect`, `engineer`, `devbackend`, `devfrontend`, `qa`, `devsecops`, `devops`, `uxui`, `dataengineer`, `dataanalyst`.
+3. Ao selecionar um agente (por exemplo, `techlead`), o chat passa a operar com aquela persona ativa, carregando automaticamente suas diretrizes, restricoes do SDLC e ferramentas de MCP Knowledge.
+4. No menu **Configurar Agentes Personalizados...** (ou tela **Personalizacoes do Agente**), eles aparecem registrados:
+   - **Workspace (12)**: via `.github/agents/*.agent.md`
+   - **Usuario (12)**: via `~/.copilot/agents/*.agent.md`
+
+### Modo 2: Agentes Globais no Copilot Chat (`@nome`) — *Atalho rapido*
+
+Gracas a extensao instalada em `~/.vscode/extensions/ai-software-factory.agents/`, os agentes tambem estao acessiveis via mencao direta `@`:
 
 1. Abra o painel do Copilot Chat (`Ctrl+Alt+I` ou `Ctrl+I`).
 2. Digite `@` para ver a lista de agentes participantes. Os agentes da factory aparecerao disponiveis:
@@ -164,7 +177,7 @@ Gracas a extensao instalada em `~/.vscode/extensions/ai-software-factory.agents/
    ```
 3. O agente assume sua persona, diretrizes de qualidade, restricoes do SDLC e padroes de entrega.
 
-### Modo 2: Reusable Prompt Files (`#file:`)
+### Modo 3: Reusable Prompt Files (`#file:`)
 
 Dentro do repositorio da factory (ou em qualquer projeto que tenha copiado a pasta `.github/prompts/`):
 
@@ -173,7 +186,7 @@ Dentro do repositorio da factory (ou em qualquer projeto que tenha copiado a pas
    #file:techlead.prompt.md Avalie a conformidade do Quality Gate G2 para o plano atual.
    ```
 
-### Modo 3: VS Code Copilot Agent Mode com MCP
+### Modo 4: VS Code Copilot Agent Mode com MCP
 
 No modo Agent do VS Code, o Copilot tem permissao para chamar ferramentas (tool calling) automaticamente. Com o arquivo `.vscode/mcp.json` configurado, ele pode acessar diretamente o MCP `knowledge`:
 
@@ -228,3 +241,26 @@ Copy-Item "$env:FACTORY_ROOT\.github\copilot-instructions.md" .github\copilot-in
 
 4. **Isolamento de Fontes**:
    - Nunca instrua o Copilot a ler `context/` ou `lib/` durante tarefas de desenvolvimento comuns (runtime). Essas pastas sao reservadas para a fase de construcao (build-time) da factory.
+
+---
+
+## 8. Desinstalacao
+
+Para remover todos os componentes gerados para o GitHub Copilot e VS Code:
+
+```powershell
+cd $env:FACTORY_ROOT
+
+# Simular a remocao (preview seguro):
+.\uninstall.ps1 -WhatIf
+
+# Executar a desinstalacao:
+.\uninstall.ps1
+```
+
+O `uninstall.ps1`:
+- Remove os agentes do workspace em `.github/agents/*.agent.md`
+- Remove os agentes do usuario em `~/.copilot/agents/*.agent.md`
+- Remove a extensao global em `~/.vscode/extensions/ai-software-factory.agents/`
+- Remove os prompt files em `.github/prompts/*.prompt.md` e `.github/copilot-instructions.md`
+- Remove as entradas do servidor MCP `knowledge` em `.vscode/mcp.json` e `%APPDATA%\Code\User\mcp.json`.
