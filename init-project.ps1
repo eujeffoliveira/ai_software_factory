@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Initializes a .factory/ workspace in the current project directory.
 
@@ -40,7 +40,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-# ── helpers ──────────────────────────────────────────────────────────────────
+# -- helpers ------------------------------------------------------------------
 
 function Write-Status {
     param([string]$Status, [string]$Message, [string]$Color = "White")
@@ -106,7 +106,7 @@ function New-FactoryDir {
     }
 }
 
-# ── resolve paths ─────────────────────────────────────────────────────────────
+# -- resolve paths -------------------------------------------------------------
 
 $projectRoot = (Get-Location).Path
 $factoryDir  = Join-Path $projectRoot ".factory"
@@ -119,10 +119,10 @@ if (-not $factoryRoot) {
 
 $templateDir = Join-Path $factoryRoot "templates\project"
 
-# ── banner ────────────────────────────────────────────────────────────────────
+# -- banner --------------------------------------------------------------------
 
 Write-Host ""
-Write-Host "  AI Software Factory — init-project" -ForegroundColor Cyan
+Write-Host "  AI Software Factory - init-project" -ForegroundColor Cyan
 Write-Host "  Project: $projectRoot" -ForegroundColor DarkGray
 if ($WhatIfPreference) {
     Write-Host "  Mode: DRY-RUN (no changes will be made)" -ForegroundColor Magenta
@@ -133,7 +133,7 @@ if ($WhatIfPreference) {
 }
 Write-Host ""
 
-# ── safety check ─────────────────────────────────────────────────────────────
+# -- safety check -------------------------------------------------------------
 
 # Prevent accidental initialization inside the factory itself
 $factoryRootResolved = (Resolve-Path $factoryRoot -ErrorAction SilentlyContinue)?.Path
@@ -143,21 +143,21 @@ if ($factoryRootResolved -and ($projectRootResolved -eq $factoryRootResolved)) {
     exit 1
 }
 
-# ── create directory structure ────────────────────────────────────────────────
+# -- create directory structure ------------------------------------------------
 
 New-FactoryDir $factoryDir
 New-FactoryDir (Join-Path $factoryDir "artifacts")
 New-FactoryDir (Join-Path $factoryDir "decisions")
 New-FactoryDir (Join-Path $factoryDir "risks")
 
-# ── load templates ────────────────────────────────────────────────────────────
+# -- load templates ------------------------------------------------------------
 
 $now    = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
 $projId = (Split-Path $projectRoot -Leaf) -replace '[^a-z0-9-]', '-' -replace '-+', '-' -replace '^-|-$', ''
 $projId = $projId.ToLower()
 if (-not $projId) { $projId = "my-project" }
 
-# ── State_Ledger.json ─────────────────────────────────────────────────────────
+# -- State_Ledger.json ---------------------------------------------------------
 
 $stateLedgerContent = @"
 {
@@ -194,13 +194,13 @@ $stateLedgerContent = @"
     "last_checked": null,
     "documents_indexed": null
   },
-  "next_action": "Run Gate A0 — share project_profile.md with @techlead to classify archetype and initialize SDLC"
+  "next_action": "Run Gate A0 - share project_profile.md with @techlead to classify archetype and initialize SDLC"
 }
 "@
 
 New-FactoryFile (Join-Path $factoryDir "State_Ledger.json") $stateLedgerContent
 
-# ── project_profile.md ────────────────────────────────────────────────────────
+# -- project_profile.md --------------------------------------------------------
 
 $profileSrc = Join-Path $templateDir "project_profile.md"
 if (Test-Path $profileSrc) {
@@ -209,21 +209,21 @@ if (Test-Path $profileSrc) {
     $profileContent = $profileContent -replace '\{\{PROJECT_ID\}\}', $projId
     $profileContent = $profileContent -replace '\{\{ISO_DATE\}\}', (Get-Date -Format "yyyy-MM-dd")
 } else {
-    $profileContent = "# Project Profile — $(Split-Path $projectRoot -Leaf)`n`nFill in project details here. See templates/project/project_profile.md for the full template.`n"
+    $profileContent = "# Project Profile - $(Split-Path $projectRoot -Leaf)`n`nFill in project details here. See templates/project/project_profile.md for the full template.`n"
 }
 
 New-FactoryFile (Join-Path $factoryDir "project_profile.md") $profileContent
 
-# ── decisions/.gitkeep ────────────────────────────────────────────────────────
+# -- decisions/.gitkeep --------------------------------------------------------
 
 New-FactoryFile (Join-Path $factoryDir "decisions\.gitkeep") ""
 New-FactoryFile (Join-Path $factoryDir "risks\.gitkeep") ""
 New-FactoryFile (Join-Path $factoryDir "artifacts\.gitkeep") ""
 
-# ── README_FACTORY.md ─────────────────────────────────────────────────────────
+# -- README_FACTORY.md ---------------------------------------------------------
 
 $readmeContent = @"
-# .factory/ — AI Software Factory Workspace
+# .factory/ - AI Software Factory Workspace
 
 This directory is the Tech Lead's workspace for this project.
 It is maintained by ``@techlead`` during factory-operated sessions.
@@ -257,17 +257,17 @@ Or let the Tech Lead read the files directly:
 
 - Commit ``State_Ledger.json`` and ``project_profile.md`` to version control.
 - Add ``.factory/artifacts/``, ``.factory/decisions/``, and ``.factory/risks/`` to ``.gitignore`` if they contain sensitive content.
-- This directory does NOT replace the factory installation — it is a per-project workspace.
+- This directory does NOT replace the factory installation - it is a per-project workspace.
 
 See ``docs/PROJECT_OPERATION.md`` in ``\$env:FACTORY_ROOT`` for full instructions.
 "@
 
 New-FactoryFile (Join-Path $factoryDir "README_FACTORY.md") $readmeContent
 
-# ── summary ───────────────────────────────────────────────────────────────────
+# -- summary -------------------------------------------------------------------
 
 Write-Host ""
-Write-Host "  DONE — .factory/ workspace initialized" -ForegroundColor Green
+Write-Host "  DONE - .factory/ workspace initialized" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Next steps:" -ForegroundColor White
 Write-Host "    1. Fill in .factory/project_profile.md with project details" -ForegroundColor DarkGray

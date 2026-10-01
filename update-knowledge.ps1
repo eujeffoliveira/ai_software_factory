@@ -1,4 +1,4 @@
-# update-knowledge.ps1 — Reindexar conhecimento da AI Software Factory
+﻿# update-knowledge.ps1 - Reindexar conhecimento da AI Software Factory
 # Execute sempre que alterar knowledge/, skills/, schemas/, templates/, examples/, bibliography/
 
 $ErrorActionPreference = "Stop"

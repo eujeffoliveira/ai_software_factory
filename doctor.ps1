@@ -1,10 +1,10 @@
-# doctor.ps1 — Diagnostico geral da AI Software Factory
+﻿# doctor.ps1 - Diagnostico geral da AI Software Factory
 # Uso: .\doctor.ps1
 # Exit code: 0 se OK (pode ter avisos), 1 se qualquer ERROR
 
 $ErrorActionPreference = "SilentlyContinue"
 
-# ─── Output helpers ──────────────────────────────────────────────────────────
+# --- Output helpers ----------------------------------------------------------
 
 function Write-CheckOK($msg)   { Write-Host "  [OK]    $msg" -ForegroundColor Green }
 function Write-CheckWarn($msg) { Write-Host "  [WARN]  $msg" -ForegroundColor Yellow }
@@ -15,21 +15,21 @@ function Write-CheckError($msg, $fix = "") {
 function Write-Section($title) {
     Write-Host ""
     Write-Host "  $title" -ForegroundColor Cyan
-    Write-Host ("  " + "─" * $title.Length) -ForegroundColor DarkGray
+    Write-Host ("  " + "-" * $title.Length) -ForegroundColor DarkGray
     Write-Host ""
 }
 
 $hadError   = $false
 $hadWarning = $false
 
-# ─── Detectar factory root ───────────────────────────────────────────────────
+# --- Detectar factory root ---------------------------------------------------
 
 $factoryRoot = $env:FACTORY_ROOT
 if (-not $factoryRoot -or -not (Test-Path $factoryRoot)) {
     $factoryRoot = (Get-Location).Path
 }
 
-# ─── Header ──────────────────────────────────────────────────────────────────
+# --- Header ------------------------------------------------------------------
 
 $versionFile    = Join-Path $factoryRoot "VERSION"
 $factoryVersion = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "desconhecida" }
@@ -56,17 +56,17 @@ $agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend
 $expectedAgentCount = $agentNames.Count
 
 Write-Host ""
-Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Blue
-Write-Host "  ║      AI Software Factory — Doctor                ║" -ForegroundColor Blue
-Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Blue
+Write-Host "  +===================================================+" -ForegroundColor Blue
+Write-Host "  |      AI Software Factory - Doctor                |" -ForegroundColor Blue
+Write-Host "  +===================================================+" -ForegroundColor Blue
 Write-Host ""
 Write-Host "  Factory : $factoryRoot" -ForegroundColor Gray
 Write-Host "  Version : $factoryVersion" -ForegroundColor Gray
 Write-Host ""
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  1. FACTORY_ROOT
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "1. FACTORY_ROOT"
 
 $frUser = [System.Environment]::GetEnvironmentVariable("FACTORY_ROOT", "User")
@@ -76,7 +76,7 @@ if ($frUser) {
         Write-CheckError "Diretorio em FACTORY_ROOT nao existe: $frUser" "Execute .\install.ps1 novamente a partir do diretorio correto"
         $hadError = $true
     } elseif ($frUser -ne $factoryRoot) {
-        Write-CheckWarn "FACTORY_ROOT difere do CWD — usando: $factoryRoot"
+        Write-CheckWarn "FACTORY_ROOT difere do CWD - usando: $factoryRoot"
         $hadWarning = $true
     }
 } else {
@@ -88,7 +88,7 @@ if ($frUser) {
 if ($env:FACTORY_ROOT) {
     Write-CheckOK "FACTORY_ROOT disponivel na sessao atual"
 } else {
-    Write-CheckWarn "FACTORY_ROOT ausente na sessao atual — abra um novo terminal apos install.ps1"
+    Write-CheckWarn "FACTORY_ROOT ausente na sessao atual - abra um novo terminal apos install.ps1"
     $hadWarning = $true
 }
 
@@ -99,9 +99,9 @@ if (Test-Path $factoryRoot) {
     $hadError = $true
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  2. VERSAO
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "2. Versao"
 
 if (Test-Path $versionFile) {
@@ -137,11 +137,11 @@ if ($hasClaudeManifest) {
             if ($manifest.factory_version -eq $factoryVersion) {
                 Write-CheckOK "Manifesto Claude alinhado com VERSION ($($manifest.factory_version))"
             } else {
-                Write-CheckWarn "Manifesto Claude v$($manifest.factory_version) != VERSION v$factoryVersion — reinstale"
+                Write-CheckWarn "Manifesto Claude v$($manifest.factory_version) != VERSION v$factoryVersion - reinstale"
                 $hadWarning = $true
             }
         } else {
-            Write-CheckWarn "Campo factory_version ausente no manifesto Claude — reinstale para atualizar"
+            Write-CheckWarn "Campo factory_version ausente no manifesto Claude - reinstale para atualizar"
             $hadWarning = $true
         }
         if ($manifest.installed_at) {
@@ -159,7 +159,7 @@ if ($hasCodexManifest) {
         if ($codexManifest.factory_version -eq $factoryVersion) {
             Write-CheckOK "Manifesto Codex alinhado com VERSION ($($codexManifest.factory_version))"
         } else {
-            Write-CheckWarn "Manifesto Codex v$($codexManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            Write-CheckWarn "Manifesto Codex v$($codexManifest.factory_version) != VERSION v$factoryVersion - reinstale"
             $hadWarning = $true
         }
         if ($codexManifest.installed_at) {
@@ -177,7 +177,7 @@ if ($hasAntigravityManifest) {
         if ($antigravityManifest.factory_version -eq $factoryVersion) {
             Write-CheckOK "Manifesto Antigravity alinhado com VERSION ($($antigravityManifest.factory_version))"
         } else {
-            Write-CheckWarn "Manifesto Antigravity v$($antigravityManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            Write-CheckWarn "Manifesto Antigravity v$($antigravityManifest.factory_version) != VERSION v$factoryVersion - reinstale"
             $hadWarning = $true
         }
         if ($antigravityManifest.installed_at) {
@@ -195,7 +195,7 @@ if (Test-Path $copilotManifestPath) {
         if ($copilotManifest.factory_version -eq $factoryVersion) {
             Write-CheckOK "Manifesto Copilot prompts alinhado com VERSION ($($copilotManifest.factory_version))"
         } else {
-            Write-CheckWarn "Manifesto Copilot prompts v$($copilotManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            Write-CheckWarn "Manifesto Copilot prompts v$($copilotManifest.factory_version) != VERSION v$factoryVersion - reinstale"
             $hadWarning = $true
         }
         if ($copilotManifest.installed_at) {
@@ -213,7 +213,7 @@ if (Test-Path $copilotExtManifestPath) {
         if ($copilotExtManifest.factory_version -eq $factoryVersion) {
             Write-CheckOK "Manifesto Copilot extensao alinhado com VERSION ($($copilotExtManifest.factory_version))"
         } else {
-            Write-CheckWarn "Manifesto Copilot extensao v$($copilotExtManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            Write-CheckWarn "Manifesto Copilot extensao v$($copilotExtManifest.factory_version) != VERSION v$factoryVersion - reinstale"
             $hadWarning = $true
         }
         if ($copilotExtManifest.installed_at) {
@@ -225,9 +225,9 @@ if (Test-Path $copilotExtManifestPath) {
     }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  3. PYTHON
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "3. Python"
 
 $pythonCmd = $null
@@ -257,9 +257,9 @@ if ($pythonCmd) {
     }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  4. CLAUDE CODE
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "4. Claude Code"
 
 try {
@@ -275,9 +275,9 @@ try {
     $hadWarning = $true
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  5. CODEX
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "5. Codex"
 
 try {
@@ -301,9 +301,9 @@ if (Test-Path $codexConfig) {
     $hadWarning = $true
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  6. CLAUDE AGENTS
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "6. Claude Code — Agentes"
 
 if ($hasClaudeManifest) {
@@ -345,12 +345,12 @@ if ($hasClaudeManifest) {
         }
     }
 } else {
-    Write-Host "  [SKIP]  Claude Code nao configurado neste ambiente (opcional — .\install.ps1 -Claude)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  Claude Code nao configurado neste ambiente (opcional - .\install.ps1 -Claude)" -ForegroundColor DarkGray
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  7. CODEX CUSTOM AGENTS
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "7. Codex — Custom Agents"
 
 if ($hasCodexManifest) {
@@ -395,12 +395,12 @@ if ($hasCodexManifest) {
         }
     }
 } else {
-    Write-Host "  [SKIP]  Codex nao configurado neste ambiente (opcional — .\install.ps1 -Codex)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  Codex nao configurado neste ambiente (opcional - .\install.ps1 -Codex)" -ForegroundColor DarkGray
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  7B. ANTIGRAVITY — PLUGIN & SKILLS
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  7B. ANTIGRAVITY - PLUGIN & SKILLS
+# =============================================================================
 Write-Section "7B. Antigravity — Plugin & Skills"
 
 if ($hasAntigravityManifest) {
@@ -454,12 +454,12 @@ if ($hasAntigravityManifest) {
         }
     }
 } else {
-    Write-Host "  [SKIP]  Antigravity nao configurado neste ambiente (opcional — .\install.ps1 -Antigravity)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  Antigravity nao configurado neste ambiente (opcional - .\install.ps1 -Antigravity)" -ForegroundColor DarkGray
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  7C. GITHUB COPILOT — PROMPT FILES & INSTRUCTIONS
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  7C. GITHUB COPILOT - PROMPT FILES & INSTRUCTIONS
+# =============================================================================
 Write-Section "7C. GitHub Copilot — Prompt Files & Instructions"
 
 if ($hasCopilotManifest) {
@@ -570,18 +570,33 @@ if ($hasCopilotManifest) {
                 $hadWarning = $true
             }
         }
+
+        # Verificacao de settings.json para evitar duplicacao de agentes caso ~/.claude/agents exista
+        $vscodeUserDir = if ($env:APPDATA) { Join-Path $env:APPDATA "Code\User" } else { Join-Path $env:USERPROFILE ".config\Code\User" }
+        $vscodeSettingsPath = Join-Path $vscodeUserDir "settings.json"
+        if (Test-Path $vscodeSettingsPath) {
+            $rawSettings = Get-Content $vscodeSettingsPath -Raw -Encoding UTF8
+            $claudeDisabled = ($rawSettings -match '"chat\.agentHost\.claudeAgent\.enabled"\s*:\s*false') -or ($rawSettings -match '"github\.copilot\.chat\.claudeAgent\.enabled"\s*:\s*false')
+            if ($claudeDisabled) {
+                Write-CheckOK "Descoberta de Claude agents desativada no Copilot (previne duplicacao com ~/.claude/agents)"
+            } else {
+                Write-CheckWarn "Claude agents habilitados no Copilot - se ~/.claude/agents tiver arquivos, eles aparecerao duplicados"
+                Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+                $hadWarning = $true
+            }
+        }
     } else {
         Write-CheckWarn "Extensao global Copilot nao encontrada em $copilotExtDir"
         Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
         $hadWarning = $true
     }
 } else {
-    Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional — .\install.ps1 -Copilot)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional - .\install.ps1 -Copilot)" -ForegroundColor DarkGray
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  8. KNOWLEDGE DB
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "8. Knowledge Database"
 
 $dbPath = Join-Path $factoryRoot "knowledge.db"
@@ -593,9 +608,9 @@ if (Test-Path $dbPath) {
     $hadError = $true
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  9. MCP HEALTH CHECK (via test-mcp.ps1)
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "9. MCP Health Check"
 
 $testMcpPath = Join-Path $factoryRoot "test-mcp.ps1"
@@ -612,14 +627,14 @@ if (Test-Path $testMcpPath) {
                 Write-Host "    $line" -ForegroundColor Yellow
             } elseif ($line -match "^\[ERROR\]|^\[FAIL\]") {
                 Write-Host "    $line" -ForegroundColor Red
-            } elseif ($line -match "^MCP Knowledge|^──────") {
+            } elseif ($line -match "^MCP Knowledge|^------") {
                 # header do test-mcp, omitir
             } else {
                 Write-Host "    $line" -ForegroundColor Gray
             }
         }
         if ($LASTEXITCODE -eq 0) {
-            Write-CheckOK "test-mcp.ps1 passou — MCP pronto"
+            Write-CheckOK "test-mcp.ps1 passou - MCP pronto"
         } else {
             Write-CheckError "test-mcp.ps1 falhou" "cd '$factoryRoot' && .\install.ps1 -ForceDeps"
             $hadError = $true
@@ -635,9 +650,9 @@ if (Test-Path $testMcpPath) {
     $hadError = $true
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  10. MCP CONFIGURACAO
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "10. MCP Configuracao"
 
 if ($hasClaudeManifest) {
@@ -671,7 +686,7 @@ if ($hasClaudeManifest) {
         $hadError = $true
     }
 } else {
-    Write-Host "  [SKIP]  Claude Code nao configurado neste ambiente (opcional — .\install.ps1 -Claude)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  Claude Code nao configurado neste ambiente (opcional - .\install.ps1 -Claude)" -ForegroundColor DarkGray
 }
 
 $mcpJson = Join-Path $factoryRoot ".mcp.json"
@@ -724,7 +739,7 @@ if ($hasCodexManifest) {
         $hadWarning = $true
     }
 } else {
-    Write-Host "  [SKIP]  Codex nao configurado neste ambiente (opcional — .\install.ps1 -Codex)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  Codex nao configurado neste ambiente (opcional - .\install.ps1 -Codex)" -ForegroundColor DarkGray
 }
 
 if ($hasAntigravityManifest) {
@@ -765,7 +780,7 @@ if ($hasAntigravityManifest) {
         $hadWarning = $true
     }
 } else {
-    Write-Host "  [SKIP]  Antigravity nao configurado neste ambiente (opcional — .\install.ps1 -Antigravity)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  Antigravity nao configurado neste ambiente (opcional - .\install.ps1 -Antigravity)" -ForegroundColor DarkGray
 }
 
 if ($hasCopilotManifest) {
@@ -818,12 +833,12 @@ if ($hasCopilotManifest) {
         }
     }
 } else {
-    Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional — .\install.ps1 -Copilot)" -ForegroundColor DarkGray
+    Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional - .\install.ps1 -Copilot)" -ForegroundColor DarkGray
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  11. PATHS NOS AGENTES GERADOS
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "11. Paths em agentes (FACTORY_ROOT)"
 
 $staleAgents = @()
@@ -851,9 +866,9 @@ if ($staleAgents.Count -gt 0) {
     Write-CheckOK "FACTORY_ROOT correto em todos os agentes instalados"
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  12. SCRIPTS PRINCIPAIS
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "12. Scripts principais"
 
 $requiredScripts = @{
@@ -868,16 +883,16 @@ $requiredScripts = @{
 foreach ($script in $requiredScripts.Keys) {
     $path = Join-Path $factoryRoot $script
     if (Test-Path $path) {
-        Write-CheckOK "$script — $($requiredScripts[$script])"
+        Write-CheckOK "$script - $($requiredScripts[$script])"
     } else {
         Write-CheckError "$script nao encontrado" "git -C '$factoryRoot' checkout -- $script"
         $hadError = $true
     }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  13. PERMISSOES
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "13. Permissoes de escrita"
 
 # ~/.claude/agents/
@@ -968,9 +983,9 @@ if (Test-Path $copilotExtDir) {
     }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  14. VARIAVEIS DE AMBIENTE NA SESSAO
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Section "14. Variaveis de ambiente na sessao"
 
 $envVars = @("FACTORY_ROOT")
@@ -979,26 +994,26 @@ foreach ($var in $envVars) {
     if ($val) {
         Write-CheckOK "$var = $val"
     } else {
-        Write-CheckWarn "$var nao disponivel nesta sessao — abra um novo terminal"
+        Write-CheckWarn "$var nao disponivel nesta sessao - abra um novo terminal"
         $hadWarning = $true
     }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  RESUMO
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Host ""
-Write-Host "  ─────────────────────────────────────────────────────" -ForegroundColor DarkGray
+Write-Host "  -----------------------------------------------------" -ForegroundColor DarkGray
 Write-Host ""
 
 if ($hadError) {
-    Write-Host "  [FAIL]  Problemas criticos encontrados — veja detalhes acima." -ForegroundColor Red
+    Write-Host "  [FAIL]  Problemas criticos encontrados - veja detalhes acima." -ForegroundColor Red
     Write-Host "          Corrija e execute: cd '$factoryRoot' && .\install.ps1" -ForegroundColor DarkYellow
     exit 1
 } elseif ($hadWarning) {
-    Write-Host "  [WARN]  Factory funcional com avisos — veja detalhes acima." -ForegroundColor Yellow
+    Write-Host "  [WARN]  Factory funcional com avisos - veja detalhes acima." -ForegroundColor Yellow
     exit 0
 } else {
-    Write-Host "  [OK]    Factory saudavel — todos os checks passaram." -ForegroundColor Green
+    Write-Host "  [OK]    Factory saudavel - todos os checks passaram." -ForegroundColor Green
     exit 0
 }

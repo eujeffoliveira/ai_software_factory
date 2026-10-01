@@ -1,4 +1,4 @@
-# link-mcp.ps1 — Vincular MCP da factory ao projeto atual
+﻿# link-mcp.ps1 - Vincular MCP da factory ao projeto atual
 # Uso: & "$env:FACTORY_ROOT\link-mcp.ps1"
 
 $ErrorActionPreference = "Stop"

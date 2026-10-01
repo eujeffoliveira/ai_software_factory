@@ -1,0 +1,8 @@
+# Ensure PowerShell scripts use CRLF on all platforms
+*.ps1 text eol=crlf
+
+# Repository standard LF for documentation and source files
+*.md text eol=lf
+*.json text eol=lf
+*.py text eol=lf
+*.toml text eol=lf

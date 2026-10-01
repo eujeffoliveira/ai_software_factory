@@ -1,4 +1,4 @@
-# install.ps1 — AI Software Factory Global Installer
+﻿# install.ps1 - AI Software Factory Global Installer
 # Uso: .\install.ps1 [-ForceDeps]
 # Documentacao: docs/INSTALL_CLI.md
 
@@ -16,18 +16,18 @@ param(
 $ErrorActionPreference = "Stop"
 $ProgressPreference    = "SilentlyContinue"
 
-# ─── Utilitários de output ────────────────────────────────────────────────────
+# --- Utilitários de output ----------------------------------------------------
 function Write-Header($t) {
     Write-Host ""
     Write-Host "  $t" -ForegroundColor Cyan
-    Write-Host ("  " + "─" * $t.Length) -ForegroundColor DarkGray
+    Write-Host ("  " + "-" * $t.Length) -ForegroundColor DarkGray
 }
 function Write-OK($m)   { Write-Host "  [OK]   $m" -ForegroundColor Green }
 function Write-Skip($m) { Write-Host "  [SKIP] $m" -ForegroundColor DarkGray }
 function Write-Warn($m) { Write-Host "  [WARN] $m" -ForegroundColor Yellow }
 function Write-Fail($m) { Write-Host "  [FAIL] $m" -ForegroundColor Red }
 
-# ─── Escrita idempotente ──────────────────────────────────────────────────────
+# --- Escrita idempotente ------------------------------------------------------
 # Normaliza para LF, compara com conteudo em disco, escreve apenas se mudou.
 # Retorna "created", "updated" ou "unchanged".
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
@@ -141,7 +141,7 @@ function Set-ManagedTextBlock {
     return Write-IfChanged -Path $Path -Content $updated -Label $Label
 }
 
-# ─── Caminhos base ────────────────────────────────────────────────────────────
+# --- Caminhos base ------------------------------------------------------------
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
 $CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
@@ -176,20 +176,20 @@ $FACTORY_VERSION   = if (Test-Path (Join-Path $FACTORY_PATH "VERSION")) {
     (Get-Content (Join-Path $FACTORY_PATH "VERSION") -Raw).Trim()
 } else { "0.0.0" }
 
-# ─── Mapeamento de agentes ────────────────────────────────────────────────────
+# --- Mapeamento de agentes ----------------------------------------------------
 $agents = @(
-    @{ Folder = "Agente00_TechLead";                Emoji = "🏗️";  Name = "techlead";     Description = "Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto" },
-    @{ Folder = "Agente01_ProductOwner";            Emoji = "📋";  Name = "po";           Description = "Product Owner — user stories, criterios de aceitacao, backlog e definicao de escopo" },
-    @{ Folder = "Agente02_SoftwareArchitect";       Emoji = "📐";  Name = "architect";    Description = "Arquiteto de Software — design de sistemas, diagramas UML, decisoes de arquitetura e ADRs" },
-    @{ Folder = "Agente03_SoftwareEngineer";        Emoji = "⚙️";  Name = "engineer";     Description = "Engenheiro de Software — decomposicao de tarefas, planejamento de implementacao e estimativas" },
-    @{ Folder = "Agente04_DevBackend";              Emoji = "🔌";  Name = "devbackend";   Description = "Dev Backend — APIs REST, servicos, banco de dados, migrations Prisma e autenticacao" },
-    @{ Folder = "Agente05_DevFrontend";             Emoji = "🎨";  Name = "devfrontend";  Description = "Dev Frontend — componentes React, paginas Next.js, UI com Tailwind e logica de interface" },
-    @{ Folder = "Agente06_QaEngineer";              Emoji = "🧪";  Name = "qa";           Description = "QA Engineer — planos de teste, testes unitarios Vitest, E2E Playwright e cobertura de codigo" },
-    @{ Folder = "Agente07_DevSecOps";               Emoji = "🔒";  Name = "devsecops";    Description = "DevSecOps — auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
-    @{ Folder = "Agente08_DevOps";                  Emoji = "🚀";  Name = "devops";       Description = "DevOps — CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
-    @{ Folder = "Agente09_UxUiDesigner";            Emoji = "✏️";  Name = "uxui";         Description = "UX/UI Designer — pesquisa de usuario, wireframes, design system e acessibilidade" },
-    @{ Folder = "Agente10_DataIntegrationEngineer"; Emoji = "🗄️";  Name = "dataengineer"; Description = "Data Engineer — pipelines de dados, ETL, integracoes de sistemas e governanca de dados" },
-    @{ Folder = "Agente11_DataAnalyst";             Emoji = "📊";  Name = "dataanalyst";  Description = "Data Analyst — metricas, analise exploratoria, insights e especificacao de dashboards" }
+    @{ Folder = "Agente00_TechLead";                Name = "techlead";     Description = "Tech Lead e orquestrador do SDLC - quality gates, ADRs, decisoes tecnicas e oversight do projeto" },
+    @{ Folder = "Agente01_ProductOwner";            Name = "po";           Description = "Product Owner - user stories, criterios de aceitacao, backlog e definicao de escopo" },
+    @{ Folder = "Agente02_SoftwareArchitect";       Name = "architect";    Description = "Arquiteto de Software - design de sistemas, diagramas UML, decisoes de arquitetura e ADRs" },
+    @{ Folder = "Agente03_SoftwareEngineer";        Name = "engineer";     Description = "Engenheiro de Software - decomposicao de tarefas, planejamento de implementacao e estimativas" },
+    @{ Folder = "Agente04_DevBackend";              Name = "devbackend";   Description = "Dev Backend - APIs REST, servicos, banco de dados, migrations Prisma e autenticacao" },
+    @{ Folder = "Agente05_DevFrontend";             Name = "devfrontend";  Description = "Dev Frontend - componentes React, paginas Next.js, UI com Tailwind e logica de interface" },
+    @{ Folder = "Agente06_QaEngineer";              Name = "qa";           Description = "QA Engineer - planos de teste, testes unitarios Vitest, E2E Playwright e cobertura de codigo" },
+    @{ Folder = "Agente07_DevSecOps";               Name = "devsecops";    Description = "DevSecOps - auditorias de seguranca, SAST, OWASP Top 10, hardening e secrets management" },
+    @{ Folder = "Agente08_DevOps";                  Name = "devops";       Description = "DevOps - CI/CD, infraestrutura Vercel, monitoramento, deployment e runbooks operacionais" },
+    @{ Folder = "Agente09_UxUiDesigner";            Name = "uxui";         Description = "UX/UI Designer - pesquisa de usuario, wireframes, design system e acessibilidade" },
+    @{ Folder = "Agente10_DataIntegrationEngineer"; Name = "dataengineer"; Description = "Data Engineer - pipelines de dados, ETL, integracoes de sistemas e governanca de dados" },
+    @{ Folder = "Agente11_DataAnalyst";             Name = "dataanalyst";  Description = "Data Analyst - metricas, analise exploratoria, insights e especificacao de dashboards" }
 )
 
 $knowledgeFiles = @(
@@ -203,7 +203,7 @@ $knowledgeFiles = @(
     "failure_modes.md"
 )
 
-# ─── Contadores do resumo ─────────────────────────────────────────────────────
+# --- Contadores do resumo -----------------------------------------------------
 $tally = @{
     agents_created        = 0
     agents_updated        = 0
@@ -236,19 +236,19 @@ $tally = @{
     scripts_unchanged     = 0
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  BANNER
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Host ""
-Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Blue
-Write-Host "  ║      AI Software Factory — Global Installer      ║" -ForegroundColor Blue
-Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Blue
+Write-Host "  +===================================================+" -ForegroundColor Blue
+Write-Host "  |      AI Software Factory - Global Installer      |" -ForegroundColor Blue
+Write-Host "  +===================================================+" -ForegroundColor Blue
 Write-Host ""
 Write-Host "  Factory: $FACTORY_PATH" -ForegroundColor Gray
 Write-Host "  Version: $FACTORY_VERSION" -ForegroundColor DarkGray
 Write-Host ""
 
-# ─── Deteccao de runtimes no sistema ──────────────────────────────────────────
+# --- Deteccao de runtimes no sistema ------------------------------------------
 $detected = [ordered]@{
     claude      = $false
     codex       = $false
@@ -297,7 +297,7 @@ if (Get-Command code -ErrorAction SilentlyContinue) {
     $detectionDetails["copilot"] = "Workspace .vscode/.github"
 }
 
-# ─── Resolucao dos runtimes selecionados ──────────────────────────────────────
+# --- Resolucao dos runtimes selecionados --------------------------------------
 $enableClaude      = $false
 $enableCodex       = $false
 $enableAntigravity = $false
@@ -424,9 +424,9 @@ if ($enableCopilot)     { $selectedNames += "GitHub Copilot" }
 Write-Host ("  Runtimes selecionados: " + ($selectedNames -join ", ")) -ForegroundColor Green
 Write-Host ""
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 1 — FACTORY_ROOT
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 1 - FACTORY_ROOT
+# =============================================================================
 $frWasUnset = -not [System.Environment]::GetEnvironmentVariable("FACTORY_ROOT", "User")
 Write-Header "FACTORY_ROOT"
 [System.Environment]::SetEnvironmentVariable("FACTORY_ROOT", $FACTORY_PATH, [System.EnvironmentVariableTarget]::User)
@@ -434,9 +434,9 @@ $env:FACTORY_ROOT = $FACTORY_PATH
 Write-OK "FACTORY_ROOT = $FACTORY_PATH"
 Write-OK "Variavel de ambiente de usuario configurada"
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 2 — Python
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 2 - Python
+# =============================================================================
 Write-Header "Python"
 $pythonCmd = $null
 $hasPython = $false
@@ -446,7 +446,7 @@ foreach ($cmd in @("python", "python3", "py")) {
         if ($LASTEXITCODE -eq 0) {
             $pythonCmd = $cmd
             $hasPython = $true
-            Write-OK "$cmd — $ver"
+            Write-OK "$cmd - $ver"
             break
         }
     } catch {}
@@ -457,9 +457,9 @@ if (-not $hasPython) {
     Write-Warn "  Instale Python 3.x e re-execute install.ps1 para ativar o RAG."
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 3 — Dependencias pip (hash-driven)
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 3 - Dependencias pip (hash-driven)
+# =============================================================================
 if ($hasPython) {
     Write-Header "Dependencias MCP"
 
@@ -495,14 +495,14 @@ if ($hasPython) {
     }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 4 — Claude Code: ~/.claude/agents/
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 4 - Claude Code: ~/.claude/agents/
+# =============================================================================
 $manifest     = $null
 $manifestPath = $null
 
 if ($enableClaude) {
-    Write-Header "Claude Code — Agentes"
+    Write-Header "Claude Code - Agentes"
 
 if (-not (Test-Path $CLAUDE_AGENTS_DIR)) {
     New-Item -ItemType Directory -Path $CLAUDE_AGENTS_DIR -Force | Out-Null
@@ -532,7 +532,7 @@ Antes de afirmar que uma skill/schema/template/checklist nao existe, consulte o 
 1. Informe explicitamente que o MCP falhou.
 2. Declare que esta usando fallback via leitura direta de arquivos.
 3. Recomende: ``& "`$env:FACTORY_ROOT\test-mcp.ps1"``
-4. Prossiga com fallback declarado se seguro — nunca use fallback silencioso.
+4. Prossiga com fallback declarado se seguro - nunca use fallback silencioso.
 
 ### Ferramentas disponiveis
 
@@ -549,13 +549,13 @@ Antes de afirmar que uma skill/schema/template/checklist nao existe, consulte o 
 
 ### O que esta indexado
 
-- ``Agente*/knowledge/`` — principles, heuristics, decision_rules, knowledge_cards
-- ``Agente*/skills/`` — documentacao e checklists de cada skill
-- ``Agente*/schemas/`` — contratos JSON de input/output
-- ``Agente*/templates/`` — templates de artefatos
-- ``Agente*/examples/`` — exemplos bom/ruim de outputs
-- ``Agente*/checklists/`` — checklists operacionais
-- ``bibliography/playbooks/`` — playbooks de engenharia
+- ``Agente*/knowledge/`` - principles, heuristics, decision_rules, knowledge_cards
+- ``Agente*/skills/`` - documentacao e checklists de cada skill
+- ``Agente*/schemas/`` - contratos JSON de input/output
+- ``Agente*/templates/`` - templates de artefatos
+- ``Agente*/examples/`` - exemplos bom/ruim de outputs
+- ``Agente*/checklists/`` - checklists operacionais
+- ``bibliography/playbooks/`` - playbooks de engenharia
 
 ### FACTORY_ROOT
 
@@ -573,7 +573,7 @@ $existingInstalledAt = if (Test-Path $manifestPath) {
     try { (Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
 } else { $null }
 
-# Manifesto de instalacao — rastreamento do que foi criado/atualizado
+# Manifesto de instalacao - rastreamento do que foi criado/atualizado
 $manifest = [ordered]@{
     factory_version   = $FACTORY_VERSION
     factory_root      = $FACTORY_PATH
@@ -606,7 +606,7 @@ foreach ($agent in $agents) {
     $autoGeneratedHeader = @"
 <!--
 AUTO-GENERATED BY ai_software_factory/install.ps1
-DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+DO NOT EDIT DIRECTLY - changes will be overwritten on next install.
 To update: cd $FACTORY_PATH && .\install.ps1
 Sources: $($agent.Folder)/prompt.md + $($agent.Folder)/knowledge/* + install.ps1 mcpBlock
 -->
@@ -658,19 +658,19 @@ Sources: $($agent.Folder)/prompt.md + $($agent.Folder)/knowledge/* + install.ps1
     }
 }
 
-    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ---------------------------------" -ForegroundColor DarkGray
     Write-Host ("  Agentes: {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged) -ForegroundColor Gray
 } else {
-    Write-Header "Claude Code — Agentes"
+    Write-Header "Claude Code - Agentes"
     Write-Skip "Runtime Claude Code nao selecionado para instalacao"
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 5 — Codex: ~/.codex/agents/
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 5 - Codex: ~/.codex/agents/
+# =============================================================================
 if ($enableCodex) {
-    Write-Header "Codex — Custom Agents"
+    Write-Header "Codex - Custom Agents"
 
 if (-not (Test-Path $CODEX_AGENTS_DIR)) {
     New-Item -ItemType Directory -Path $CODEX_AGENTS_DIR -Force | Out-Null
@@ -749,7 +749,7 @@ foreach ($agent in $agents) {
     $agentInstructions = [System.Text.StringBuilder]::new()
     [void]$agentInstructions.AppendLine("<!--")
     [void]$agentInstructions.AppendLine("AUTO-GENERATED BY ai_software_factory/install.ps1")
-    [void]$agentInstructions.AppendLine("DO NOT EDIT DIRECTLY — changes will be overwritten on next install.")
+    [void]$agentInstructions.AppendLine("DO NOT EDIT DIRECTLY - changes will be overwritten on next install.")
     [void]$agentInstructions.AppendLine("To update: cd `$env:FACTORY_ROOT && .\install.ps1")
     [void]$agentInstructions.AppendLine("Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 codexMcpBlock")
     [void]$agentInstructions.AppendLine("-->")
@@ -775,11 +775,11 @@ foreach ($agent in $agents) {
     [void]$agentInstructions.AppendLine("")
     [void]$agentInstructions.AppendLine("<!-- END ai_software_factory managed block -->")
 
-    $nickname = (($agent.Description -split ' — ')[0].Trim())
+    $nickname = (($agent.Description -split ' - ')[0].Trim())
     $nickname = (($nickname -replace '[^A-Za-z0-9 _-]', ' ') -replace '\s+', ' ').Trim()
     $toml = @(
         "# AUTO-GENERATED BY ai_software_factory/install.ps1",
-        "# DO NOT EDIT DIRECTLY — changes will be overwritten on next install.",
+        "# DO NOT EDIT DIRECTLY - changes will be overwritten on next install.",
         "name = $(ConvertTo-TomlString $agent.Name)",
         "description = $(ConvertTo-TomlString $agent.Description)",
         "nickname_candidates = [$(ConvertTo-TomlString $nickname)]",
@@ -807,19 +807,19 @@ foreach ($agent in $agents) {
 $codexManifestJson = $codexManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $codexManifestPath -Content $codexManifestJson -Label "codex/.ai_software_factory_manifest.json" | Out-Null
 
-    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ---------------------------------" -ForegroundColor DarkGray
     Write-Host ("  Codex agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged) -ForegroundColor Gray
 } else {
-    Write-Header "Codex — Custom Agents"
+    Write-Header "Codex - Custom Agents"
     Write-Skip "Runtime Codex nao selecionado para instalacao"
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 5B — Antigravity: ~/.gemini/config/plugins/ai-software-factory/
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 5B - Antigravity: ~/.gemini/config/plugins/ai-software-factory/
+# =============================================================================
 if ($enableAntigravity) {
-    Write-Header "Antigravity — Plugin e Skills"
+    Write-Header "Antigravity - Plugin e Skills"
 
 if (-not (Test-Path $GEMINI_SKILLS_DIR)) {
     New-Item -ItemType Directory -Path $GEMINI_SKILLS_DIR -Force | Out-Null
@@ -832,7 +832,7 @@ if (-not (Test-Path $GEMINI_SKILLS_DIR)) {
 $pluginJson = [ordered]@{
     name        = "ai-software-factory"
     version     = $FACTORY_VERSION
-    description = "AI Software Factory — Framework SDLC com 12 agentes especializados, Quality Gates, State Ledger, ADRs e busca semantica via MCP."
+    description = "AI Software Factory - Framework SDLC com 12 agentes especializados, Quality Gates, State Ledger, ADRs e busca semantica via MCP."
     author      = [ordered]@{ name = "AI Software Factory" }
     keywords    = @("sdlc", "multi-agent", "software-engineering", "quality-gates", "mcp")
 } | ConvertTo-Json -Depth 5
@@ -942,7 +942,7 @@ description: >-
 
 <!--
 AUTO-GENERATED BY ai_software_factory/install.ps1
-DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+DO NOT EDIT DIRECTLY - changes will be overwritten on next install.
 To update: cd $FACTORY_PATH && .\install.ps1
 Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 antigravityMcpBlock
 -->
@@ -993,19 +993,19 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
 $antigravityManifestJson = $antigravityManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $antigravityManifestPath -Content $antigravityManifestJson -Label "antigravity/.ai_software_factory_manifest.json" | Out-Null
 
-    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ---------------------------------" -ForegroundColor DarkGray
     Write-Host ("  Antigravity skills: {0} criadas, {1} atualizadas, {2} sem mudancas" -f `
         $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged) -ForegroundColor Gray
 } else {
-    Write-Header "Antigravity — Plugin e Skills"
+    Write-Header "Antigravity - Plugin e Skills"
     Write-Skip "Runtime Antigravity nao selecionado para instalacao"
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 5C — GitHub Copilot: .github/prompts/ & copilot-instructions.md
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 5C - GitHub Copilot: .github/prompts/ & copilot-instructions.md
+# =============================================================================
 if ($enableCopilot) {
-    Write-Header "GitHub Copilot — Prompt Files e Instructions"
+    Write-Header "GitHub Copilot - Prompt Files e Instructions"
 
 if (-not (Test-Path $COPILOT_DIR)) {
     New-Item -ItemType Directory -Path $COPILOT_DIR -Force | Out-Null
@@ -1031,7 +1031,7 @@ if (-not (Test-Path $COPILOT_EXT_AGENTS_DIR)) {
 # Gerar package.json declarativo da extensao VS Code
 $copilotExtPkgJson = [ordered]@{
     name        = "ai-software-factory-agents"
-    displayName = "AI Software Factory — SDLC Agents"
+    displayName = "AI Software Factory - SDLC Agents"
     description = "12 specialized SDLC agents for GitHub Copilot in VS Code"
     version     = $FACTORY_VERSION
     publisher   = "ai-software-factory"
@@ -1051,11 +1051,11 @@ $tally.copilot_ext_pkg = Write-IfChanged -Path $COPILOT_EXT_PKG -Content $copilo
 $copilotInstructionsContent = @"
 <!--
 AUTO-GENERATED BY ai_software_factory/install.ps1
-DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+DO NOT EDIT DIRECTLY - changes will be overwritten on next install.
 To update: cd $FACTORY_PATH && .\install.ps1
 -->
 
-# AI Software Factory — Diretrizes para GitHub Copilot
+# AI Software Factory - Diretrizes para GitHub Copilot
 
 Este repositorio opera como uma **AI Software Factory**, implementando um framework SDLC (Software Development Life Cycle) multiagente com 12 personas especializadas, Quality Gates inviolaveis, State Ledger e busca semantica de conhecimento via MCP.
 
@@ -1257,7 +1257,7 @@ description: >-
 
 <!--
 AUTO-GENERATED BY ai_software_factory/install.ps1
-DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+DO NOT EDIT DIRECTLY - changes will be overwritten on next install.
 To update: cd $FACTORY_PATH && .\install.ps1
 Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 copilotMcpBlock
 -->
@@ -1291,7 +1291,7 @@ tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web, k
 
 <!--
 AUTO-GENERATED BY ai_software_factory/install.ps1
-DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+DO NOT EDIT DIRECTLY - changes will be overwritten on next install.
 To update: cd $FACTORY_PATH && .\install.ps1
 Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 copilotMcpBlock
 -->
@@ -1320,19 +1320,19 @@ Write-IfChanged -Path $copilotManifestPath -Content $copilotManifestJson -Label 
 $copilotExtManifestJson = $copilotExtManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $copilotExtManifestPath -Content $copilotExtManifestJson -Label "copilot-ext/.ai_software_factory_manifest.json" | Out-Null
 
-    Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ---------------------------------" -ForegroundColor DarkGray
     Write-Host ("  Copilot prompt files:     {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged) -ForegroundColor Gray
     Write-Host ("  Copilot extension agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.copilot_ext_created, $tally.copilot_ext_updated, $tally.copilot_ext_unchanged) -ForegroundColor Gray
 } else {
-    Write-Header "GitHub Copilot — Prompt Files e Instructions"
+    Write-Header "GitHub Copilot - Prompt Files e Instructions"
     Write-Skip "Runtime GitHub Copilot nao selecionado para instalacao"
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 6 — knowledge-config.json + ingest (backup/restore on failure)
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 6 - knowledge-config.json + ingest (backup/restore on failure)
+# =============================================================================
 if ($hasPython) {
     Write-Header "MCP Knowledge Base"
 
@@ -1408,7 +1408,7 @@ if ($hasPython) {
             Write-OK "knowledge.db atualizado ($($tally.knowledge_docs) documentos)"
             $tally.knowledge_status = "rebuilt"
         } else {
-            # Falha — restaurar backup se existir
+            # Falha - restaurar backup se existir
             if (Test-Path $dbBackup) {
                 Move-Item $dbBackup $DB_PATH -Force
                 Write-Warn "Falha na indexacao. knowledge.db anterior restaurado."
@@ -1425,7 +1425,7 @@ if ($hasPython) {
     }
 } else {
     Write-Header "MCP Knowledge Base"
-    Write-Skip "Python nao disponivel — pulando indexacao"
+    Write-Skip "Python nao disponivel - pulando indexacao"
     $tally.knowledge_status = "skipped"
 }
 
@@ -1436,9 +1436,9 @@ if ($manifest) {
     } else { $null }
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 6 — .mcp.json + .claude.json (merge cirurgico, atomico)
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 6 - .mcp.json + .claude.json (merge cirurgico, atomico)
+# =============================================================================
 Write-Header "MCP Configuration"
 
 $mcpEntry = [ordered]@{
@@ -1454,7 +1454,7 @@ $mcpJsonStr = $mcpJson | ConvertTo-Json -Depth 5
 $mcpStatus = Write-IfChanged -Path (Join-Path $FACTORY_PATH ".mcp.json") -Content $mcpJsonStr -Label ".mcp.json"
 $tally.mcp_status = $mcpStatus
 
-# .claude.json global — merge cirurgico com escrita atomica
+# .claude.json global - merge cirurgico com escrita atomica
 if ($enableClaude) {
     $claudeDir = Split-Path $CLAUDE_SETTINGS
     if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null }
@@ -1473,7 +1473,7 @@ if ($enableClaude) {
                 $settings = ConvertFrom-JsonSafe $settingsRaw
                 $parseOk = $true
             } catch {
-                # JSON invalido — criar backup antes de qualquer alteracao
+                # JSON invalido - criar backup antes de qualquer alteracao
                 $badBackup = "$CLAUDE_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
                 Copy-Item $CLAUDE_SETTINGS $badBackup -Force
                 Write-Warn ".claude.json estava invalido. Backup criado: $badBackup"
@@ -1532,7 +1532,7 @@ if ($enableClaude) {
     $tally.claude_mcp_status = "pulado"
 }
 
-# Codex global config.toml — bloco gerenciado, sem sobrescrever configuracoes pessoais
+# Codex global config.toml - bloco gerenciado, sem sobrescrever configuracoes pessoais
 if ($enableCodex) {
     $codexGlobalBegin = "# BEGIN ai_software_factory:codex-mcp"
     $codexGlobalEnd   = "# END ai_software_factory:codex-mcp"
@@ -1565,7 +1565,7 @@ $codexGlobalEnd
         $tally.codex_mcp_status = "failed"
     }
 
-    # Codex project config — gerado com caminhos relativos para a propria factory
+    # Codex project config - gerado com caminhos relativos para a propria factory
     $projectCodexConfig = @"
 # AUTO-GENERATED BY ai_software_factory/install.ps1
 # Project-scoped Codex configuration for this factory repository.
@@ -1592,7 +1592,7 @@ KNOWLEDGE_DB = "knowledge.db"
     $tally.codex_project_status = "pulado"
 }
 
-# Antigravity global mcp_config.json — merge cirurgico com escrita atomica
+# Antigravity global mcp_config.json - merge cirurgico com escrita atomica
 if ($enableAntigravity) {
     if (Test-Path $GEMINI_CONFIG_DIR) {
         try {
@@ -1664,7 +1664,7 @@ if ($enableAntigravity) {
     $tally.gemini_mcp_status = "pulado"
 }
 
-# VS Code project config — gerado para Copilot Agent Mode com suporte MCP
+# VS Code project config - gerado para Copilot Agent Mode com suporte MCP
 if ($enableCopilot) {
     $vscodeMcpEntry = [ordered]@{
         mcpServers = [ordered]@{
@@ -1679,7 +1679,7 @@ if ($enableCopilot) {
     if (-not (Test-Path $VSCODE_DIR)) { New-Item -ItemType Directory -Path $VSCODE_DIR -Force | Out-Null }
     $tally.vscode_mcp_status = Write-IfChanged -Path $VSCODE_MCP_CONFIG -Content $vscodeMcpJsonStr -Label ".vscode/mcp.json"
 
-    # VS Code User config global — registrar MCP knowledge para disponibilidade em qualquer projeto
+    # VS Code User config global - registrar MCP knowledge para disponibilidade em qualquer projeto
     if (Test-Path $VSCODE_USER_DIR) {
         try {
             $vscodeUserMcp = [ordered]@{}
@@ -1735,6 +1735,39 @@ if ($enableCopilot) {
                 Write-OK "VS Code User mcp.json atualizado (MCP global registrado)"
                 $tally.vscode_global_mcp_status = "updated"
             }
+
+            # Configurar settings.json para evitar duplicacao de agentes caso ~/.claude/agents exista
+            $vscodeSettingsPath = Join-Path $VSCODE_USER_DIR "settings.json"
+            if (Test-Path $vscodeSettingsPath) {
+                try {
+                    $rawSettings = Get-Content $vscodeSettingsPath -Raw -Encoding UTF8
+                    $settingsUpdated = $false
+                    if ($rawSettings -notmatch '"chat\.agentHost\.claudeAgent\.enabled"\s*:\s*false') {
+                        if ($rawSettings -match '"chat\.agentHost\.claudeAgent\.enabled"\s*:\s*true') {
+                            $rawSettings = $rawSettings -replace '"chat\.agentHost\.claudeAgent\.enabled"\s*:\s*true', '"chat.agentHost.claudeAgent.enabled": false'
+                        } else {
+                            $rawSettings = $rawSettings -replace '\{(\r?\n)?', "{`$1  `"chat.agentHost.claudeAgent.enabled`": false,`$1"
+                        }
+                        $settingsUpdated = $true
+                    }
+                    if ($rawSettings -notmatch '"github\.copilot\.chat\.claudeAgent\.enabled"\s*:\s*false') {
+                        if ($rawSettings -match '"github\.copilot\.chat\.claudeAgent\.enabled"\s*:\s*true') {
+                            $rawSettings = $rawSettings -replace '"github\.copilot\.chat\.claudeAgent\.enabled"\s*:\s*true', '"github.copilot.chat.claudeAgent.enabled": false'
+                        } else {
+                            $rawSettings = $rawSettings -replace '\{(\r?\n)?', "{`$1  `"github.copilot.chat.claudeAgent.enabled`": false,`$1"
+                        }
+                        $settingsUpdated = $true
+                    }
+                    if ($settingsUpdated) {
+                        [System.IO.File]::WriteAllText($vscodeSettingsPath, $rawSettings, $utf8NoBom)
+                        Write-OK "VS Code settings.json: descoberta de agentes Claude desativada no Copilot (evita duplicacao)"
+                    } else {
+                        Write-Skip "VS Code settings.json: deduplicacao de Claude ja configurada"
+                    }
+                } catch {
+                    Write-Warn "Nao foi possivel atualizar VS Code settings.json para desativar Claude agents: $_"
+                }
+            }
         } catch {
             Write-Warn "Nao foi possivel atualizar VS Code User mcp.json: $_"
             $tally.vscode_global_mcp_status = "failed"
@@ -1747,9 +1780,9 @@ if ($enableCopilot) {
     $tally.vscode_global_mcp_status = "pulado"
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE 7 — Scripts auxiliares
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE 7 - Scripts auxiliares
+# =============================================================================
 Write-Header "Scripts auxiliares"
 
 # Limpeza de factory.ps1 legado (Gemini CLI depreciado)
@@ -1760,7 +1793,7 @@ if (Test-Path $legacyFactoryPs1) {
 
 # update-knowledge.ps1
 $updateKnowledge = @"
-# update-knowledge.ps1 — Reindexar conhecimento da AI Software Factory
+# update-knowledge.ps1 - Reindexar conhecimento da AI Software Factory
 # Execute sempre que alterar knowledge/, skills/, schemas/, templates/, examples/, bibliography/
 
 `$ErrorActionPreference = "Stop"
@@ -1801,7 +1834,7 @@ if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_uncha
 
 # link-mcp.ps1
 $linkMcp = @"
-# link-mcp.ps1 — Vincular MCP da factory ao projeto atual
+# link-mcp.ps1 - Vincular MCP da factory ao projeto atual
 # Uso: & "`$env:FACTORY_ROOT\link-mcp.ps1"
 
 `$ErrorActionPreference = "Stop"
@@ -1888,9 +1921,9 @@ Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code, 
 $s = Write-IfChanged -Path (Join-Path $FACTORY_PATH "link-mcp.ps1") -Content $linkMcp -Label "link-mcp.ps1"
 if ($s -ne "unchanged") { $tally.scripts_updated++ } else { $tally.scripts_unchanged++ }
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  FASE FINAL — MCP Health Check
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
+#  FASE FINAL - MCP Health Check
+# =============================================================================
 Write-Header "MCP Health Check"
 
 $testMcpPath    = Join-Path $FACTORY_PATH "test-mcp.ps1"
@@ -1926,93 +1959,93 @@ if (Test-Path $testMcpPath) {
     Write-Skip "Health check pulado (test-mcp.ps1 nao disponivel nesta fase)"
 }
 
-# ─── Gravar manifesto completo (apos todas as fases) ─────────────────────────
+# --- Gravar manifesto completo (apos todas as fases) -------------------------
 if ($enableClaude -and $manifest -and $manifestPath) {
     $manifestJson = $manifest | ConvertTo-Json -Depth 10
     Write-IfChanged -Path $manifestPath -Content $manifestJson -Label ".ai_software_factory_manifest.json" | Out-Null
 }
 
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 #  RESUMO
-# ═════════════════════════════════════════════════════════════════════════════
+# =============================================================================
 Write-Host ""
-Write-Host "  ╔═══════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "  ║                    Resumo                        ║" -ForegroundColor Green
-Write-Host "  ╠═══════════════════════════════════════════════════╣" -ForegroundColor Green
+Write-Host "  +===================================================+" -ForegroundColor Green
+Write-Host "  |                    Resumo                        |" -ForegroundColor Green
+Write-Host "  +===================================================+" -ForegroundColor Green
 
 $agentSummary = if ($enableClaude) {
     "{0} criados  {1} atualizados  {2} sem mudancas" -f `
         $tally.agents_created, $tally.agents_updated, $tally.agents_unchanged
 } else { "pulado (nao selecionado)" }
-Write-Host ("  ║  Agentes      {0,-36}║" -f $agentSummary) -ForegroundColor Green
+Write-Host ("  |  Agentes      {0,-36}|" -f $agentSummary) -ForegroundColor Green
 
 $codexSummary = if ($enableCodex) {
     "{0} criados  {1} atualizados  {2} sem mudancas" -f `
         $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged
 } else { "pulado (nao selecionado)" }
-Write-Host ("  ║  Codex agents {0,-36}║" -f $codexSummary) -ForegroundColor Green
+Write-Host ("  |  Codex agents {0,-36}|" -f $codexSummary) -ForegroundColor Green
 
 $antigravitySummary = if ($enableAntigravity) {
     "{0} criadas  {1} atualizadas  {2} sem mudancas" -f `
         $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged
 } else { "pulado (nao selecionado)" }
-Write-Host ("  ║  Antigravity  {0,-36}║" -f $antigravitySummary) -ForegroundColor Green
+Write-Host ("  |  Antigravity  {0,-36}|" -f $antigravitySummary) -ForegroundColor Green
 
 $copilotSummary = if ($enableCopilot) {
     "{0} criados  {1} atualizados  {2} sem mudancas" -f `
         $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged
 } else { "pulado (nao selecionado)" }
-Write-Host ("  ║  Copilot Prmp {0,-36}║" -f $copilotSummary) -ForegroundColor Green
+Write-Host ("  |  Copilot Prmp {0,-36}|" -f $copilotSummary) -ForegroundColor Green
 
 $copilotExtSummary = if ($enableCopilot) {
     "{0} criados  {1} atualizados  {2} sem mudancas" -f `
         $tally.copilot_ext_created, $tally.copilot_ext_updated, $tally.copilot_ext_unchanged
 } else { "pulado (nao selecionado)" }
-Write-Host ("  ║  Copilot Ext  {0,-36}║" -f $copilotExtSummary) -ForegroundColor Green
+Write-Host ("  |  Copilot Ext  {0,-36}|" -f $copilotExtSummary) -ForegroundColor Green
 
 $copilotInstrSummary = if ($enableCopilot) { $tally.copilot_instr_status } else { "pulado" }
-Write-Host ("  ║  Copilot Inst {0,-36}║" -f $copilotInstrSummary) -ForegroundColor Green
+Write-Host ("  |  Copilot Inst {0,-36}|" -f $copilotInstrSummary) -ForegroundColor Green
 
 $kbSummary = switch ($tally.knowledge_status) {
-    "rebuilt"   { "reconstruido — $($tally.knowledge_docs) documentos" }
-    "unchanged" { "sem mudancas — $($tally.knowledge_docs) documentos" }
-    "failed"    { "FALHA — DB anterior mantido" }
+    "rebuilt"   { "reconstruido - $($tally.knowledge_docs) documentos" }
+    "unchanged" { "sem mudancas - $($tally.knowledge_docs) documentos" }
+    "failed"    { "FALHA - DB anterior mantido" }
     default     { "nao configurado (Python ausente)" }
 }
-Write-Host ("  ║  Knowledge DB {0,-36}║" -f $kbSummary) -ForegroundColor Green
-Write-Host ("  ║  MCP Config   {0,-36}║" -f $tally.mcp_status) -ForegroundColor Green
-Write-Host ("  ║  Claude MCP   {0,-36}║" -f $tally.claude_mcp_status) -ForegroundColor Green
-Write-Host ("  ║  Codex MCP    {0,-36}║" -f $tally.codex_mcp_status) -ForegroundColor Green
-Write-Host ("  ║  Codex local  {0,-36}║" -f $tally.codex_project_status) -ForegroundColor Green
-Write-Host ("  ║  Gemini MCP   {0,-36}║" -f $tally.gemini_mcp_status) -ForegroundColor Green
-Write-Host ("  ║  VS Code MCP  {0,-36}║" -f $tally.vscode_mcp_status) -ForegroundColor Green
-Write-Host ("  ║  VS Code Usr  {0,-36}║" -f $tally.vscode_global_mcp_status) -ForegroundColor Green
-Write-Host ("  ║  Dependencias {0,-36}║" -f $tally.deps_status) -ForegroundColor Green
-Write-Host ("  ║  Scripts      {0,-36}║" -f ("{0} atualizados  {1} sem mudancas" -f $tally.scripts_updated, $tally.scripts_unchanged)) -ForegroundColor Green
-Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host ("  |  Knowledge DB {0,-36}|" -f $kbSummary) -ForegroundColor Green
+Write-Host ("  |  MCP Config   {0,-36}|" -f $tally.mcp_status) -ForegroundColor Green
+Write-Host ("  |  Claude MCP   {0,-36}|" -f $tally.claude_mcp_status) -ForegroundColor Green
+Write-Host ("  |  Codex MCP    {0,-36}|" -f $tally.codex_mcp_status) -ForegroundColor Green
+Write-Host ("  |  Codex local  {0,-36}|" -f $tally.codex_project_status) -ForegroundColor Green
+Write-Host ("  |  Gemini MCP   {0,-36}|" -f $tally.gemini_mcp_status) -ForegroundColor Green
+Write-Host ("  |  VS Code MCP  {0,-36}|" -f $tally.vscode_mcp_status) -ForegroundColor Green
+Write-Host ("  |  VS Code Usr  {0,-36}|" -f $tally.vscode_global_mcp_status) -ForegroundColor Green
+Write-Host ("  |  Dependencias {0,-36}|" -f $tally.deps_status) -ForegroundColor Green
+Write-Host ("  |  Scripts      {0,-36}|" -f ("{0} atualizados  {1} sem mudancas" -f $tally.scripts_updated, $tally.scripts_unchanged)) -ForegroundColor Green
+Write-Host "  +===================================================+" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "  FACTORY_ROOT = $FACTORY_PATH" -ForegroundColor DarkGray
 Write-Host ""
 if ($enableClaude) {
-    Write-Host "  Claude Code — use em qualquer projeto:" -ForegroundColor Cyan
+    Write-Host "  Claude Code - use em qualquer projeto:" -ForegroundColor Cyan
     Write-Host "    @techlead  @qa  @architect  @po  @devbackend ..."
     Write-Host ""
 }
 if ($enableCodex) {
-    Write-Host "  Codex — custom agents instalados:" -ForegroundColor Cyan
+    Write-Host "  Codex - custom agents instalados:" -ForegroundColor Cyan
     Write-Host "    spawn/use techlead, qa, architect, po, devbackend ... como subagentes"
     Write-Host "    MCP: ~/.codex/config.toml e .codex/config.toml nesta factory"
     Write-Host ""
 }
 if ($enableAntigravity) {
-    Write-Host "  Antigravity (AGY) — plugin e skills instalados:" -ForegroundColor Cyan
+    Write-Host "  Antigravity (AGY) - plugin e skills instalados:" -ForegroundColor Cyan
     Write-Host "    Skills: techlead, qa, architect, po, devbackend ... sob demanda"
     Write-Host "    MCP: ~/.gemini/config/mcp_config.json e ~/.gemini/config/plugins/ai-software-factory"
     Write-Host ""
 }
 if ($enableCopilot) {
-    Write-Host "  GitHub Copilot — extensao global e prompt files configurados:" -ForegroundColor Cyan
+    Write-Host "  GitHub Copilot - extensao global e prompt files configurados:" -ForegroundColor Cyan
     Write-Host "    Extensao global: ~/.vscode/extensions/ai-software-factory.agents/ (disponivel em qualquer projeto)"
     Write-Host "    Agentes no Copilot Chat: @techlead  @qa  @architect  @po  @devbackend ..."
     Write-Host "    Prompt files: .github/prompts/*.prompt.md"

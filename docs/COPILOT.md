@@ -118,6 +118,7 @@ O `install.ps1` detecta o ambiente do VS Code / Copilot e executa automaticament
 3. Geracao dos 12 arquivos de prompt em `.github/prompts/<nome>.prompt.md`.
 4. Configuracao do servidor MCP em `.vscode/mcp.json` (workspace) e em `%APPDATA%\Code\User\mcp.json` (global do usuario).
 5. Registro dos manifestos em `.github/prompts/` e `~/.vscode/extensions/ai-software-factory.agents/`.
+6. Configuracao em `settings.json` do VS Code para desativar a descoberta de agentes do Claude no Copilot (`chat.agentHost.claudeAgent.enabled: false`), prevenindo duplicacao no menu `@` caso `~/.claude/agents/` tambem esteja instalada para o Claude Code CLI.
 
 Para validar a integracao:
 
