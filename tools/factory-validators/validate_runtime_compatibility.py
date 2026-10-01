@@ -90,10 +90,10 @@ def main() -> int:
     require_contains(
         "doctor.ps1",
         [
-            "Claude Code — Agentes",
-            "Codex — Custom Agents",
-            "Antigravity — Plugin & Skills",
-            "GitHub Copilot — Prompt Files & Instructions",
+            "Claude Code",
+            "Codex",
+            "Antigravity",
+            "GitHub Copilot",
             "mcp_servers.knowledge",
             "mcpServers.knowledge",
             ".vscode/mcp.json",

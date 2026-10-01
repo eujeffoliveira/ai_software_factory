@@ -1,4 +1,4 @@
-# install.ps1 - AI Software Factory Global Installer
+﻿# install.ps1 - AI Software Factory Global Installer
 # Uso: .\install.ps1 [-ForceDeps]
 # Documentacao: docs/INSTALL_CLI.md
 
@@ -16,7 +16,7 @@ param(
 $ErrorActionPreference = "Stop"
 $ProgressPreference    = "SilentlyContinue"
 
-# --- Utilitários de output ----------------------------------------------------
+# --- Utilitarios de output ----------------------------------------------------
 function Write-Header($t) {
     Write-Host ""
     Write-Host "  $t" -ForegroundColor Cyan
@@ -1624,7 +1624,7 @@ if ($enableClaude) {
             $newJson = $settings | ConvertTo-Json -Depth 20
             $newJson | ConvertFrom-Json | Out-Null  # lanca excecao se invalido
 
-            # Escrita atomica: temp → rename
+            # Escrita atomica: temp -> rename
             $tmpSettings = "$CLAUDE_SETTINGS.tmp"
             [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
             Move-Item $tmpSettings $CLAUDE_SETTINGS -Force

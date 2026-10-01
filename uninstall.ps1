@@ -1,4 +1,4 @@
-# uninstall.ps1 - Remove componentes instalados pelo install.ps1
+﻿# uninstall.ps1 - Remove componentes instalados pelo install.ps1
 # Uso:
 #   .\uninstall.ps1                     # remove agentes e configs, preserva knowledge.db e logs
 #   .\uninstall.ps1 -KeepKnowledge      # idem (explicito)

@@ -1,4 +1,4 @@
-# doctor.ps1 - Diagnostico geral da AI Software Factory
+﻿# doctor.ps1 - Diagnostico geral da AI Software Factory
 # Uso: .\doctor.ps1
 # Exit code: 0 se OK (pode ter avisos), 1 se qualquer ERROR
 
@@ -83,7 +83,7 @@ if ($frUser) {
     }
 } else {
     Write-CheckWarn "FACTORY_ROOT nao definido como variavel de usuario"
-    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
+    Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1"
     $hadWarning = $true
 }
 
@@ -128,7 +128,7 @@ $hasCopilotManifest      = (Test-Path $copilotManifestPath) -or (Test-Path $copi
 $anyRuntimeInstalled = $hasClaudeManifest -or $hasCodexManifest -or $hasAntigravityManifest -or $hasCopilotManifest
 
 if (-not $anyRuntimeInstalled) {
-    Write-CheckError "Nenhum manifesto de runtime encontrado (Claude, Codex, Antigravity ou Copilot)" "cd '$factoryRoot' && .\install.ps1"
+    Write-CheckError "Nenhum manifesto de runtime encontrado (Claude, Codex, Antigravity ou Copilot)" "cd '$factoryRoot'; .\install.ps1"
     $hadError = $true
 }
 
@@ -257,7 +257,7 @@ if ($pythonCmd) {
         $mcpVer = ($mcpCheck | Select-String "^Version:") -replace "Version:\s*", ""
         Write-CheckOK "Pacote mcp instalado (v$($mcpVer.ToString().Trim()))"
     } else {
-        Write-CheckError "Pacote mcp nao instalado" "cd '$factoryRoot' && .\install.ps1 -ForceDeps"
+        Write-CheckError "Pacote mcp nao instalado" "cd '$factoryRoot'; .\install.ps1 -ForceDeps"
         $hadError = $true
     }
 }
@@ -302,20 +302,20 @@ if (Test-Path $codexConfig) {
     Write-CheckOK "Codex config existe: $codexConfig"
 } else {
     Write-CheckWarn "Codex config global nao encontrado em ~/.codex/config.toml"
-    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
+    Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1"
     $hadWarning = $true
 }
 
 # =============================================================================
 #  6. CLAUDE AGENTS
 # =============================================================================
-Write-Section "6. Claude Code — Agentes"
+Write-Section "6. Claude Code - Agentes"
 
 if ($hasClaudeManifest) {
     if (Test-Path $claudeAgentsDir) {
         Write-CheckOK "Diretorio ~/.claude/agents/ existe"
     } else {
-        Write-CheckError "~/.claude/agents/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Claude"
+        Write-CheckError "~/.claude/agents/ nao encontrado" "cd '$factoryRoot'; .\install.ps1 -Claude"
         $hadError = $true
     }
 
@@ -341,7 +341,7 @@ if ($hasClaudeManifest) {
             Write-CheckOK "$($agentsOK.Count)/$expectedAgentCount agentes OK"
         }
         if ($agentsMissing.Count -gt 0) {
-            Write-CheckError "Agentes ausentes ($($agentsMissing.Count)): $($agentsMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1 -Claude"
+            Write-CheckError "Agentes ausentes ($($agentsMissing.Count)): $($agentsMissing -join ', ')" "cd '$factoryRoot'; .\install.ps1 -Claude"
             $hadError = $true
         }
         if ($agentsNoMarker.Count -gt 0) {
@@ -356,13 +356,13 @@ if ($hasClaudeManifest) {
 # =============================================================================
 #  7. CODEX CUSTOM AGENTS
 # =============================================================================
-Write-Section "7. Codex — Custom Agents"
+Write-Section "7. Codex - Custom Agents"
 
 if ($hasCodexManifest) {
     if (Test-Path $codexAgentsDir) {
         Write-CheckOK "Diretorio ~/.codex/agents/ existe"
     } else {
-        Write-CheckError "~/.codex/agents/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Codex"
+        Write-CheckError "~/.codex/agents/ nao encontrado" "cd '$factoryRoot'; .\install.ps1 -Codex"
         $hadError = $true
     }
 
@@ -391,7 +391,7 @@ if ($hasCodexManifest) {
             Write-CheckOK "$($codexOK.Count)/$expectedAgentCount custom agents Codex OK"
         }
         if ($codexMissing.Count -gt 0) {
-            Write-CheckError "Custom agents Codex ausentes ($($codexMissing.Count)): $($codexMissing -join ', ')" "cd '$factoryRoot' && .\install.ps1 -Codex"
+            Write-CheckError "Custom agents Codex ausentes ($($codexMissing.Count)): $($codexMissing -join ', ')" "cd '$factoryRoot'; .\install.ps1 -Codex"
             $hadError = $true
         }
         if ($codexNoMarker.Count -gt 0) {
@@ -406,7 +406,7 @@ if ($hasCodexManifest) {
 # =============================================================================
 #  7B. ANTIGRAVITY - PLUGIN & SKILLS
 # =============================================================================
-Write-Section "7B. Antigravity — Plugin & Skills"
+Write-Section "7B. Antigravity - Plugin & Skills"
 
 if ($hasAntigravityManifest) {
     if (Test-Path $geminiPluginDir) {
@@ -420,7 +420,7 @@ if ($hasAntigravityManifest) {
         }
     } else {
         Write-CheckWarn "Plugin Antigravity nao encontrado em $geminiPluginDir"
-        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Antigravity"
+        Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Antigravity"
         $hadWarning = $true
     }
 
@@ -450,7 +450,7 @@ if ($hasAntigravityManifest) {
         }
         if ($antigravityMissing.Count -gt 0) {
             Write-CheckWarn "Skills Antigravity ausentes ($($antigravityMissing.Count)): $($antigravityMissing -join ', ')"
-            Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Antigravity"
+            Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Antigravity"
             $hadWarning = $true
         }
         if ($antigravityNoMarker.Count -gt 0) {
@@ -465,7 +465,7 @@ if ($hasAntigravityManifest) {
 # =============================================================================
 #  7C. GITHUB COPILOT - PROMPT FILES & INSTRUCTIONS
 # =============================================================================
-Write-Section "7C. GitHub Copilot — Prompt Files & Instructions"
+Write-Section "7C. GitHub Copilot - Prompt Files & Instructions"
 
 if ($hasCopilotManifest) {
     if (Test-Path $copilotInstructions) {
@@ -478,7 +478,7 @@ if ($hasCopilotManifest) {
         }
     } else {
         Write-CheckWarn ".github/copilot-instructions.md nao encontrado"
-        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+        Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Copilot"
         $hadWarning = $true
     }
 
@@ -486,7 +486,7 @@ if ($hasCopilotManifest) {
         Write-CheckOK "Diretorio de prompts do Copilot existe: $copilotPromptsDir"
     } else {
         Write-CheckWarn "Diretorio .github/prompts/ nao encontrado"
-        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+        Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Copilot"
         $hadWarning = $true
     }
 
@@ -516,7 +516,7 @@ if ($hasCopilotManifest) {
         }
         if ($copilotMissing.Count -gt 0) {
             Write-CheckWarn "Prompt files Copilot ausentes ($($copilotMissing.Count)): $($copilotMissing -join ', ')"
-            Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+            Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Copilot"
             $hadWarning = $true
         }
         if ($copilotNoMarker.Count -gt 0) {
@@ -611,7 +611,7 @@ if ($hasCopilotManifest) {
             }
             if ($extMissing.Count -gt 0) {
                 Write-CheckWarn "Agentes da extensao Copilot ausentes ($($extMissing.Count)): $($extMissing -join ', ')"
-                Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+                Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Copilot"
                 $hadWarning = $true
             }
             if ($extNoMarker.Count -gt 0) {
@@ -630,13 +630,13 @@ if ($hasCopilotManifest) {
                 Write-CheckOK "Descoberta de Claude agents desativada no Copilot (previne duplicacao com ~/.claude/agents)"
             } else {
                 Write-CheckWarn "Claude agents habilitados no Copilot - se ~/.claude/agents tiver arquivos, eles aparecerao duplicados"
-                Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+                Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Copilot"
                 $hadWarning = $true
             }
         }
     } else {
         Write-CheckWarn "Extensao global Copilot nao encontrada em $copilotExtDir"
-        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+        Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Copilot"
         $hadWarning = $true
     }
 } else {
@@ -653,7 +653,7 @@ if (Test-Path $dbPath) {
     $dbSize = [math]::Round((Get-Item $dbPath).Length / 1MB, 2)
     Write-CheckOK "knowledge.db existe ($dbSize MB)"
 } else {
-    Write-CheckError "knowledge.db nao encontrado" "cd '$factoryRoot' && .\update-knowledge.ps1"
+    Write-CheckError "knowledge.db nao encontrado" "cd '$factoryRoot'; .\update-knowledge.ps1"
     $hadError = $true
 }
 
@@ -685,7 +685,7 @@ if (Test-Path $testMcpPath) {
         if ($LASTEXITCODE -eq 0) {
             Write-CheckOK "test-mcp.ps1 passou - MCP pronto"
         } else {
-            Write-CheckError "test-mcp.ps1 falhou" "cd '$factoryRoot' && .\install.ps1 -ForceDeps"
+            Write-CheckError "test-mcp.ps1 falhou" "cd '$factoryRoot'; .\install.ps1 -ForceDeps"
             $hadError = $true
         }
     } catch {
@@ -719,11 +719,11 @@ if ($hasClaudeManifest) {
                 } else {
                     Write-CheckWarn "server.py em ~/.claude.json aponta para: $configuredServer"
                     Write-CheckWarn "          Esperado: $expectedServer"
-                    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Claude"
+                    Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Claude"
                     $hadWarning = $true
                 }
             } else {
-                Write-CheckError "mcpServers.knowledge ausente em ~/.claude.json" "cd '$factoryRoot' && .\install.ps1 -Claude"
+                Write-CheckError "mcpServers.knowledge ausente em ~/.claude.json" "cd '$factoryRoot'; .\install.ps1 -Claude"
                 $hadError = $true
             }
         } catch {
@@ -731,7 +731,7 @@ if ($hasClaudeManifest) {
             $hadWarning = $true
         }
     } else {
-        Write-CheckError "~/.claude.json nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Claude"
+        Write-CheckError "~/.claude.json nao encontrado" "cd '$factoryRoot'; .\install.ps1 -Claude"
         $hadError = $true
     }
 } else {
@@ -759,11 +759,11 @@ if ($hasCodexManifest) {
                     Write-CheckOK "server.py path correto em ~/.codex/config.toml"
                 } else {
                     Write-CheckWarn "Codex global config possui knowledge, mas nao aponta claramente para esta factory"
-                    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Codex"
+                    Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Codex"
                     $hadWarning = $true
                 }
             } else {
-                Write-CheckError "mcp_servers.knowledge ausente em ~/.codex/config.toml" "cd '$factoryRoot' && .\install.ps1 -Codex"
+                Write-CheckError "mcp_servers.knowledge ausente em ~/.codex/config.toml" "cd '$factoryRoot'; .\install.ps1 -Codex"
                 $hadError = $true
             }
         } catch {
@@ -771,7 +771,7 @@ if ($hasCodexManifest) {
             $hadWarning = $true
         }
     } else {
-        Write-CheckError "~/.codex/config.toml nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Codex"
+        Write-CheckError "~/.codex/config.toml nao encontrado" "cd '$factoryRoot'; .\install.ps1 -Codex"
         $hadError = $true
     }
 
@@ -804,7 +804,7 @@ if ($hasAntigravityManifest) {
                         Write-CheckOK "server.py path correto em mcp_config.json"
                     } else {
                         Write-CheckWarn "server.py em mcp_config.json aponta para: $configuredServer"
-                        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Antigravity"
+                        Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1 -Antigravity"
                         $hadWarning = $true
                     }
                 } else {
@@ -909,7 +909,7 @@ foreach ($name in $agentNames) {
 if ($staleAgents.Count -gt 0) {
     Write-CheckWarn "Agentes com FACTORY_ROOT desatualizado (factory foi movida?):"
     $staleAgents | ForEach-Object { Write-CheckWarn "          $_" }
-    Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1"
+    Write-CheckWarn "          Fix: cd '$factoryRoot'; .\install.ps1"
     $hadWarning = $true
 } else {
     Write-CheckOK "FACTORY_ROOT correto em todos os agentes instalados"
@@ -956,7 +956,7 @@ if (Test-Path $claudeAgentsDir) {
         $hadError = $true
     }
 } elseif ($hasClaudeManifest) {
-    Write-CheckError "~/.claude/agents/ nao existe" "cd '$factoryRoot' && .\install.ps1 -Claude"
+    Write-CheckError "~/.claude/agents/ nao existe" "cd '$factoryRoot'; .\install.ps1 -Claude"
     $hadError = $true
 }
 
@@ -972,7 +972,7 @@ if (Test-Path $codexAgentsDir) {
         $hadError = $true
     }
 } elseif ($hasCodexManifest) {
-    Write-CheckError "~/.codex/agents/ nao existe" "cd '$factoryRoot' && .\install.ps1 -Codex"
+    Write-CheckError "~/.codex/agents/ nao existe" "cd '$factoryRoot'; .\install.ps1 -Codex"
     $hadError = $true
 }
 
@@ -999,7 +999,7 @@ if (Test-Path $geminiPluginDir) {
         $hadError = $true
     }
 } elseif ($hasAntigravityManifest) {
-    Write-CheckError "Plugin Antigravity nao encontrado em $geminiPluginDir" "cd '$factoryRoot' && .\install.ps1 -Antigravity"
+    Write-CheckError "Plugin Antigravity nao encontrado em $geminiPluginDir" "cd '$factoryRoot'; .\install.ps1 -Antigravity"
     $hadError = $true
 }
 
@@ -1015,7 +1015,7 @@ if (Test-Path $copilotPromptsDir) {
         $hadError = $true
     }
 } elseif ($hasCopilotManifest) {
-    Write-CheckError "Diretorio .github/prompts/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Copilot"
+    Write-CheckError "Diretorio .github/prompts/ nao encontrado" "cd '$factoryRoot'; .\install.ps1 -Copilot"
     $hadError = $true
 }
 
@@ -1057,7 +1057,7 @@ Write-Host ""
 
 if ($hadError) {
     Write-Host "  [FAIL]  Problemas criticos encontrados - veja detalhes acima." -ForegroundColor Red
-    Write-Host "          Corrija e execute: cd '$factoryRoot' && .\install.ps1" -ForegroundColor DarkYellow
+    Write-Host "          Corrija e execute: cd '$factoryRoot'; .\install.ps1" -ForegroundColor DarkYellow
     exit 1
 } elseif ($hadWarning) {
     Write-Host "  [WARN]  Factory funcional com avisos - veja detalhes acima." -ForegroundColor Yellow

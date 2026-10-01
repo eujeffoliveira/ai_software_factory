@@ -243,7 +243,7 @@ It is maintained by ``@techlead`` during factory-operated sessions.
 Start every new session with:
 
 ``````
-@techlead aqui está o perfil do projeto: [attach .factory/project_profile.md]
+@techlead aqui esta o perfil do projeto: [attach .factory/project_profile.md]
          e o estado atual: [attach .factory/State_Ledger.json]
 ``````
 
