@@ -166,7 +166,8 @@ Do not hand-edit generated user-local files. Update `install.ps1` or the
 canonical `AgenteXX_*/` sources, then run the installer.
 
 Generated local artifacts with machine-specific paths are intentionally
-gitignored: `knowledge.db`, `knowledge-config.json`, `.mcp.json`, `.codex/`, and `.vscode/`.
+gitignored: `knowledge.db`, `knowledge-config.json`, `.mcp.json`, `.codex/`, `.vscode/`,
+and `.github/**/.ai_software_factory_manifest.json`.
 
 ## Validation Commands
 
