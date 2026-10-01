@@ -22,17 +22,34 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from mcp.server.fastmcp import FastMCP
+try:
+    # MCP 2.x+: FastMCP foi renomeado para MCPServer
+    from mcp.server.mcpserver import MCPServer as FastMCP
+except ImportError:
+    try:
+        # MCP 1.x
+        from mcp.server.fastmcp import FastMCP
+    except ImportError:
+        try:
+            # Fallback raiz
+            from mcp.server import FastMCP
+        except ImportError:
+            raise ImportError(
+                "MCP Python SDK nao encontrado. Instale com: pip install mcp"
+            )
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from database import get_connection, search, search_filtered, get_document, get_related, get_stats
 
 DB_PATH = os.environ.get("KNOWLEDGE_DB", "knowledge.db")
 
-mcp = FastMCP(
-    "knowledge-search",
-    instructions="Busca full-text em base de conhecimento local via SQLite FTS5"
-)
+try:
+    mcp = FastMCP(
+        "knowledge-search",
+        instructions="Busca full-text em base de conhecimento local via SQLite FTS5"
+    )
+except TypeError:
+    mcp = FastMCP("knowledge-search")
 
 # ─── Logging estruturado JSON ─────────────────────────────────────────────────
 
@@ -358,4 +375,7 @@ def knowledge_stats() -> str:
 
 if __name__ == "__main__":
     _log("server_start", db_path=DB_PATH, db_exists=os.path.exists(DB_PATH))
-    mcp.run(transport="stdio")
+    try:
+        mcp.run(transport="stdio")
+    except TypeError:
+        mcp.run()

@@ -15,6 +15,7 @@ The factory supports multiple agent runtimes from the same canonical sources:
 | Claude Code | `~/.claude/agents/<name>.md` and `@name` | `~/.claude.json` plus `.mcp.json` | Primary historical runtime |
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
 | Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` (`<name>`) | `~/.gemini/config/mcp_config.json` | Progressive skills, MCP tools `mcp_knowledge_*` |
+| GitHub Copilot | `.github/prompts/<name>.prompt.md` & instructions | `.vscode/mcp.json` | VS Code Copilot Chat prompt files and Agent mode MCP |
 | Gemini CLI | `factory.ps1` wrapper | none | Partial/manual support |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
@@ -108,6 +109,21 @@ In Antigravity, MCP tools for knowledge search are exposed with eager loading:
 `mcp_knowledge_search_knowledge`, `mcp_knowledge_get_full_document`, etc.
 See `docs/ANTIGRAVITY.md` for full details.
 
+## GitHub Copilot-Specific Guidance
+
+GitHub Copilot integrates via repository instructions, reusable prompt files,
+and workspace MCP configuration.
+
+After `.\install.ps1`, GitHub Copilot artifacts are generated:
+- `.github/copilot-instructions.md` containing global SDLC engineering rules
+- `.github/prompts/<name>.prompt.md` reusable prompt files for all 12 roles
+- `.vscode/mcp.json` configuring the `knowledge` MCP server for VS Code Copilot Agent mode
+
+Use them in VS Code Copilot Chat by attaching prompt files (`#file:techlead.prompt.md`)
+or addressing personas directly (`Atue como o @techlead...`).
+In Agent mode, Copilot calls MCP knowledge tools natively.
+See `docs/COPILOT.md` for full details.
+
 ## MCP Knowledge
 
 The MCP server lives in `tools/mcp-knowledge-search/` and exposes:
@@ -138,7 +154,8 @@ or updates:
 - Claude agents in `~/.claude/agents/`
 - Codex custom agents in `~/.codex/agents/`
 - Antigravity plugin and skills in `~/.gemini/config/plugins/ai-software-factory/`
-- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/config/mcp_config.json`, and `.mcp.json`
+- GitHub Copilot prompt files and instructions in `.github/prompts/` and `.github/copilot-instructions.md`
+- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/config/mcp_config.json`, `.vscode/mcp.json`, and `.mcp.json`
 - local `.codex/config.toml` for this factory repository
 - helper scripts such as `update-knowledge.ps1` and `link-mcp.ps1`
 
@@ -146,7 +163,7 @@ Do not hand-edit generated user-local files. Update `install.ps1` or the
 canonical `AgenteXX_*/` sources, then run the installer.
 
 Generated local artifacts with machine-specific paths are intentionally
-gitignored: `knowledge.db`, `knowledge-config.json`, `.mcp.json`, and `.codex/`.
+gitignored: `knowledge.db`, `knowledge-config.json`, `.mcp.json`, `.codex/`, and `.vscode/`.
 
 ## Validation Commands
 
@@ -187,6 +204,7 @@ When changing only indexed knowledge files and not prompts:
 
 - `docs/ANTIGRAVITY.md` - Antigravity installation, skills, subagents, MCP, and rules
 - `docs/CODEX.md` - Codex installation, custom agents, MCP, and limits
+- `docs/COPILOT.md` - GitHub Copilot prompt files, instructions, and MCP usage
 - `docs/CLIENT_COMPATIBILITY.md` - runtime comparison
 - `docs/INSTALLATION.md` - install phases
 - `docs/MCP_RAG.md` - knowledge DB and MCP tools

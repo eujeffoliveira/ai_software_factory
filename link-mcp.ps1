@@ -67,4 +67,25 @@ if ($hasUnmanagedKnowledge) {
     Write-Host "[OK] .codex/config.toml vinculado: $(Get-Location)" -ForegroundColor Green
 }
 
-Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code ou Codex."
+$TARGET_VSCODE_DIR = Join-Path (Get-Location).Path ".vscode"
+$TARGET_VSCODE_CONFIG = Join-Path $TARGET_VSCODE_DIR "mcp.json"
+if (-not (Test-Path $TARGET_VSCODE_DIR)) { New-Item -ItemType Directory -Path $TARGET_VSCODE_DIR -Force | Out-Null }
+
+$vscodeMcpEntry = [ordered]@{
+    mcpServers = [ordered]@{
+        knowledge = [ordered]@{
+            command = "python"
+            args    = @($serverPath)
+            env     = [ordered]@{ KNOWLEDGE_DB = $dbPath }
+        }
+    }
+}
+$vscodeJson = $vscodeMcpEntry | ConvertTo-Json -Depth 5
+if (Test-Path $TARGET_VSCODE_CONFIG) {
+    $bak = "$TARGET_VSCODE_CONFIG.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+    Copy-Item $TARGET_VSCODE_CONFIG $bak; Write-Host "  [BAK] $bak" -ForegroundColor DarkGray
+}
+Set-Content -Path $TARGET_VSCODE_CONFIG -Value $vscodeJson -Encoding UTF8
+Write-Host "[OK] .vscode/mcp.json vinculado: $(Get-Location)" -ForegroundColor Green
+
+Write-Host "     MCP knowledge search disponivel na proxima sessao Claude Code, Codex ou VS Code Copilot."

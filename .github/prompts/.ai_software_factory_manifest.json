@@ -1,0 +1,93 @@
+{
+  "factory_version": "0.1.0",
+  "factory_root": "D:\\Projetos\\ai_software_factory",
+  "installed_at": "2026-10-01T11:04:08Z",
+  "knowledge_db_path": "D:\\Projetos\\ai_software_factory\\knowledge.db",
+  "mcp_server": "knowledge",
+  "prompts": {
+    "techlead": {
+      "status": "created",
+      "source": "Agente00_TechLead",
+      "source_hash": "D45FF67F59A4BC13",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\techlead.prompt.md",
+      "installed_hash": "40C3D2D493E2C672"
+    },
+    "po": {
+      "status": "created",
+      "source": "Agente01_ProductOwner",
+      "source_hash": "1FA4D76E701F8A2F",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\po.prompt.md",
+      "installed_hash": "53790EFCDD8B1DD3"
+    },
+    "architect": {
+      "status": "created",
+      "source": "Agente02_SoftwareArchitect",
+      "source_hash": "9DBABB91A20AA2F3",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\architect.prompt.md",
+      "installed_hash": "5C85011D9E07D15C"
+    },
+    "engineer": {
+      "status": "created",
+      "source": "Agente03_SoftwareEngineer",
+      "source_hash": "4490A9F4D1D2FD5A",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\engineer.prompt.md",
+      "installed_hash": "6261997D630A3708"
+    },
+    "devbackend": {
+      "status": "created",
+      "source": "Agente04_DevBackend",
+      "source_hash": "67CADF094B9724F7",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\devbackend.prompt.md",
+      "installed_hash": "3AA421E5624EBC77"
+    },
+    "devfrontend": {
+      "status": "created",
+      "source": "Agente05_DevFrontend",
+      "source_hash": "F47BE2B53A6F8EB2",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\devfrontend.prompt.md",
+      "installed_hash": "DC8CD5BC98C1F289"
+    },
+    "qa": {
+      "status": "created",
+      "source": "Agente06_QaEngineer",
+      "source_hash": "ABB00ECA9E2216B1",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\qa.prompt.md",
+      "installed_hash": "3159F601EA153198"
+    },
+    "devsecops": {
+      "status": "created",
+      "source": "Agente07_DevSecOps",
+      "source_hash": "141267515973C2F8",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\devsecops.prompt.md",
+      "installed_hash": "F6039E0AE59DE6C6"
+    },
+    "devops": {
+      "status": "created",
+      "source": "Agente08_DevOps",
+      "source_hash": "28CDE10E1AB9ACEE",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\devops.prompt.md",
+      "installed_hash": "061C9CE141EFA6D8"
+    },
+    "uxui": {
+      "status": "created",
+      "source": "Agente09_UxUiDesigner",
+      "source_hash": "C2602D33B0ECC161",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\uxui.prompt.md",
+      "installed_hash": "B29B819574F8ED0F"
+    },
+    "dataengineer": {
+      "status": "created",
+      "source": "Agente10_DataIntegrationEngineer",
+      "source_hash": "03DB1FA5A487977F",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\dataengineer.prompt.md",
+      "installed_hash": "662C2D883145E516"
+    },
+    "dataanalyst": {
+      "status": "created",
+      "source": "Agente11_DataAnalyst",
+      "source_hash": "511DE16C1D7CC38E",
+      "installed_path": "D:\\Projetos\\ai_software_factory\\.github\\prompts\\dataanalyst.prompt.md",
+      "installed_hash": "322DE5A1B823CC4B"
+    }
+  }
+}

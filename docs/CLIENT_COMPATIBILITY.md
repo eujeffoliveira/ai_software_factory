@@ -7,6 +7,7 @@
 | Claude Code | Sim | Sim | `@nome` via `~/.claude/agents/*.md` | Completo |
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
 | Antigravity | Sim | Sim | skills (`techlead`, etc.) em `~/.gemini/config/plugins/` | Completo |
+| GitHub Copilot | Sim | Sim | prompt files (`.github/prompts/`) + `.vscode/mcp.json` | Completo |
 | Gemini CLI | Parcial | Não | wrapper `factory.ps1` | Parcial |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
@@ -88,6 +89,34 @@ O MCP `knowledge` é registrado diretamente com ferramentas eager (`mcp_knowledg
 
 Leia detalhes em `docs/ANTIGRAVITY.md`.
 
+## GitHub Copilot
+
+GitHub Copilot opera no VS Code, GitHub CLI e GitHub.com Copilot Chat.
+
+Após `.\install.ps1`, os artefatos ficam em:
+
+```text
+.github/copilot-instructions.md
+.github/prompts/*.prompt.md
+.vscode/mcp.json
+```
+
+Uso:
+
+```text
+# No Copilot Chat:
+#file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
+#file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
+
+# Ou diretamente invocando a persona conhecida pelas copilot-instructions:
+Atue como o @architect e elabore o diagrama C4 de componentes.
+```
+
+No VS Code Copilot Agent mode, o servidor MCP `knowledge` permite tool calling nativo
+para busca de principios, heuristicas e playbooks.
+
+Leia detalhes em `docs/COPILOT.md`.
+
 ## Gemini CLI
 
 Gemini CLI tem suporte parcial via `factory.ps1`.
@@ -124,15 +153,15 @@ não edita configurações do VS Code e o diagnóstico não valida esses artefat
 
 ## Comparação de recursos
 
-| Recurso | Claude Code | Codex | Antigravity | Gemini CLI | Manual |
-|---|---:|---:|---:|---:|---:|
-| Prompt completo | Sim | Sim | Sim | Parcial | Manual |
-| Knowledge embutida | Sim | Sim | Sim | Não | Manual |
-| MCP Knowledge | Sim | Sim | Sim | Não | Não |
-| Agentes especializados | `@nome` | custom agents | skills (`techlead`, etc.) | wrapper | Manual |
-| State Ledger | Sim | Sim | Sim | Manual | Manual |
-| Quality gates | Sim | Sim | Sim | Manual | Manual |
-| Config por projeto | Opcional | `.codex/config.toml` | `AGENTS.md` | Não | Não |
+| Recurso | Claude Code | Codex | Antigravity | GitHub Copilot | Gemini CLI | Manual |
+|---|---:|---:|---:|---:|---:|---:|
+| Prompt completo | Sim | Sim | Sim | Sim | Parcial | Manual |
+| Knowledge embutida | Sim | Sim | Sim | Sim | Não | Manual |
+| MCP Knowledge | Sim | Sim | Sim | Sim | Não | Não |
+| Agentes especializados | `@nome` | custom agents | skills (`techlead`, etc.) | prompt files | wrapper | Manual |
+| State Ledger | Sim | Sim | Sim | Sim | Manual | Manual |
+| Quality gates | Sim | Sim | Sim | Sim | Manual | Manual |
+| Config por projeto | Opcional | `.codex/config.toml` | `AGENTS.md` | `.github/` & `.vscode/` | Não | Não |
 
 ## Validação
 

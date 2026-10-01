@@ -62,7 +62,7 @@ def main() -> int:
     )
     require_contains(
         "AGENTS.md",
-        ["Codex", ".codex/config.toml", "~/.codex/agents/", "Antigravity", "MCP-first"],
+        ["Codex", ".codex/config.toml", "~/.codex/agents/", "Antigravity", "GitHub Copilot", "MCP-first"],
         errors,
     )
 
@@ -72,9 +72,12 @@ def main() -> int:
             "$CLAUDE_AGENTS_DIR",
             "$CODEX_AGENTS_DIR",
             "$GEMINI_PLUGIN_DIR",
+            "$COPILOT_PROMPTS_DIR",
+            "copilot-instructions.md",
             "developer_instructions",
             "[mcp_servers.knowledge]",
             "mcp_config.json",
+            ".vscode/mcp.json",
         ],
         errors,
     )
@@ -90,24 +93,26 @@ def main() -> int:
             "Claude Code — Agentes",
             "Codex — Custom Agents",
             "Antigravity — Plugin & Skills",
+            "GitHub Copilot — Prompt Files & Instructions",
             "mcp_servers.knowledge",
             "mcpServers.knowledge",
+            ".vscode/mcp.json",
         ],
         errors,
     )
     require_contains(
         "link-mcp.ps1",
-        [".mcp.json", ".codex", "[mcp_servers.knowledge]"],
+        [".mcp.json", ".codex", ".vscode", "[mcp_servers.knowledge]"],
         errors,
     )
     require_contains(
         ".gitignore",
-        ["knowledge.db", ".mcp.json", ".codex/"],
+        ["knowledge.db", ".mcp.json", ".codex/", ".vscode/"],
         errors,
     )
     require_contains(
         "docs/CLIENT_COMPATIBILITY.md",
-        ["Claude Code", "Codex", "Antigravity", "MCP"],
+        ["Claude Code", "Codex", "Antigravity", "GitHub Copilot", "MCP"],
         errors,
     )
     require_contains(
@@ -118,6 +123,11 @@ def main() -> int:
     require_contains(
         "docs/ANTIGRAVITY.md",
         ["Antigravity", "skills", "mcp_config.json", "MCP"],
+        errors,
+    )
+    require_contains(
+        "docs/COPILOT.md",
+        ["GitHub Copilot", "prompt.md", "mcp.json", "MCP"],
         errors,
     )
 

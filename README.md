@@ -1,8 +1,8 @@
 # AI Software Factory — Multi-Agent SDLC Framework
 
-Uma instalação multi-runtime de 12 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code e Codex.
+Uma instalação multi-runtime de 12 agentes de IA especializados para o ciclo completo de desenvolvimento de software. Clone uma vez, instale, e use os mesmos papéis em Claude Code, Codex, Antigravity e GitHub Copilot.
 
-Suporta **Claude Code** (`@nome`) e **Codex** (custom agents/subagents). O wrapper `factory.ps1` mantém uso manual parcial com Gemini CLI.
+Suporta **Claude Code** (`@nome`), **Codex** (custom agents/subagents), **Antigravity** (skills/subagents) e **GitHub Copilot** (prompt files e Agent mode MCP). O wrapper `factory.ps1` mantém uso manual parcial com Gemini CLI.
 
 ---
 
@@ -28,6 +28,14 @@ Abra um **novo terminal** e use os agentes:
 # Codex
 Use the techlead custom agent to classify this project and propose the SDLC flow.
 Spawn qa and devsecops as subagents and summarize their findings.
+
+# Antigravity (AGY)
+Ative a skill techlead para avaliar este projeto.
+Invoque qa como subagente para auditar a cobertura de testes.
+
+# GitHub Copilot (VS Code)
+#file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
+#file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
 ```
 
 ---
@@ -60,9 +68,11 @@ A factory funciona como **instalação multi-runtime**: os agentes são gerados 
 Cada agente tem acesso a dois layers de conhecimento:
 
 ```
-~/.claude/agents/<nome>.md       ← Claude Code (@nome)
-~/.codex/agents/<nome>.toml      ← Codex custom agents
-knowledge.db (SQLite FTS5)       ← ~7.000 docs indexados via MCP sob demanda
+~/.claude/agents/<nome>.md                       ← Claude Code (@nome)
+~/.codex/agents/<nome>.toml                      ← Codex custom agents
+~/.gemini/config/plugins/ai-software-factory/    ← Antigravity skills
+.github/prompts/<nome>.prompt.md                 ← GitHub Copilot prompt files
+knowledge.db (SQLite FTS5)                       ← ~8.000 docs indexados via MCP sob demanda
 ```
 
 O **Tech Lead** (`@techlead`) orquestra todos os outros agentes através de gates sequenciais (A0, 1–7). Nenhum agente avança sem o artefato obrigatório do gate anterior.
@@ -85,6 +95,8 @@ A factory suporta **8 arquétipos de projeto**: `web_app`, `automation_script`, 
 | Python 3.x no PATH | `python --version` |
 | Claude Code | `claude --version` |
 | Codex | `codex --version` |
+| Antigravity (AGY) | `agy --version` |
+| GitHub Copilot / VS Code | VS Code instalado |
 
 Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime completo é o `install.ps1` no Windows.
 
@@ -97,10 +109,12 @@ Linux/macOS: `install.sh` mantém o fluxo CLI legado; o instalador multi-runtime
 | Ação | Resultado |
 |------|-----------|
 | Define `FACTORY_ROOT` | Variável de ambiente de usuário Windows |
-| Instala 12 agentes | `~/.claude/agents/<nome>.md` |
+| Instala 12 agentes Claude | `~/.claude/agents/<nome>.md` |
 | Instala 12 custom agents Codex | `~/.codex/agents/<nome>.toml` |
-| Cria `knowledge.db` | SQLite FTS5, ~7.000 documentos |
-| Configura MCP global | `~/.claude.json`, `~/.codex/config.toml` |
+| Instala plugin e 12 skills Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` |
+| Gera 12 prompt files e instruções Copilot | `.github/prompts/*.prompt.md` e `.github/copilot-instructions.md` |
+| Cria `knowledge.db` | SQLite FTS5, ~8.000 documentos |
+| Configura MCP global | `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/config/mcp_config.json`, `.vscode/mcp.json` |
 | Gera scripts auxiliares | `update-knowledge.ps1`, `link-mcp.ps1` |
 
 Após a instalação, reabra o terminal e verifique:
@@ -194,8 +208,10 @@ Editou só arquivos de knowledge (sem mexer em `prompt.md`)?
 | [`docs/PROJECT_ARCHETYPES.md`](docs/PROJECT_ARCHETYPES.md) | Gate A0, classificação, ADR vs. não-ADR |
 | [`docs/MCP_RAG.md`](docs/MCP_RAG.md) | knowledge.db, MCP-first, ferramentas, logs, troubleshooting |
 | [`docs/CODEX.md`](docs/CODEX.md) | Codex custom agents, MCP e limitações |
+| [`docs/ANTIGRAVITY.md`](docs/ANTIGRAVITY.md) | Antigravity skills, subagentes, MCP e regras |
+| [`docs/COPILOT.md`](docs/COPILOT.md) | GitHub Copilot prompt files, instruções e MCP |
 | [`docs/ADDING_KNOWLEDGE.md`](docs/ADDING_KNOWLEDGE.md) | Distilação de conhecimento, source_map.json, comandos |
-| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Gemini CLI, uso manual |
+| [`docs/CLIENT_COMPATIBILITY.md`](docs/CLIENT_COMPATIBILITY.md) | Claude Code, Codex, Antigravity, GitHub Copilot, Gemini CLI |
 | [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | Problemas comuns e soluções |
 | [`docs/TESTING.md`](docs/TESTING.md) | Factory validators, pytest MCP, doctor.ps1, test-mcp.ps1 |
 | [`docs/PROJECT_OPERATION.md`](docs/PROJECT_OPERATION.md) | State Ledger, .factory/, init-project, gates, riscos, ADRs |
