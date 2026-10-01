@@ -14,6 +14,7 @@ The factory supports multiple agent runtimes from the same canonical sources:
 |---|---|---|---|
 | Claude Code | `~/.claude/agents/<name>.md` and `@name` | `~/.claude.json` plus `.mcp.json` | Primary historical runtime |
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
+| Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` (`<name>`) | `~/.gemini/config/mcp_config.json` | Progressive skills, MCP tools `mcp_knowledge_*` |
 | Gemini CLI | `factory.ps1` wrapper | none | Partial/manual support |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
@@ -89,6 +90,24 @@ Codex does not use Claude Code's `@techlead` syntax. For project behavior, use
 `AGENTS.md`; for reusable Codex roles, use `~/.codex/agents/*.toml`; for MCP,
 use `.codex/config.toml` or `~/.codex/config.toml`.
 
+## Antigravity-Specific Guidance
+
+Google Antigravity automatically discovers and loads `AGENTS.md` as project rules.
+Keep this file within the 24 KB per-file limit.
+
+After `.\install.ps1`, Antigravity skills are generated in
+`~/.gemini/config/plugins/ai-software-factory/skills/<name>/SKILL.md`.
+Use them by activating skills or spawning subagents:
+
+```text
+Ative a skill techlead para avaliar este projeto.
+Invoque qa como subagente para auditar a cobertura de testes.
+```
+
+In Antigravity, MCP tools for knowledge search are exposed with eager loading:
+`mcp_knowledge_search_knowledge`, `mcp_knowledge_get_full_document`, etc.
+See `docs/ANTIGRAVITY.md` for full details.
+
 ## MCP Knowledge
 
 The MCP server lives in `tools/mcp-knowledge-search/` and exposes:
@@ -118,7 +137,8 @@ or updates:
 
 - Claude agents in `~/.claude/agents/`
 - Codex custom agents in `~/.codex/agents/`
-- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, and `.mcp.json`
+- Antigravity plugin and skills in `~/.gemini/config/plugins/ai-software-factory/`
+- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/config/mcp_config.json`, and `.mcp.json`
 - local `.codex/config.toml` for this factory repository
 - helper scripts such as `update-knowledge.ps1` and `link-mcp.ps1`
 
@@ -165,6 +185,7 @@ When changing only indexed knowledge files and not prompts:
 
 ## Documentation Map
 
+- `docs/ANTIGRAVITY.md` - Antigravity installation, skills, subagents, MCP, and rules
 - `docs/CODEX.md` - Codex installation, custom agents, MCP, and limits
 - `docs/CLIENT_COMPATIBILITY.md` - runtime comparison
 - `docs/INSTALLATION.md` - install phases

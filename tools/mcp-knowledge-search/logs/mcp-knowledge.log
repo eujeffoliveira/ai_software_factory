@@ -66,3 +66,8 @@
 {"timestamp": "2026-07-10T13:21:49.316527Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
 {"timestamp": "2026-07-10T13:21:49.318448Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
 {"timestamp": "2026-07-10T13:23:04.180479Z", "event": "server_start", "db_path": "C:\\Projetos\\Pessoal\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-10-01T12:37:01.602056Z", "event": "server_start", "db_path": "D:\\Projetos\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-10-01T12:37:26.928659Z", "event": "server_start", "db_path": "D:\\Projetos\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-10-01T13:48:32.465563Z", "event": "server_start", "db_path": "D:\\Projetos\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-10-01T13:51:35.096504Z", "event": "server_start", "db_path": "D:\\Projetos\\ai_software_factory\\knowledge.db", "db_exists": true}
+{"timestamp": "2026-10-01T13:51:57.723563Z", "event": "server_start", "db_path": "D:\\Projetos\\ai_software_factory\\knowledge.db", "db_exists": true}

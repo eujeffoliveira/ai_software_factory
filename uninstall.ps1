@@ -53,6 +53,9 @@ $CLAUDE_SETTINGS   = "$env:USERPROFILE\.claude.json"
 $CODEX_HOME_DIR    = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE ".codex" }
 $CODEX_AGENTS_DIR  = Join-Path $CODEX_HOME_DIR "agents"
 $CODEX_CONFIG      = Join-Path $CODEX_HOME_DIR "config.toml"
+$GEMINI_CONFIG_DIR = Join-Path $env:USERPROFILE ".gemini\config"
+$GEMINI_PLUGIN_DIR = Join-Path $GEMINI_CONFIG_DIR "plugins\ai-software-factory"
+$GEMINI_MCP_CONFIG = Join-Path $GEMINI_CONFIG_DIR "mcp_config.json"
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 
 $agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer","dataanalyst")
@@ -160,6 +163,17 @@ Write-Host "  ──────────────────────
 Write-Host "  $codexRemoved removidos, $codexSkipped nao encontrados, $codexExternal externos ignorados" -ForegroundColor Gray
 
 # ═════════════════════════════════════════════════════════════════════════════
+#  2B — Antigravity: plugin e skills
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "Antigravity — Plugin e Skills"
+
+if (Test-Path $GEMINI_PLUGIN_DIR) {
+    Remove-IfExists -Path $GEMINI_PLUGIN_DIR -Label "Plugin Antigravity (ai-software-factory)" -Recurse
+} else {
+    Write-Skip "Plugin Antigravity nao encontrado"
+}
+
+# ═════════════════════════════════════════════════════════════════════════════
 #  3 — ~/.claude.json: remover mcpServers.knowledge
 # ═════════════════════════════════════════════════════════════════════════════
 Write-Header ".claude.json — MCP entry"
@@ -250,6 +264,44 @@ if (Test-Path $CODEX_CONFIG) {
     }
 } else {
     Write-Skip "~/.codex/config.toml nao encontrado"
+}
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  4B — mcp_config.json (Antigravity): remover mcpServers.knowledge
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "mcp_config.json (Antigravity) — MCP entry"
+
+if (Test-Path $GEMINI_MCP_CONFIG) {
+    try {
+        $raw = Get-Content $GEMINI_MCP_CONFIG -Raw -Encoding UTF8
+        if ($raw -and $raw.Trim()) {
+            $settings = $raw | ConvertFrom-Json -AsHashtable
+            if ($settings.ContainsKey("mcpServers") -and $settings["mcpServers"].ContainsKey("knowledge")) {
+                if ($WhatIf) {
+                    Write-What "Removeria mcpServers.knowledge de mcp_config.json"
+                } else {
+                    $tsBackup = "$GEMINI_MCP_CONFIG.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                    Copy-Item $GEMINI_MCP_CONFIG $tsBackup -Force
+                    Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+
+                    $settings["mcpServers"].Remove("knowledge")
+                    if ($settings["mcpServers"].Count -eq 0) { $settings.Remove("mcpServers") }
+
+                    $newJson = $settings | ConvertTo-Json -Depth 10
+                    $tmpFile = "$GEMINI_MCP_CONFIG.tmp"
+                    [System.IO.File]::WriteAllText($tmpFile, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+                    Move-Item $tmpFile $GEMINI_MCP_CONFIG -Force
+                    Write-OK "mcpServers.knowledge removido de mcp_config.json"
+                }
+            } else {
+                Write-Skip "mcpServers.knowledge nao encontrado em mcp_config.json"
+            }
+        }
+    } catch {
+        Write-Warn "Nao foi possivel editar mcp_config.json: $_"
+    }
+} else {
+    Write-Skip "mcp_config.json nao encontrado"
 }
 
 # ═════════════════════════════════════════════════════════════════════════════

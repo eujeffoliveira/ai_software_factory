@@ -6,6 +6,7 @@
 |---|---|---|---|---|
 | Claude Code | Sim | Sim | `@nome` via `~/.claude/agents/*.md` | Completo |
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
+| Antigravity | Sim | Sim | skills (`techlead`, etc.) em `~/.gemini/config/plugins/` | Completo |
 | Gemini CLI | Parcial | Não | wrapper `factory.ps1` | Parcial |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
@@ -66,6 +67,27 @@ O MCP `knowledge` é configurado em:
 
 Leia detalhes em `docs/CODEX.md`.
 
+## Antigravity
+
+Antigravity usa um plugin global com skills e MCP registrados em:
+
+```text
+~/.gemini/config/plugins/ai-software-factory/
+~/.gemini/config/mcp_config.json
+```
+
+Uso:
+
+```text
+Ative a skill techlead e avalie os quality gates deste projeto.
+Use a skill qa para criar a suite de testes Vitest.
+```
+
+O Antigravity carrega as skills sob demanda (progressive disclosure) e pode invocar subagentes dedicados (`invoke_subagent`).
+O MCP `knowledge` é registrado diretamente com ferramentas eager (`mcp_knowledge_search_knowledge`, `mcp_knowledge_get_full_document`, etc.).
+
+Leia detalhes em `docs/ANTIGRAVITY.md`.
+
 ## Gemini CLI
 
 Gemini CLI tem suporte parcial via `factory.ps1`.
@@ -102,15 +124,15 @@ não edita configurações do VS Code e o diagnóstico não valida esses artefat
 
 ## Comparação de recursos
 
-| Recurso | Claude Code | Codex | Gemini CLI | Manual |
-|---|---:|---:|---:|---:|
-| Prompt completo | Sim | Sim | Parcial | Manual |
-| Knowledge embutida | Sim | Sim | Não | Manual |
-| MCP Knowledge | Sim | Sim | Não | Não |
-| Agentes especializados | `@nome` | custom agents | wrapper | Manual |
-| State Ledger | Sim | Sim | Manual | Manual |
-| Quality gates | Sim | Sim | Manual | Manual |
-| Config por projeto | Opcional | `.codex/config.toml` | Não | Não |
+| Recurso | Claude Code | Codex | Antigravity | Gemini CLI | Manual |
+|---|---:|---:|---:|---:|---:|
+| Prompt completo | Sim | Sim | Sim | Parcial | Manual |
+| Knowledge embutida | Sim | Sim | Sim | Não | Manual |
+| MCP Knowledge | Sim | Sim | Sim | Não | Não |
+| Agentes especializados | `@nome` | custom agents | skills (`techlead`, etc.) | wrapper | Manual |
+| State Ledger | Sim | Sim | Sim | Manual | Manual |
+| Quality gates | Sim | Sim | Sim | Manual | Manual |
+| Config por projeto | Opcional | `.codex/config.toml` | `AGENTS.md` | Não | Não |
 
 ## Validação
 
@@ -120,5 +142,5 @@ não edita configurações do VS Code e o diagnóstico não valida esses artefat
 python tools/factory-validators/run_all.py
 ```
 
-`doctor.ps1` valida agentes Claude, custom agents Codex, MCP, `knowledge.db` e
+`doctor.ps1` valida agentes Claude, custom agents Codex, skills e plugin Antigravity, MCP, `knowledge.db` e
 scripts esperados.

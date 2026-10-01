@@ -62,7 +62,7 @@ def main() -> int:
     )
     require_contains(
         "AGENTS.md",
-        ["Codex", ".codex/config.toml", "~/.codex/agents/", "MCP-first"],
+        ["Codex", ".codex/config.toml", "~/.codex/agents/", "Antigravity", "MCP-first"],
         errors,
     )
 
@@ -71,8 +71,10 @@ def main() -> int:
         [
             "$CLAUDE_AGENTS_DIR",
             "$CODEX_AGENTS_DIR",
+            "$GEMINI_PLUGIN_DIR",
             "developer_instructions",
             "[mcp_servers.knowledge]",
+            "mcp_config.json",
         ],
         errors,
     )
@@ -87,6 +89,7 @@ def main() -> int:
         [
             "Claude Code — Agentes",
             "Codex — Custom Agents",
+            "Antigravity — Plugin & Skills",
             "mcp_servers.knowledge",
             "mcpServers.knowledge",
         ],
@@ -104,12 +107,17 @@ def main() -> int:
     )
     require_contains(
         "docs/CLIENT_COMPATIBILITY.md",
-        ["Claude Code", "Codex", "MCP"],
+        ["Claude Code", "Codex", "Antigravity", "MCP"],
         errors,
     )
     require_contains(
         "docs/CODEX.md",
         ["Codex", "custom agents", ".codex/config.toml", "MCP"],
+        errors,
+    )
+    require_contains(
+        "docs/ANTIGRAVITY.md",
+        ["Antigravity", "skills", "mcp_config.json", "MCP"],
         errors,
     )
 

@@ -107,6 +107,10 @@ $CODEX_AGENTS_DIR  = Join-Path $CODEX_HOME_DIR "agents"
 $CODEX_CONFIG      = Join-Path $CODEX_HOME_DIR "config.toml"
 $PROJECT_CODEX_DIR = Join-Path $FACTORY_PATH ".codex"
 $PROJECT_CODEX_CONFIG = Join-Path $PROJECT_CODEX_DIR "config.toml"
+$GEMINI_CONFIG_DIR = Join-Path $env:USERPROFILE ".gemini\config"
+$GEMINI_MCP_SETTINGS = Join-Path $GEMINI_CONFIG_DIR "mcp_config.json"
+$GEMINI_PLUGIN_DIR = Join-Path $GEMINI_CONFIG_DIR "plugins\ai-software-factory"
+$GEMINI_SKILLS_DIR = Join-Path $GEMINI_PLUGIN_DIR "skills"
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 $DB_PATH           = Join-Path $FACTORY_PATH "knowledge.db"
 $CONFIG_PATH       = Join-Path $FACTORY_PATH "knowledge-config.json"
@@ -147,20 +151,24 @@ $knowledgeFiles = @(
 
 # ─── Contadores do resumo ─────────────────────────────────────────────────────
 $tally = @{
-    agents_created   = 0
-    agents_updated   = 0
-    agents_unchanged = 0
-    codex_created    = 0
-    codex_updated    = 0
-    codex_unchanged  = 0
-    knowledge_docs   = 0
-    knowledge_status = "skipped"
-    mcp_status       = "unchanged"
-    codex_mcp_status = "unchanged"
-    codex_project_status = "unchanged"
-    deps_status      = "skipped"
-    scripts_updated  = 0
-    scripts_unchanged = 0
+    agents_created        = 0
+    agents_updated        = 0
+    agents_unchanged      = 0
+    codex_created         = 0
+    codex_updated         = 0
+    codex_unchanged       = 0
+    antigravity_created   = 0
+    antigravity_updated   = 0
+    antigravity_unchanged = 0
+    knowledge_docs        = 0
+    knowledge_status      = "skipped"
+    mcp_status            = "unchanged"
+    codex_mcp_status      = "unchanged"
+    codex_project_status  = "unchanged"
+    gemini_mcp_status     = "unchanged"
+    deps_status           = "skipped"
+    scripts_updated       = 0
+    scripts_unchanged     = 0
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -554,6 +562,187 @@ Write-Host ("  Codex agents: {0} criados, {1} atualizados, {2} sem mudancas" -f 
     $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged) -ForegroundColor Gray
 
 # ═════════════════════════════════════════════════════════════════════════════
+#  FASE 5B — Antigravity: ~/.gemini/config/plugins/ai-software-factory/
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "Antigravity — Plugin e Skills"
+
+if (-not (Test-Path $GEMINI_SKILLS_DIR)) {
+    New-Item -ItemType Directory -Path $GEMINI_SKILLS_DIR -Force | Out-Null
+    Write-OK "Criado: $GEMINI_SKILLS_DIR"
+} else {
+    Write-Skip "Ja existe: $GEMINI_SKILLS_DIR"
+}
+
+# Manifest do plugin
+$pluginJson = [ordered]@{
+    name        = "ai-software-factory"
+    version     = $FACTORY_VERSION
+    description = "AI Software Factory — Framework SDLC com 12 agentes especializados, Quality Gates, State Ledger, ADRs e busca semantica via MCP."
+    author      = [ordered]@{ name = "AI Software Factory" }
+    keywords    = @("sdlc", "multi-agent", "software-engineering", "quality-gates", "mcp")
+} | ConvertTo-Json -Depth 5
+Write-IfChanged -Path (Join-Path $GEMINI_PLUGIN_DIR "plugin.json") -Content $pluginJson -Label "antigravity/plugin.json" | Out-Null
+
+# plugin mcp_config.json
+$pluginMcpConfig = [ordered]@{
+    mcpServers = [ordered]@{
+        knowledge = [ordered]@{
+            command = "python"
+            args    = @($SERVER_PATH)
+            env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
+            tools   = [ordered]@{
+                search_knowledge    = [ordered]@{ eager = $true }
+                get_full_document   = [ordered]@{ eager = $true }
+                get_context         = [ordered]@{ eager = $true }
+                health_check        = [ordered]@{ eager = $true }
+                knowledge_stats     = [ordered]@{ eager = $true }
+                search_with_filters = [ordered]@{ eager = $true }
+            }
+        }
+    }
+} | ConvertTo-Json -Depth 6
+Write-IfChanged -Path (Join-Path $GEMINI_PLUGIN_DIR "mcp_config.json") -Content $pluginMcpConfig -Label "antigravity/mcp_config.json" | Out-Null
+
+$antigravityMcpBlock = @"
+
+---
+
+<!-- BEGIN ai_software_factory:antigravity-runtime -->
+## Antigravity Runtime
+
+Esta skill representa o agente especializado no runtime do Google Antigravity.
+Ela e ativada sob demanda (progressive disclosure) para orientar este papel no SDLC.
+
+### Uso do Conhecimento via MCP
+
+Consulte o servidor MCP ``knowledge`` antes de responder sobre artefatos internos da factory:
+skills, schemas, templates, examples, checklists, playbooks, Golden Models, quality gates,
+failure modes, knowledge cards, heuristicas e principios.
+
+Ferramentas MCP disponiveis no Antigravity:
+- ``mcp_knowledge_search_knowledge`` ou ``search_knowledge``
+- ``mcp_knowledge_search_with_filters`` ou ``search_with_filters``
+- ``mcp_knowledge_get_full_document`` ou ``get_full_document``
+- ``mcp_knowledge_get_context`` ou ``get_context``
+- ``mcp_knowledge_knowledge_stats`` ou ``knowledge_stats``
+- ``mcp_knowledge_health_check`` ou ``health_check``
+
+### Politica de Fallback
+
+Se o MCP falhar ou estiver indisponivel:
+1. Declare explicitamente que o MCP falhou ou esta indisponivel nesta sessao.
+2. Utilize leitura direta de arquivos apenas como fallback declarado.
+3. FACTORY_ROOT: $FACTORY_PATH
+4. Recomende: `& "`$env:FACTORY_ROOT\test-mcp.ps1"` ou `& "`$env:FACTORY_ROOT\doctor.ps1"`.
+5. NUNCA utilize fallback silencioso.
+
+### Isolamento de Fontes
+
+No runtime, utilize apenas os arquivos da pasta do agente e o MCP knowledge.
+Fontes como ``context/`` e ``lib/`` sao exclusivas de build-time e nao devem ser consultadas em tempo de execucao,
+salvo pedido explicito do usuario.
+<!-- END ai_software_factory:antigravity-runtime -->
+"@
+
+$antigravityManifestPath = Join-Path $GEMINI_PLUGIN_DIR ".ai_software_factory_manifest.json"
+$existingAntigravityInstalledAt = if (Test-Path $antigravityManifestPath) {
+    try { (Get-Content $antigravityManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
+$antigravityManifest = [ordered]@{
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingAntigravityInstalledAt) { $existingAntigravityInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    mcp_server        = "knowledge"
+    skills            = [ordered]@{}
+}
+
+# Limpar versoes legadas com prefixo factory- se existirem
+Get-ChildItem -Path $GEMINI_SKILLS_DIR -Directory -Filter "factory-*" -ErrorAction SilentlyContinue | ForEach-Object {
+    Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+foreach ($agent in $agents) {
+    $agentDir   = Join-Path $FACTORY_PATH $agent.Folder
+    $promptFile = Join-Path $agentDir "prompt.md"
+    $skillFolder = Join-Path $GEMINI_SKILLS_DIR $agent.Name
+    if (-not (Test-Path $skillFolder)) {
+        New-Item -ItemType Directory -Path $skillFolder -Force | Out-Null
+    }
+    $outputFile = Join-Path $skillFolder "SKILL.md"
+
+    if (-not (Test-Path $promptFile)) {
+        Write-Warn "prompt.md nao encontrado: $($agent.Folder)"
+        $antigravityManifest.skills[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        continue
+    }
+
+    $skillHeader = @"
+---
+name: $($agent.Name)
+description: >-
+  $($agent.Description). Use esta skill quando o usuario pedir acoes de $($agent.Name), analise, revisao de qualidade ou artefatos relacionados a este papel no SDLC.
+---
+
+<!--
+AUTO-GENERATED BY ai_software_factory/install.ps1
+DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+To update: cd $FACTORY_PATH && .\install.ps1
+Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 antigravityMcpBlock
+-->
+"@
+
+    $sbSkill = [System.Text.StringBuilder]::new()
+    [void]$sbSkill.AppendLine($skillHeader.TrimEnd())
+    [void]$sbSkill.AppendLine("")
+    [void]$sbSkill.AppendLine("<!-- BEGIN ai_software_factory managed block -->")
+    [void]$sbSkill.AppendLine("")
+    [void]$sbSkill.AppendLine((Get-Content $promptFile -Raw -Encoding UTF8).TrimEnd())
+    [void]$sbSkill.AppendLine("")
+
+    foreach ($relPath in $knowledgeFiles) {
+        $fullPath = Join-Path $agentDir $relPath
+        if (Test-Path $fullPath) {
+            $display = "$($agent.Folder)/$($relPath.Replace('\','/'))"
+            [void]$sbSkill.AppendLine("---")
+            [void]$sbSkill.AppendLine("<!-- SOURCE: $display -->")
+            [void]$sbSkill.AppendLine("")
+            [void]$sbSkill.AppendLine((Get-Content $fullPath -Raw -Encoding UTF8).TrimEnd())
+            [void]$sbSkill.AppendLine("")
+        }
+    }
+
+    [void]$sbSkill.AppendLine($antigravityMcpBlock)
+    [void]$sbSkill.AppendLine("")
+    [void]$sbSkill.AppendLine("<!-- END ai_software_factory managed block -->")
+
+    $status = Write-IfChanged -Path $outputFile -Content $sbSkill.ToString() -Label "antigravity/$($agent.Name)"
+    switch ($status) {
+        "created"   { $tally.antigravity_created++ }
+        "updated"   { $tally.antigravity_updated++ }
+        "unchanged" { $tally.antigravity_unchanged++ }
+    }
+
+    $sourceHash    = (Get-FileHash $promptFile -Algorithm SHA256).Hash.Substring(0, 16)
+    $installedHash = if (Test-Path $outputFile) { (Get-FileHash $outputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $antigravityManifest.skills[$agent.Name] = [ordered]@{
+        status         = $status
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $outputFile
+        installed_hash = $installedHash
+    }
+}
+
+$antigravityManifestJson = $antigravityManifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $antigravityManifestPath -Content $antigravityManifestJson -Label "antigravity/.ai_software_factory_manifest.json" | Out-Null
+
+Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
+Write-Host ("  Antigravity skills: {0} criadas, {1} atualizadas, {2} sem mudancas" -f `
+    $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged) -ForegroundColor Gray
+
+# ═════════════════════════════════════════════════════════════════════════════
 #  FASE 6 — knowledge-config.json + ingest (backup/restore on failure)
 # ═════════════════════════════════════════════════════════════════════════════
 if ($hasPython) {
@@ -801,6 +990,74 @@ KNOWLEDGE_DB = "knowledge.db"
 if (-not (Test-Path $PROJECT_CODEX_DIR)) { New-Item -ItemType Directory -Path $PROJECT_CODEX_DIR -Force | Out-Null }
 $tally.codex_project_status = Write-IfChanged -Path $PROJECT_CODEX_CONFIG -Content $projectCodexConfig -Label ".codex/config.toml"
 
+# Antigravity global mcp_config.json — merge cirurgico com escrita atomica
+if (Test-Path $GEMINI_CONFIG_DIR) {
+    try {
+        $geminiSettings = [ordered]@{}
+        $geminiSettingsRaw = ""
+        if (Test-Path $GEMINI_MCP_SETTINGS) {
+            $geminiSettingsRaw = Get-Content $GEMINI_MCP_SETTINGS -Raw -Encoding UTF8
+        }
+
+        $parseOk = $false
+        if ($geminiSettingsRaw -and $geminiSettingsRaw.Trim()) {
+            try {
+                $geminiSettings = $geminiSettingsRaw | ConvertFrom-Json -AsHashtable
+                $parseOk = $true
+            } catch {
+                $badBackup = "$GEMINI_MCP_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                Copy-Item $GEMINI_MCP_SETTINGS $badBackup -Force
+                Write-Warn "mcp_config.json estava invalido. Backup criado: $badBackup"
+            }
+        }
+
+        $geminiMcpEntry = [ordered]@{
+            command = "python"
+            args    = @($SERVER_PATH)
+            env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
+            tools   = [ordered]@{
+                search_knowledge    = [ordered]@{ eager = $true }
+                get_full_document   = [ordered]@{ eager = $true }
+                get_context         = [ordered]@{ eager = $true }
+                health_check        = [ordered]@{ eager = $true }
+                knowledge_stats     = [ordered]@{ eager = $true }
+                search_with_filters = [ordered]@{ eager = $true }
+            }
+        }
+
+        $existingGemini = if ($parseOk) { $geminiSettings["mcpServers"]?["knowledge"] } else { $null }
+        $alreadyCurrentGemini = $existingGemini -and
+                                ($existingGemini["command"] -eq $geminiMcpEntry.command) -and
+                                ($existingGemini["args"]    -contains $SERVER_PATH) -and
+                                ($existingGemini["env"]?["KNOWLEDGE_DB"] -eq $DB_PATH)
+
+        if ($alreadyCurrentGemini) {
+            Write-Skip "mcp_config.json ja configurado corretamente"
+            $tally.gemini_mcp_status = "unchanged"
+        } else {
+            if ($parseOk -and (Test-Path $GEMINI_MCP_SETTINGS) -and (Get-Item $GEMINI_MCP_SETTINGS).Length -gt 0) {
+                $tsBackup = "$GEMINI_MCP_SETTINGS.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                Copy-Item $GEMINI_MCP_SETTINGS $tsBackup -Force
+                Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+            }
+
+            if (-not $geminiSettings.Contains("mcpServers")) { $geminiSettings["mcpServers"] = [ordered]@{} }
+            $geminiSettings["mcpServers"]["knowledge"] = $geminiMcpEntry
+
+            $newJson = $geminiSettings | ConvertTo-Json -Depth 10
+            $tmpSettings = "$GEMINI_MCP_SETTINGS.tmp"
+            [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+            Move-Item $tmpSettings $GEMINI_MCP_SETTINGS -Force
+
+            Write-OK "mcp_config.json atualizado (MCP Antigravity registrado)"
+            $tally.gemini_mcp_status = "updated"
+        }
+    } catch {
+        Write-Warn "Nao foi possivel atualizar mcp_config.json: $_"
+        $tally.gemini_mcp_status = "failed"
+    }
+}
+
 # ═════════════════════════════════════════════════════════════════════════════
 #  FASE 7 — factory.ps1 (Gemini CLI)
 # ═════════════════════════════════════════════════════════════════════════════
@@ -1033,6 +1290,10 @@ $codexSummary = "{0} criados  {1} atualizados  {2} sem mudancas" -f `
     $tally.codex_created, $tally.codex_updated, $tally.codex_unchanged
 Write-Host ("  ║  Codex agents {0,-36}║" -f $codexSummary) -ForegroundColor Green
 
+$antigravitySummary = "{0} criadas  {1} atualizadas  {2} sem mudancas" -f `
+    $tally.antigravity_created, $tally.antigravity_updated, $tally.antigravity_unchanged
+Write-Host ("  ║  Antigravity  {0,-36}║" -f $antigravitySummary) -ForegroundColor Green
+
 $kbSummary = switch ($tally.knowledge_status) {
     "rebuilt"   { "reconstruido — $($tally.knowledge_docs) documentos" }
     "unchanged" { "sem mudancas — $($tally.knowledge_docs) documentos" }
@@ -1043,6 +1304,7 @@ Write-Host ("  ║  Knowledge DB {0,-36}║" -f $kbSummary) -ForegroundColor Gre
 Write-Host ("  ║  MCP Config   {0,-36}║" -f $tally.mcp_status) -ForegroundColor Green
 Write-Host ("  ║  Codex MCP    {0,-36}║" -f $tally.codex_mcp_status) -ForegroundColor Green
 Write-Host ("  ║  Codex local  {0,-36}║" -f $tally.codex_project_status) -ForegroundColor Green
+Write-Host ("  ║  Gemini MCP   {0,-36}║" -f $tally.gemini_mcp_status) -ForegroundColor Green
 Write-Host ("  ║  Dependencias {0,-36}║" -f $tally.deps_status) -ForegroundColor Green
 Write-Host ("  ║  Scripts      {0,-36}║" -f ("{0} atualizados  {1} sem mudancas" -f $tally.scripts_updated, $tally.scripts_unchanged)) -ForegroundColor Green
 Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Green
@@ -1056,6 +1318,10 @@ Write-Host ""
 Write-Host "  Codex — custom agents instalados:" -ForegroundColor Cyan
 Write-Host "    spawn/use techlead, qa, architect, po, devbackend ... como subagentes"
 Write-Host "    MCP: ~/.codex/config.toml e .codex/config.toml nesta factory"
+Write-Host ""
+Write-Host "  Antigravity (AGY) — plugin e skills instalados:" -ForegroundColor Cyan
+Write-Host "    Skills: techlead, qa, architect, po, devbackend ... sob demanda"
+Write-Host "    MCP: ~/.gemini/config/mcp_config.json e ~/.gemini/config/plugins/ai-software-factory"
 Write-Host ""
 if ($hasPython) {
     Write-Host "  Atualizar apos git pull / editar conhecimento:" -ForegroundColor Cyan
