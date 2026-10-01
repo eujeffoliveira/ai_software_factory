@@ -46,6 +46,42 @@ function Remove-IfExists {
     }
 }
 
+function Convert-PSObjectToOrderedHashtable ($inputObj) {
+    if ($null -eq $inputObj) { return $null }
+    if ($inputObj -is [System.Collections.IDictionary]) {
+        $hash = [ordered]@{}
+        foreach ($key in $inputObj.Keys) {
+            $hash[$key] = Convert-PSObjectToOrderedHashtable $inputObj[$key]
+        }
+        return $hash
+    }
+    if ($inputObj -is [System.Array] -or ($inputObj -is [System.Collections.IList] -and $inputObj -isnot [string])) {
+        $list = [System.Collections.ArrayList]::new()
+        foreach ($item in $inputObj) {
+            [void]$list.Add((Convert-PSObjectToOrderedHashtable $item))
+        }
+        return $list
+    }
+    if ($inputObj -is [PSCustomObject]) {
+        $hash = [ordered]@{}
+        foreach ($prop in $inputObj.PSObject.Properties) {
+            $hash[$prop.Name] = Convert-PSObjectToOrderedHashtable $prop.Value
+        }
+        return $hash
+    }
+    return $inputObj
+}
+
+function ConvertFrom-JsonSafe ($jsonText) {
+    if (-not $jsonText -or -not $jsonText.Trim()) { return [ordered]@{} }
+    try {
+        return (ConvertFrom-Json -InputObject $jsonText -AsHashtable -ErrorAction Stop)
+    } catch {
+        $obj = ConvertFrom-Json -InputObject $jsonText -ErrorAction Stop
+        return (Convert-PSObjectToOrderedHashtable $obj)
+    }
+}
+
 # ─── Caminhos ────────────────────────────────────────────────────────────────
 $FACTORY_PATH      = (Get-Location).Path
 $CLAUDE_AGENTS_DIR = "$env:USERPROFILE\.claude\agents"
@@ -65,6 +101,8 @@ $VSCODE_USER_EXTENSIONS_DIR = if ($env:VSCODE_EXTENSIONS) { $env:VSCODE_EXTENSIO
 $COPILOT_EXT_DIR            = Join-Path $VSCODE_USER_EXTENSIONS_DIR "ai-software-factory.agents"
 $COPILOT_EXT_AGENTS_DIR     = Join-Path $COPILOT_EXT_DIR "agents"
 $COPILOT_EXT_PKG            = Join-Path $COPILOT_EXT_DIR "package.json"
+$VSCODE_USER_DIR            = if ($env:APPDATA) { Join-Path $env:APPDATA "Code\User" } else { Join-Path $env:USERPROFILE ".config\Code\User" }
+$VSCODE_GLOBAL_MCP          = Join-Path $VSCODE_USER_DIR "mcp.json"
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 
 $agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer","dataanalyst")
@@ -409,6 +447,42 @@ if (Test-Path $GEMINI_MCP_CONFIG) {
     }
 } else {
     Write-Skip "mcp_config.json nao encontrado"
+}
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  4C — VS Code User mcp.json: remover servers.knowledge
+# ═════════════════════════════════════════════════════════════════════════════
+Write-Header "VS Code User mcp.json — MCP entry"
+
+if (Test-Path $VSCODE_GLOBAL_MCP) {
+    try {
+        $vscodeUserRaw = Get-Content $VSCODE_GLOBAL_MCP -Raw -Encoding UTF8
+        if ($vscodeUserRaw -and $vscodeUserRaw.Trim()) {
+            $vscodeUserSettings = ConvertFrom-JsonSafe $vscodeUserRaw
+            if ($vscodeUserSettings.ContainsKey("servers") -and $vscodeUserSettings["servers"].ContainsKey("knowledge")) {
+                if ($WhatIf) {
+                    Write-What "Removeria servers.knowledge de VS Code User mcp.json"
+                } else {
+                    $tsBackup = "$VSCODE_GLOBAL_MCP.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                    Copy-Item $VSCODE_GLOBAL_MCP $tsBackup -Force
+                    Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+
+                    $vscodeUserSettings["servers"].Remove("knowledge")
+                    $newJson = $vscodeUserSettings | ConvertTo-Json -Depth 10
+                    $tmpSettings = "$VSCODE_GLOBAL_MCP.tmp"
+                    [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+                    Move-Item $tmpSettings $VSCODE_GLOBAL_MCP -Force
+                    Write-OK "servers.knowledge removido de VS Code User mcp.json"
+                }
+            } else {
+                Write-Skip "servers.knowledge nao encontrado em VS Code User mcp.json"
+            }
+        }
+    } catch {
+        Write-Warn "Nao foi possivel editar VS Code User mcp.json: $_"
+    }
+} else {
+    Write-Skip "VS Code User mcp.json nao encontrado"
 }
 
 # ═════════════════════════════════════════════════════════════════════════════

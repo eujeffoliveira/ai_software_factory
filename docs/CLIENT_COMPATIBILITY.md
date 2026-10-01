@@ -7,7 +7,7 @@
 | Claude Code | Sim | Sim | `@nome` via `~/.claude/agents/*.md` | Completo |
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
 | Antigravity | Sim | Sim | skills (`techlead`, etc.) em `~/.gemini/config/plugins/` | Completo |
-| GitHub Copilot | Sim | Sim | `@nome` via extensão global (`~/.vscode/extensions/`) + prompt files (`.github/prompts/`) + `.vscode/mcp.json` | Completo |
+| GitHub Copilot | Sim | Sim | `@nome` via extensão global (`~/.vscode/extensions/`) + prompt files (`.github/prompts/`) + MCP global e local (`mcp.json`) | Completo |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
 Todos os runtimes completos usam a mesma fonte canônica:
@@ -98,7 +98,8 @@ Após `.\install.ps1`, os artefatos ficam em:
 ~/.vscode/extensions/ai-software-factory.agents/   # Extensão declarativa global (qualquer projeto)
 .github/copilot-instructions.md                    # Diretrizes do SDLC e Quality Gates
 .github/prompts/*.prompt.md                        # Prompt files reutilizáveis
-.vscode/mcp.json                                   # Conexão MCP knowledge (Agent mode)
+.vscode/mcp.json                                   # Conexão MCP knowledge (Agent mode workspace)
+%APPDATA%/Code/User/mcp.json                       # Conexão MCP knowledge global (qualquer projeto)
 ```
 
 Uso:

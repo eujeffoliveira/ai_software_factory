@@ -56,6 +56,42 @@ function Write-IfChanged {
     return $status
 }
 
+function Convert-PSObjectToOrderedHashtable ($inputObj) {
+    if ($null -eq $inputObj) { return $null }
+    if ($inputObj -is [System.Collections.IDictionary]) {
+        $hash = [ordered]@{}
+        foreach ($key in $inputObj.Keys) {
+            $hash[$key] = Convert-PSObjectToOrderedHashtable $inputObj[$key]
+        }
+        return $hash
+    }
+    if ($inputObj -is [System.Array] -or ($inputObj -is [System.Collections.IList] -and $inputObj -isnot [string])) {
+        $list = [System.Collections.ArrayList]::new()
+        foreach ($item in $inputObj) {
+            [void]$list.Add((Convert-PSObjectToOrderedHashtable $item))
+        }
+        return $list
+    }
+    if ($inputObj -is [PSCustomObject]) {
+        $hash = [ordered]@{}
+        foreach ($prop in $inputObj.PSObject.Properties) {
+            $hash[$prop.Name] = Convert-PSObjectToOrderedHashtable $prop.Value
+        }
+        return $hash
+    }
+    return $inputObj
+}
+
+function ConvertFrom-JsonSafe ($jsonText) {
+    if (-not $jsonText -or -not $jsonText.Trim()) { return [ordered]@{} }
+    try {
+        return (ConvertFrom-Json -InputObject $jsonText -AsHashtable -ErrorAction Stop)
+    } catch {
+        $obj = ConvertFrom-Json -InputObject $jsonText -ErrorAction Stop
+        return (Convert-PSObjectToOrderedHashtable $obj)
+    }
+}
+
 function ConvertTo-TomlString {
     param([string]$Value)
     $escaped = $Value.Replace("\", "\\").Replace('"', '\"')
@@ -127,6 +163,8 @@ $VSCODE_USER_EXTENSIONS_DIR = if ($env:VSCODE_EXTENSIONS) { $env:VSCODE_EXTENSIO
 $COPILOT_EXT_DIR            = Join-Path $VSCODE_USER_EXTENSIONS_DIR "ai-software-factory.agents"
 $COPILOT_EXT_AGENTS_DIR     = Join-Path $COPILOT_EXT_DIR "agents"
 $COPILOT_EXT_PKG            = Join-Path $COPILOT_EXT_DIR "package.json"
+$VSCODE_USER_DIR            = if ($env:APPDATA) { Join-Path $env:APPDATA "Code\User" } else { Join-Path $env:USERPROFILE ".config\Code\User" }
+$VSCODE_GLOBAL_MCP          = Join-Path $VSCODE_USER_DIR "mcp.json"
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 $DB_PATH           = Join-Path $FACTORY_PATH "knowledge.db"
 $CONFIG_PATH       = Join-Path $FACTORY_PATH "knowledge-config.json"
@@ -190,9 +228,10 @@ $tally = @{
     claude_mcp_status     = "unchanged"
     codex_mcp_status      = "unchanged"
     codex_project_status  = "unchanged"
-    gemini_mcp_status     = "unchanged"
-    vscode_mcp_status     = "unchanged"
-    deps_status           = "skipped"
+    gemini_mcp_status        = "unchanged"
+    vscode_mcp_status        = "unchanged"
+    vscode_global_mcp_status = "unchanged"
+    deps_status              = "skipped"
     scripts_updated       = 0
     scripts_unchanged     = 0
 }
@@ -1247,7 +1286,7 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
 name: $($agent.Name)
 description: >-
   $($agent.Description)
-tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web]
+tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web, knowledge/*]
 ---
 
 <!--
@@ -1431,7 +1470,7 @@ if ($enableClaude) {
         $parseOk = $false
         if ($settingsRaw -and $settingsRaw.Trim()) {
             try {
-                $settings = $settingsRaw | ConvertFrom-Json -AsHashtable
+                $settings = ConvertFrom-JsonSafe $settingsRaw
                 $parseOk = $true
             } catch {
                 # JSON invalido — criar backup antes de qualquer alteracao
@@ -1566,7 +1605,7 @@ if ($enableAntigravity) {
             $parseOk = $false
             if ($geminiSettingsRaw -and $geminiSettingsRaw.Trim()) {
                 try {
-                    $geminiSettings = $geminiSettingsRaw | ConvertFrom-Json -AsHashtable
+                    $geminiSettings = ConvertFrom-JsonSafe $geminiSettingsRaw
                     $parseOk = $true
                 } catch {
                     $badBackup = "$GEMINI_MCP_SETTINGS.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
@@ -1639,8 +1678,73 @@ if ($enableCopilot) {
     $vscodeMcpJsonStr = $vscodeMcpEntry | ConvertTo-Json -Depth 5
     if (-not (Test-Path $VSCODE_DIR)) { New-Item -ItemType Directory -Path $VSCODE_DIR -Force | Out-Null }
     $tally.vscode_mcp_status = Write-IfChanged -Path $VSCODE_MCP_CONFIG -Content $vscodeMcpJsonStr -Label ".vscode/mcp.json"
+
+    # VS Code User config global — registrar MCP knowledge para disponibilidade em qualquer projeto
+    if (Test-Path $VSCODE_USER_DIR) {
+        try {
+            $vscodeUserMcp = [ordered]@{}
+            $vscodeUserMcpRaw = ""
+            if (Test-Path $VSCODE_GLOBAL_MCP) {
+                $vscodeUserMcpRaw = Get-Content $VSCODE_GLOBAL_MCP -Raw -Encoding UTF8
+            }
+
+            $parseOk = $false
+            if ($vscodeUserMcpRaw -and $vscodeUserMcpRaw.Trim()) {
+                try {
+                    $vscodeUserMcp = ConvertFrom-JsonSafe $vscodeUserMcpRaw
+                    $parseOk = $true
+                } catch {
+                    $badBackup = "$VSCODE_GLOBAL_MCP.invalid_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                    Copy-Item $VSCODE_GLOBAL_MCP $badBackup -Force
+                    Write-Warn "VS Code User mcp.json estava invalido. Backup criado: $badBackup"
+                }
+            }
+
+            $vscodeGlobalEntry = [ordered]@{
+                type    = "stdio"
+                command = "python"
+                args    = @($SERVER_PATH)
+                env     = [ordered]@{ KNOWLEDGE_DB = $DB_PATH }
+            }
+
+            $existingVscode = if ($parseOk -and $vscodeUserMcp.Contains("servers")) { $vscodeUserMcp["servers"]["knowledge"] } else { $null }
+            $alreadyCurrentVscode = $existingVscode -and
+                                    ($existingVscode["command"] -eq $vscodeGlobalEntry.command) -and
+                                    ($existingVscode["args"]    -contains $SERVER_PATH) -and
+                                    ($existingVscode.Contains("env") -and $existingVscode["env"]["KNOWLEDGE_DB"] -eq $DB_PATH)
+
+            if ($alreadyCurrentVscode) {
+                Write-Skip "VS Code User mcp.json ja configurado corretamente"
+                $tally.vscode_global_mcp_status = "unchanged"
+            } else {
+                if ($parseOk -and (Test-Path $VSCODE_GLOBAL_MCP) -and (Get-Item $VSCODE_GLOBAL_MCP).Length -gt 0) {
+                    $tsBackup = "$VSCODE_GLOBAL_MCP.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                    Copy-Item $VSCODE_GLOBAL_MCP $tsBackup -Force
+                    Write-Host "  [BAK]  $tsBackup" -ForegroundColor DarkGray
+                }
+
+                if (-not $vscodeUserMcp.Contains("servers")) { $vscodeUserMcp["servers"] = [ordered]@{} }
+                $vscodeUserMcp["servers"]["knowledge"] = $vscodeGlobalEntry
+                if (-not $vscodeUserMcp.Contains("inputs")) { $vscodeUserMcp["inputs"] = @() }
+
+                $newJson = $vscodeUserMcp | ConvertTo-Json -Depth 10
+                $tmpSettings = "$VSCODE_GLOBAL_MCP.tmp"
+                [System.IO.File]::WriteAllText($tmpSettings, ($newJson -replace "`r`n","`n"), $utf8NoBom)
+                Move-Item $tmpSettings $VSCODE_GLOBAL_MCP -Force
+
+                Write-OK "VS Code User mcp.json atualizado (MCP global registrado)"
+                $tally.vscode_global_mcp_status = "updated"
+            }
+        } catch {
+            Write-Warn "Nao foi possivel atualizar VS Code User mcp.json: $_"
+            $tally.vscode_global_mcp_status = "failed"
+        }
+    } else {
+        $tally.vscode_global_mcp_status = "skipped"
+    }
 } else {
     $tally.vscode_mcp_status = "pulado"
+    $tally.vscode_global_mcp_status = "pulado"
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -1882,6 +1986,7 @@ Write-Host ("  ║  Codex MCP    {0,-36}║" -f $tally.codex_mcp_status) -Foregr
 Write-Host ("  ║  Codex local  {0,-36}║" -f $tally.codex_project_status) -ForegroundColor Green
 Write-Host ("  ║  Gemini MCP   {0,-36}║" -f $tally.gemini_mcp_status) -ForegroundColor Green
 Write-Host ("  ║  VS Code MCP  {0,-36}║" -f $tally.vscode_mcp_status) -ForegroundColor Green
+Write-Host ("  ║  VS Code Usr  {0,-36}║" -f $tally.vscode_global_mcp_status) -ForegroundColor Green
 Write-Host ("  ║  Dependencias {0,-36}║" -f $tally.deps_status) -ForegroundColor Green
 Write-Host ("  ║  Scripts      {0,-36}║" -f ("{0} atualizados  {1} sem mudancas" -f $tally.scripts_updated, $tally.scripts_unchanged)) -ForegroundColor Green
 Write-Host "  ╚═══════════════════════════════════════════════════╝" -ForegroundColor Green

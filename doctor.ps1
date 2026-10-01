@@ -50,6 +50,8 @@ $vscodeExtensionsDir = if ($env:VSCODE_EXTENSIONS) { $env:VSCODE_EXTENSIONS } el
 $copilotExtDir = Join-Path $vscodeExtensionsDir "ai-software-factory.agents"
 $copilotExtAgentsDir = Join-Path $copilotExtDir "agents"
 $copilotExtPkg = Join-Path $copilotExtDir "package.json"
+$vscodeUserDir = if ($env:APPDATA) { Join-Path $env:APPDATA "Code\User" } else { Join-Path $env:USERPROFILE ".config\Code\User" }
+$vscodeGlobalMcp = Join-Path $vscodeUserDir "mcp.json"
 $agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer","dataanalyst")
 $expectedAgentCount = $agentNames.Count
 
@@ -786,6 +788,34 @@ if ($hasCopilotManifest) {
     } else {
         Write-CheckWarn ".vscode/mcp.json nao encontrado (execute .\install.ps1 -Copilot)"
         $hadWarning = $true
+    }
+
+    if (Test-Path $vscodeGlobalMcp) {
+        try {
+            $vscodeUserRaw = Get-Content $vscodeGlobalMcp -Raw -Encoding UTF8
+            if ($vscodeUserRaw -and $vscodeUserRaw.Trim()) {
+                $vscodeUserSettings = $vscodeUserRaw | ConvertFrom-Json
+                $userKnowledge = if ($vscodeUserSettings.servers) { $vscodeUserSettings.servers.knowledge } else { $null }
+                if ($userKnowledge) {
+                    Write-CheckOK "servers.knowledge configurado em VS Code User mcp.json"
+                    $configuredServer = if ($userKnowledge.args) { $userKnowledge.args[0] } else { "" }
+                    $expectedServer   = Join-Path $factoryRoot "tools\mcp-knowledge-search\server.py"
+                    if ($configuredServer -eq $expectedServer) {
+                        Write-CheckOK "server.py path correto em VS Code User mcp.json"
+                    } else {
+                        Write-CheckWarn "server.py em VS Code User mcp.json aponta para: $configuredServer"
+                        Write-CheckWarn "          Esperado: $expectedServer"
+                        $hadWarning = $true
+                    }
+                } else {
+                    Write-CheckWarn "servers.knowledge ausente em VS Code User mcp.json (execute .\install.ps1 -Copilot)"
+                    $hadWarning = $true
+                }
+            }
+        } catch {
+            Write-CheckWarn "Nao foi possivel ler VS Code User mcp.json: $_"
+            $hadWarning = $true
+        }
     }
 } else {
     Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional — .\install.ps1 -Copilot)" -ForegroundColor DarkGray

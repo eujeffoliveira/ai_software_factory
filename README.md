@@ -217,7 +217,7 @@ Após `.\install.ps1 -Copilot` (ou via seleção interativa):
    @architect Desenhe o diagrama C4 de componentes e avalie necessidade de ADR
    ```
 2. Prompt files e instruções são gerados em `.github/prompts/` e `.github/copilot-instructions.md` (uso via `#file:` no repositório).
-3. No modo Agent do Copilot Chat, as ferramentas MCP são chamadas automaticamente via `.vscode/mcp.json`.
+3. No modo Agent do Copilot Chat, as ferramentas MCP são chamadas automaticamente tanto globalmente (`%APPDATA%\Code\User\mcp.json`) quanto no workspace (`.vscode/mcp.json`).
 
 Ver: [`docs/COPILOT.md`](docs/COPILOT.md)
 

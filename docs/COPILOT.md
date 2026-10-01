@@ -13,7 +13,7 @@ A integracao com o GitHub Copilot e sustentada por quatro pilares canonicamente 
 | **Extensao Global VS Code** | `~/.vscode/extensions/ai-software-factory.agents/` | **Global** (qualquer janela/projeto) | Extensao declarativa com `contributes.chatAgents` contendo os 12 agentes em formato `.agent.md`, acessiveis via `@<nome>` no Copilot Chat em qualquer pasta aberta no VS Code |
 | **Instrucoes Globais** | `.github/copilot-instructions.md` | Workspace atual | Regras do SDLC, Quality Gates, State Ledger, ADR policy e isolamento de runtime injetados automaticamente no contexto do Copilot |
 | **Prompt Files Reutilizaveis** | `.github/prompts/*.prompt.md` | Workspace atual | Personas completas dos 12 agentes com conhecimento destilado (principles, heuristics, cards) para invocacao sob demanda via `#file:` no Copilot Chat |
-| **MCP Knowledge Server** | `.vscode/mcp.json` | Workspace atual | Configuracao do servidor MCP `knowledge` para consulta semantica de conhecimento no VS Code Copilot Agent mode |
+| **MCP Knowledge Server** | `.vscode/mcp.json` (workspace) & `%APPDATA%\Code\User\mcp.json` (global) | Workspace e Global | Configuracao do servidor MCP `knowledge` para consulta semantica de conhecimento no VS Code Copilot Agent mode em qualquer projeto |
 
 ---
 
@@ -88,7 +88,7 @@ Cada agente possui um cabecalho YAML com ferramentas permitidas (`tools`), descr
 name: techlead
 description: >-
   Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto
-tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web]
+tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web, knowledge/*]
 ---
 
 <!-- BEGIN ai_software_factory managed block -->
@@ -113,10 +113,10 @@ A fonte da verdade de todos os agentes reside nas pastas canonicas `AgenteXX_Rol
 ```
 
 O `install.ps1` detecta o ambiente do VS Code / Copilot e executa automaticamente:
-1. Criacao da extensao global em `~/.vscode/extensions/ai-software-factory.agents/` com os 12 `.agent.md`.
+1. Criacao da extensao global em `~/.vscode/extensions/ai-software-factory.agents/` com os 12 `.agent.md` (autorizando ferramentas `knowledge/*`).
 2. Criacao/atualizacao de `.github/copilot-instructions.md` no workspace.
 3. Geracao dos 12 arquivos de prompt em `.github/prompts/<nome>.prompt.md`.
-4. Configuracao do servidor MCP em `.vscode/mcp.json`.
+4. Configuracao do servidor MCP em `.vscode/mcp.json` (workspace) e em `%APPDATA%\Code\User\mcp.json` (global do usuario).
 5. Registro dos manifestos em `.github/prompts/` e `~/.vscode/extensions/ai-software-factory.agents/`.
 
 Para validar a integracao:
@@ -191,15 +191,17 @@ Consulte o servidor MCP knowledge para encontrar o template de ADR e o checklist
 ---
 
 ## 6. Vinculando o MCP a Projetos Externos
+ 
+Com a instalacao do `install.ps1`, tanto a extensao global de agentes (`@techlead`, etc.) quanto o servidor MCP de conhecimento (`servers.knowledge` em `%APPDATA%\Code\User\mcp.json`) ja estao configurados globalmente. Isso significa que o Copilot tem acesso automatico as ferramentas MCP em **qualquer janela, pasta ou projeto** aberto no VS Code!
 
-A extensao global de agentes (`@techlead`, etc.) ja funciona em qualquer pasta. Caso voce tambem queira que o Copilot tenha acesso as ferramentas MCP de busca semantica de conhecimento no projeto consumidor:
+Caso voce deseje configurar explicitamente um arquivo `.vscode/mcp.json` especifico na raiz de um projeto consumidor (por exemplo, para versionar a configuracao ou permitir que outros membros da equipe usem):
 
 ```powershell
 # Abra o terminal no diretorio do projeto consumidor e execute:
 & "$env:FACTORY_ROOT\link-mcp.ps1"
 ```
 
-O script criara/atualizara automaticamente `.vscode/mcp.json` com a conexao para o servidor MCP `knowledge` da factory.
+O script criara/atualizara `.vscode/mcp.json` local com a conexao para o servidor MCP `knowledge` da factory.
 
 Caso tambem queira que o Copilot siga as regras completas de engenharia da factory no projeto consumidor via `.github/copilot-instructions.md`:
 

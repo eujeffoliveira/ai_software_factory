@@ -15,7 +15,7 @@ The factory supports multiple agent runtimes from the same canonical sources:
 | Claude Code | `~/.claude/agents/<name>.md` and `@name` | `~/.claude.json` plus `.mcp.json` | Primary historical runtime |
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
 | Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` (`<name>`) | `~/.gemini/config/mcp_config.json` | Progressive skills, MCP tools `mcp_knowledge_*` |
-| GitHub Copilot | `~/.vscode/extensions/ai-software-factory.agents/` & `.github/prompts/` | `.vscode/mcp.json` | Global declarative extension `@name`, prompt files, Agent mode MCP |
+| GitHub Copilot | `~/.vscode/extensions/ai-software-factory.agents/` & `.github/prompts/` | `.vscode/mcp.json` & `%APPDATA%\Code\User\mcp.json` | Global declarative extension `@name`, prompt files, global & workspace Agent mode MCP |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
 runtime files must be derived from those sources, not hand-maintained as forks.
@@ -111,13 +111,14 @@ See `docs/ANTIGRAVITY.md` for full details.
 ## GitHub Copilot-Specific Guidance
 
 GitHub Copilot integrates via a global declarative VS Code extension, repository instructions,
-reusable prompt files, and workspace MCP configuration.
+reusable prompt files, and both workspace and global user MCP configurations.
 
 After `.\install.ps1`, GitHub Copilot artifacts are generated:
-- `~/.vscode/extensions/ai-software-factory.agents/` global declarative extension with all 12 `.agent.md` files
+- `~/.vscode/extensions/ai-software-factory.agents/` global declarative extension with all 12 `.agent.md` files (authorizing `knowledge/*` tools)
 - `.github/copilot-instructions.md` containing global SDLC engineering rules
 - `.github/prompts/<name>.prompt.md` reusable prompt files for all 12 roles
-- `.vscode/mcp.json` configuring the `knowledge` MCP server for VS Code Copilot Agent mode
+- `.vscode/mcp.json` configuring the `knowledge` MCP server for workspace Copilot Agent mode
+- `%APPDATA%\Code\User\mcp.json` configuring `servers.knowledge` globally for VS Code across all projects
 
 Use them in VS Code Copilot Chat globally in any project by addressing agents directly (`@techlead`, `@qa`, etc.),
 or within this repo by attaching prompt files (`#file:techlead.prompt.md`).
@@ -155,7 +156,7 @@ or updates:
 - Codex custom agents in `~/.codex/agents/`
 - Antigravity plugin and skills in `~/.gemini/config/plugins/ai-software-factory/`
 - GitHub Copilot prompt files and instructions in `.github/prompts/` and `.github/copilot-instructions.md`
-- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/config/mcp_config.json`, `.vscode/mcp.json`, and `.mcp.json`
+- MCP entries in `~/.claude.json`, `~/.codex/config.toml`, `~/.gemini/config/mcp_config.json`, `.vscode/mcp.json`, `%APPDATA%\Code\User\mcp.json`, and `.mcp.json`
 - local `.codex/config.toml` for this factory repository
 - helper scripts such as `update-knowledge.ps1` and `link-mcp.ps1`
 
