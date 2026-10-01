@@ -209,16 +209,15 @@ Ver: [`docs/ANTIGRAVITY.md`](docs/ANTIGRAVITY.md)
 
 ## GitHub Copilot
 
-Após `.\install.ps1 -Copilot` (ou via seleção interativa), os prompt files e instruções são gerados em `.github/prompts/` e `.github/copilot-instructions.md`.
-No VS Code Copilot Chat, anexe o prompt reutilizável com `#file:` ou invoque a persona:
-
-```text
-#file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
-#file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
-Atue sob a persona @architect para elaborar o diagrama C4 de componentes.
-```
-
-No modo Agent do Copilot Chat, as ferramentas MCP são chamadas automaticamente via `.vscode/mcp.json`.
+Após `.\install.ps1 -Copilot` (ou via seleção interativa):
+1. A **extensão global do VS Code** é instalada em `~/.vscode/extensions/ai-software-factory.agents/`, disponibilizando os 12 agentes em **qualquer projeto ou pasta** aberto no VS Code via `@<nome>` no Copilot Chat:
+   ```text
+   @techlead Avalie a aderencia ao Gate G0 deste projeto
+   @qa Elabore o plano de testes Vitest e Playwright
+   @architect Desenhe o diagrama C4 de componentes e avalie necessidade de ADR
+   ```
+2. Prompt files e instruções são gerados em `.github/prompts/` e `.github/copilot-instructions.md` (uso via `#file:` no repositório).
+3. No modo Agent do Copilot Chat, as ferramentas MCP são chamadas automaticamente via `.vscode/mcp.json`.
 
 Ver: [`docs/COPILOT.md`](docs/COPILOT.md)
 

@@ -55,6 +55,15 @@ Gera 12 arquivos `.toml` em `~/.codex/agents/`. Cada arquivo define:
 Esses arquivos são custom agents do Codex. Use-os como subagentes explícitos,
 não com a sintaxe `@nome` do Claude Code.
 
+### Fase 5B — Skills Antigravity
+Gera o plugin `~/.gemini/config/plugins/ai-software-factory/` com as 12 skills em `skills/<nome>/SKILL.md` e configuração MCP nativa para o Google Antigravity.
+
+### Fase 5C — GitHub Copilot (Extensão Global + Prompt Files)
+Configura o suporte completo ao GitHub Copilot no VS Code:
+1. **Extensão Declarativa Global**: Cria `~/.vscode/extensions/ai-software-factory.agents/` com `package.json` (`contributes.chatAgents`) e os 12 agentes em `agents/<nome>.agent.md`, disponibilizando `@techlead`, `@qa`, etc. em **qualquer projeto ou pasta** aberta no VS Code.
+2. **Prompt Files Reutilizáveis**: Gera `.github/prompts/<nome>.prompt.md` e `.github/copilot-instructions.md` no workspace.
+3. **Suporte MCP**: Configura `.vscode/mcp.json` para VS Code Copilot Agent mode.
+
 ### Fase 6 — Knowledge Base
 Cria/atualiza `knowledge.db` (SQLite FTS5, ~7.000 documentos). Indexa todos os `.md` da factory. Pula se o DB é mais recente que todos os `.md`.
 

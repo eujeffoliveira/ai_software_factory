@@ -15,7 +15,7 @@ The factory supports multiple agent runtimes from the same canonical sources:
 | Claude Code | `~/.claude/agents/<name>.md` and `@name` | `~/.claude.json` plus `.mcp.json` | Primary historical runtime |
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
 | Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` (`<name>`) | `~/.gemini/config/mcp_config.json` | Progressive skills, MCP tools `mcp_knowledge_*` |
-| GitHub Copilot | `.github/prompts/<name>.prompt.md` & instructions | `.vscode/mcp.json` | VS Code Copilot Chat prompt files and Agent mode MCP |
+| GitHub Copilot | `~/.vscode/extensions/ai-software-factory.agents/` & `.github/prompts/` | `.vscode/mcp.json` | Global declarative extension `@name`, prompt files, Agent mode MCP |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
 runtime files must be derived from those sources, not hand-maintained as forks.
@@ -110,16 +110,17 @@ See `docs/ANTIGRAVITY.md` for full details.
 
 ## GitHub Copilot-Specific Guidance
 
-GitHub Copilot integrates via repository instructions, reusable prompt files,
-and workspace MCP configuration.
+GitHub Copilot integrates via a global declarative VS Code extension, repository instructions,
+reusable prompt files, and workspace MCP configuration.
 
 After `.\install.ps1`, GitHub Copilot artifacts are generated:
+- `~/.vscode/extensions/ai-software-factory.agents/` global declarative extension with all 12 `.agent.md` files
 - `.github/copilot-instructions.md` containing global SDLC engineering rules
 - `.github/prompts/<name>.prompt.md` reusable prompt files for all 12 roles
 - `.vscode/mcp.json` configuring the `knowledge` MCP server for VS Code Copilot Agent mode
 
-Use them in VS Code Copilot Chat by attaching prompt files (`#file:techlead.prompt.md`)
-or addressing personas directly (`Atue como o @techlead...`).
+Use them in VS Code Copilot Chat globally in any project by addressing agents directly (`@techlead`, `@qa`, etc.),
+or within this repo by attaching prompt files (`#file:techlead.prompt.md`).
 In Agent mode, Copilot calls MCP knowledge tools natively.
 See `docs/COPILOT.md` for full details.
 

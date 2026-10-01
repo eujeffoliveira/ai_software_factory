@@ -123,6 +123,10 @@ $COPILOT_PROMPTS_DIR  = Join-Path $COPILOT_DIR "prompts"
 $COPILOT_INSTRUCTIONS = Join-Path $COPILOT_DIR "copilot-instructions.md"
 $VSCODE_DIR           = Join-Path $FACTORY_PATH ".vscode"
 $VSCODE_MCP_CONFIG    = Join-Path $VSCODE_DIR "mcp.json"
+$VSCODE_USER_EXTENSIONS_DIR = if ($env:VSCODE_EXTENSIONS) { $env:VSCODE_EXTENSIONS } else { Join-Path $env:USERPROFILE ".vscode\extensions" }
+$COPILOT_EXT_DIR            = Join-Path $VSCODE_USER_EXTENSIONS_DIR "ai-software-factory.agents"
+$COPILOT_EXT_AGENTS_DIR     = Join-Path $COPILOT_EXT_DIR "agents"
+$COPILOT_EXT_PKG            = Join-Path $COPILOT_EXT_DIR "package.json"
 $BIN_DIR           = "$env:USERPROFILE\.local\bin"
 $DB_PATH           = Join-Path $FACTORY_PATH "knowledge.db"
 $CONFIG_PATH       = Join-Path $FACTORY_PATH "knowledge-config.json"
@@ -175,6 +179,10 @@ $tally = @{
     copilot_created       = 0
     copilot_updated       = 0
     copilot_unchanged     = 0
+    copilot_ext_created   = 0
+    copilot_ext_updated   = 0
+    copilot_ext_unchanged = 0
+    copilot_ext_pkg       = "unchanged"
     copilot_instr_status  = "unchanged"
     knowledge_docs        = 0
     knowledge_status      = "skipped"
@@ -970,6 +978,36 @@ if (-not (Test-Path $COPILOT_PROMPTS_DIR)) {
     Write-Skip "Ja existe: $COPILOT_PROMPTS_DIR"
 }
 
+# Diretorios da extensao global do VS Code (~/.vscode/extensions/ai-software-factory.agents/)
+if (-not (Test-Path $COPILOT_EXT_DIR)) {
+    New-Item -ItemType Directory -Path $COPILOT_EXT_DIR -Force | Out-Null
+}
+if (-not (Test-Path $COPILOT_EXT_AGENTS_DIR)) {
+    New-Item -ItemType Directory -Path $COPILOT_EXT_AGENTS_DIR -Force | Out-Null
+    Write-OK "Criado: $COPILOT_EXT_AGENTS_DIR"
+} else {
+    Write-Skip "Ja existe: $COPILOT_EXT_AGENTS_DIR"
+}
+
+# Gerar package.json declarativo da extensao VS Code
+$copilotExtPkgJson = [ordered]@{
+    name        = "ai-software-factory-agents"
+    displayName = "AI Software Factory — SDLC Agents"
+    description = "12 specialized SDLC agents for GitHub Copilot in VS Code"
+    version     = $FACTORY_VERSION
+    publisher   = "ai-software-factory"
+    engines     = [ordered]@{
+        vscode = "^1.90.0"
+    }
+    categories  = @("AI", "Chat")
+    contributes = [ordered]@{
+        chatAgents = @($agents | ForEach-Object {
+            [ordered]@{ path = "agents/$($_.Name).agent.md" }
+        })
+    }
+} | ConvertTo-Json -Depth 5
+$tally.copilot_ext_pkg = Write-IfChanged -Path $COPILOT_EXT_PKG -Content $copilotExtPkgJson -Label "vscode-extension/package.json"
+
 # 1. Gerar .github/copilot-instructions.md
 $copilotInstructionsContent = @"
 <!--
@@ -1120,17 +1158,58 @@ $copilotManifest = [ordered]@{
     prompts           = [ordered]@{}
 }
 
+$copilotExtManifestPath = Join-Path $COPILOT_EXT_DIR ".ai_software_factory_manifest.json"
+$existingExtInstalledAt = if (Test-Path $copilotExtManifestPath) {
+    try { (Get-Content $copilotExtManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).installed_at } catch { $null }
+} else { $null }
+
+$copilotExtManifest = [ordered]@{
+    factory_version   = $FACTORY_VERSION
+    factory_root      = $FACTORY_PATH
+    installed_at      = if ($existingExtInstalledAt) { $existingExtInstalledAt } else { (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ") }
+    knowledge_db_path = $DB_PATH
+    mcp_server        = "knowledge"
+    agents            = [ordered]@{}
+}
+
 foreach ($agent in $agents) {
-    $agentDir   = Join-Path $FACTORY_PATH $agent.Folder
-    $promptFile = Join-Path $agentDir "prompt.md"
-    $outputFile = Join-Path $COPILOT_PROMPTS_DIR "$($agent.Name).prompt.md"
+    $agentDir      = Join-Path $FACTORY_PATH $agent.Folder
+    $promptFile    = Join-Path $agentDir "prompt.md"
+    $outputFile    = Join-Path $COPILOT_PROMPTS_DIR "$($agent.Name).prompt.md"
+    $extOutputFile = Join-Path $COPILOT_EXT_AGENTS_DIR "$($agent.Name).agent.md"
 
     if (-not (Test-Path $promptFile)) {
         Write-Warn "prompt.md nao encontrado: $($agent.Folder)"
         $copilotManifest.prompts[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
+        $copilotExtManifest.agents[$agent.Name] = [ordered]@{ status = "skipped"; source = $agent.Folder; reason = "prompt.md not found" }
         continue
     }
 
+    # Montar corpo gerenciado compartilhado (prompt.md + runtime knowledge + MCP block)
+    $sbManaged = [System.Text.StringBuilder]::new()
+    [void]$sbManaged.AppendLine("<!-- BEGIN ai_software_factory managed block -->")
+    [void]$sbManaged.AppendLine("")
+    [void]$sbManaged.AppendLine((Get-Content $promptFile -Raw -Encoding UTF8).TrimEnd())
+    [void]$sbManaged.AppendLine("")
+
+    foreach ($relPath in $knowledgeFiles) {
+        $fullPath = Join-Path $agentDir $relPath
+        if (Test-Path $fullPath) {
+            $display = "$($agent.Folder)/$($relPath.Replace('\','/'))"
+            [void]$sbManaged.AppendLine("---")
+            [void]$sbManaged.AppendLine("<!-- SOURCE: $display -->")
+            [void]$sbManaged.AppendLine("")
+            [void]$sbManaged.AppendLine((Get-Content $fullPath -Raw -Encoding UTF8).TrimEnd())
+            [void]$sbManaged.AppendLine("")
+        }
+    }
+
+    [void]$sbManaged.AppendLine($copilotMcpBlock)
+    [void]$sbManaged.AppendLine("")
+    [void]$sbManaged.AppendLine("<!-- END ai_software_factory managed block -->")
+    $managedBody = $sbManaged.ToString()
+
+    # 1. Gerar .github/prompts/<name>.prompt.md
     $promptHeader = @"
 ---
 description: >-
@@ -1144,32 +1223,8 @@ To update: cd $FACTORY_PATH && .\install.ps1
 Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 copilotMcpBlock
 -->
 "@
-
-    $sbCopilot = [System.Text.StringBuilder]::new()
-    [void]$sbCopilot.AppendLine($promptHeader.TrimEnd())
-    [void]$sbCopilot.AppendLine("")
-    [void]$sbCopilot.AppendLine("<!-- BEGIN ai_software_factory managed block -->")
-    [void]$sbCopilot.AppendLine("")
-    [void]$sbCopilot.AppendLine((Get-Content $promptFile -Raw -Encoding UTF8).TrimEnd())
-    [void]$sbCopilot.AppendLine("")
-
-    foreach ($relPath in $knowledgeFiles) {
-        $fullPath = Join-Path $agentDir $relPath
-        if (Test-Path $fullPath) {
-            $display = "$($agent.Folder)/$($relPath.Replace('\','/'))"
-            [void]$sbCopilot.AppendLine("---")
-            [void]$sbCopilot.AppendLine("<!-- SOURCE: $display -->")
-            [void]$sbCopilot.AppendLine("")
-            [void]$sbCopilot.AppendLine((Get-Content $fullPath -Raw -Encoding UTF8).TrimEnd())
-            [void]$sbCopilot.AppendLine("")
-        }
-    }
-
-    [void]$sbCopilot.AppendLine($copilotMcpBlock)
-    [void]$sbCopilot.AppendLine("")
-    [void]$sbCopilot.AppendLine("<!-- END ai_software_factory managed block -->")
-
-    $status = Write-IfChanged -Path $outputFile -Content $sbCopilot.ToString() -Label "copilot/$($agent.Name).prompt.md"
+    $promptContent = $promptHeader.TrimEnd() + "`n`n" + $managedBody
+    $status = Write-IfChanged -Path $outputFile -Content $promptContent -Label "copilot/$($agent.Name).prompt.md"
     switch ($status) {
         "created"   { $tally.copilot_created++ }
         "updated"   { $tally.copilot_updated++ }
@@ -1185,14 +1240,52 @@ Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install
         installed_path = $outputFile
         installed_hash = $installedHash
     }
+
+    # 2. Gerar ~/.vscode/extensions/ai-software-factory.agents/agents/<name>.agent.md (Global VS Code Extension)
+    $extAgentHeader = @"
+---
+name: $($agent.Name)
+description: >-
+  $($agent.Description)
+tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web]
+---
+
+<!--
+AUTO-GENERATED BY ai_software_factory/install.ps1
+DO NOT EDIT DIRECTLY — changes will be overwritten on next install.
+To update: cd $FACTORY_PATH && .\install.ps1
+Sources: $($agent.Folder)/prompt.md + selected runtime knowledge files + install.ps1 copilotMcpBlock
+-->
+"@
+    $extAgentContent = $extAgentHeader.TrimEnd() + "`n`n" + $managedBody
+    $extStatus = Write-IfChanged -Path $extOutputFile -Content $extAgentContent -Label "copilot-ext/agents/$($agent.Name).agent.md"
+    switch ($extStatus) {
+        "created"   { $tally.copilot_ext_created++ }
+        "updated"   { $tally.copilot_ext_updated++ }
+        "unchanged" { $tally.copilot_ext_unchanged++ }
+    }
+
+    $extInstalledHash = if (Test-Path $extOutputFile) { (Get-FileHash $extOutputFile -Algorithm SHA256).Hash.Substring(0, 16) } else { $null }
+    $copilotExtManifest.agents[$agent.Name] = [ordered]@{
+        status         = $extStatus
+        source         = $agent.Folder
+        source_hash    = $sourceHash
+        installed_path = $extOutputFile
+        installed_hash = $extInstalledHash
+    }
 }
 
 $copilotManifestJson = $copilotManifest | ConvertTo-Json -Depth 10
 Write-IfChanged -Path $copilotManifestPath -Content $copilotManifestJson -Label "copilot/.ai_software_factory_manifest.json" | Out-Null
 
+$copilotExtManifestJson = $copilotExtManifest | ConvertTo-Json -Depth 10
+Write-IfChanged -Path $copilotExtManifestPath -Content $copilotExtManifestJson -Label "copilot-ext/.ai_software_factory_manifest.json" | Out-Null
+
     Write-Host "  ─────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host ("  Copilot prompt files: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+    Write-Host ("  Copilot prompt files:     {0} criados, {1} atualizados, {2} sem mudancas" -f `
         $tally.copilot_created, $tally.copilot_updated, $tally.copilot_unchanged) -ForegroundColor Gray
+    Write-Host ("  Copilot extension agents: {0} criados, {1} atualizados, {2} sem mudancas" -f `
+        $tally.copilot_ext_created, $tally.copilot_ext_updated, $tally.copilot_ext_unchanged) -ForegroundColor Gray
 } else {
     Write-Header "GitHub Copilot — Prompt Files e Instructions"
     Write-Skip "Runtime GitHub Copilot nao selecionado para instalacao"
@@ -1767,6 +1860,12 @@ $copilotSummary = if ($enableCopilot) {
 } else { "pulado (nao selecionado)" }
 Write-Host ("  ║  Copilot Prmp {0,-36}║" -f $copilotSummary) -ForegroundColor Green
 
+$copilotExtSummary = if ($enableCopilot) {
+    "{0} criados  {1} atualizados  {2} sem mudancas" -f `
+        $tally.copilot_ext_created, $tally.copilot_ext_updated, $tally.copilot_ext_unchanged
+} else { "pulado (nao selecionado)" }
+Write-Host ("  ║  Copilot Ext  {0,-36}║" -f $copilotExtSummary) -ForegroundColor Green
+
 $copilotInstrSummary = if ($enableCopilot) { $tally.copilot_instr_status } else { "pulado" }
 Write-Host ("  ║  Copilot Inst {0,-36}║" -f $copilotInstrSummary) -ForegroundColor Green
 
@@ -1808,8 +1907,10 @@ if ($enableAntigravity) {
     Write-Host ""
 }
 if ($enableCopilot) {
-    Write-Host "  GitHub Copilot — prompt files e MCP configurados:" -ForegroundColor Cyan
-    Write-Host "    Prompt files: .github/prompts/*.prompt.md (carregue no Copilot Chat)"
+    Write-Host "  GitHub Copilot — extensao global e prompt files configurados:" -ForegroundColor Cyan
+    Write-Host "    Extensao global: ~/.vscode/extensions/ai-software-factory.agents/ (disponivel em qualquer projeto)"
+    Write-Host "    Agentes no Copilot Chat: @techlead  @qa  @architect  @po  @devbackend ..."
+    Write-Host "    Prompt files: .github/prompts/*.prompt.md"
     Write-Host "    Instrucoes globais: .github/copilot-instructions.md"
     Write-Host "    MCP: .vscode/mcp.json (VS Code Copilot Agent mode)"
     Write-Host ""

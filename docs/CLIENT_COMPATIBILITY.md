@@ -7,7 +7,7 @@
 | Claude Code | Sim | Sim | `@nome` via `~/.claude/agents/*.md` | Completo |
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
 | Antigravity | Sim | Sim | skills (`techlead`, etc.) em `~/.gemini/config/plugins/` | Completo |
-| GitHub Copilot | Sim | Sim | prompt files (`.github/prompts/`) + `.vscode/mcp.json` | Completo |
+| GitHub Copilot | Sim | Sim | `@nome` via extensão global (`~/.vscode/extensions/`) + prompt files (`.github/prompts/`) + `.vscode/mcp.json` | Completo |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
 Todos os runtimes completos usam a mesma fonte canônica:
@@ -90,20 +90,26 @@ Leia detalhes em `docs/ANTIGRAVITY.md`.
 
 ## GitHub Copilot
 
-GitHub Copilot opera no VS Code, GitHub CLI e GitHub.com Copilot Chat.
+GitHub Copilot opera no VS Code com suporte global e local por workspace.
 
 Após `.\install.ps1`, os artefatos ficam em:
 
 ```text
-.github/copilot-instructions.md
-.github/prompts/*.prompt.md
-.vscode/mcp.json
+~/.vscode/extensions/ai-software-factory.agents/   # Extensão declarativa global (qualquer projeto)
+.github/copilot-instructions.md                    # Diretrizes do SDLC e Quality Gates
+.github/prompts/*.prompt.md                        # Prompt files reutilizáveis
+.vscode/mcp.json                                   # Conexão MCP knowledge (Agent mode)
 ```
 
 Uso:
 
 ```text
-# No Copilot Chat:
+# 1. Globalmente em qualquer projeto/pasta via extensão:
+@techlead Avalie a arquitetura deste projeto
+@qa Crie testes Playwright para o fluxo de checkout
+@po Escreva user stories para o novo módulo de faturamento
+
+# 2. Localmente no workspace via prompt files:
 #file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
 #file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
 

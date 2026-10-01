@@ -1,24 +1,108 @@
 # GitHub Copilot — AI Software Factory Integration
 
-Este documento descreve como utilizar a **AI Software Factory** com o **GitHub Copilot** (especialmente no VS Code, GitHub CLI e GitHub.com Copilot Chat).
+Este documento descreve como utilizar a **AI Software Factory** com o **GitHub Copilot** no VS Code, cobrindo o uso global em qualquer projeto e o uso local por workspace.
 
 ---
 
 ## 1. Visao Geral da Arquitetura
 
-A integracao com o GitHub Copilot e sustentada por tres pilares canonicamente gerados pelo `install.ps1`:
+A integracao com o GitHub Copilot e sustentada por quatro pilares canonicamente gerados pelo `install.ps1`:
 
-| Componente | Localizacao | Funcao |
-|---|---|---|
-| **Instrucoes Globais** | `.github/copilot-instructions.md` | Regras do SDLC, Quality Gates, State Ledger, ADR policy e isolamento de runtime injetados automaticamente no contexto do Copilot |
-| **Prompt Files Reutilizaveis** | `.github/prompts/*.prompt.md` | Personas completas dos 12 agentes com conhecimento destilado (principles, heuristics, cards) para invocacao sob demanda no Copilot Chat |
-| **MCP Knowledge Server** | `.vscode/mcp.json` | Configuracao do servidor MCP `knowledge` para consulta semantica de conhecimento no VS Code Copilot Agent mode |
+| Componente | Localizacao | Alcance | Funcao |
+|---|---|---|---|
+| **Extensao Global VS Code** | `~/.vscode/extensions/ai-software-factory.agents/` | **Global** (qualquer janela/projeto) | Extensao declarativa com `contributes.chatAgents` contendo os 12 agentes em formato `.agent.md`, acessiveis via `@<nome>` no Copilot Chat em qualquer pasta aberta no VS Code |
+| **Instrucoes Globais** | `.github/copilot-instructions.md` | Workspace atual | Regras do SDLC, Quality Gates, State Ledger, ADR policy e isolamento de runtime injetados automaticamente no contexto do Copilot |
+| **Prompt Files Reutilizaveis** | `.github/prompts/*.prompt.md` | Workspace atual | Personas completas dos 12 agentes com conhecimento destilado (principles, heuristics, cards) para invocacao sob demanda via `#file:` no Copilot Chat |
+| **MCP Knowledge Server** | `.vscode/mcp.json` | Workspace atual | Configuracao do servidor MCP `knowledge` para consulta semantica de conhecimento no VS Code Copilot Agent mode |
 
 ---
 
-## 2. Instalacao e Configuracao
+## 2. Como Funciona a Extensao Global de Agentes
 
-A fonte da verdade de todos os agentes reside nas pastas `AgenteXX_RoleName/`. Para gerar ou atualizar a configuracao do GitHub Copilot:
+O VS Code possui um recurso nativo de descoberta de extensoes: qualquer pasta localizada em `~/.vscode/extensions/` contendo um `package.json` valido e carregada automaticamente pelo editor na inicializacao, sem necessidade de compilacao JavaScript ou publicacao no Marketplace.
+
+A factory aproveita esse mecanismo criando a extensao declarativa:
+
+```text
+~/.vscode/extensions/ai-software-factory.agents/
+  package.json                          # Declara contributes.chatAgents
+  .ai_software_factory_manifest.json    # Rastreamento de versoes e hashes
+  agents/
+    techlead.agent.md                   # Definicao completa do Tech Lead
+    po.agent.md                         # Definicao completa do PO
+    architect.agent.md                  # Definicao completa do Architect
+    engineer.agent.md                   # Definicao completa do Engineer
+    devbackend.agent.md                 # Definicao completa do Dev Backend
+    devfrontend.agent.md                # Definicao completa do Dev Frontend
+    qa.agent.md                         # Definicao completa do QA
+    devsecops.agent.md                  # Definicao completa do DevSecOps
+    devops.agent.md                     # Definicao completa do DevOps
+    uxui.agent.md                       # Definicao completa do UX/UI
+    dataengineer.agent.md               # Definicao completa do Data Engineer
+    dataanalyst.agent.md                # Definicao completa do Data Analyst
+```
+
+### Estrutura do `package.json`
+
+O arquivo `package.json` registra cada agente no ponto de contribuicao `chatAgents`:
+
+```json
+{
+  "name": "ai-software-factory-agents",
+  "displayName": "AI Software Factory — SDLC Agents",
+  "description": "12 specialized SDLC agents for GitHub Copilot in VS Code",
+  "version": "0.1.0",
+  "publisher": "ai-software-factory",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "contributes": {
+    "chatAgents": [
+      { "path": "agents/techlead.agent.md" },
+      { "path": "agents/po.agent.md" },
+      { "path": "agents/architect.agent.md" },
+      { "path": "agents/engineer.agent.md" },
+      { "path": "agents/devbackend.agent.md" },
+      { "path": "agents/devfrontend.agent.md" },
+      { "path": "agents/qa.agent.md" },
+      { "path": "agents/devsecops.agent.md" },
+      { "path": "agents/devops.agent.md" },
+      { "path": "agents/uxui.agent.md" },
+      { "path": "agents/dataengineer.agent.md" },
+      { "path": "agents/dataanalyst.agent.md" }
+    ]
+  }
+}
+```
+
+### Formato dos Arquivos `.agent.md`
+
+Cada agente possui um cabecalho YAML com ferramentas permitidas (`tools`), descricao e o corpo completo com as diretrizes e conhecimento destilado da factory:
+
+```markdown
+---
+name: techlead
+description: >-
+  Tech Lead e orquestrador do SDLC — quality gates, ADRs, decisoes tecnicas e oversight do projeto
+tools: [vscode, tool_search, execute, read, agent, browser, edit, search, web]
+---
+
+<!-- BEGIN ai_software_factory managed block -->
+...
+<!-- END ai_software_factory managed block -->
+```
+
+Como resultado, os agentes ficam disponiveis no VS Code Copilot Chat em **qualquer janela, pasta ou projeto** que voce abrir.
+
+---
+
+## 3. Instalacao e Configuracao
+
+A fonte da verdade de todos os agentes reside nas pastas canonicas `AgenteXX_RoleName/`. Para gerar ou atualizar os artefatos do GitHub Copilot:
 
 ```powershell
 # Instalacao direta para GitHub Copilot:
@@ -28,11 +112,12 @@ A fonte da verdade de todos os agentes reside nas pastas `AgenteXX_RoleName/`. P
 .\install.ps1
 ```
 
-O `install.ps1` detecta o ambiente do VS Code / Copilot e executara:
-1. Criacao/atualizacao de `.github/copilot-instructions.md`.
-2. Geracao dos 12 arquivos de prompt em `.github/prompts/<nome>.prompt.md`.
-3. Configuracao do servidor MCP em `.vscode/mcp.json`.
-4. Registro no manifesto `.github/prompts/.ai_software_factory_manifest.json`.
+O `install.ps1` detecta o ambiente do VS Code / Copilot e executa automaticamente:
+1. Criacao da extensao global em `~/.vscode/extensions/ai-software-factory.agents/` com os 12 `.agent.md`.
+2. Criacao/atualizacao de `.github/copilot-instructions.md` no workspace.
+3. Geracao dos 12 arquivos de prompt em `.github/prompts/<nome>.prompt.md`.
+4. Configuracao do servidor MCP em `.vscode/mcp.json`.
+5. Registro dos manifestos em `.github/prompts/` e `~/.vscode/extensions/ai-software-factory.agents/`.
 
 Para validar a integracao:
 
@@ -44,44 +129,50 @@ A secao **7C. GitHub Copilot — Prompt Files & Instructions** e a secao **10. M
 
 ---
 
-## 3. Os 12 Agentes Disponiveis
+## 4. Os 12 Agentes Disponiveis
 
-Cada agente possui um arquivo `.prompt.md` dedicado em `.github/prompts/`:
-
-| Papel | Arquivo Prompt | Descricao |
-|---|---|---|
-| `techlead` | `.github/prompts/techlead.prompt.md` | Tech Lead, orquestrador do SDLC, validacao de Quality Gates, ADRs, State Ledger |
-| `po` | `.github/prompts/po.prompt.md` | Product Owner, PRD, user stories, criterios de aceitacao e backlog |
-| `architect` | `.github/prompts/architect.prompt.md` | Arquiteto de Software, design de sistemas, diagramas UML, decisoes e ADRs |
-| `engineer` | `.github/prompts/engineer.prompt.md` | Engenheiro de Software, decomposicao de tarefas, planos e estimativas |
-| `devbackend` | `.github/prompts/devbackend.prompt.md` | Dev Backend, APIs REST, servicos, banco de dados, migrations Prisma |
-| `devfrontend` | `.github/prompts/devfrontend.prompt.md` | Dev Frontend, componentes React, paginas Next.js, UI Tailwind |
-| `qa` | `.github/prompts/qa.prompt.md` | QA Engineer, estrategia de testes, Vitest, Playwright E2E e cobertura |
-| `devsecops` | `.github/prompts/devsecops.prompt.md` | DevSecOps, auditorias de seguranca, SAST, OWASP Top 10, hardening |
-| `devops` | `.github/prompts/devops.prompt.md` | DevOps, CI/CD, infraestrutura Vercel, deployment e runbooks |
-| `uxui` | `.github/prompts/uxui.prompt.md` | UX/UI Designer, pesquisa de usuario, wireframes, design system |
-| `dataengineer` | `.github/prompts/dataengineer.prompt.md` | Data Engineer, pipelines de dados, ETL, integracoes e governanca |
-| `dataanalyst` | `.github/prompts/dataanalyst.prompt.md` | Data Analyst, metricas, analise exploratoria, insights e dashboards |
+| Papel | Arquivo Global (`.agent.md`) | Arquivo Prompt (`.prompt.md`) | Descricao |
+|---|---|---|---|
+| `techlead` | `agents/techlead.agent.md` | `.github/prompts/techlead.prompt.md` | Tech Lead, orquestrador do SDLC, validacao de Quality Gates, ADRs, State Ledger |
+| `po` | `agents/po.agent.md` | `.github/prompts/po.prompt.md` | Product Owner, PRD, user stories, criterios de aceitacao e backlog |
+| `architect` | `agents/architect.agent.md` | `.github/prompts/architect.prompt.md` | Arquiteto de Software, design de sistemas, diagramas UML, decisoes e ADRs |
+| `engineer` | `agents/engineer.agent.md` | `.github/prompts/engineer.prompt.md` | Engenheiro de Software, decomposicao de tarefas, planos e estimativas |
+| `devbackend` | `agents/devbackend.agent.md` | `.github/prompts/devbackend.prompt.md` | Dev Backend, APIs REST, servicos, banco de dados, migrations Prisma |
+| `devfrontend` | `agents/devfrontend.agent.md` | `.github/prompts/devfrontend.prompt.md` | Dev Frontend, componentes React, paginas Next.js, UI Tailwind |
+| `qa` | `agents/qa.agent.md` | `.github/prompts/qa.prompt.md` | QA Engineer, estrategia de testes, Vitest, Playwright E2E e cobertura |
+| `devsecops` | `agents/devsecops.agent.md` | `.github/prompts/devsecops.prompt.md` | DevSecOps, auditorias de seguranca, SAST, OWASP Top 10, hardening |
+| `devops` | `agents/devops.agent.md` | `.github/prompts/devops.prompt.md` | DevOps, CI/CD, infraestrutura Vercel, deployment e runbooks |
+| `uxui` | `agents/uxui.agent.md` | `.github/prompts/uxui.prompt.md` | UX/UI Designer, pesquisa de usuario, wireframes, design system |
+| `dataengineer` | `agents/dataengineer.agent.md` | `.github/prompts/dataengineer.prompt.md` | Data Engineer, pipelines de dados, ETL, integracoes e governanca |
+| `dataanalyst` | `agents/dataanalyst.agent.md` | `.github/prompts/dataanalyst.prompt.md` | Data Analyst, metricas, analise exploratoria, insights e dashboards |
 
 ---
 
-## 4. Como Usar no VS Code
+## 5. Como Usar no VS Code
 
-### Modo 1: Copilot Chat com Reusable Prompt Files
+### Modo 1: Agentes Globais no Copilot Chat (`@nome`) — *Recomendado*
 
-O VS Code reconhece arquivos `.prompt.md` dentro de `.github/prompts/`. Voce pode utiliza-los das seguintes formas:
+Gracas a extensao instalada em `~/.vscode/extensions/ai-software-factory.agents/`, os agentes estao disponiveis em qualquer projeto:
 
-1. **Anexando o Prompt File**:
-   - No painel do Copilot Chat (`Ctrl+Alt+I` ou `Ctrl+I`), clique no botao de anexar contexto (ou digite `#file:`) e selecione o arquivo correspondente, por exemplo: `#file:techlead.prompt.md`.
-   - Adicione sua solicitacao: `Avalie o PRD atual contra o Quality Gate G0.`
+1. Abra o painel do Copilot Chat (`Ctrl+Alt+I` ou `Ctrl+I`).
+2. Digite `@` para ver a lista de agentes participantes. Os agentes da factory aparecerao disponiveis:
+   ```text
+   @techlead Avalie o PRD e verifique se podemos aprovar a transicao do Gate G0 para G1.
+   @qa Qual e o plano de testes recomendado para esta API de pagamentos?
+   @architect Desenhe a arquitetura de servicos e defina se precisamos de um ADR para cache.
+   ```
+3. O agente assume sua persona, diretrizes de qualidade, restricoes do SDLC e padroes de entrega.
 
-2. **Invocando a Persona**:
-   - Gracas ao `.github/copilot-instructions.md`, o Copilot ja conhece todas as 12 personas. Voce pode iniciar a interacao diretamente:
-     ```text
-     Atue sob a persona @techlead definida no repositorio. Qual e o checklist para avancar do Gate G1 para G2?
-     ```
+### Modo 2: Reusable Prompt Files (`#file:`)
 
-### Modo 2: VS Code Copilot Agent Mode com MCP
+Dentro do repositorio da factory (ou em qualquer projeto que tenha copiado a pasta `.github/prompts/`):
+
+1. No Copilot Chat, anexe o arquivo usando `#file:`:
+   ```text
+   #file:techlead.prompt.md Avalie a conformidade do Quality Gate G2 para o plano atual.
+   ```
+
+### Modo 3: VS Code Copilot Agent Mode com MCP
 
 No modo Agent do VS Code, o Copilot tem permissao para chamar ferramentas (tool calling) automaticamente. Com o arquivo `.vscode/mcp.json` configurado, ele pode acessar diretamente o MCP `knowledge`:
 
@@ -92,28 +183,25 @@ No modo Agent do VS Code, o Copilot tem permissao para chamar ferramentas (tool 
 - `knowledge_stats`: Estatisticas da base indexada.
 - `health_check`: Verificacao de conectividade do MCP.
 
-Exemplo de prompt no Agent mode:
+Exemplo de interacao no Agent mode:
 ```text
 Consulte o servidor MCP knowledge para encontrar o template de ADR e o checklist de revisao de seguranca para Gate G4.
 ```
 
 ---
 
-## 5. Vinculando o MCP a Projetos Externos
+## 6. Vinculando o MCP a Projetos Externos
 
-Para habilitar a busca de conhecimento da factory e as configuracoes do Copilot em outro projeto consumidor:
+A extensao global de agentes (`@techlead`, etc.) ja funciona em qualquer pasta. Caso voce tambem queira que o Copilot tenha acesso as ferramentas MCP de busca semantica de conhecimento no projeto consumidor:
 
 ```powershell
 # Abra o terminal no diretorio do projeto consumidor e execute:
 & "$env:FACTORY_ROOT\link-mcp.ps1"
 ```
 
-O script criara/atualizara:
-- `.mcp.json` (para Claude Code)
-- `.codex/config.toml` (para Codex)
-- `.vscode/mcp.json` (para VS Code Copilot Agent mode)
+O script criara/atualizara automaticamente `.vscode/mcp.json` com a conexao para o servidor MCP `knowledge` da factory.
 
-Caso queira que o Copilot siga as regras completas da factory no projeto consumidor, voce pode copiar a pasta `.github/` gerada ou criar um link simbolico:
+Caso tambem queira que o Copilot siga as regras completas de engenharia da factory no projeto consumidor via `.github/copilot-instructions.md`:
 
 ```powershell
 # Opcional: copiar instrucoes para o projeto consumidor
@@ -122,7 +210,7 @@ Copy-Item "$env:FACTORY_ROOT\.github\copilot-instructions.md" .github\copilot-in
 
 ---
 
-## 6. Regras de Ouro e Boas Praticas
+## 7. Regras de Ouro e Boas Praticas
 
 1. **Quality Gates sao Bloqueantes**:
    - Cada gate (G0 a G6) exige os artefatos obrigatorios aprovados antes de prosseguir.

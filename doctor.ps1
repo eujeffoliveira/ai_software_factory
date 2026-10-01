@@ -46,6 +46,10 @@ $copilotPromptsDir = Join-Path $copilotDir "prompts"
 $copilotInstructions = Join-Path $copilotDir "copilot-instructions.md"
 $vscodeDir = Join-Path $factoryRoot ".vscode"
 $vscodeMcpConfig = Join-Path $vscodeDir "mcp.json"
+$vscodeExtensionsDir = if ($env:VSCODE_EXTENSIONS) { $env:VSCODE_EXTENSIONS } else { Join-Path $env:USERPROFILE ".vscode\extensions" }
+$copilotExtDir = Join-Path $vscodeExtensionsDir "ai-software-factory.agents"
+$copilotExtAgentsDir = Join-Path $copilotExtDir "agents"
+$copilotExtPkg = Join-Path $copilotExtDir "package.json"
 $agentNames = @("techlead","po","architect","engineer","devbackend","devfrontend","qa","devsecops","devops","uxui","dataengineer","dataanalyst")
 $expectedAgentCount = $agentNames.Count
 
@@ -109,12 +113,13 @@ $claudeAgentsDir    = "$env:USERPROFILE\.claude\agents"
 $manifestPath       = "$claudeAgentsDir\.ai_software_factory_manifest.json"
 $codexManifestPath  = Join-Path $codexAgentsDir ".ai_software_factory_manifest.json"
 $geminiManifestPath = Join-Path $geminiPluginDir ".ai_software_factory_manifest.json"
-$copilotManifestPath = Join-Path $copilotPromptsDir ".ai_software_factory_manifest.json"
+$copilotManifestPath    = Join-Path $copilotPromptsDir ".ai_software_factory_manifest.json"
+$copilotExtManifestPath = Join-Path $copilotExtDir ".ai_software_factory_manifest.json"
 
 $hasClaudeManifest       = Test-Path $manifestPath
 $hasCodexManifest        = Test-Path $codexManifestPath
 $hasAntigravityManifest  = Test-Path $geminiManifestPath
-$hasCopilotManifest      = Test-Path $copilotManifestPath
+$hasCopilotManifest      = (Test-Path $copilotManifestPath) -or (Test-Path $copilotExtManifestPath)
 
 $anyRuntimeInstalled = $hasClaudeManifest -or $hasCodexManifest -or $hasAntigravityManifest -or $hasCopilotManifest
 
@@ -182,20 +187,38 @@ if ($hasAntigravityManifest) {
     }
 }
 
-if ($hasCopilotManifest) {
+if (Test-Path $copilotManifestPath) {
     try {
         $copilotManifest = Get-Content $copilotManifestPath -Raw | ConvertFrom-Json
         if ($copilotManifest.factory_version -eq $factoryVersion) {
-            Write-CheckOK "Manifesto Copilot alinhado com VERSION ($($copilotManifest.factory_version))"
+            Write-CheckOK "Manifesto Copilot prompts alinhado com VERSION ($($copilotManifest.factory_version))"
         } else {
-            Write-CheckWarn "Manifesto Copilot v$($copilotManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            Write-CheckWarn "Manifesto Copilot prompts v$($copilotManifest.factory_version) != VERSION v$factoryVersion — reinstale"
             $hadWarning = $true
         }
         if ($copilotManifest.installed_at) {
-            Write-CheckOK "Copilot instalado em: $($copilotManifest.installed_at)"
+            Write-CheckOK "Copilot prompts instalado em: $($copilotManifest.installed_at)"
         }
     } catch {
-        Write-CheckWarn "Manifesto Copilot existe mas JSON invalido: $_"
+        Write-CheckWarn "Manifesto Copilot prompts existe mas JSON invalido: $_"
+        $hadWarning = $true
+    }
+}
+
+if (Test-Path $copilotExtManifestPath) {
+    try {
+        $copilotExtManifest = Get-Content $copilotExtManifestPath -Raw | ConvertFrom-Json
+        if ($copilotExtManifest.factory_version -eq $factoryVersion) {
+            Write-CheckOK "Manifesto Copilot extensao alinhado com VERSION ($($copilotExtManifest.factory_version))"
+        } else {
+            Write-CheckWarn "Manifesto Copilot extensao v$($copilotExtManifest.factory_version) != VERSION v$factoryVersion — reinstale"
+            $hadWarning = $true
+        }
+        if ($copilotExtManifest.installed_at) {
+            Write-CheckOK "Copilot extensao instalada em: $($copilotExtManifest.installed_at)"
+        }
+    } catch {
+        Write-CheckWarn "Manifesto Copilot extensao existe mas JSON invalido: $_"
         $hadWarning = $true
     }
 }
@@ -493,6 +516,62 @@ if ($hasCopilotManifest) {
             Write-CheckWarn "Prompt files Copilot sem marcador/formato esperado: $($copilotNoMarker -join ', ')"
             $hadWarning = $true
         }
+    }
+
+    # Verificacao da extensao global do VS Code (~/.vscode/extensions/ai-software-factory.agents/)
+    if (Test-Path $copilotExtDir) {
+        Write-CheckOK "Diretorio da extensao global Copilot existe: $copilotExtDir"
+        if (Test-Path $copilotExtPkg) {
+            $pkgContent = Get-Content $copilotExtPkg -Raw -Encoding UTF8
+            if ($pkgContent -match '"chatAgents"') {
+                Write-CheckOK "package.json da extensao Copilot presente e contribui chatAgents"
+            } else {
+                Write-CheckWarn "package.json da extensao Copilot presente mas sem contribuicao chatAgents"
+                $hadWarning = $true
+            }
+        } else {
+            Write-CheckWarn "package.json ausente na extensao global Copilot"
+            $hadWarning = $true
+        }
+
+        $extMissing  = @()
+        $extNoMarker = @()
+        $extOK       = @()
+
+        foreach ($name in $agentNames) {
+            $extFile = Join-Path $copilotExtAgentsDir "$name.agent.md"
+            if (-not (Test-Path $extFile)) {
+                $extMissing += $name
+            } else {
+                $content = Get-Content $extFile -Raw -Encoding UTF8
+                if ($content -match "AUTO-GENERATED BY ai_software_factory" -and $content -match "(?m)^name:\s*$name") {
+                    $extOK += $name
+                } else {
+                    $extNoMarker += $name
+                }
+            }
+        }
+
+        if ($extOK.Count -eq $expectedAgentCount) {
+            Write-CheckOK "Todos os $expectedAgentCount agentes da extensao global Copilot instalados com marcador AUTO-GENERATED"
+        } else {
+            if ($extOK.Count -gt 0) {
+                Write-CheckOK "$($extOK.Count)/$expectedAgentCount agentes da extensao global Copilot OK"
+            }
+            if ($extMissing.Count -gt 0) {
+                Write-CheckWarn "Agentes da extensao Copilot ausentes ($($extMissing.Count)): $($extMissing -join ', ')"
+                Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+                $hadWarning = $true
+            }
+            if ($extNoMarker.Count -gt 0) {
+                Write-CheckWarn "Agentes da extensao Copilot sem marcador/formato esperado: $($extNoMarker -join ', ')"
+                $hadWarning = $true
+            }
+        }
+    } else {
+        Write-CheckWarn "Extensao global Copilot nao encontrada em $copilotExtDir"
+        Write-CheckWarn "          Fix: cd '$factoryRoot' && .\install.ps1 -Copilot"
+        $hadWarning = $true
     }
 } else {
     Write-Host "  [SKIP]  GitHub Copilot nao configurado neste ambiente (opcional — .\install.ps1 -Copilot)" -ForegroundColor DarkGray
@@ -844,6 +923,19 @@ if (Test-Path $copilotPromptsDir) {
 } elseif ($hasCopilotManifest) {
     Write-CheckError "Diretorio .github/prompts/ nao encontrado" "cd '$factoryRoot' && .\install.ps1 -Copilot"
     $hadError = $true
+}
+
+# GitHub Copilot global extension
+if (Test-Path $copilotExtDir) {
+    $testCopilotExtFile = Join-Path $copilotExtDir ".doctor_write_test"
+    try {
+        [System.IO.File]::WriteAllText($testCopilotExtFile, "test", [System.Text.UTF8Encoding]::new($false))
+        Remove-Item $testCopilotExtFile -Force
+        Write-CheckOK "Escrita em extensao global Copilot OK"
+    } catch {
+        Write-CheckError "Sem permissao de escrita em extensao global Copilot" "Verifique permissoes de: $copilotExtDir"
+        $hadError = $true
+    }
 }
 
 # ═════════════════════════════════════════════════════════════════════════════
