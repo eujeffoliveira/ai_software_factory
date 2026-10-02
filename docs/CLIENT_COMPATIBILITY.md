@@ -7,7 +7,7 @@
 | Claude Code | Sim | Sim | `@nome` via `~/.claude/agents/*.md` | Completo |
 | Codex | Sim | Sim | custom agents em `~/.codex/agents/*.toml` | Completo |
 | Antigravity | Sim | Sim | skills (`techlead`, etc.) em `~/.gemini/config/plugins/` | Completo |
-| GitHub Copilot | Sim | Sim | `@nome` via extensão global (`~/.vscode/extensions/`) + prompt files (`.github/prompts/`) + MCP global e local (`mcp.json`) | Completo |
+| GitHub Copilot | Sim | Sim | `@nome` / seletor de agentes via `~/.copilot/agents/*.agent.md` + prompt files (`.github/prompts/`) + MCP global e local (`mcp.json`) | Completo |
 | ChatGPT/outros | Manual | Não | colar prompts/knowledge | Manual |
 
 Todos os runtimes completos usam a mesma fonte canônica:
@@ -95,7 +95,8 @@ GitHub Copilot opera no VS Code com suporte global e local por workspace.
 Após `.\install.ps1`, os artefatos ficam em:
 
 ```text
-~/.vscode/extensions/ai-software-factory.agents/   # Extensão declarativa global (qualquer projeto)
+~/.copilot/agents/*.agent.md                       # Custom Agents globais de usuário (qualquer projeto)
+.github/agents/*.agent.md                          # Custom Agents do workspace
 .github/copilot-instructions.md                    # Diretrizes do SDLC e Quality Gates
 .github/prompts/*.prompt.md                        # Prompt files reutilizáveis
 .vscode/mcp.json                                   # Conexão MCP knowledge (Agent mode workspace)
@@ -105,7 +106,7 @@ Após `.\install.ps1`, os artefatos ficam em:
 Uso:
 
 ```text
-# 1. Globalmente em qualquer projeto/pasta via extensão:
+# 1. Globalmente em qualquer projeto/pasta via Custom Agents:
 @techlead Avalie a arquitetura deste projeto
 @qa Crie testes Playwright para o fluxo de checkout
 @po Escreva user stories para o novo módulo de faturamento

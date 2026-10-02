@@ -15,7 +15,7 @@ The factory supports multiple agent runtimes from the same canonical sources:
 | Claude Code | `~/.claude/agents/<name>.md` and `@name` | `~/.claude.json` plus `.mcp.json` | Primary historical runtime |
 | Codex | `~/.codex/agents/<name>.toml` custom agents | `~/.codex/config.toml` plus `.codex/config.toml` | Use as custom subagents, not Claude-style `@name` |
 | Antigravity | `~/.gemini/config/plugins/ai-software-factory/skills/` (`<name>`) | `~/.gemini/config/mcp_config.json` | Progressive skills, MCP tools `mcp_knowledge_*` |
-| GitHub Copilot | `~/.vscode/extensions/ai-software-factory.agents/` & `.github/prompts/` | `.vscode/mcp.json` & `%APPDATA%\Code\User\mcp.json` | Global declarative extension `@name`, prompt files, global & workspace Agent mode MCP |
+| GitHub Copilot | `~/.copilot/agents/<name>.agent.md` & `.github/prompts/` | `.vscode/mcp.json` & `%APPDATA%\Code\User\mcp.json` | Native user custom agents `@name`, prompt files, global & workspace Agent mode MCP |
 
 The canonical agent content remains in each `AgenteXX_*/` folder. Generated
 runtime files must be derived from those sources, not hand-maintained as forks.
@@ -110,13 +110,12 @@ See `docs/ANTIGRAVITY.md` for full details.
 
 ## GitHub Copilot-Specific Guidance
 
-GitHub Copilot integrates via native Workspace and User Custom Agents (`.github/agents/` and `~/.copilot/agents/`),
-a global declarative VS Code extension, repository instructions, reusable prompt files, and both workspace and global user MCP configurations.
+GitHub Copilot integrates via native User and Workspace Custom Agents (`~/.copilot/agents/` and `.github/agents/`),
+repository instructions, reusable prompt files, and both workspace and global user MCP configurations.
 
 After `.\install.ps1`, GitHub Copilot artifacts are generated:
-- `.github/agents/<name>.agent.md` workspace custom agents appearing directly in the VS Code Agent picker
-- `~/.copilot/agents/<name>.agent.md` user-level custom agents available in any workspace
-- `~/.vscode/extensions/ai-software-factory.agents/` global declarative extension with all 12 `.agent.md` files (authorizing `knowledge/*` tools)
+- `~/.copilot/agents/<name>.agent.md` user-level custom agents available globally in VS Code across all projects
+- `.github/agents/<name>.agent.md` workspace custom agents appearing in the VS Code Agent picker for this workspace
 - `.github/copilot-instructions.md` containing global SDLC engineering rules
 - `.github/prompts/<name>.prompt.md` reusable prompt files for all 12 roles
 - `.vscode/mcp.json` configuring the `knowledge` MCP server for workspace Copilot Agent mode

@@ -41,6 +41,7 @@ Ative a skill techlead para avaliar este projeto.
 Invoque qa como subagente para auditar a cobertura de testes.
 
 # GitHub Copilot (VS Code)
+Selecione o agente no dropdown do Chat (ex: techlead, qa) ou mencione @techlead
 #file:techlead.prompt.md Avalie a aderencia ao Gate G0 deste projeto
 #file:qa.prompt.md Elabore o plano de testes Vitest e Playwright
 ```
@@ -78,7 +79,7 @@ Cada agente tem acesso a dois layers de conhecimento:
 ~/.claude/agents/<nome>.md                       ← Claude Code (@nome)
 ~/.codex/agents/<nome>.toml                      ← Codex custom agents
 ~/.gemini/config/plugins/ai-software-factory/    ← Antigravity skills
-.github/prompts/<nome>.prompt.md                 ← GitHub Copilot prompt files
+~/.copilot/agents/<nome>.agent.md                ← GitHub Copilot custom agents
 knowledge.db (SQLite FTS5)                       ← ~8.000 docs indexados via MCP sob demanda
 ```
 
